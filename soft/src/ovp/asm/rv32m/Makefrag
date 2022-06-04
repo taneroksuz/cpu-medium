@@ -1,0 +1,11 @@
+rv32m_test = \
+	MUL-01 \
+	MULH-01 \
+	MULHSU-01 \
+	MULHU-01 \
+	DIV-01 \
+	DIVU-01 \
+	REM-01 \
+	REMU-01 \
+
+rv32m_tests = $(addprefix rv32m-, $(rv32m_test))

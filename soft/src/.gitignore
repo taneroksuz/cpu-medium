@@ -1,0 +1,10 @@
+coremark
+riscv-compliance
+riscv-ovp
+riscv-tests
+!common
+!coremark_portme
+!dhrystone
+!env
+!isa
+!.gitignore

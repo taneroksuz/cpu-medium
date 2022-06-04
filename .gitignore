@@ -1,0 +1,10 @@
+build
+!fpga/
+!sim/
+!synth/
+!soft/
+!tools/
+!verilog/
+!Makefile
+!README.md
+!.gitignore

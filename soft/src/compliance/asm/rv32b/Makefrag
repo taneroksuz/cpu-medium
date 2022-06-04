@@ -1,0 +1,10 @@
+rv32b_test = \
+  andn-01 \
+  clmul-01 \
+  clmulh-01 \
+  orn-01 \
+  rol-01 \
+  ror-01 \
+  xnor-01 \
+
+rv32b_tests = $(addprefix rv32b-, $(rv32b_test))

@@ -1,0 +1,10 @@
+#=======================================================================
+# Makefrag for rv64um tests
+#-----------------------------------------------------------------------
+
+rv64um_test = \
+	div divu divuw divw \
+	mul mulh mulhsu mulhu mulw \
+	rem remu remuw remw \
+
+rv64um_tests = $(addprefix rv64um-, $(rv64um_test))

@@ -1,0 +1,35 @@
+rv32b_test = \
+	SH1ADD-01 \
+	SH2ADD-01 \
+	SH3ADD-01 \
+	ANDN-01 \
+	CLZ-01 \
+	CPOP-01 \
+	CTZ-01 \
+	MAX-01 \
+	MAXU-01 \
+	MIN-01 \
+	MINU-01 \
+	ORC-B-01 \
+	ORN-01 \
+	REV8-01 \
+	ROL-01 \
+	ROR-01 \
+	RORI-01 \
+	SEXT-B-01 \
+	SEXT-H-01 \
+	XNOR-01 \
+	ZEXT-H-01 \
+	CLMUL-01 \
+	CLMULH-01 \
+	CLMULR-01 \
+	# BCLR-01 \
+	# BCLRI-01 \
+	# BEXT-01 \
+	# BEXTI-01 \
+	# BINV-01 \
+	# BINVI-01 \
+	# BSET-01 \
+	# BSETI-01 \
+
+rv32b_tests = $(addprefix rv32b-, $(rv32b_test))

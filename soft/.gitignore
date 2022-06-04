@@ -1,0 +1,5 @@
+!patch/
+!py/
+!src*
+!*.sh
+!.gitignore

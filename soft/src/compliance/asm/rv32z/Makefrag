@@ -1,0 +1,4 @@
+rv32z_test = \
+  Fencei \
+
+rv32z_tests = $(addprefix rv32z-, $(rv32z_test))

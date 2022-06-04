@@ -1,0 +1,19 @@
+rv32p_test = \
+  ebreak \
+  ecall \
+  misalign-beq-01 \
+  misalign-bge-01 \
+  misalign-bgeu-01 \
+  misalign-blt-01 \
+  misalign-bltu-01 \
+  misalign-bne-01 \
+  misalign-jal-01 \
+  misalign-lh-01 \
+  misalign-lhu-01 \
+  misalign-lw-01 \
+  misalign-sh-01 \
+  misalign-sw-01 \
+  misalign1-jalr-01 \
+  misalign2-jalr-01 \
+
+rv32p_tests = $(addprefix rv32p-, $(rv32p_test))
