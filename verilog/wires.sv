@@ -662,9 +662,11 @@ package wires;
     logic [31 : 0] npc;
     logic [31 : 0] imm;
     logic [0  : 0] wren;
+    logic [0  : 0] wren_b;
     logic [0  : 0] rden1;
     logic [0  : 0] rden2;
     logic [0  : 0] cwren;
+    logic [0  : 0] cwren_b;
     logic [0  : 0] crden;
     logic [4  : 0] waddr;
     logic [4  : 0] raddr1;
@@ -676,19 +678,28 @@ package wires;
     logic [0  : 0] jalr;
     logic [0  : 0] branch;
     logic [0  : 0] load;
+    logic [0  : 0] load_b;
     logic [0  : 0] store;
+    logic [0  : 0] store_b;
     logic [0  : 0] nop;
     logic [0  : 0] csregister;
     logic [0  : 0] division;
     logic [0  : 0] multiplication;
     logic [0  : 0] bitmanipulation;
     logic [0  : 0] fence;
+    logic [0  : 0] fence_b;
     logic [0  : 0] ecall;
+    logic [0  : 0] ecall_b;
     logic [0  : 0] ebreak;
+    logic [0  : 0] ebreak_b;
     logic [0  : 0] mret;
+    logic [0  : 0] mret_b;
     logic [0  : 0] wfi;
+    logic [0  : 0] wfi_b;
     logic [0  : 0] valid;
+    logic [0  : 0] valid_b;
     logic [0  : 0] jump;
+    logic [0  : 0] jump_b;
     logic [31 : 0] rdata1;
     logic [31 : 0] rdata2;
     logic [31 : 0] cdata;
@@ -706,6 +717,7 @@ package wires;
     div_op_type div_op;
     bit_op_type bit_op;
     logic [0  : 0] exception;
+    logic [0  : 0] exception_b;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
     logic [0  : 0] stall;
@@ -717,9 +729,11 @@ package wires;
     npc : 0,
     imm : 0,
     wren : 0,
+    wren_b : 0,
     rden1 : 0,
     rden2 : 0,
     cwren : 0,
+    cwren_b : 0,
     crden : 0,
     waddr : 0,
     raddr1 : 0,
@@ -731,19 +745,28 @@ package wires;
     jalr : 0,
     branch : 0,
     load : 0,
+    load_b : 0,
     store : 0,
+    store_b : 0,
     nop : 0,
     csregister : 0,
     division : 0,
     multiplication : 0,
     bitmanipulation : 0,
     fence : 0,
+    fence_b : 0,
     ecall : 0,
+    ecall_b : 0,
     ebreak : 0,
+    ebreak_b : 0,
     mret : 0,
+    mret_b : 0,
     wfi : 0,
+    wfi_b : 0,
     jump : 0,
+    jump_b : 0,
     valid : 0,
+    valid_b : 0,
     rdata1 : 0,
     rdata2 : 0,
     cdata : 0,
@@ -761,6 +784,7 @@ package wires;
     mul_op : init_mul_op,
     bit_op : init_bit_op,
     exception : 0,
+    exception_b : 0,
     ecause : 0,
     etval : 0,
     stall : 0,

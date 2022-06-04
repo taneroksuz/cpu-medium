@@ -85,6 +85,18 @@ module execute_stage
 
     if ((d.e.stall | d.m.stall) == 1) begin
       v = r;
+      v.wren = v.wren_b;
+      v.cwren = v.cwren_b;
+      v.load = v.load_b;
+      v.store = v.store_b;
+      v.fence = v.fence_b;
+      v.ecall = v.ecall_b;
+      v.ebreak = v.ebreak_b;
+      v.mret = v.mret_b;
+      v.wfi = v.wfi_b;
+      v.jump = v.jump_b;
+      v.valid = v.valid_b;
+      v.exception = v.exception_b;
     end
 
     v.clear = d.e.jump | d.w.clear;
@@ -202,23 +214,31 @@ module execute_stage
       end
     end
 
+    v.wren_b = v.wren;
+    v.cwren_b = v.cwren;
+    v.load_b = v.load;
+    v.store_b = v.store;
+    v.fence_b = v.fence;
+    v.ecall_b = v.ecall;
+    v.ebreak_b = v.ebreak;
+    v.mret_b = v.mret;
+    v.wfi_b = v.wfi;
+    v.jump_b = v.jump;
+    v.valid_b = v.valid;
+    v.exception_b = v.exception;
+
     if ((v.stall | a.m.stall | v.clear | csr_out.exception | csr_out.mret) == 1) begin
       v.wren = 0;
       v.cwren = 0;
-      v.auipc = 0;
-      v.lui = 0;
-      v.jal = 0;
-      v.jalr = 0;
-      v.branch = 0;
-      v.nop = 0;
-      v.csregister = 0;
+      v.load = 0;
+      v.store = 0;
       v.fence = 0;
       v.ecall = 0;
       v.ebreak = 0;
       v.mret = 0;
       v.wfi = 0;
-      v.valid = 0;
       v.jump = 0;
+      v.valid = 0;
       v.exception = 0;
       v.clear = 0;
     end
