@@ -152,35 +152,6 @@ module csr
             csr_machine_reg.mstatus.sie <= csr_ein.cdata[1];
             csr_machine_reg.mstatus.uie <= csr_ein.cdata[0];
           end
-          csr_misa : begin
-            csr_machine_reg.misa.mxl <= csr_ein.cdata[31:30];
-            csr_machine_reg.misa.z <= csr_ein.cdata[25];
-            csr_machine_reg.misa.y <= csr_ein.cdata[24];
-            csr_machine_reg.misa.x <= csr_ein.cdata[23];
-            csr_machine_reg.misa.w <= csr_ein.cdata[22];
-            csr_machine_reg.misa.v <= csr_ein.cdata[21];
-            csr_machine_reg.misa.u <= csr_ein.cdata[20];
-            csr_machine_reg.misa.t <= csr_ein.cdata[19];
-            csr_machine_reg.misa.s <= csr_ein.cdata[18];
-            csr_machine_reg.misa.r <= csr_ein.cdata[17];
-            csr_machine_reg.misa.q <= csr_ein.cdata[16];
-            csr_machine_reg.misa.p <= csr_ein.cdata[15];
-            csr_machine_reg.misa.o <= csr_ein.cdata[14];
-            csr_machine_reg.misa.n <= csr_ein.cdata[13];
-            csr_machine_reg.misa.m <= csr_ein.cdata[12];
-            csr_machine_reg.misa.l <= csr_ein.cdata[11];
-            csr_machine_reg.misa.k <= csr_ein.cdata[10];
-            csr_machine_reg.misa.j <= csr_ein.cdata[9];
-            csr_machine_reg.misa.i <= csr_ein.cdata[8];
-            csr_machine_reg.misa.h <= csr_ein.cdata[7];
-            csr_machine_reg.misa.g <= csr_ein.cdata[6];
-            csr_machine_reg.misa.f <= csr_ein.cdata[5];
-            csr_machine_reg.misa.e <= csr_ein.cdata[4];
-            csr_machine_reg.misa.d <= csr_ein.cdata[3];
-            csr_machine_reg.misa.c <= csr_ein.cdata[2];
-            csr_machine_reg.misa.b <= csr_ein.cdata[1];
-            csr_machine_reg.misa.a <= csr_ein.cdata[0];
-          end
           csr_mtvec : csr_machine_reg.mtvec <= csr_ein.cdata;
           csr_mscratch : csr_machine_reg.mscratch <= csr_ein.cdata;
           csr_mepc : csr_machine_reg.mepc <= csr_ein.cdata;
