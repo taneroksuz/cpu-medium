@@ -11,6 +11,7 @@ module memory_stage
   output mem_in_type writebuffer_in,
   output forwarding_memory_in_type forwarding_min,
   output register_write_in_type register_win,
+  output csr_memory_in_type csr_min,
   input memory_in_type a,
   input memory_in_type d,
   output memory_out_type y,
@@ -81,6 +82,12 @@ module memory_stage
     register_win.wren = v.wren;
     register_win.waddr = v.waddr;
     register_win.wdata = v.wdata;
+
+    csr_min.valid = 0;
+    csr_min.exception = 0;
+    csr_min.epc = 0;
+    csr_min.ecause = 0;
+    csr_min.etval = 0;
     
     rin = v;
 

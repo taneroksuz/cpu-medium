@@ -259,6 +259,11 @@ module execute_stage
     csr_ein.cwaddr = v.caddr;
     csr_ein.cdata = v.cdata;
 
+    csr_ein.exception = v.exception;
+    csr_ein.epc = v.pc;
+    csr_ein.ecause = v.ecause;
+    csr_ein.etval = v.etval;
+
     rin = v;
 
     y.wren = v.wren;

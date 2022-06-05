@@ -1016,15 +1016,13 @@ package wires;
   };
 
   typedef struct packed{
+    logic [0  : 0] valid;
     logic [0  : 0] crden;
     logic [11 : 0] craddr;
     logic [0  : 0] mret;
     logic [0  : 0] exception;
+    logic [31 : 0] epc;
     logic [3  : 0] ecause;
-    logic [31 : 0] d_epc;
-    logic [31 : 0] e_epc;
-    logic [0 : 0]  d_valid;
-    logic [0 : 0]  e_valid;
     logic [31 : 0] etval;
   } csr_decode_in_type;
 
@@ -1033,7 +1031,19 @@ package wires;
     logic [0  : 0] cwren;
     logic [11 : 0] cwaddr;
     logic [31 : 0] cdata;
+    logic [0  : 0] exception;
+    logic [31 : 0] epc;
+    logic [3  : 0] ecause;
+    logic [31 : 0] etval;
   } csr_execute_in_type;
+
+  typedef struct packed{
+    logic [0  : 0] valid;
+    logic [0  : 0] exception;
+    logic [31 : 0] epc;
+    logic [3  : 0] ecause;
+    logic [31 : 0] etval;
+  } csr_memory_in_type;
 
   typedef struct packed{
     logic [0  : 0] exception;
