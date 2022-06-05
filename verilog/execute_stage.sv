@@ -115,7 +115,7 @@ module execute_stage
     bcu_in.rdata2 = v.rdata2;
     bcu_in.bcu_op = v.bcu_op;
 
-    v.jump = v.jal | v.jalr | bcu_out.branch;
+    v.jump = v.jal | v.jalr | (bcu_out.branch & v.branch);
 
     agu_in.rdata1 = v.rdata1;
     agu_in.imm = v.imm;
@@ -240,7 +240,6 @@ module execute_stage
       v.jump = 0;
       v.valid = 0;
       v.exception = 0;
-      v.clear = 0;
     end
 
     if (v.clear == 1) begin

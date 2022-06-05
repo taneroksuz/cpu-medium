@@ -144,6 +144,8 @@ module decode_stage
       v.stall = 1;
     end else if (d.d.bitmanipulation == 1 && d.d.bit_op.bmcycle == 1) begin
       v.stall = 1;
+    end else if (d.d.load == 1 && ((v.rden1 == 1 && d.d.waddr == v.raddr1) || (v.rden2 == 1 && d.d.waddr == v.raddr2))) begin 
+      v.stall = 1;
     end
 
     if ((v.stall | a.e.stall | a.m.stall | v.clear | csr_out.exception | csr_out.mret) == 1) begin
