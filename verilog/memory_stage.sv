@@ -68,7 +68,6 @@ module memory_stage
 
     if ((v.stall | v.clear) == 1) begin
       v.wren = 0;
-      v.clear = 0;
     end
 
     if (v.clear == 1) begin

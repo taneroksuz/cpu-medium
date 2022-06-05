@@ -176,12 +176,12 @@ module execute_stage
 
     div_in.rdata1 = v.rdata1;
     div_in.rdata2 = v.rdata2;
-    div_in.enable = v.division & ~(d.w.clear | d.e.stall);
+    div_in.enable = v.division & ~(d.w.clear | d.e.stall | a.m.stall);
     div_in.div_op = v.div_op;
 
     bit_clmul_in.rdata1 = v.rdata1;
     bit_clmul_in.rdata2 = v.rdata2;
-    bit_clmul_in.enable = v.bitmanipulation & ~(d.w.clear | d.e.stall);
+    bit_clmul_in.enable = v.bitmanipulation & ~(d.w.clear | d.e.stall | a.m.stall);
     bit_clmul_in.op = v.bit_op.bit_zbc;
 
     if (v.division == 1) begin
