@@ -148,7 +148,7 @@ module decode_stage
       v.stall = 1;
     end
 
-    if ((v.stall | a.e.stall | a.m.stall | v.clear | csr_out.exception | csr_out.mret) == 1) begin
+    if ((v.stall | a.e.stall | a.m.stall | a.e.jump | v.clear | csr_out.exception | csr_out.mret) == 1) begin
       v.wren = 0;
       v.cwren = 0;
       v.auipc = 0;
