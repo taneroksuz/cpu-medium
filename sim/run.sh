@@ -48,7 +48,7 @@ then
   then
     cp $DIR/build/aapg/dat/aapg.dat bram.dat
     cp $DIR/build/aapg/elf/aapg.host host.dat
-  	obj_dir/Vsoc $CYCLES coremark 2> /dev/null
+  	obj_dir/Vsoc $CYCLES aapg 2> /dev/null
   elif [ "$4" = 'csmith' ]
   then
     cp $DIR/build/csmith/dat/csmith.dat bram.dat
