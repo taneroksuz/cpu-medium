@@ -256,7 +256,6 @@ module itim_ctrl
     if (itim_in.mem_valid == 1) begin
       if (itim_in.mem_fence == 1) begin
         v_f.fence = itim_in.mem_fence;
-        v_f.did = 0;
       end else begin
         v_f.en = itim_in.mem_valid;
         v_f.addr = itim_in.mem_addr;
@@ -266,7 +265,9 @@ module itim_ctrl
       end
     end
 
-    if (rin_b.fence == 1) begin
+    if (v_f.fence == 1) begin
+      v_f.did = 0;
+    end else if (rin_b.fence == 1) begin
       v_f.did = rin_b.did;
     end
 

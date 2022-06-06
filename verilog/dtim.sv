@@ -316,7 +316,6 @@ module dtim_ctrl
     if (dtim_in.mem_valid == 1) begin
       if (dtim_in.mem_fence == 1) begin
         v_f.fence = dtim_in.mem_fence;
-        v_f.did = 0;
       end else begin
         v_f.wren = |dtim_in.mem_wstrb;
         v_f.rden = ~(|dtim_in.mem_wstrb);
@@ -329,7 +328,9 @@ module dtim_ctrl
       end
     end
 
-    if (rin_b.fence == 1) begin
+    if (v_f.fence == 1) begin
+      v_f.did = 0;
+    end else if (rin_b.fence == 1) begin
       v_f.did = rin_b.did;
     end
 
@@ -565,6 +566,16 @@ module dtim_ctrl
           v_b.ready = 1;
         end
       fence :
+        begin
+          if (v_b.state == hit) begin
+            v_b.rdata = 0;
+            v_b.ready = 1;
+          end else begin
+            v_b.rdata = 0;
+            v_b.ready = 0;
+          end
+        end
+      writeback :
         begin
           if (v_b.state == hit) begin
             v_b.rdata = 0;

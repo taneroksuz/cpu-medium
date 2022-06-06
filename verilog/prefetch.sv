@@ -100,7 +100,7 @@ module prefetch
     v.comp = 0;
 
     if (v.fence == 1) begin
-      if (v.wid == prefetch_depth-1) begin
+      if (v.wid == 2**prefetch_depth-1) begin
         v.wren = 0;
         v.wid = 0;
         v.wdata = 0;
