@@ -1,10 +1,9 @@
-riscv-isa-sim#!/bin/bash
+#!/bin/bash
 
 RISCV_PATH=/opt/riscv
 FLAG1="rv32i-ilp32--;rv32im-ilp32--;rv32imc-ilp32--;"
-FLAG2="rv64i-lp64--;rv64im-lp64--;rv64imc-lp64--;"
-FLAG3="rv64imfd-lp64d--;rv64imfdc-lp64d--"
-FLAG="$FLAG1$FLAG2$FLAG3"
+FLAG2="rv32imfc-ilp32--;rv32imfdc-ilp32--"
+FLAG="$FLAG1$FLAG2"
 
 
 if [ -d "$RISCV_PATH" ]
@@ -37,57 +36,3 @@ cd build
 
 ../configure --prefix=$RISCV_PATH --with-multilib-generator=$FLAG
 make -j$(nproc)
-
-# RISCV LLVM
-
-git clone https://github.com/llvm/llvm-project.git riscv-llvm
-
-cd riscv-llvm
-
-ln -s ../../clang llvm/tools || true
-
-mkdir build
-cd build
-
-cmake -G Ninja -DCMAKE_BUILD_TYPE="Release" \
-  -DBUILD_SHARED_LIBS=True -DLLVM_USE_SPLIT_DWARF=True \
-  -DCMAKE_INSTALL_PREFIX=$RISCV_PATH \
-  -DLLVM_OPTIMIZED_TABLEGEN=True -DLLVM_BUILD_TESTS=False \
-  -DDEFAULT_SYSROOT="$RISCV_PATH/riscv64-unknown-elf" \
-  -DLLVM_DEFAULT_TARGET_TRIPLE="riscv64-unknown-elf" \
-  -DLLVM_TARGETS_TO_BUILD="RISCV" \
-  ../llvm
-
-cmake --build . --target install
-
-# RISCV ISA SIM
-
-git clone --recursive https://github.com/riscv/riscv-isa-sim.git
-
-cd riscv-isa-sim
-
-mkdir build
-cd build
-
-../configure --prefix=$RISCV_PATH
-
-make -j$(nproc)
-
-make install
-
-# ELF2HEX
-
-git clone --recursive https://github.com/sifive/elf2hex.git
-
-cd elf2hex
-
-autoreconf -i
-
-mkdir build
-cd build
-
-../configure --prefix=$RISCV_PATH
-
-make -j$(nproc)
-
-make install
