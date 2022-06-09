@@ -41,7 +41,7 @@ module decode_stage
     //   v = r;
     // end
 
-    v.clear = d.e.jump | d.d.exception | d.d.mret | d.w.clear;
+    v.clear = csr_out.exception | csr_out.mret | d.e.jump | d.w.clear;
 
     v.stall = 0;
 
@@ -66,10 +66,17 @@ module decode_stage
     v.load = decoder_out.load;
     v.store = decoder_out.store;
     v.nop = decoder_out.nop;
-    v.csregister = decoder_out.csregister;
+    v.csreg = decoder_out.csreg;
     v.division = decoder_out.division;
-    v.multiplication = decoder_out.multiplication;
-    v.bitmanipulation = decoder_out.bitmanipulation;
+    v.mult = decoder_out.mult;
+    v.bitm = decoder_out.bitm;
+    v.bitc = decoder_out.bitc;
+    v.fence = decoder_out.fence;
+    v.ecall = decoder_out.ecall;
+    v.ebreak = decoder_out.ebreak;
+    v.mret = decoder_out.mret;
+    v.wfi = decoder_out.wfi;
+    v.valid = decoder_out.valid;
     v.alu_op = decoder_out.alu_op;
     v.bcu_op = decoder_out.bcu_op;
     v.lsu_op = decoder_out.lsu_op;
@@ -77,12 +84,6 @@ module decode_stage
     v.div_op = decoder_out.div_op;
     v.mul_op = decoder_out.mul_op;
     v.bit_op = decoder_out.bit_op;
-    v.fence = decoder_out.fence;
-    v.ecall = decoder_out.ecall;
-    v.ebreak = decoder_out.ebreak;
-    v.mret = decoder_out.mret;
-    v.wfi = decoder_out.wfi;
-    v.valid = decoder_out.valid;
 
     compress_in.instr = v.instr;
 
@@ -100,11 +101,11 @@ module decode_stage
       v.branch = compress_out.branch;
       v.load = compress_out.load;
       v.store = compress_out.store;
+      v.ebreak = compress_out.ebreak;
+      v.valid = compress_out.valid;
       v.alu_op = compress_out.alu_op;
       v.bcu_op = compress_out.bcu_op;
       v.lsu_op = compress_out.lsu_op;
-      v.ebreak = compress_out.ebreak;
-      v.valid = compress_out.valid;
     end
 
     v.npc = v.pc + ((v.instr[1:0] == 2'b11) ? 4 : 2);
@@ -138,17 +139,17 @@ module decode_stage
       v.etval = v.instr;
     end
 
-    if (d.d.cwren == 1) begin
+    if (a.e.cwren_b == 1) begin
       v.stall = 1;
-    end else if (d.d.division == 1) begin
+    end else if (a.e.division_b == 1) begin
       v.stall = 1;
-    end else if (d.d.bitmanipulation == 1 && d.d.bit_op.bmcycle == 1) begin
+    end else if (a.e.bitc_b == 1) begin
       v.stall = 1;
-    end else if (d.d.load == 1 && ((v.rden1 == 1 && d.d.waddr == v.raddr1) || (v.rden2 == 1 && d.d.waddr == v.raddr2))) begin 
+    end else if (a.e.load_b == 1 && ((v.rden1 == 1 && a.e.waddr == v.raddr1) || (v.rden2 == 1 && a.e.waddr == v.raddr2))) begin 
       v.stall = 1;
     end
 
-    if ((v.stall | a.e.stall | a.m.stall | a.e.jump | v.clear | csr_out.exception | csr_out.mret) == 1) begin
+    if ((v.stall | a.e.stall | a.m.stall | v.clear) == 1) begin
       v.wren = 0;
       v.cwren = 0;
       v.auipc = 0;
@@ -159,10 +160,11 @@ module decode_stage
       v.load = 0;
       v.store = 0;
       v.nop = 0;
-      v.csregister = 0;
+      v.csreg = 0;
       v.division = 0;
-      v.multiplication = 0;
-      v.bitmanipulation = 0;
+      v.mult = 0;
+      v.bitm = 0;
+      v.bitc = 0;
       v.fence = 0;
       v.ecall = 0;
       v.ebreak = 0;
@@ -211,10 +213,11 @@ module decode_stage
     y.load = v.load;
     y.store = v.store;
     y.nop = v.nop;
-    y.csregister = v.csregister;
+    y.csreg = v.csreg;
     y.division = v.division;
-    y.multiplication = v.multiplication;
-    y.bitmanipulation = v.bitmanipulation;
+    y.mult = v.mult;
+    y.bitm = v.bitm;
+    y.bitc = v.bitc;
     y.fence = v.fence;
     y.ecall = v.ecall;
     y.ebreak = v.ebreak;
@@ -224,6 +227,10 @@ module decode_stage
     y.rdata1 = v.rdata1;
     y.rdata2 = v.rdata2;
     y.cdata = v.cdata;
+    y.exception = v.exception;
+    y.ecause = v.ecause;
+    y.etval = v.etval;
+    y.stall = v.stall;
     y.alu_op = v.alu_op;
     y.bcu_op = v.bcu_op;
     y.lsu_op = v.lsu_op;
@@ -231,10 +238,6 @@ module decode_stage
     y.div_op = v.div_op;
     y.mul_op = v.mul_op;
     y.bit_op = v.bit_op;
-    y.exception = v.exception;
-    y.ecause = v.ecause;
-    y.etval = v.etval;
-    y.stall = v.stall;
 
     q.pc = r.pc;
     q.npc = r.npc;
@@ -256,10 +259,11 @@ module decode_stage
     q.load = r.load;
     q.store = r.store;
     q.nop = r.nop;
-    q.csregister = r.csregister;
+    q.csreg = r.csreg;
     q.division = r.division;
-    q.multiplication = r.multiplication;
-    q.bitmanipulation = r.bitmanipulation;
+    q.mult = r.mult;
+    q.bitm = r.bitm;
+    q.bitc = r.bitc;
     q.fence = r.fence;
     q.ecall = r.ecall;
     q.ebreak = r.ebreak;
@@ -269,6 +273,10 @@ module decode_stage
     q.rdata1 = r.rdata1;
     q.rdata2 = r.rdata2;
     q.cdata = r.cdata;
+    q.exception = r.exception;
+    q.ecause = r.ecause;
+    q.etval = r.etval;
+    q.stall = r.stall;
     q.alu_op = r.alu_op;
     q.bcu_op = r.bcu_op;
     q.lsu_op = r.lsu_op;
@@ -276,10 +284,6 @@ module decode_stage
     q.div_op = r.div_op;
     q.mul_op = r.mul_op;
     q.bit_op = r.bit_op;
-    q.exception = r.exception;
-    q.ecause = r.ecause;
-    q.etval = r.etval;
-    q.stall = r.stall;
 
   end
 

@@ -34,10 +34,17 @@ module memory_stage
     v.fence = d.e.fence;
     v.wdata = d.e.wdata;
     v.byteenable = d.e.byteenable;
+    v.alu_op = d.e.alu_op;
+    v.bcu_op = d.e.bcu_op;
     v.lsu_op = d.e.lsu_op;
+    v.csr_op = d.e.csr_op;
+    v.div_op = d.e.div_op;
+    v.mul_op = d.e.mul_op;
+    v.bit_op = d.e.bit_op;
 
     if (d.m.stall == 1) begin
       v = r;
+      v.wren = v.wren_b;
     end
 
     v.clear = d.w.clear;
@@ -65,6 +72,8 @@ module memory_stage
         v.wdata = v.ldata;
       end
     end
+
+    v.wren_b = v.wren;
 
     if ((v.stall | v.clear) == 1) begin
       v.wren = 0;

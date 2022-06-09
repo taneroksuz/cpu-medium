@@ -59,10 +59,11 @@ module execute_stage
     v.load = d.d.load;
     v.store = d.d.store;
     v.nop = d.d.nop;
-    v.csregister = d.d.csregister;
+    v.csreg = d.d.csreg;
     v.division = d.d.division;
-    v.multiplication = d.d.multiplication;
-    v.bitmanipulation = d.d.bitmanipulation;
+    v.mult = d.d.mult;
+    v.bitm = d.d.bitm;
+    v.bitc = d.d.bitc;
     v.fence = d.d.fence;
     v.ecall = d.d.ecall;
     v.ebreak = d.d.ebreak;
@@ -72,6 +73,9 @@ module execute_stage
     v.rdata1 = d.d.rdata1;
     v.rdata2 = d.d.rdata2;
     v.cdata = d.d.cdata;
+    v.exception = d.d.exception;
+    v.ecause = d.d.ecause;
+    v.etval = d.d.etval;
     v.alu_op = d.d.alu_op;
     v.bcu_op = d.d.bcu_op;
     v.lsu_op = d.d.lsu_op;
@@ -79,9 +83,6 @@ module execute_stage
     v.div_op = d.d.div_op;
     v.mul_op = d.d.mul_op;
     v.bit_op = d.d.bit_op;
-    v.exception = d.d.exception;
-    v.ecause = d.d.ecause;
-    v.etval = d.d.etval;
 
     if ((d.e.stall | d.m.stall) == 1) begin
       v = r;
@@ -89,6 +90,11 @@ module execute_stage
       v.cwren = v.cwren_b;
       v.load = v.load_b;
       v.store = v.store_b;
+      v.csreg = v.csreg_b;
+      v.division = v.division_b;
+      v.mult = v.mult_b;
+      v.bitm = v.bitm_b;
+      v.bitc = v.bitc_b;
       v.fence = v.fence_b;
       v.ecall = v.ecall_b;
       v.ebreak = v.ebreak_b;
@@ -99,9 +105,11 @@ module execute_stage
       v.exception = v.exception_b;
     end
 
-    v.clear = d.e.jump | d.w.clear;
+    v.clear = csr_out.exception | csr_out.mret | d.e.jump | d.w.clear;
 
     v.stall = 0;
+
+    v.enable = ~(d.e.stall | a.m.stall | d.w.clear);
 
     alu_in.rdata1 = v.rdata1;
     alu_in.rdata2 = v.rdata2;
@@ -113,9 +121,10 @@ module execute_stage
 
     bcu_in.rdata1 = v.rdata1;
     bcu_in.rdata2 = v.rdata2;
+    bcu_in.enable = v.branch;
     bcu_in.bcu_op = v.bcu_op;
 
-    v.jump = v.jal | v.jalr | (bcu_out.branch & v.branch);
+    v.jump = v.jal | v.jalr | bcu_out.branch;
 
     agu_in.rdata1 = v.rdata1;
     agu_in.imm = v.imm;
@@ -150,6 +159,22 @@ module execute_stage
 
     v.bdata = bit_alu_out.result;
 
+    div_in.rdata1 = v.rdata1;
+    div_in.rdata2 = v.rdata2;
+    div_in.enable = v.division & v.enable;
+    div_in.div_op = v.div_op;
+
+    v.ddata = div_out.result;
+    v.dready = div_out.ready;
+
+    bit_clmul_in.rdata1 = v.rdata1;
+    bit_clmul_in.rdata2 = v.rdata2;
+    bit_clmul_in.enable = v.bitc & v.enable;
+    bit_clmul_in.op = v.bit_op.bit_zbc;
+
+    v.bcdata = bit_clmul_out.result;
+    v.bcready = bit_clmul_out.ready;
+
     if (v.auipc == 1) begin
       v.wdata = v.address;
     end else if (v.lui == 1) begin
@@ -160,10 +185,14 @@ module execute_stage
       v.wdata = v.npc;
     end else if (v.crden == 1) begin
       v.wdata = v.cdata;
-    end else if (v.multiplication == 1) begin
+    end else if (v.division == 1) begin
+      v.wdata = v.ddata;
+    end else if (v.mult == 1) begin
       v.wdata = v.mdata;
-    end else if (v.bitmanipulation == 1) begin
-      v.wdata = v.bdata;
+    end else if (v.bitm == 1) begin
+        v.wdata = v.bdata;
+    end else if (v.bitc == 1) begin
+        v.wdata = v.bcdata;
     end
 
     csr_alu_in.cdata = v.cdata;
@@ -174,29 +203,13 @@ module execute_stage
 
     v.cdata = csr_alu_out.cdata;
 
-    div_in.rdata1 = v.rdata1;
-    div_in.rdata2 = v.rdata2;
-    div_in.enable = v.division & ~(d.w.clear | d.e.stall | a.m.stall);
-    div_in.div_op = v.div_op;
-
-    bit_clmul_in.rdata1 = v.rdata1;
-    bit_clmul_in.rdata2 = v.rdata2;
-    bit_clmul_in.enable = v.bitmanipulation & ~(d.w.clear | d.e.stall | a.m.stall);
-    bit_clmul_in.op = v.bit_op.bit_zbc;
-
     if (v.division == 1) begin
-      if (div_out.ready == 0) begin
-        v.stall = 1;
-      end else if (div_out.ready == 1) begin
-        v.wren = |v.waddr;
-        v.wdata = div_out.result;
+      if (v.dready == 0) begin
+        v.stall = ~(a.m.stall);
       end
-    end else if (v.bitmanipulation == 1 && v.bit_op.bmcycle == 1) begin
-      if (bit_clmul_out.ready == 0) begin
-        v.stall = 1;
-      end else if (bit_clmul_out.ready == 1) begin
-        v.wren = |v.waddr;
-        v.wdata = bit_clmul_out.result;
+    end else if (v.bitc == 1) begin
+      if (v.bcready == 0) begin
+        v.stall = ~(a.m.stall);
       end
     end
 
@@ -218,6 +231,11 @@ module execute_stage
     v.cwren_b = v.cwren;
     v.load_b = v.load;
     v.store_b = v.store;
+    v.csreg_b = v.csreg;
+    v.division_b = v.division;
+    v.mult_b = v.mult;
+    v.bitm_b = v.bitm;
+    v.bitc_b = v.bitc;
     v.fence_b = v.fence;
     v.ecall_b = v.ecall;
     v.ebreak_b = v.ebreak;
@@ -227,11 +245,16 @@ module execute_stage
     v.valid_b = v.valid;
     v.exception_b = v.exception;
 
-    if ((v.stall | a.m.stall | v.clear | csr_out.exception | csr_out.mret) == 1) begin
+    if ((v.stall | a.m.stall | v.clear) == 1) begin
       v.wren = 0;
       v.cwren = 0;
       v.load = 0;
       v.store = 0;
+      v.csreg = 0;
+      v.division = 0;
+      v.mult = 0;
+      v.bitm = 0;
+      v.bitc = 0;
       v.fence = 0;
       v.ecall = 0;
       v.ebreak = 0;
@@ -267,32 +290,92 @@ module execute_stage
     rin = v;
 
     y.wren = v.wren;
+    y.cwren = v.cwren;
     y.waddr = v.waddr;
     y.load = v.load;
     y.store = v.store;
+    y.csreg = v.csreg;
+    y.division = v.division;
+    y.mult = v.mult;
+    y.bitm = v.bitm;
+    y.bitc = v.bitc;
     y.fence = v.fence;
     y.jump = v.jump;
     y.wdata = v.wdata;
     y.sdata = v.sdata;
     y.address = v.address;
     y.byteenable = v.byteenable;
-    y.lsu_op = v.lsu_op;
     y.stall = v.stall;
     y.clear = v.clear;
+    y.alu_op = v.alu_op;
+    y.bcu_op = v.bcu_op;
+    y.lsu_op = v.lsu_op;
+    y.csr_op = v.csr_op;
+    y.div_op = v.div_op;
+    y.mul_op = v.mul_op;
+    y.bit_op = v.bit_op;
+
+    y.wren_b = v.wren_b;
+    y.cwren_b = v.cwren_b;
+    y.load_b = v.load_b;
+    y.store_b = v.store_b;
+    y.csreg_b = v.csreg_b;
+    y.division_b = v.division_b;
+    y.mult_b = v.mult_b;
+    y.bitm_b = v.bitm_b;
+    y.bitc_b = v.bitc_b;
+    y.fence_b = v.fence_b;
+    y.ecall_b = v.ecall_b;
+    y.ebreak_b = v.ebreak_b;
+    y.mret_b = v.mret_b;
+    y.wfi_b = v.wfi_b;
+    y.jump_b = v.jump_b;
+    y.valid_b = v.valid_b;
+    y.exception_b = v.exception_b;
 
     q.wren = r.wren;
+    q.cwren = r.cwren;
     q.waddr = r.waddr;
     q.load = r.load;
     q.store = r.store;
+    q.csreg = r.csreg;
+    q.division = r.division;
+    q.mult = r.mult;
+    q.bitm = r.bitm;
+    q.bitc = r.bitc;
     q.fence = r.fence;
     q.jump = r.jump;
     q.wdata = r.wdata;
     q.sdata = r.sdata;
     q.address = r.address;
     q.byteenable = r.byteenable;
-    q.lsu_op = r.lsu_op;
     q.stall = r.stall;
     q.clear = r.clear;
+    q.alu_op = r.alu_op;
+    q.bcu_op = r.bcu_op;
+    q.lsu_op = r.lsu_op;
+    q.csr_op = r.csr_op;
+    q.div_op = r.div_op;
+    q.mul_op = r.mul_op;
+    q.bit_op = r.bit_op;
+
+    q.wren_b = r.wren_b;
+    q.cwren_b = r.cwren_b;
+    q.load_b = r.load_b;
+    q.store_b = r.store_b;
+    q.csreg_b = r.csreg_b;
+    q.division_b = r.division_b;
+    q.mult_b = r.mult_b;
+    q.bitm_b = r.bitm_b;
+    q.bitc_b = r.bitc_b;
+    q.fence_b = r.fence_b;
+    q.ecall_b = r.ecall_b;
+    q.ebreak_b = r.ebreak_b;
+    q.mret_b = r.mret_b;
+    q.wfi_b = r.wfi_b;
+    q.jump_b = r.jump_b;
+    q.valid_b = r.valid_b;
+    q.exception_b = r.exception_b;
 
   end
 

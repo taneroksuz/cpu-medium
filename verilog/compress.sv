@@ -335,11 +335,11 @@ module compress
     compress_out.branch = branch;
     compress_out.load = load;
     compress_out.store = store;
+    compress_out.ebreak = ebreak;
+    compress_out.valid = valid;
     compress_out.alu_op = alu_op;
     compress_out.bcu_op = bcu_op;
     compress_out.lsu_op = lsu_op;
-    compress_out.ebreak = ebreak;
-    compress_out.valid = valid;
 
   end
 
