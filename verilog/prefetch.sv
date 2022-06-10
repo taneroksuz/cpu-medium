@@ -102,9 +102,11 @@ module prefetch
     if (v.fence == 1) begin
       if (v.wid == 2**prefetch_depth-1) begin
         v.wren = 0;
-        v.wid = 0;
         v.wdata = 0;
-        v.fence = 0;
+        if (imem_out.mem_ready == 1) begin
+          v.wid = 0;
+          v.fence = 0;
+        end
       end else begin 
         v.wren = 1;
         v.wid = v.wid + 1;
@@ -225,6 +227,10 @@ module prefetch
       if (v.step <= v.incr) begin
         v.incr = v.incr - v.step;
       end
+    end
+
+    if (v.fence == 1) begin
+      v.ready = 0;
     end
 
     imem_in.mem_valid = v.valid;

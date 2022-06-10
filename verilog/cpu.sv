@@ -52,9 +52,9 @@ module cpu
   forwarding_execute_in_type forwarding_ein;
   forwarding_memory_in_type forwarding_min;
   forwarding_out_type forwarding_out;
-  csr_decode_in_type csr_din;
-  csr_execute_in_type csr_ein;
-  csr_memory_in_type csr_min;
+  csr_read_in_type csr_rin;
+  csr_write_in_type csr_win;
+  csr_exception_in_type csr_ein;
   csr_out_type csr_out;
   register_read_in_type register_rin;
   register_write_in_type register_win;
@@ -237,9 +237,9 @@ module cpu
   (
     .rst (rst),
     .clk (clk),
-    .csr_din (csr_din),
+    .csr_rin (csr_rin),
+    .csr_win (csr_win),
     .csr_ein (csr_ein),
-    .csr_min (csr_min),
     .csr_out (csr_out),
     .meip (meip),
     .msip (msip),
@@ -293,7 +293,7 @@ module cpu
     .forwarding_out (forwarding_out),
     .forwarding_rin (forwarding_rin),
     .csr_out (csr_out),
-    .csr_din (csr_din),
+    .csr_rin (csr_rin),
     .a (decode_in_a),
     .d (decode_in_d),
     .y (decode_out_y),
@@ -322,7 +322,6 @@ module cpu
     .bit_clmul_in (bit_clmul_in),
     .forwarding_ein (forwarding_ein),
     .csr_out (csr_out),
-    .csr_ein (csr_ein),
     .a (execute_in_a),
     .d (execute_in_d),
     .y (execute_out_y),
@@ -339,7 +338,9 @@ module cpu
     .writebuffer_in (writebuffer_in),
     .forwarding_min (forwarding_min),
     .register_win (register_win),
-    .csr_min (csr_min),
+    .csr_out (csr_out),
+    .csr_win (csr_win),
+    .csr_ein (csr_ein),
     .a (memory_in_a),
     .d (memory_in_d),
     .y (memory_out_y),

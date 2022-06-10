@@ -23,7 +23,6 @@ module execute_stage
   output bit_clmul_in_type bit_clmul_in,
   output forwarding_execute_in_type forwarding_ein,
   input csr_out_type csr_out,
-  output csr_execute_in_type csr_ein,
   input execute_in_type a,
   input execute_in_type d,
   output execute_out_type y,
@@ -139,9 +138,23 @@ module execute_stage
 
     v.address = agu_out.address;
     v.byteenable = agu_out.byteenable;
-    v.exception = agu_out.exception;
-    v.ecause = agu_out.ecause;
-    v.etval = agu_out.etval;
+
+    if (v.exception == 0) begin
+      v.exception = agu_out.exception;
+      v.ecause = agu_out.ecause;
+      v.etval = agu_out.etval;
+      if (v.exception == 1) begin
+        if (v.load == 1) begin
+          v.load = 0;
+          v.wren = 0;
+        end else if (v.store == 1) begin
+          v.store = 0;
+        end else if (v.jump == 1) begin
+          v.jump = 0;
+          v.wren = 0;
+        end
+      end
+    end
 
     v.sdata = v.rdata2;
 
@@ -213,20 +226,6 @@ module execute_stage
       end
     end
 
-    if (v.exception == 1) begin
-      if (v.load == 1) begin
-        v.load = 0;
-        v.wren = 0;
-      end else if (v.store == 1) begin
-        v.store = 0;
-      end else if (v.jump == 1) begin
-        v.jump = 0;
-        v.wren = 0;
-      end else begin
-        v.exception = 0;
-      end
-    end
-
     v.wren_b = v.wren;
     v.cwren_b = v.cwren;
     v.load_b = v.load;
@@ -277,21 +276,13 @@ module execute_stage
     forwarding_ein.waddr = v.waddr;
     forwarding_ein.wdata = v.wdata;
 
-    csr_ein.valid = v.valid;
-    csr_ein.cwren = v.cwren;
-    csr_ein.cwaddr = v.caddr;
-    csr_ein.cdata = v.cdata;
-
-    csr_ein.exception = v.exception;
-    csr_ein.epc = v.pc;
-    csr_ein.ecause = v.ecause;
-    csr_ein.etval = v.etval;
-
     rin = v;
 
+    y.pc = v.pc;
     y.wren = v.wren;
     y.cwren = v.cwren;
     y.waddr = v.waddr;
+    y.caddr = v.caddr;
     y.load = v.load;
     y.store = v.store;
     y.csreg = v.csreg;
@@ -301,10 +292,16 @@ module execute_stage
     y.bitc = v.bitc;
     y.fence = v.fence;
     y.jump = v.jump;
+    y.valid = v.valid;
     y.wdata = v.wdata;
+    y.cdata = v.cdata;
     y.sdata = v.sdata;
     y.address = v.address;
     y.byteenable = v.byteenable;
+    y.mret = v.mret;
+    y.exception = v.exception;
+    y.ecause = v.ecause;
+    y.etval = v.etval;
     y.stall = v.stall;
     y.clear = v.clear;
     y.alu_op = v.alu_op;
@@ -333,9 +330,11 @@ module execute_stage
     y.valid_b = v.valid_b;
     y.exception_b = v.exception_b;
 
+    q.pc = r.pc;
     q.wren = r.wren;
     q.cwren = r.cwren;
     q.waddr = r.waddr;
+    q.caddr = r.caddr;
     q.load = r.load;
     q.store = r.store;
     q.csreg = r.csreg;
@@ -345,10 +344,16 @@ module execute_stage
     q.bitc = r.bitc;
     q.fence = r.fence;
     q.jump = r.jump;
+    q.valid = r.valid;
     q.wdata = r.wdata;
+    q.cdata = r.cdata;
     q.sdata = r.sdata;
     q.address = r.address;
     q.byteenable = r.byteenable;
+    q.mret = r.mret;
+    q.exception = r.exception;
+    q.ecause = r.ecause;
+    q.etval = r.etval;
     q.stall = r.stall;
     q.clear = r.clear;
     q.alu_op = r.alu_op;

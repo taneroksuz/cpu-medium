@@ -13,7 +13,7 @@ module decode_stage
   input register_out_type register_out,
   output register_read_in_type register_rin,
   input csr_out_type csr_out,
-  output csr_decode_in_type csr_din,
+  output csr_read_in_type csr_rin,
   input forwarding_out_type forwarding_out,
   output forwarding_register_in_type forwarding_rin,
   input decode_in_type a,
@@ -139,7 +139,11 @@ module decode_stage
       v.etval = v.instr;
     end
 
-    if (a.e.cwren_b == 1) begin
+    if (a.e.cwren_b == 1 || a.m.cwren_b == 1) begin
+      v.stall = 1;
+    end else if (a.e.mret_b == 1 || a.m.mret_b == 1) begin
+      v.stall = 1;
+    end else if (a.e.fence_b == 1 || a.m.fence_b == 1) begin
       v.stall = 1;
     end else if (a.e.division_b == 1) begin
       v.stall = 1;
@@ -178,16 +182,8 @@ module decode_stage
       v.stall = 0;
     end
 
-    csr_din.valid = v.valid;
-    csr_din.crden = v.crden;
-    csr_din.craddr = v.caddr;
-
-    csr_din.mret = v.mret;
-
-    csr_din.exception = v.exception;
-    csr_din.epc = v.pc;
-    csr_din.ecause = v.ecause;
-    csr_din.etval = v.etval;
+    csr_rin.crden = v.crden;
+    csr_rin.craddr = v.caddr;
 
     v.cdata = csr_out.cdata;
 

@@ -11,7 +11,9 @@ module memory_stage
   output mem_in_type writebuffer_in,
   output forwarding_memory_in_type forwarding_min,
   output register_write_in_type register_win,
-  output csr_memory_in_type csr_min,
+  input csr_out_type csr_out,
+  output csr_write_in_type csr_win,
+  output csr_exception_in_type csr_ein,
   input memory_in_type a,
   input memory_in_type d,
   output memory_out_type y,
@@ -27,13 +29,23 @@ module memory_stage
 
     v = r;
 
+    v.pc = d.e.pc;
     v.wren = d.e.wren;
+    v.cwren = d.e.cwren;
     v.waddr = d.e.waddr;
+    v.caddr = d.e.caddr;
     v.load = d.e.load;
     v.store = d.e.store;
     v.fence = d.e.fence;
     v.wdata = d.e.wdata;
+    v.cdata = d.e.cdata;
+    v.valid = d.e.valid;
+    v.mret = d.e.mret;
+    v.fence = d.e.fence;
     v.byteenable = d.e.byteenable;
+    v.exception = d.e.exception;
+    v.ecause = d.e.ecause;
+    v.etval = d.e.etval;
     v.alu_op = d.e.alu_op;
     v.bcu_op = d.e.bcu_op;
     v.lsu_op = d.e.lsu_op;
@@ -45,9 +57,14 @@ module memory_stage
     if (d.m.stall == 1) begin
       v = r;
       v.wren = v.wren_b;
+      v.cwren = v.cwren_b;
+      v.valid = v.valid_b;
+      v.mret = v.mret_b;
+      v.fence = v.fence_b;
+      v.exception = v.exception_b;
     end
 
-    v.clear = d.w.clear;
+    v.clear = csr_out.exception | csr_out.mret | d.w.clear;
 
     v.stall = 0;
 
@@ -74,9 +91,19 @@ module memory_stage
     end
 
     v.wren_b = v.wren;
+    v.cwren_b = v.cwren;
+    v.valid_b = v.valid;
+    v.mret_b = v.mret;
+    v.fence_b = v.fence;
+    v.exception_b = v.exception;
 
     if ((v.stall | v.clear) == 1) begin
       v.wren = 0;
+      v.cwren = 0;
+      v.valid = 0;
+      v.mret = 0;
+      v.fence = 0;
+      v.exception = 0;
     end
 
     if (v.clear == 1) begin
@@ -91,19 +118,42 @@ module memory_stage
     register_win.waddr = v.waddr;
     register_win.wdata = v.wdata;
 
-    csr_min.valid = 0;
-    csr_min.exception = 0;
-    csr_min.epc = 0;
-    csr_min.ecause = 0;
-    csr_min.etval = 0;
+    csr_win.cwren = v.cwren;
+    csr_win.cwaddr = v.caddr;
+    csr_win.cdata = v.cdata;
+
+    csr_ein.valid = v.valid;
+    csr_ein.mret = v.mret;
+    csr_ein.exception = v.exception;
+    csr_ein.epc = v.pc;
+    csr_ein.ecause = v.ecause;
+    csr_ein.etval = v.etval;
     
     rin = v;
 
+    y.cwren = v.cwren;
+    y.mret = v.mret;
+    y.fence = v.fence;
+    y.exception = v.exception;
     y.stall = v.stall;
     y.clear = v.clear;
 
+    y.cwren_b = v.cwren_b;
+    y.mret_b = v.mret_b;
+    y.fence_b = v.fence_b;
+    y.exception_b = v.exception_b;
+
+    q.cwren = r.cwren;
+    q.mret = r.mret;
+    q.fence = r.fence;
+    q.exception = r.exception;
     q.stall = r.stall;
     q.clear = r.clear;
+
+    q.cwren_b = r.cwren_b;
+    q.mret_b = r.mret_b;
+    q.fence_b = r.fence_b;
+    q.exception_b = r.exception_b;
 
   end
 

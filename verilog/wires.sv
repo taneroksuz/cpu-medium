@@ -645,9 +645,11 @@ package wires;
   };
 
   typedef struct packed{
+    logic [31 : 0] pc;
     logic [0  : 0] wren;
     logic [0  : 0] cwren;
     logic [4  : 0] waddr;
+    logic [11 : 0] caddr;
     logic [0  : 0] load;
     logic [0  : 0] store;
     logic [0  : 0] csreg;
@@ -656,11 +658,17 @@ package wires;
     logic [0  : 0] bitm;
     logic [0  : 0] bitc;
     logic [0  : 0] fence;
+    logic [0  : 0] valid;
     logic [0  : 0] jump;
     logic [31 : 0] wdata;
+    logic [31 : 0] cdata;
     logic [31 : 0] sdata;
     logic [31 : 0] address;
     logic [3  : 0] byteenable;
+    logic [0  : 0] mret;
+    logic [0  : 0] exception;
+    logic [3  : 0] ecause;
+    logic [31 : 0] etval;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
     alu_op_type alu_op;
@@ -849,19 +857,37 @@ package wires;
   };
 
   typedef struct packed{
+    logic [0  : 0] cwren;
+    logic [0  : 0] mret;
+    logic [0  : 0] fence;
+    logic [0  : 0] exception;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
+    ///////////////////////////
+    logic [0  : 0] cwren_b;
+    logic [0  : 0] mret_b;
+    logic [0  : 0] fence_b;
+    logic [0  : 0] exception_b;
   } memory_out_type;
 
   typedef struct packed{
+    logic [31 : 0] pc;
     logic [0  : 0] wren;
+    logic [0  : 0] cwren;
     logic [4  : 0] waddr;
+    logic [11 : 0] caddr;
     logic [0  : 0] load;
     logic [0  : 0] store;
     logic [0  : 0] fence;
     logic [31 : 0] wdata;
+    logic [31 : 0] cdata;
     logic [31 : 0] ldata;
+    logic [0  : 0] valid;
     logic [3  : 0] byteenable;
+    logic [0  : 0] mret;
+    logic [0  : 0] exception;
+    logic [3  : 0] ecause;
+    logic [31 : 0] etval;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
     alu_op_type alu_op;
@@ -873,17 +899,31 @@ package wires;
     bit_op_type bit_op;
     ///////////////////////////
     logic [0  : 0] wren_b;
+    logic [0  : 0] cwren_b;
+    logic [0  : 0] valid_b;
+    logic [0  : 0] mret_b;
+    logic [0  : 0] fence_b;
+    logic [0  : 0] exception_b;
   } memory_reg_type;
 
   parameter memory_reg_type init_memory_reg = '{
+    pc : 0,
     wren : 0,
+    cwren : 0,
     waddr : 0,
+    caddr : 0,
     load : 0,
     store : 0,
     fence : 0,
     wdata : 0,
+    cdata : 0,
     ldata : 0,
+    valid : 0,
     byteenable : 0,
+    mret : 0,
+    exception : 0,
+    ecause : 0,
+    etval : 0,
     stall : 0,
     clear : 0,
     alu_op : init_alu_op,
@@ -894,7 +934,12 @@ package wires;
     mul_op : init_mul_op,
     bit_op : init_bit_op,
     ///////////////////////////
-    wren_b : 0
+    wren_b : 0,
+    cwren_b : 0,
+    valid_b : 0,
+    mret_b : 0,
+    fence_b : 0,
+    exception_b : 0
   };
 
   typedef struct packed{
@@ -1089,34 +1134,24 @@ package wires;
   };
 
   typedef struct packed{
-    logic [0  : 0] valid;
     logic [0  : 0] crden;
     logic [11 : 0] craddr;
+  } csr_read_in_type;
+
+  typedef struct packed{
+    logic [0  : 0] cwren;
+    logic [11 : 0] cwaddr;
+    logic [31 : 0] cdata;
+  } csr_write_in_type;
+
+  typedef struct packed{
+    logic [0  : 0] valid;
     logic [0  : 0] mret;
     logic [0  : 0] exception;
     logic [31 : 0] epc;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
-  } csr_decode_in_type;
-
-  typedef struct packed{
-    logic [0  : 0] valid;
-    logic [0  : 0] cwren;
-    logic [11 : 0] cwaddr;
-    logic [31 : 0] cdata;
-    logic [0  : 0] exception;
-    logic [31 : 0] epc;
-    logic [3  : 0] ecause;
-    logic [31 : 0] etval;
-  } csr_execute_in_type;
-
-  typedef struct packed{
-    logic [0  : 0] valid;
-    logic [0  : 0] exception;
-    logic [31 : 0] epc;
-    logic [3  : 0] ecause;
-    logic [31 : 0] etval;
-  } csr_memory_in_type;
+  } csr_exception_in_type;
 
   typedef struct packed{
     logic [0  : 0] exception;
