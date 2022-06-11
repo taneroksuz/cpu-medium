@@ -68,26 +68,26 @@ module soc
   logic [31 : 0] ibase_addr;
   logic [31 : 0] dbase_addr;
 
-  typedef struct packed{
-    logic [0  : 0] bram_i;
-    logic [0  : 0] bram_d;
-    logic [0  : 0] uart_i;
-    logic [0  : 0] uart_d;
-    logic [0  : 0] clint_i;
-    logic [0  : 0] clint_d;
-  } reg_type;
+  logic [0  : 0] bram_i;
+  logic [0  : 0] bram_d;
+  logic [0  : 0] uart_i;
+  logic [0  : 0] uart_d;
+  logic [0  : 0] clint_i;
+  logic [0  : 0] clint_d;
 
-  parameter reg_type init_reg = '{
-    bram_i : 0,
-    bram_d : 0,
-    uart_i : 0,
-    uart_d : 0,
-    clint_i : 0,
-    clint_d : 0
-  };
+  logic [0  : 0] bram_i_r;
+  logic [0  : 0] bram_d_r;
+  logic [0  : 0] uart_i_r;
+  logic [0  : 0] uart_d_r;
+  logic [0  : 0] clint_i_r;
+  logic [0  : 0] clint_d_r;
 
-  reg_type r,rin;
-  reg_type v;
+  logic [0  : 0] bram_i_rin;
+  logic [0  : 0] bram_d_rin;
+  logic [0  : 0] uart_i_rin;
+  logic [0  : 0] uart_d_rin;
+  logic [0  : 0] clint_i_rin;
+  logic [0  : 0] clint_d_rin;
 
   always_ff @(posedge clk) begin
     if (count == clk_divider_rtc) begin
@@ -106,46 +106,51 @@ module soc
 
   always_comb begin
 
-    v = r;
+    bram_i = bram_i_r;
+    bram_d = bram_d_r;
+    uart_i = uart_i_r;
+    uart_d = uart_d_r;
+    clint_i = clint_i_r;
+    clint_d = clint_d_r;
 
     dbase_addr = 0;
 
     if (bram_ready == 1) begin
-      v.bram_i = 0;
-      v.bram_d = 0;
+      bram_i = 0;
+      bram_d = 0;
     end
     if (uart_ready == 1) begin
-      v.uart_i = 0;
-      v.uart_d = 0;
+      uart_i = 0;
+      uart_d = 0;
     end
     if (clint_ready == 1) begin
-      v.clint_i = 0;
-      v.clint_d = 0;
+      clint_i = 0;
+      clint_d = 0;
     end
 
     if (dmemory_valid == 1) begin
       if (dmemory_addr >= clint_base_addr &&
         dmemory_addr < clint_top_addr) begin
-          v.clint_d = dmemory_valid;
-          v.uart_d = 0;
-          v.bram_d = 0;
+          clint_d = dmemory_valid;
+          uart_d = 0;
+          bram_d = 0;
           dbase_addr = clint_base_addr;
       end else if (dmemory_addr >= uart_base_addr &&
         dmemory_addr < uart_top_addr) begin
-          v.clint_d = 0;
-          v.uart_d = dmemory_valid;
-          v.bram_d = 0;
+          clint_d = 0;
+          uart_d = dmemory_valid;
+          bram_d = 0;
           dbase_addr = uart_base_addr;
       end else if (dmemory_addr >= bram_base_addr &&
         dmemory_addr < bram_top_addr) begin
-          v.clint_d = 0;
-          v.uart_d = 0;
-          v.bram_d = dmemory_valid;
+          clint_d = 0;
+          uart_d = 0;
+          bram_d = dmemory_valid;
           dbase_addr = bram_base_addr;
       end else begin
-        v.clint_d = 0;
-        v.uart_d = 0;
-        v.bram_d = 0;
+        clint_d = 0;
+        uart_d = 0;
+        bram_d = 0;
         dbase_addr = 0;
       end
     end
@@ -157,69 +162,74 @@ module soc
     if (imemory_valid == 1) begin
       if (imemory_addr >= clint_base_addr &&
         imemory_addr < clint_top_addr) begin
-          v.clint_i = imemory_valid;
-          v.uart_i = 0;
-          v.bram_i = 0;
+          clint_i = imemory_valid;
+          uart_i = 0;
+          bram_i = 0;
           ibase_addr = clint_base_addr;
       end else if (imemory_addr >= uart_base_addr &&
         imemory_addr < uart_top_addr) begin
-          v.clint_i = 0;
-          v.uart_i = imemory_valid;
-          v.bram_i = 0;
+          clint_i = 0;
+          uart_i = imemory_valid;
+          bram_i = 0;
           ibase_addr = uart_base_addr;
       end else if (imemory_addr >= bram_base_addr &&
         imemory_addr < bram_top_addr) begin
-          v.clint_i = 0;
-          v.uart_i = 0;
-          v.bram_i = imemory_valid;
+          clint_i = 0;
+          uart_i = 0;
+          bram_i = imemory_valid;
           ibase_addr = bram_base_addr;
       end else begin
-        v.clint_i = 0;
-        v.uart_i = 0;
-        v.bram_i = 0;
+        clint_i = 0;
+        uart_i = 0;
+        bram_i = 0;
         ibase_addr = 0;
       end
     end
 
-    if (v.bram_i == 1 && v.bram_d == 1) begin
-      v.bram_i = 0;
+    if (bram_i == 1 && bram_d == 1) begin
+      bram_i = 0;
     end
-    if (v.uart_i == 1 && v.uart_d == 1) begin
-      v.uart_i = 0;
+    if (uart_i == 1 && uart_d == 1) begin
+      uart_i = 0;
     end
-    if (v.clint_i == 1 && v.clint_d == 1) begin
-      v.clint_i = 0;
+    if (clint_i == 1 && clint_d == 1) begin
+      clint_i = 0;
     end
 
     imem_addr = imemory_addr - ibase_addr;
 
-    bram_valid = v.bram_d ? dmemory_valid : imemory_valid;
-    bram_instr = v.bram_d ? dmemory_instr : imemory_instr;
-    bram_addr = v.bram_d ? dmem_addr : imem_addr;
-    bram_wdata = v.bram_d ? dmemory_wdata : imemory_wdata;
-    bram_wstrb = v.bram_d ? dmemory_wstrb : imemory_wstrb;
+    bram_valid = bram_d ? dmemory_valid : imemory_valid;
+    bram_instr = bram_d ? dmemory_instr : imemory_instr;
+    bram_addr = bram_d ? dmem_addr : imem_addr;
+    bram_wdata = bram_d ? dmemory_wdata : imemory_wdata;
+    bram_wstrb = bram_d ? dmemory_wstrb : imemory_wstrb;
 
-    uart_valid = v.uart_d ? dmemory_valid : imemory_valid;
-    uart_instr = v.uart_d ? dmemory_instr : imemory_instr;
-    uart_addr = v.uart_d ? dmem_addr : imem_addr;
-    uart_wdata = v.uart_d ? dmemory_wdata : imemory_wdata;
-    uart_wstrb = v.uart_d ? dmemory_wstrb : imemory_wstrb;
+    uart_valid = uart_d ? dmemory_valid : imemory_valid;
+    uart_instr = uart_d ? dmemory_instr : imemory_instr;
+    uart_addr = uart_d ? dmem_addr : imem_addr;
+    uart_wdata = uart_d ? dmemory_wdata : imemory_wdata;
+    uart_wstrb = uart_d ? dmemory_wstrb : imemory_wstrb;
 
-    clint_valid = v.clint_d ? dmemory_valid : imemory_valid;
-    clint_instr = v.clint_d ? dmemory_instr : imemory_instr;
-    clint_addr = v.clint_d ? dmem_addr : imem_addr;
-    clint_wdata = v.clint_d ? dmemory_wdata : imemory_wdata;
-    clint_wstrb = v.clint_d ? dmemory_wstrb : imemory_wstrb;
+    clint_valid = clint_d ? dmemory_valid : imemory_valid;
+    clint_instr = clint_d ? dmemory_instr : imemory_instr;
+    clint_addr = clint_d ? dmem_addr : imem_addr;
+    clint_wdata = clint_d ? dmemory_wdata : imemory_wdata;
+    clint_wstrb = clint_d ? dmemory_wstrb : imemory_wstrb;
 
-    rin = v;
+    bram_i_rin = bram_i;
+    bram_d_rin = bram_d;
+    uart_i_rin = uart_i;
+    uart_d_rin = uart_d;
+    clint_i_rin = clint_i;
+    clint_d_rin = clint_d;
 
-    if (r.bram_i == 1 && bram_ready == 1) begin
+    if (bram_i_r == 1 && bram_ready == 1) begin
       imemory_rdata = bram_rdata;
       imemory_ready = bram_ready;
-    end else if (r.uart_i == 1 && uart_ready == 1) begin
+    end else if (uart_i_r == 1 && uart_ready == 1) begin
       imemory_rdata = uart_rdata;
       imemory_ready = uart_ready;
-    end else if (r.clint_i == 1 && clint_ready == 1) begin
+    end else if (clint_i_r == 1 && clint_ready == 1) begin
       imemory_rdata = clint_rdata;
       imemory_ready = clint_ready;
     end else begin
@@ -227,13 +237,13 @@ module soc
       imemory_ready = 0;
     end
 
-    if (r.bram_d == 1 && bram_ready == 1) begin
+    if (bram_d_r == 1 && bram_ready == 1) begin
       dmemory_rdata = bram_rdata;
       dmemory_ready = bram_ready;
-    end else if (r.uart_d == 1 && uart_ready == 1) begin
+    end else if (uart_d_r == 1 && uart_ready == 1) begin
       dmemory_rdata = uart_rdata;
       dmemory_ready = uart_ready;
-    end else if (r.clint_d == 1 && clint_ready == 1) begin
+    end else if (clint_d_r == 1 && clint_ready == 1) begin
       dmemory_rdata = clint_rdata;
       dmemory_ready = clint_ready;
     end else begin
@@ -245,9 +255,19 @@ module soc
 
   always_ff @(posedge clk_pll) begin
     if (rst == 0) begin
-      r <= init_reg;
+      bram_i_r <= 0;
+      bram_d_r <= 0;
+      uart_i_r <= 0;
+      uart_d_r <= 0;
+      clint_i_r <= 0;
+      clint_d_r <= 0;
     end else begin
-      r <= rin;
+      bram_i_r <= bram_i_rin;
+      bram_d_r <= bram_d_rin;
+      uart_i_r <= uart_i_rin;
+      uart_d_r <= uart_d_rin;
+      clint_i_r <= clint_i_rin;
+      clint_d_r <= clint_d_rin;
     end
   end
 
