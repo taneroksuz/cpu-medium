@@ -43,7 +43,7 @@ module prefetch
     logic [0:0] stall;
   } reg_type;
 
-  reg_type init_reg = '{
+  parameter reg_type init_reg = '{
     incr : 0,
     step : 0,
     wid : 0,
@@ -70,8 +70,8 @@ module prefetch
     stall : 0
   };
 
-  reg_type r,rin;
-  reg_type v;
+  reg_type r,rin = init_reg;
+  reg_type v = init_reg;
 
   always_comb begin
 

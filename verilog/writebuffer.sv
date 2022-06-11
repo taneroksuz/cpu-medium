@@ -48,7 +48,7 @@ module writebuffer
     logic [0:0] stall;
   } reg_type;
 
-  reg_type init_reg = '{
+  parameter reg_type init_reg = '{
     wbwaddr : 0,
     wbraddr : 0,
     waddr : 0,

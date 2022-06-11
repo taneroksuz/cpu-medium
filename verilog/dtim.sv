@@ -507,7 +507,7 @@ module dtim_ctrl
 
     if (v_b.store == 1) begin
       v_b.sdata = v_b.data[32*v_b.wid +: 32];
-      for (i=0; i<4; i=i+1) begin
+      for (int i=0; i<4; i=i+1) begin
         if (v_b.strb[i] == 1) begin
           v_b.sdata[8*i +: 8] = v_b.wdata[8*i +: 8];
         end
