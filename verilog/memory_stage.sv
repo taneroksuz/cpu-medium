@@ -81,13 +81,13 @@ module memory_stage
 
     v.ldata = lsu_out.result;
 
-    if (v.load == 1 | v.store == 1 | v.fence == 1) begin
-      if (writebuffer_out.mem_ready == 0) begin
-        v.stall = 1;
-      end else if (writebuffer_out.mem_ready == 1) begin
-        v.wren = v.load & |v.waddr;
-        v.wdata = v.ldata;
-      end
+    if (v.load == 1) begin
+      v.wdata = v.ldata;
+      v.stall = ~(writebuffer_out.mem_ready);
+    end else if (v.store == 1) begin
+      v.stall = ~(writebuffer_out.mem_ready);
+    end else if (v.fence == 1) begin
+      v.stall = ~(writebuffer_out.mem_ready);
     end
 
     v.wren_b = v.wren;

@@ -309,7 +309,6 @@ module compress
           end
           c2_swsp : begin
             imm = imm_swsp;
-            wren = 1;
             rden1 = 1;
             rden2 = 1;
             raddr1 = 2;
