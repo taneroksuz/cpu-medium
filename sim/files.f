@@ -24,7 +24,6 @@
 ../../verilog/memory_stage.sv
 ../../verilog/writeback_stage.sv
 ../../verilog/clint.sv
-../../verilog/debug.sv
 ../../verilog/itim.sv
 ../../verilog/dtim.sv
 ../../verilog/cpu.sv

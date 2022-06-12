@@ -47,15 +47,6 @@ module soc
   logic [31 : 0] clint_rdata;
   logic [0  : 0] clint_ready;
 
-  logic [0  : 0] debug_valid;
-  logic [0  : 0] debug_instr;
-  logic [31 : 0] debug_addr;
-  logic [31 : 0] debug_wdata;
-  logic [3  : 0] debug_wstrb;
-  logic [31 : 0] debug_rdata;
-  logic [0  : 0] debug_ready;
-
-  logic [11 : 0] meid;
   logic [0  : 0] meip;
   logic [0  : 0] msip;
   logic [0  : 0] mtip;
@@ -75,8 +66,6 @@ module soc
     logic [0  : 0] print_d;
     logic [0  : 0] clint_i;
     logic [0  : 0] clint_d;
-    logic [0  : 0] debug_i;
-    logic [0  : 0] debug_d;
   } reg_type;
 
   parameter reg_type init_reg = '{
@@ -85,9 +74,7 @@ module soc
     print_i : 0,
     print_d : 0,
     clint_i : 0,
-    clint_d : 0,
-    debug_i : 0,
-    debug_d : 0
+    clint_d : 0
   };
 
   reg_type r,rin;
@@ -111,41 +98,27 @@ module soc
       v.clint_i = 0;
       v.clint_d = 0;
     end
-    if (debug_ready == 1) begin
-      v.debug_i = 0;
-      v.debug_d = 0;
-    end
 
     if (dmemory_valid == 1) begin
-      if (dmemory_addr >= debug_base_addr &&
-        dmemory_addr < debug_top_addr) begin
-          v.debug_d = dmemory_valid;
-          v.print_d = 0;
-          v.bram_d = 0;
-          dbase_addr = debug_base_addr;
-      end else if (dmemory_addr >= clint_base_addr &&
+      if (dmemory_addr >= clint_base_addr &&
         dmemory_addr < clint_top_addr) begin
-          v.debug_d = 0;
           v.clint_d = dmemory_valid;
           v.print_d = 0;
           v.bram_d = 0;
           dbase_addr = clint_base_addr;
       end else if (dmemory_addr >= print_base_addr &&
         dmemory_addr < print_top_addr) begin
-          v.debug_d = 0;
           v.clint_d = 0;
           v.print_d = dmemory_valid;
           v.bram_d = 0;
           dbase_addr = print_base_addr;
       end else if (dmemory_addr >= bram_base_addr &&
         dmemory_addr < bram_top_addr) begin
-          v.debug_d = 0;
           v.clint_d = 0;
           v.print_d = 0;
           v.bram_d = dmemory_valid;
           dbase_addr = bram_base_addr;
       end else begin
-        v.debug_d = 0;
         v.clint_d = 0;
         v.print_d = 0;
         v.bram_d = dmemory_valid;
@@ -158,35 +131,25 @@ module soc
     ibase_addr = 0;
 
     if (imemory_valid == 1) begin
-      if (imemory_addr >= debug_base_addr &&
-        imemory_addr < debug_top_addr) begin
-          v.debug_i = dmemory_valid;
-          v.print_i = 0;
-          v.bram_i = 0;
-          ibase_addr = debug_base_addr;
-      end else if (imemory_addr >= clint_base_addr &&
+      if (imemory_addr >= clint_base_addr &&
         imemory_addr < clint_top_addr) begin
-          v.debug_i = 0;
           v.clint_i = imemory_valid;
           v.print_i = 0;
           v.bram_i = 0;
           ibase_addr = clint_base_addr;
       end else if (imemory_addr >= print_base_addr &&
         imemory_addr < print_top_addr) begin
-          v.debug_i = 0;
           v.clint_i = 0;
           v.print_i = imemory_valid;
           v.bram_i = 0;
           ibase_addr = print_base_addr;
       end else if (imemory_addr >= bram_base_addr &&
         imemory_addr < bram_top_addr) begin
-          v.debug_i = 0;
           v.clint_i = 0;
           v.print_i = 0;
           v.bram_i = imemory_valid;
           ibase_addr = bram_base_addr;
       end else begin
-        v.debug_i = 0;
         v.clint_i = 0;
         v.print_i = 0;
         v.bram_i = imemory_valid;
@@ -202,9 +165,6 @@ module soc
     end
     if (v.clint_i == 1 && v.clint_d == 1) begin
       v.clint_i = 0;
-    end
-    if (v.debug_i == 1 && v.debug_d == 1) begin
-      v.debug_i = 0;
     end
 
     imem_addr = imemory_addr - ibase_addr;
@@ -227,12 +187,6 @@ module soc
     clint_wdata = v.clint_d ? dmemory_wdata : imemory_wdata;
     clint_wstrb = v.clint_d ? dmemory_wstrb : imemory_wstrb;
 
-    debug_valid = v.debug_d ? dmemory_valid : imemory_valid;
-    debug_instr = v.debug_d ? dmemory_instr : imemory_instr;
-    debug_addr = v.debug_d ? dmem_addr : imem_addr;
-    debug_wdata = v.debug_d ? dmemory_wdata : imemory_wdata;
-    debug_wstrb = v.debug_d ? dmemory_wstrb : imemory_wstrb;
-
     rin = v;
 
     if (r.bram_i == 1 && bram_ready == 1) begin
@@ -244,9 +198,6 @@ module soc
     end else if (r.clint_i == 1 && clint_ready == 1) begin
       imemory_rdata = clint_rdata;
       imemory_ready = clint_ready;
-    end else if (r.debug_i == 1 && debug_ready == 1) begin
-      imemory_rdata = debug_rdata;
-      imemory_ready = debug_ready;
     end else begin
       imemory_rdata = 0;
       imemory_ready = 0;
@@ -261,9 +212,6 @@ module soc
     end else if (r.clint_d == 1 && clint_ready == 1) begin
       dmemory_rdata = clint_rdata;
       dmemory_ready = clint_ready;
-    end else if (r.debug_d == 1 && debug_ready == 1) begin
-      dmemory_rdata = debug_rdata;
-      dmemory_ready = debug_ready;
     end else begin
       dmemory_rdata = 0;
       dmemory_ready = 0;
@@ -344,20 +292,6 @@ module soc
     .clint_msip (msip),
     .clint_mtip (mtip),
     .clint_mtime (mtime)
-  );
-
-  debug debug_comp
-  (
-    .rst (rst),
-    .clk (clk),
-    .rtc (rtc),
-    .debug_valid (debug_valid),
-    .debug_instr (debug_instr),
-    .debug_addr (debug_addr),
-    .debug_wdata (debug_wdata),
-    .debug_wstrb (debug_wstrb),
-    .debug_rdata (debug_rdata),
-    .debug_ready (debug_ready)
   );
 
 endmodule
