@@ -14,7 +14,11 @@ module writebuffer
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [67 : 0] writebuffer_buffer[0:2**writebuffer_depth-1] = '{default:'0};
+  wire [0  : 0] wren;
+  wire [67 : 0] wdata;
+  wire [67 : 0] rdata;
+  wire [writebuffer_depth-1:0] waddr;
+  wire [writebuffer_depth-1:0] raddr;
 
   typedef struct packed{
     logic [writebuffer_depth-1:0] wbwaddr;
@@ -181,7 +185,8 @@ module writebuffer
     v.wbwaddr = v.waddr;
     v.wbwdata = {v.bwstrb,v.baddr,v.bwdata};
 
-    v.wbrdata = writebuffer_buffer[v.raddr];
+    v.wbraddr = v.raddr;
+    v.wbrdata = rdata;
 
     if (v.wren == 1) begin
       if (v.waddr == 2**writebuffer_depth-1) begin
@@ -240,17 +245,29 @@ module writebuffer
 
   end
 
+  assign wren = rin.wbwren;
+  assign waddr = rin.wbwaddr;
+  assign wdata = rin.wbwdata;
+
+  assign raddr = rin.wbraddr;
+
+  dram1#(
+    .DATA (68),
+    .ADDR (writebuffer_depth)
+  ) dram_comp(
+    .clk     (clk),
+    .wr      (wren),
+    .wr_addr (waddr),
+    .wr_data (wdata),
+    .rd_addr (raddr),
+    .rd_data (rdata)
+  );
+
   always_ff @(posedge clk) begin
     if (rst == 0) begin
       r <= init_reg;
     end else begin
       r <= rin;
-    end
-  end
-
-  always_ff @(posedge clk) begin
-    if (rin.wbwren == 1) begin
-      writebuffer_buffer[rin.wbwaddr] <= rin.wbwdata;
     end
   end
 

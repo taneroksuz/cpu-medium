@@ -28,7 +28,7 @@ module register
   dram2#(
     .DATA (32),
     .ADDR (5)
-  ) dram2_comp(
+  ) dram_comp(
     .clk     (clk),
     .wr      (wren),
     .wr_addr (waddr),
