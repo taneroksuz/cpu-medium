@@ -12,6 +12,7 @@
 ../../verilog/mul.sv
 ../../verilog/div.sv
 ../../verilog/decoder.sv
+../../verilog/dram.sv
 ../../verilog/register.sv
 ../../verilog/csr.sv
 ../../verilog/compress.sv
@@ -24,6 +25,7 @@
 ../../verilog/memory_stage.sv
 ../../verilog/writeback_stage.sv
 ../../verilog/clint.sv
+../../verilog/ram.sv
 ../../verilog/itim.sv
 ../../verilog/dtim.sv
 ../../verilog/cpu.sv

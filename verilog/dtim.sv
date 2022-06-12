@@ -89,17 +89,17 @@ module dtim_tag
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [29-(dtim_depth+dtim_width):0] tag_array[0:2**dtim_depth-1] = '{default:'0};
-  logic [29-(dtim_depth+dtim_width):0] tag_rdata = 0;
-
-  assign dtim_tag_out.rdata = tag_rdata;
-
-  always_ff @(posedge clk) begin
-    if (dtim_tag_in.wen == 1) begin
-      tag_array[dtim_tag_in.waddr] <= dtim_tag_in.wdata;
-    end
-    tag_rdata <= tag_array[dtim_tag_in.raddr];
-  end
+  ram#(
+    .DATA (30-(dtim_depth+dtim_width)),
+    .ADDR (dtim_depth)
+  ) ram_comp(
+    .clk     (clk),
+    .wr      (dtim_tag_in.wen),
+    .wr_addr (dtim_tag_in.waddr),
+    .wr_data (dtim_tag_in.wdata),
+    .rd_addr (dtim_tag_in.raddr),
+    .rd_data (dtim_tag_out.rdata)
+  );
 
 endmodule
 
@@ -112,17 +112,17 @@ module dtim_data
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [2**dtim_width*32-1 : 0] data_array[0:2**dtim_depth-1] = '{default:'0};
-  logic [2**dtim_width*32-1 : 0] data_rdata = 0;
-
-  assign dtim_data_out.rdata = data_rdata;
-
-  always_ff @(posedge clk) begin
-    if (dtim_data_in.wen == 1) begin
-      data_array[dtim_data_in.waddr] <= dtim_data_in.wdata;
-    end
-    data_rdata <= data_array[dtim_data_in.raddr];
-  end
+  ram#(
+    .DATA (2**dtim_width*32),
+    .ADDR (dtim_depth)
+  ) ram_comp(
+    .clk     (clk),
+    .wr      (dtim_data_in.wen),
+    .wr_addr (dtim_data_in.waddr),
+    .wr_data (dtim_data_in.wdata),
+    .rd_addr (dtim_data_in.raddr),
+    .rd_data (dtim_data_out.rdata)
+  );
 
 endmodule
 
@@ -135,17 +135,17 @@ module dtim_valid
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [0 : 0] valid_array[0:2**dtim_depth-1] = '{default:'0};
-  logic [0 : 0] valid_rdata = 0;
-
-  assign dtim_valid_out.rdata = valid_rdata;
-
-  always_ff @(posedge clk) begin
-    if (dtim_valid_in.wen == 1) begin
-      valid_array[dtim_valid_in.waddr] <= dtim_valid_in.wdata;
-    end
-    valid_rdata <= valid_array[dtim_valid_in.raddr];
-  end
+  ram#(
+    .DATA (1),
+    .ADDR (dtim_depth)
+  ) ram_comp(
+    .clk     (clk),
+    .wr      (dtim_valid_in.wen),
+    .wr_addr (dtim_valid_in.waddr),
+    .wr_data (dtim_valid_in.wdata),
+    .rd_addr (dtim_valid_in.raddr),
+    .rd_data (dtim_valid_out.rdata)
+  );
 
 endmodule
 
@@ -158,17 +158,17 @@ module dtim_lock
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [0 : 0] lock_array[0:2**dtim_depth-1] = '{default:'0};
-  logic [0 : 0] lock_rdata = 0;
-
-  assign dtim_lock_out.rdata = lock_rdata;
-
-  always_ff @(posedge clk) begin
-    if (dtim_lock_in.wen == 1) begin
-      lock_array[dtim_lock_in.waddr] <= dtim_lock_in.wdata;
-    end
-    lock_rdata <= lock_array[dtim_lock_in.raddr];
-  end
+  ram#(
+    .DATA (1),
+    .ADDR (dtim_depth)
+  ) ram_comp(
+    .clk     (clk),
+    .wr      (dtim_lock_in.wen),
+    .wr_addr (dtim_lock_in.waddr),
+    .wr_data (dtim_lock_in.wdata),
+    .rd_addr (dtim_lock_in.raddr),
+    .rd_data (dtim_lock_out.rdata)
+  );
 
 endmodule
 
@@ -181,17 +181,17 @@ module dtim_dirty
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [0 : 0] dirty_array[0:2**dtim_depth-1] = '{default:'0};
-  logic [0 : 0] dirty_rdata = 0;
-
-  assign dtim_dirty_out.rdata = dirty_rdata;
-
-  always_ff @(posedge clk) begin
-    if (dtim_dirty_in.wen == 1) begin
-      dirty_array[dtim_dirty_in.waddr] <= dtim_dirty_in.wdata;
-    end
-    dirty_rdata <= dirty_array[dtim_dirty_in.raddr];
-  end
+  ram#(
+    .DATA (1),
+    .ADDR (dtim_depth)
+  ) ram_comp(
+    .clk     (clk),
+    .wr      (dtim_dirty_in.wen),
+    .wr_addr (dtim_dirty_in.waddr),
+    .wr_data (dtim_dirty_in.wdata),
+    .rd_addr (dtim_dirty_in.raddr),
+    .rd_data (dtim_dirty_out.rdata)
+  );
 
 endmodule
 

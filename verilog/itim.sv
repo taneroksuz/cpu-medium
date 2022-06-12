@@ -76,17 +76,17 @@ module itim_tag
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [29-(itim_depth+itim_width):0] tag_array[0:2**itim_depth-1] = '{default:'0};
-  logic [29-(itim_depth+itim_width):0] tag_rdata = 0;
-
-  assign itim_tag_out.rdata = tag_rdata;
-
-  always_ff @(posedge clk) begin
-    if (itim_tag_in.wen == 1) begin
-      tag_array[itim_tag_in.waddr] <= itim_tag_in.wdata;
-    end
-    tag_rdata <= tag_array[itim_tag_in.raddr];
-  end
+  ram#(
+    .DATA (30-(itim_depth+itim_width)),
+    .ADDR (itim_depth)
+  ) ram_comp(
+    .clk     (clk),
+    .wr      (itim_tag_in.wen),
+    .wr_addr (itim_tag_in.waddr),
+    .wr_data (itim_tag_in.wdata),
+    .rd_addr (itim_tag_in.raddr),
+    .rd_data (itim_tag_out.rdata)
+  );
 
 endmodule
 
@@ -99,17 +99,17 @@ module itim_data
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [2**itim_width*32-1 : 0] data_array[0:2**itim_depth-1] = '{default:'0};
-  logic [2**itim_width*32-1 : 0] data_rdata = 0;
-
-  assign itim_data_out.rdata = data_rdata;
-
-  always_ff @(posedge clk) begin
-    if (itim_data_in.wen == 1) begin
-      data_array[itim_data_in.waddr] <= itim_data_in.wdata;
-    end
-    data_rdata <= data_array[itim_data_in.raddr];
-  end
+  ram#(
+    .DATA (2**itim_width*32),
+    .ADDR (itim_depth)
+  ) ram_comp(
+    .clk     (clk),
+    .wr      (itim_data_in.wen),
+    .wr_addr (itim_data_in.waddr),
+    .wr_data (itim_data_in.wdata),
+    .rd_addr (itim_data_in.raddr),
+    .rd_data (itim_data_out.rdata)
+  );
 
 endmodule
 
@@ -122,17 +122,17 @@ module itim_valid
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [0 : 0] valid_array[0:2**itim_depth-1] = '{default:'0};
-  logic [0 : 0] valid_rdata = 0;
-
-  assign itim_valid_out.rdata = valid_rdata;
-
-  always_ff @(posedge clk) begin
-    if (itim_valid_in.wen == 1) begin
-      valid_array[itim_valid_in.waddr] <= itim_valid_in.wdata;
-    end
-    valid_rdata <= valid_array[itim_valid_in.raddr];
-  end
+  ram#(
+    .DATA (1),
+    .ADDR (itim_depth)
+  ) ram_comp(
+    .clk     (clk),
+    .wr      (itim_valid_in.wen),
+    .wr_addr (itim_valid_in.waddr),
+    .wr_data (itim_valid_in.wdata),
+    .rd_addr (itim_valid_in.raddr),
+    .rd_data (itim_valid_out.rdata)
+  );
 
 endmodule
 
@@ -145,17 +145,17 @@ module itim_lock
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [0 : 0] lock_array[0:2**itim_depth-1] = '{default:'0};
-  logic [0 : 0] lock_rdata = 0;
-
-  assign itim_lock_out.rdata = lock_rdata;
-
-  always_ff @(posedge clk) begin
-    if (itim_lock_in.wen == 1) begin
-      lock_array[itim_lock_in.waddr] <= itim_lock_in.wdata;
-    end
-    lock_rdata <= lock_array[itim_lock_in.raddr];
-  end
+  ram#(
+    .DATA (1),
+    .ADDR (itim_depth)
+  ) ram_comp(
+    .clk     (clk),
+    .wr      (itim_lock_in.wen),
+    .wr_addr (itim_lock_in.waddr),
+    .wr_data (itim_lock_in.wdata),
+    .rd_addr (itim_lock_in.raddr),
+    .rd_data (itim_lock_out.rdata)
+  );
 
 endmodule
 

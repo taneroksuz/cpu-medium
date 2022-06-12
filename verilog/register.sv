@@ -11,29 +11,35 @@ module register
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [31:0] reg_file[0:31] = '{default:'0};
+  wire [0  : 0] wren;
+  wire [31 : 0] wdata;
+  wire [4  : 0] waddr;
+  wire [31 : 0] rdata1;
+  wire [31 : 0] rdata2;
+  wire [4  : 0] raddr1;
+  wire [4  : 0] raddr2;
 
-  always_comb begin
-    if (register_rin.rden1 == 1) begin
-      register_out.rdata1 = reg_file[register_rin.raddr1];
-    end else begin
-      register_out.rdata1 = 32'h0;
-    end
-    if (register_rin.rden2 == 1) begin
-      register_out.rdata2 = reg_file[register_rin.raddr2];
-    end else begin
-      register_out.rdata2 = 32'h0;
-    end
-  end
+  assign wren = register_win.wren & |(register_win.waddr);
+  assign wdata = register_win.wdata;
+  assign waddr = register_win.waddr;
+  assign raddr1 = register_rin.raddr1;
+  assign raddr2 = register_rin.raddr2;
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
-      reg_file <= '{default:'0};
-    end else begin
-      if (register_win.wren == 1 && register_win.waddr != 0) begin
-        reg_file[register_win.waddr] <= register_win.wdata;
-      end
-    end
-  end
+  dram2#(
+    .DATA (32),
+    .ADDR (5)
+  ) dram2_comp(
+    .clk     (clk),
+    .wr      (wren),
+    .wr_addr (waddr),
+    .wr_data (wdata),
+    .rd0_addr (raddr1),
+    .rd0_data (rdata1),
+    .rd1_addr (raddr2),
+    .rd1_data (rdata2)
+  );
+
+  assign register_out.rdata1 = register_rin.rden1 == 1 ? rdata1 : 0; 
+  assign register_out.rdata2 = register_rin.rden2 == 1 ? rdata2 : 0;
 
 endmodule
