@@ -31,10 +31,4 @@ package configure;
   parameter clint_base_addr = 32'h2000000;
   parameter clint_top_addr  = 32'h200C000;
 
-  parameter debug_base_addr = 32'h4000000;
-  parameter debug_top_addr  = 32'h400C000;
-
-  parameter plic_base_addr = 32'h0C000000;
-  parameter plic_top_addr  = 32'h10000000;
-
 endpackage
