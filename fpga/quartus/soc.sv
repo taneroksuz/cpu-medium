@@ -274,6 +274,18 @@ module soc
     end
   end
 
+  always_ff @(posedge clk_pll) begin
+    if (rst == 0) begin
+      bram_ready <= 0;
+    end else begin
+      if (bram_valid == 1) begin
+        bram_ready <= 1;
+      end else begin
+        bram_ready <= 0;
+      end
+    end
+  end
+
   cpu cpu_comp
   (
     .rst (rst),
