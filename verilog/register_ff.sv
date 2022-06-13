@@ -27,12 +27,8 @@ module register
   end
 
   always_ff @(posedge clk) begin
-    if (rst == 0) begin
-      reg_file <= '{default:'0};
-    end else begin
-      if (register_win.wren == 1 && register_win.waddr != 0) begin
-        reg_file[register_win.waddr] <= register_win.wdata;
-      end
+    if (register_win.wren == 1 && register_win.waddr != 0) begin
+      reg_file[register_win.waddr] <= register_win.wdata;
     end
   end
 

@@ -31,7 +31,7 @@ ${SV2V} ${DIR}/fpga/${FPGA}/configure.sv \
 				${DIR}/verilog/mul.sv \
 				${DIR}/verilog/div.sv \
 				${DIR}/verilog/decoder.sv \
-				${DIR}/verilog/register.sv \
+				${DIR}/verilog/register_ff.sv \
 				${DIR}/verilog/csr.sv \
 				${DIR}/verilog/compress.sv \
 				${DIR}/verilog/prefetch.sv \
@@ -40,8 +40,6 @@ ${SV2V} ${DIR}/fpga/${FPGA}/configure.sv \
 				${DIR}/verilog/fetch_stage.sv \
 				${DIR}/verilog/decode_stage.sv \
 				${DIR}/verilog/execute_stage.sv \
-				${DIR}/verilog/memory_stage.sv \
-				${DIR}/verilog/writeback_stage.sv \
 				${DIR}/verilog/clint.sv \
 				${DIR}/verilog/uart.sv \
 				${DIR}/verilog/itim.sv \
@@ -49,8 +47,6 @@ ${SV2V} ${DIR}/fpga/${FPGA}/configure.sv \
 				${DIR}/verilog/cpu.sv \
 				> cpu.v
 
-cp ${DIR}/verilog/ram.sv ram.sv
-cp ${DIR}/verilog/dram.sv dram.sv
 cp ${DIR}/fpga/${FPGA}/configure.sv configure.sv
 cp ${DIR}/fpga/${FPGA}/bram.sv bram.sv
 cp ${DIR}/fpga/${FPGA}/soc.sv soc.sv

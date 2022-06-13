@@ -14,13 +14,7 @@ module prefetch
   timeunit 1ns;
   timeprecision 1ps;
 
-  wire [0  : 0] wr;
-  wire [62 : 0] wr_data;
-  wire [62 : 0] rd0_data;
-  wire [62 : 0] rd1_data;
-  wire [prefetch_depth-1:0] wr_addr;
-  wire [prefetch_depth-1:0] rd0_addr;
-  wire [prefetch_depth-1:0] rd1_addr;
+  logic [62 : 0] prefetch_buffer[0:2**prefetch_depth-1] = '{default:'0};
 
   typedef struct packed{
     logic [2*prefetch_depth-1:0] incr;
@@ -157,8 +151,8 @@ module prefetch
 
     v.pwren = v.wren;
 
-    v.rdata1 = rd0_data;
-    v.rdata2 = rd1_data;
+    v.rdata1 = prefetch_buffer[v.rid1];
+    v.rdata2 = prefetch_buffer[v.rid2];
 
     if (v.rdata1[62] == 1 && v.rdata1[61:32] == v.paddr[31:2]) begin
       v.rden1 = 1;
@@ -253,32 +247,17 @@ module prefetch
 
   end
 
-  assign wr = rin.pwren;
-  assign wr_addr = rin.wid;
-  assign wr_data = rin.wdata;
-
-  assign rd0_addr = rin.rid1;
-  assign rd1_addr = rin.rid2;
-
-  dram2#(
-    .DATA (63),
-    .ADDR (prefetch_depth)
-  ) dram_comp(
-    .clk     (clk),
-    .wr      (wr),
-    .wr_addr (wr_addr),
-    .wr_data (wr_data),
-    .rd0_addr (rd0_addr),
-    .rd0_data (rd0_data),
-    .rd1_addr (rd1_addr),
-    .rd1_data (rd1_data)
-  );
-
   always_ff @(posedge clk) begin
     if (rst == 0) begin
       r <= init_reg;
     end else begin
       r <= rin;
+    end
+  end
+
+  always_ff @(posedge clk) begin
+    if (rin.pwren == 1) begin
+      prefetch_buffer[rin.wid] <= rin.wdata;
     end
   end
 
