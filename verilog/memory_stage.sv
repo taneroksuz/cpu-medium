@@ -114,7 +114,7 @@ module memory_stage
     forwarding_min.waddr = v.waddr;
     forwarding_min.wdata = v.wdata;
 
-    register_win.wren = v.wren;
+    register_win.wren = v.wren & |(v.waddr);
     register_win.waddr = v.waddr;
     register_win.wdata = v.wdata;
 
