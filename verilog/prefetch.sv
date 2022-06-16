@@ -154,18 +154,18 @@ module prefetch
     v.rdata1 = prefetch_buffer[v.rid1];
     v.rdata2 = prefetch_buffer[v.rid2];
 
-    if (v.rdata1[62] == 1 && v.rdata1[61:32] == v.paddr[31:2]) begin
+    if (v.rdata1[62] == 1 && |(v.rdata1[61:32] ^ v.paddr[31:2]) == 0) begin
       v.rden1 = 1;
     end
-    if (v.rdata2[62] == 1 && v.rdata2[61:32] == (v.paddr[31:2]+1)) begin
+    if (v.rdata2[62] == 1 && |(v.rdata2[61:32] ^ (v.paddr[31:2]+1)) == 0) begin
       v.rden2 = 1;
     end
 
     if (v.wren == 1) begin
-      if (v.wdata[61:32] == v.paddr[31:2]) begin
+      if (|(v.wdata[61:32] ^ v.paddr[31:2]) == 0) begin
         v.wrden1 = 1;
       end
-      if (v.wdata[61:32] == (v.paddr[31:2]+1)) begin
+      if (|(v.wdata[61:32] ^ (v.paddr[31:2]+1)) == 0) begin
         v.wrden2 = 1;
       end
     end
