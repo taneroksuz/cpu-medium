@@ -238,7 +238,7 @@ module bp_ctrl
     v_bht.get_sat = bht_out.rdata2;
 
     if (bp_in.upd_branch == 1) begin 
-      v_bht.history = {v_bht.history[btb_depth-2:0],1'b0};
+      v_bht.history = {v_bht.history[bht_depth-2:0],1'b0};
       if (bp_in.upd_jump == 1) begin
         v_bht.history[0] = 1;
         if (v_bht.upd_sat < 3) begin
