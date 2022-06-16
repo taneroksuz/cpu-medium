@@ -23,6 +23,7 @@ ${SV2V} ${DIR}/fpga/${FPGA}/configure.sv \
 				${DIR}/verilog/wires.sv \
 				${DIR}/verilog/bit_alu.sv \
 				${DIR}/verilog/bit_clmul.sv \
+				${DIR}/verilog/bp.sv \
 				${DIR}/verilog/alu.sv \
 				${DIR}/verilog/agu.sv \
 				${DIR}/verilog/bcu.sv \
