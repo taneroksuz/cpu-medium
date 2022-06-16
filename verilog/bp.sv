@@ -39,34 +39,10 @@ package bp_wires;
     logic [31 : 0] rdata;
   } ras_out_type;
 
-  typedef struct packed{
-    logic [31 : 0] get_pc;
-    logic [0  : 0] get_branch;
-    logic [0  : 0] get_return;
-    logic [0  : 0] get_uncond;
-    logic [31 : 0] upd_pc;
-    logic [31 : 0] upd_npc;
-    logic [31 : 0] upd_addr;
-    logic [0  : 0] upd_branch;
-    logic [0  : 0] upd_return;
-    logic [0  : 0] upd_uncond;
-    logic [0  : 0] upd_jump;
-    logic [0  : 0] stall;
-    logic [0  : 0] clear;
-  } bp_in_type;
-
-  typedef struct packed{
-    logic [31 : 0] pred_baddr;
-    logic [0  : 0] pred_branch;
-    logic [0  : 0] pred_jump;
-    logic [31 : 0] pred_raddr;
-    logic [0  : 0] pred_return;
-    logic [0  : 0] pred_uncond;
-  } bp_out_type;
-
 endpackage
 
 import configure::*;
+import wires::*;
 import bp_wires::*;
 
 module btb
@@ -84,7 +60,7 @@ module btb
 
   always_ff @(posedge clk) begin
     if (btb_in.wen == 1) begin
-      tag_array[btb_in.waddr] <= btb_in.wdata;
+      btb_array[btb_in.waddr] <= btb_in.wdata;
     end
   end
 
@@ -101,11 +77,12 @@ module bht
 
   logic [1:0] bht_array[0:2**bht_depth-1] = '{default:'0};
 
-  assign bht_out.rdata = bht_array[bht_in.raddr];
+  assign bht_out.rdata1 = bht_array[bht_in.raddr1];
+  assign bht_out.rdata2 = bht_array[bht_in.raddr2];
 
   always_ff @(posedge clk) begin
     if (bht_in.wen == 1) begin
-      tag_array[bht_in.waddr] <= bht_in.wdata;
+      bht_array[bht_in.waddr] <= bht_in.wdata;
     end
   end
 
@@ -122,18 +99,17 @@ module ras
 
   logic [31:0] ras_array[0:2**ras_depth-1] = '{default:'0};
 
-  assign ras_out.rdata1 = ras_array[ras_in.raddr1];
-  assign ras_out.rdata2 = ras_array[ras_in.raddr2];
+  assign ras_out.rdata = ras_array[ras_in.raddr];
 
   always_ff @(posedge clk) begin
     if (ras_in.wen == 1) begin
-      tag_array[ras_in.waddr] <= ras_in.wdata;
+      ras_array[ras_in.waddr] <= ras_in.wdata;
     end
   end
 
 endmodule
 
-module bp
+module bp_ctrl
 (
   input logic rst,
   input logic clk,
@@ -190,7 +166,7 @@ module bp
     logic [ras_depth-1 : 0] rid;
     logic [ras_depth : 0] count;
     logic [31 : 0] waddr;
-    logic [1  : 0] update;
+    logic [0  : 0] update;
   } ras_reg_type;
 
   parameter ras_reg_type init_ras_reg = '{
@@ -202,48 +178,210 @@ module bp
   };
 
   btb_reg_type r_btb, rin_btb, v_btb = init_btb_reg;
-  btb_reg_type r_bht, rin_bht, v_bht = init_bht_reg;
-  btb_reg_type r_ras, rin_ras, v_ras = init_ras_reg;
+  bht_reg_type r_bht, rin_bht, v_bht = init_bht_reg;
+  ras_reg_type r_ras, rin_ras, v_ras = init_ras_reg;
+
+  always_comb begin : branch_target_buffer
+
+    v_btb = r_btb;
+
+    if (bp_in.clear == 0) begin
+      v_btb.rpc = bp_in.get_pc;
+      v_btb.rid = v_btb.rpc[btb_depth:1];
+    end
+
+    if (bp_in.clear == 0) begin
+      v_btb.wpc = bp_in.upd_pc;
+      v_btb.waddr = bp_in.upd_addr;
+      v_btb.wid = v_btb.wpc[btb_depth:1];
+    end
+
+    btb_in.raddr = v_btb.rid;
+
+    if (bp_in.upd_jump == 0 && bp_in.stall == 0 && bp_in.clear == 0 &&
+          |(btb_out.rdata[62-btb_depth:32] ^ v_btb.rpc[31:(btb_depth+1)]) == 0) begin
+        bp_out.pred_baddr = btb_out.rdata[31:0];
+        bp_out.pred_branch = bp_in.get_branch;
+        bp_out.pred_uncond = bp_in.get_uncond;
+    end else begin
+        bp_out.pred_baddr = 0;
+        bp_out.pred_branch = 0;
+        bp_out.pred_uncond = 0;
+    end
+
+    v_btb.update = (bp_in.upd_branch & bp_in.upd_jump) | bp_in.upd_uncond;
+
+    btb_in.wen = v_btb.update;
+    btb_in.waddr = v_btb.wid;
+    btb_in.wdata = {v_btb.wpc[31:(btb_depth+1)],v_btb.waddr};
+
+    rin_btb = v_btb;
+    
+  end
+
+  always_comb begin : branch_history_table
+
+    v_bht = r_bht;
+
+    if (bp_in.clear == 0) begin
+      v_bht.upd_ind = v_bht.history ^ bp_in.upd_pc[bht_depth:1];
+    end
+
+    bht_in.raddr1 = v_bht.upd_ind;
+    v_bht.upd_sat = bht_out.rdata1;
+
+    if (bp_in.clear == 0) begin
+      v_bht.get_ind = v_bht.history ^ bp_in.get_pc[bht_depth:1];
+    end
+
+    bht_in.raddr2 = v_bht.get_ind;
+    v_bht.get_sat = bht_out.rdata2;
+
+    if (bp_in.upd_branch == 1) begin 
+      v_bht.history = {v_bht.history[btb_depth-2:0],1'b0};
+      if (bp_in.upd_jump == 1) begin
+        v_bht.history[0] = 1;
+        if (v_bht.upd_sat < 3) begin
+          v_bht.upd_sat = v_bht.upd_sat + 1;
+        end
+      end else if (bp_in.upd_jump == 0) begin
+        if (v_bht.upd_sat > 0) begin
+          v_bht.upd_sat = v_bht.upd_sat - 1;
+        end
+      end
+    end
+
+    if (bp_in.get_branch == 1 && bp_in.upd_jump == 0 && bp_in.stall == 0 && bp_in.clear == 0) begin
+      bp_out.pred_jump = v_bht.get_sat[1];
+    end else begin 
+      bp_out.pred_jump = 0;
+    end
+
+    v_bht.update = bp_in.upd_branch;
+
+    bht_in.wen = v_bht.update;
+    bht_in.waddr = v_bht.upd_ind;
+    bht_in.wdata = v_bht.upd_sat;
+
+    rin_bht = v_bht;
+    
+  end
+
+  always_comb begin : return_address_stack
+
+    v_ras = r_ras;
+
+    v_ras.waddr = bp_in.upd_npc;
+
+    if (bp_in.upd_return == 1) begin
+      if (v_ras.count < 2**ras_depth) begin
+        v_ras.count = v_ras.count + 1;
+      end
+      v_ras.rid = v_ras.wid;
+      if (v_ras.wid < 2**ras_depth-1) begin
+        v_ras.wid = v_ras.wid + 1;
+      end else begin
+        v_ras.wid = 0;
+      end
+    end
+
+    ras_in.raddr = v_ras.rid;
+
+    if (bp_in.get_return == 1 && bp_in.upd_jump == 0 && bp_in.stall == 0 && bp_in.clear == 0 &&
+          v_ras.count > 0) begin
+      bp_out.pred_raddr = ras_out.rdata;
+      bp_out.pred_return = 1;
+      v_ras.count = v_ras.count - 1;
+      v_ras.wid = v_ras.rid;
+      if (v_ras.rid > 0) begin
+        v_ras.rid = v_ras.rid - 1;
+      end else begin
+        v_ras.rid = 2**ras_depth-1;
+      end
+    end else begin
+      bp_out.pred_raddr = 0;
+      bp_out.pred_return = 0;
+    end
+
+    v_ras.update = bp_in.upd_return;
+
+    ras_in.wen = v_ras.update;
+    ras_in.waddr = r_ras.wid;
+    ras_in.wdata = v_ras.waddr;
+
+    rin_ras = v_ras;
+    
+  end
+
+  always_ff @(posedge clk) begin
+    if (rst == 0) begin
+      r_btb <= init_btb_reg;
+      r_bht <= init_bht_reg;
+      r_ras <= init_ras_reg;
+    end else begin
+      r_btb <= rin_btb;
+      r_bht <= rin_bht;
+      r_ras <= rin_ras;
+    end
+  end
+
+endmodule
+
+module bp
+(
+  input logic rst,
+  input logic clk,
+  input bp_in_type bp_in,
+  output bp_out_type bp_out
+);
+  timeunit 1ns;
+  timeprecision 1ps;
 
   generate
 
     if (bp_enable == 1) begin
 
-      always_comb begin : branch_target_buffer
+      btb_in_type btb_in;
+      btb_out_type btb_out;
+      bht_in_type bht_in;
+      bht_out_type bht_out;
+      ras_in_type ras_in;
+      ras_out_type ras_out;
 
-        v_btb = r_btb;
+      btb btb_comp
+      (
+        .clk (clk),
+        .btb_in (btb_in),
+        .btb_out (btb_out)
+      );
 
-        rin_btb = v_btb;
-        
-      end
+      bht bht_comp
+      (
+        .clk (clk),
+        .bht_in (bht_in),
+        .bht_out (bht_out)
+      );
 
-      always_comb begin : branch_history_table
+      ras ras_comp
+      (
+        .clk (clk),
+        .ras_in (ras_in),
+        .ras_out (ras_out)
+      );
 
-        v_bht = r_bht;
-
-        rin_bht = v_bht;
-        
-      end
-
-      always_comb begin : return_address_stack
-
-        v_ras = r_ras;
-
-        rin_ras = v_ras;
-        
-      end
-
-      always_ff @(posedge clk) begin
-        if (rst == 0) begin
-          r_btb <= init_btb_reg;
-          r_bht <= init_bht_reg;
-          r_ras <= init_ras_reg;
-        end else begin
-          r_btb <= rin_btb;
-          r_bht <= rin_bht;
-          r_ras <= rin_ras;
-        end
-      end
+      bp_ctrl bp_ctrl_comp
+      (
+        .rst (rst),
+        .clk (clk),
+        .bp_in (bp_in),
+        .bp_out (bp_out),
+        .btb_in (btb_in),
+        .btb_out (btb_out),
+        .bht_in (bht_in),
+        .bht_out (bht_out),
+        .ras_in (ras_in),
+        .ras_out (ras_out)
+      );
 
     end else begin
 

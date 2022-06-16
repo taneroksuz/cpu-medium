@@ -283,6 +283,7 @@ module execute_stage
     y.cwren = v.cwren;
     y.waddr = v.waddr;
     y.caddr = v.caddr;
+    y.branch = v.branch;
     y.load = v.load;
     y.store = v.store;
     y.csreg = v.csreg;
@@ -335,6 +336,7 @@ module execute_stage
     q.cwren = r.cwren;
     q.waddr = r.waddr;
     q.caddr = r.caddr;
+    q.branch = r.branch;
     q.load = r.load;
     q.store = r.store;
     q.csreg = r.csreg;

@@ -7,6 +7,8 @@ module fetch_stage
   input logic rst,
   input logic clk,
   input csr_out_type csr_out,
+  input bp_out_type bp_out,
+  output bp_in_type bp_in,
   input mem_out_type prefetch_out,
   output mem_in_type prefetch_in,
   input fetch_in_type a,
@@ -27,6 +29,21 @@ module fetch_stage
     v.valid = ~(a.d.stall | a.e.stall | a.m.stall | d.w.clear);
     v.fence = d.d.fence;
     v.stall = v.stall | a.d.stall | a.e.stall | a.m.stall | d.w.clear;
+    v.clear = d.w.clear;
+
+    // bp_in.get_pc = d.d.pc;
+    // bp_in.get_branch = d.d.branch;
+    // bp_in.get_return = d.d.return_pop;
+    // bp_in.get_uncond = d.d.jump_uncond;
+    // bp_in.upd_pc = d.e.pc;
+    // bp_in.upd_npc = d.e.npc;
+    // bp_in.upd_addr = d.e.address;
+    // bp_in.upd_branch = d.e.branch;
+    // bp_in.upd_return = d.e.return_push;
+    // bp_in.upd_uncond = d.e.jump_uncond;
+    // bp_in.upd_jump = d.e.jump;
+    // bp_in.stall = v.stall;
+    // bp_in.clear = v.clear;
 
     if (csr_out.exception == 1) begin
       v.pc = csr_out.mtvec;

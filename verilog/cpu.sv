@@ -44,6 +44,8 @@ module cpu
   bit_alu_out_type bit_alu_out;
   bit_clmul_in_type bit_clmul_in;
   bit_clmul_out_type bit_clmul_out;
+  bp_in_type bp_in;
+  bp_out_type bp_out;
   decoder_in_type decoder_in;
   decoder_out_type decoder_out;
   compress_in_type compress_in;
@@ -212,6 +214,14 @@ module cpu
     .forwarding_out (forwarding_out)
   );
 
+  bp bp_comp
+  (
+    .rst (rst),
+    .clk (clk),
+    .bp_in (bp_in),
+    .bp_out (bp_out)
+  );
+
   decoder decoder_comp
   (
     .decoder_in (decoder_in),
@@ -272,6 +282,8 @@ module cpu
     .rst (rst),
     .clk (clk),
     .csr_out (csr_out),
+    .bp_out (bp_out),
+    .bp_in (bp_in),
     .prefetch_out (prefetch_out),
     .prefetch_in (prefetch_in),
     .a (fetch_in_a),

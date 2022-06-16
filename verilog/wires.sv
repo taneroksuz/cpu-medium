@@ -385,6 +385,31 @@ package wires;
   } csr_alu_out_type;
 
   typedef struct packed{
+    logic [31 : 0] get_pc;
+    logic [0  : 0] get_branch;
+    logic [0  : 0] get_return;
+    logic [0  : 0] get_uncond;
+    logic [31 : 0] upd_pc;
+    logic [31 : 0] upd_npc;
+    logic [31 : 0] upd_addr;
+    logic [0  : 0] upd_branch;
+    logic [0  : 0] upd_return;
+    logic [0  : 0] upd_uncond;
+    logic [0  : 0] upd_jump;
+    logic [0  : 0] stall;
+    logic [0  : 0] clear;
+  } bp_in_type;
+
+  typedef struct packed{
+    logic [31 : 0] pred_baddr;
+    logic [0  : 0] pred_branch;
+    logic [0  : 0] pred_jump;
+    logic [31 : 0] pred_raddr;
+    logic [0  : 0] pred_return;
+    logic [0  : 0] pred_uncond;
+  } bp_out_type;
+
+  typedef struct packed{
     logic [31 : 0] instr;
   } decoder_in_type;
 
@@ -483,6 +508,7 @@ package wires;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
     logic [0  : 0] stall;
+    logic [0  : 0] clear;
   } fetch_reg_type;
 
   parameter fetch_reg_type init_fetch_reg = '{
@@ -493,7 +519,8 @@ package wires;
     exception : 0,
     ecause : 0,
     etval : 0,
-    stall : 0
+    stall : 0,
+    clear : 0
   };
 
   typedef struct packed{
@@ -650,6 +677,7 @@ package wires;
     logic [0  : 0] cwren;
     logic [4  : 0] waddr;
     logic [11 : 0] caddr;
+    logic [0  : 0] branch;
     logic [0  : 0] load;
     logic [0  : 0] store;
     logic [0  : 0] csreg;
