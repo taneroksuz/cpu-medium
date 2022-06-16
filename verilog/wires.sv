@@ -825,6 +825,7 @@ package wires;
     ///////////////////////////
     logic [0  : 0] wren_b;
     logic [0  : 0] cwren_b;
+    logic [0  : 0] branch_b;
     logic [0  : 0] load_b;
     logic [0  : 0] store_b;
     logic [0  : 0] csreg_b;
@@ -914,6 +915,7 @@ package wires;
     ///////////////////////////
     wren_b : 0,
     cwren_b : 0,
+    branch_b : 0,
     load_b : 0,
     store_b : 0,
     csreg_b : 0,

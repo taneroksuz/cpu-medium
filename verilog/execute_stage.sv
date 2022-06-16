@@ -92,6 +92,7 @@ module execute_stage
       v = r;
       v.wren = v.wren_b;
       v.cwren = v.cwren_b;
+      v.branch = v.branch_b;
       v.load = v.load_b;
       v.store = v.store_b;
       v.csreg = v.csreg_b;
@@ -106,6 +107,11 @@ module execute_stage
       v.wfi = v.wfi_b;
       v.jump = v.jump_b;
       v.valid = v.valid_b;
+      v.return_pop = v.return_pop_b;
+      v.return_push = v.return_push_b;
+      v.jump_uncond = v.jump_uncond_b;
+      v.jump_rest = v.jump_rest_b;
+      v.taken = v.taken_b;
       v.exception = v.exception_b;
     end
 
@@ -233,6 +239,7 @@ module execute_stage
 
     v.wren_b = v.wren;
     v.cwren_b = v.cwren;
+    v.branch_b = v.branch;
     v.load_b = v.load;
     v.store_b = v.store;
     v.csreg_b = v.csreg;
@@ -247,11 +254,17 @@ module execute_stage
     v.wfi_b = v.wfi;
     v.jump_b = v.jump;
     v.valid_b = v.valid;
+    v.return_pop_b = v.return_pop;
+    v.return_push_b = v.return_push;
+    v.jump_uncond_b = v.jump_uncond;
+    v.jump_rest_b = v.jump_rest;
+    v.taken_b = v.taken;
     v.exception_b = v.exception;
 
     if ((v.stall | a.m.stall | v.clear) == 1) begin
       v.wren = 0;
       v.cwren = 0;
+      v.branch = 0;
       v.load = 0;
       v.store = 0;
       v.csreg = 0;
