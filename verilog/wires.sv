@@ -494,6 +494,7 @@ package wires;
   typedef struct packed{
     logic [31 : 0] pc;
     logic [31 : 0] instr;
+    logic [0  : 0] taken;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
@@ -504,6 +505,7 @@ package wires;
     logic [31 : 0] instr;
     logic [0  : 0] valid;
     logic [0  : 0] fence;
+    logic [0  : 0] taken;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
@@ -516,6 +518,7 @@ package wires;
     instr : 0,
     valid : 0,
     fence : 0,
+    taken : 0,
     exception : 0,
     ecause : 0,
     etval : 0,
@@ -558,6 +561,11 @@ package wires;
     logic [31 : 0] rdata1;
     logic [31 : 0] rdata2;
     logic [31 : 0] cdata;
+    logic [0  : 0] return_pop;
+    logic [0  : 0] return_push;
+    logic [0  : 0] jump_uncond;
+    logic [0  : 0] jump_rest;
+    logic [0  : 0] taken;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
@@ -607,6 +615,15 @@ package wires;
     logic [31 : 0] rdata1;
     logic [31 : 0] rdata2;
     logic [31 : 0] cdata;
+    logic [0  : 0] return_pop;
+    logic [0  : 0] return_push;
+    logic [0  : 0] jump_uncond;
+    logic [0  : 0] jump_rest;
+    logic [0  : 0] taken;
+    logic [0  : 0] link_waddr;
+    logic [0  : 0] link_raddr1;
+    logic [0  : 0] equal_waddr_raddr1;
+    logic [0  : 0] zero_waddr;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
@@ -657,6 +674,15 @@ package wires;
     rdata1 : 0,
     rdata2 : 0,
     cdata : 0,
+    return_pop : 0,
+    return_push : 0,
+    jump_uncond : 0,
+    jump_rest : 0,
+    taken : 0,
+    link_waddr : 0,
+    link_raddr1 : 0,
+    equal_waddr_raddr1 : 0,
+    zero_waddr : 0,
     exception : 0,
     ecause : 0,
     etval : 0,
@@ -673,6 +699,7 @@ package wires;
 
   typedef struct packed{
     logic [31 : 0] pc;
+    logic [31 : 0] npc;
     logic [0  : 0] wren;
     logic [0  : 0] cwren;
     logic [4  : 0] waddr;
@@ -694,6 +721,11 @@ package wires;
     logic [31 : 0] address;
     logic [3  : 0] byteenable;
     logic [0  : 0] mret;
+    logic [0  : 0] return_pop;
+    logic [0  : 0] return_push;
+    logic [0  : 0] jump_uncond;
+    logic [0  : 0] jump_rest;
+    logic [0  : 0] taken;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
@@ -772,6 +804,11 @@ package wires;
     logic [0  : 0] bcready;
     logic [31 : 0] address;
     logic [3  : 0] byteenable;
+    logic [0  : 0] return_pop;
+    logic [0  : 0] return_push;
+    logic [0  : 0] jump_uncond;
+    logic [0  : 0] jump_rest;
+    logic [0  : 0] taken;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
@@ -802,6 +839,11 @@ package wires;
     logic [0  : 0] wfi_b;
     logic [0  : 0] valid_b;
     logic [0  : 0] jump_b;
+    logic [0  : 0] return_pop_b;
+    logic [0  : 0] return_push_b;
+    logic [0  : 0] jump_uncond_b;
+    logic [0  : 0] jump_rest_b;
+    logic [0  : 0] taken_b;
     logic [0  : 0] exception_b;
   } execute_reg_type;
 
@@ -851,6 +893,11 @@ package wires;
     bcready : 0,
     address : 0,
     byteenable : 0,
+    return_pop : 0,
+    return_push : 0,
+    jump_uncond : 0,
+    jump_rest : 0,
+    taken : 0,
     exception : 0,
     ecause : 0,
     etval : 0,
@@ -881,6 +928,11 @@ package wires;
     wfi_b : 0,
     jump_b : 0,
     valid_b : 0,
+    return_pop_b : 0,
+    return_push_b : 0,
+    jump_uncond_b : 0,
+    jump_rest_b : 0,
+    taken_b : 0,
     exception_b : 0
   };
 

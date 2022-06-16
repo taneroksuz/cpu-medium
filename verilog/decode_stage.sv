@@ -33,6 +33,7 @@ module decode_stage
 
     v.pc = d.f.pc;
     v.instr = d.f.instr;
+    v.taken = d.f.taken;
     v.exception = d.f.exception;
     v.ecause = d.f.ecause;
     v.etval = d.f.etval;
@@ -41,7 +42,15 @@ module decode_stage
     //   v = r;
     // end
 
-    v.clear = csr_out.exception | csr_out.mret | d.e.jump | d.w.clear;
+    v.clear = csr_out.exception | csr_out.mret | d.w.clear;
+
+    if (d.e.jump == 1 && d.f.taken == 0) begin
+      v.clear = 1;
+    end else if (d.e.jump == 0 && d.f.taken == 1) begin
+      v.clear = 1;
+    end else if (d.e.jump == 1 && d.f.taken == 1 && |(d.e.address ^ d.f.pc) == 1) begin
+      v.clear = 1;
+    end
 
     v.stall = 0;
 
@@ -106,6 +115,43 @@ module decode_stage
       v.alu_op = compress_out.alu_op;
       v.bcu_op = compress_out.bcu_op;
       v.lsu_op = compress_out.lsu_op;
+    end
+
+    v.link_waddr = (v.waddr == 1 || v.waddr == 5) ? 1 : 0;
+    v.link_raddr1 = (v.raddr1 == 1 || v.raddr1 == 5) ? 1 : 0;
+    v.equal_waddr_raddr1 = (v.waddr == v.raddr1) ? 1 : 0;
+    v.zero_waddr = (v.waddr == 0) ? 1 : 0;
+
+    v.return_pop = 0;
+    v.return_push = 0;
+    v.jump_uncond = 0;
+    v.jump_rest = 0;
+
+    if (v.jal == 1) begin
+      if (v.link_waddr == 1) begin
+        v.return_push = 1;
+      end else if (v.zero_waddr == 1) begin
+        v.jump_uncond = 1;
+      end else begin
+        v.jump_rest = 1;
+      end
+    end
+
+    if (v.jalr == 1) begin
+      if (v.link_waddr == 0 && v.link_raddr1 == 1) begin
+        v.return_pop = 1;
+      end else if (v.link_waddr == 1 && v.link_raddr1 == 0) begin
+        v.return_push = 1;
+      end else if (v.link_waddr == 1 && v.link_raddr1 == 1) begin
+        if (v.equal_waddr_raddr1 == 1) begin
+          v.return_push = 1;
+        end else if (v.equal_waddr_raddr1 == 0) begin
+          v.return_pop = 1;
+          v.return_push = 1;
+        end
+      end else begin
+        v.jump_rest = 1;
+      end
     end
 
     v.npc = v.pc + ((v.instr[1:0] == 2'b11) ? 4 : 2);
@@ -175,6 +221,11 @@ module decode_stage
       v.mret = 0;
       v.wfi = 0;
       v.valid = 0;
+      v.return_pop = 0;
+      v.return_push = 0;
+      v.jump_uncond = 0;
+      v.jump_rest = 0;
+      v.taken = 0;
       v.exception = 0;
     end
 
@@ -223,6 +274,11 @@ module decode_stage
     y.rdata1 = v.rdata1;
     y.rdata2 = v.rdata2;
     y.cdata = v.cdata;
+    y.return_pop = v.return_pop;
+    y.return_push = v.return_push;
+    y.jump_uncond = v.jump_uncond;
+    y.jump_rest = v.jump_rest;
+    y.taken = v.taken;
     y.exception = v.exception;
     y.ecause = v.ecause;
     y.etval = v.etval;
@@ -269,6 +325,11 @@ module decode_stage
     q.rdata1 = r.rdata1;
     q.rdata2 = r.rdata2;
     q.cdata = r.cdata;
+    q.return_pop = r.return_pop;
+    q.return_push = r.return_push;
+    q.jump_uncond = r.jump_uncond;
+    q.jump_rest = r.jump_rest;
+    q.taken = r.taken;
     q.exception = r.exception;
     q.ecause = r.ecause;
     q.etval = r.etval;

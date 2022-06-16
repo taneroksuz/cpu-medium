@@ -72,6 +72,11 @@ module execute_stage
     v.rdata1 = d.d.rdata1;
     v.rdata2 = d.d.rdata2;
     v.cdata = d.d.cdata;
+    v.return_pop = d.d.return_pop;
+    v.return_push = d.d.return_push;
+    v.jump_uncond = d.d.jump_uncond;
+    v.jump_rest = d.d.jump_rest;
+    v.taken = d.d.taken;
     v.exception = d.d.exception;
     v.ecause = d.d.ecause;
     v.etval = d.d.etval;
@@ -261,6 +266,11 @@ module execute_stage
       v.wfi = 0;
       v.jump = 0;
       v.valid = 0;
+      v.return_pop = 0;
+      v.return_push = 0;
+      v.jump_uncond = 0;
+      v.jump_rest = 0;
+      v.taken = 0;
       v.exception = 0;
     end
 
@@ -279,6 +289,7 @@ module execute_stage
     rin = v;
 
     y.pc = v.pc;
+    y.npc = v.npc;
     y.wren = v.wren;
     y.cwren = v.cwren;
     y.waddr = v.waddr;
@@ -300,6 +311,11 @@ module execute_stage
     y.address = v.address;
     y.byteenable = v.byteenable;
     y.mret = v.mret;
+    y.return_pop = v.return_pop;
+    y.return_push = v.return_push;
+    y.jump_uncond = v.jump_uncond;
+    y.jump_rest = v.jump_rest;
+    y.taken = v.taken;
     y.exception = v.exception;
     y.ecause = v.ecause;
     y.etval = v.etval;
@@ -332,6 +348,7 @@ module execute_stage
     y.exception_b = v.exception_b;
 
     q.pc = r.pc;
+    q.npc = r.npc;
     q.wren = r.wren;
     q.cwren = r.cwren;
     q.waddr = r.waddr;
@@ -353,6 +370,11 @@ module execute_stage
     q.address = r.address;
     q.byteenable = r.byteenable;
     q.mret = r.mret;
+    q.return_pop = r.return_pop;
+    q.return_push = r.return_push;
+    q.jump_uncond = r.jump_uncond;
+    q.jump_rest = r.jump_rest;
+    q.taken = r.taken;
     q.exception = r.exception;
     q.ecause = r.ecause;
     q.etval = r.etval;
