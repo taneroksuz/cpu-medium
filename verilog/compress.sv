@@ -277,6 +277,7 @@ module compress
                 if (|raddr1 == 1) begin
                   if (|raddr2 == 0) begin
                     rden1 = 1;
+                    waddr = 0;
                     jalr = 1;
                   end else if (|raddr2 == 1) begin
                     wren = 1;
