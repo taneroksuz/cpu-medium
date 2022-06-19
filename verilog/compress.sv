@@ -118,10 +118,9 @@ module compress
             imm = imm_w;
             waddr = {2'b01,instr[4:2]};
             raddr1 = 2;
-            wren = 1;
-            rden1 = 1;
-            alu_op.alu_add = 1;
-            valid = nonzero_imm_w;
+            wren = nonzero_imm_w;
+            rden1 = nonzero_imm_w;
+            alu_op.alu_add = nonzero_imm_w;
           end
           c0_lw : begin
             imm = imm_lswr;
@@ -185,12 +184,12 @@ module compress
               0 : begin
                 wren = nonzero_imm_i;
                 rden1 = nonzero_imm_i;
-                alu_op.alu_srl = 1;
+                alu_op.alu_srl = nonzero_imm_i;
               end
               1 : begin
                 wren = nonzero_imm_i;
                 rden1 = nonzero_imm_i;
-                alu_op.alu_sra = 1;
+                alu_op.alu_sra = nonzero_imm_i;
               end
               2 : begin
                 wren = 1;
