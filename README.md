@@ -5,11 +5,11 @@ RISCV Z7 CPU supports currently only riscv32-imfdcb instruction set architecture
 ## Dhrystone Benchmark ##
 | Cycles | Dhrystone/s/MHz | DMIPS/s/MHz | Iteration |
 | ------ | --------------- | ----------- | --------- |
-|    437 |            2286 |        1.30 |      1000 |
+|    422 |            2368 |        1.35 |      1000 |
 
 ## Coremark Benchmark ##
 | Cycles | Iteration/s/MHz | Iteration |
 | ------ | --------------- | --------- |
-| 384699 |            2.60 |        10 |
+| 373409 |            2.68 |        10 |
 
 Documentation will be expanded in the future.
