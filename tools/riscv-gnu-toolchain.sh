@@ -17,7 +17,7 @@ sudo apt-get -y install \
   binutils build-essential libtool texinfo \
   gzip zip unzip patchutils curl git \
   make cmake ninja-build automake bison flex gperf \
-  grep sed gawk python bc \
+  grep sed gawk python3 bc \
   zlib1g-dev libexpat1-dev libmpc-dev \
   libglib2.0-dev libfdt-dev libpixman-1-dev
 

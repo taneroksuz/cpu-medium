@@ -13,7 +13,7 @@ rm -f *.tar.gz
 
 sudo apt-get install git autoconf automake autotools-dev curl libmpc-dev \
   libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool \
-  patchutils bc zlib1g-dev libexpat-dev texinfo python device-tree-compiler
+  patchutils bc zlib1g-dev libexpat-dev texinfo python3 device-tree-compiler
 
 wget https://static.dev.sifive.com/dev-tools/freedom-tools/v2020.12/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz 
 
