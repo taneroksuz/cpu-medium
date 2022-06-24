@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import binascii
 import sys
@@ -66,19 +66,19 @@ if __name__ == '__main__':
                 string3 = "00"
             elif address-start_address < lines:
                 if (address-start_address+3) < lines:
-                    string0 = str(binascii.hexlify(content[address-start_address+3])).upper()
+                    string0 = "{:02X}".format(content[address-start_address+3])
                 else:
                     string0 = "00"
                 if (address-start_address+2) < lines:
-                    string1 = str(binascii.hexlify(content[address-start_address+2])).upper()
+                    string1 = "{:02X}".format(content[address-start_address+2])
                 else:
                     string1 = "00"
                 if (address-start_address+1) < lines:
-                    string2 = str(binascii.hexlify(content[address-start_address+1])).upper()
+                    string2 = "{:02X}".format(content[address-start_address+1])
                 else:
                     string2 = "00"
                 if (address-start_address) < lines:
-                    string3 = str(binascii.hexlify(content[address-start_address])).upper()
+                    string3 = "{:02X}".format(content[address-start_address])
                 else:
                     string3 = "00"
             else:
@@ -89,7 +89,7 @@ if __name__ == '__main__':
             string_check = byte + byte_addr + string + string0 + string1 + string2 + string3
             checksum = getCheckSum(string_check)
             w_line = ":" + string_check + checksum + "\n";
-        output.writelines(w_line)
+        output.write(w_line.encode('ascii'))
         address = address + 4
 
     output.close()

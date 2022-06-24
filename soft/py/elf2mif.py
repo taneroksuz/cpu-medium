@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import binascii
 import sys
@@ -49,12 +49,12 @@ if __name__ == '__main__':
 
     lines = len(content)
 
-    output.writelines("DEPTH = {:d};\n".format(offset/4))
-    output.writelines("WIDTH = 32;\n")
-    output.writelines("ADDRESS_RADIX = HEX;\n")
-    output.writelines("string_RADIX = HEX;\n")
-    output.writelines("CONTENT;\n")
-    output.writelines("BEGIN\n")
+    output.write("DEPTH = {:d};\n".format(int(offset/4)).encode('ascii'))
+    output.write("WIDTH = 32;\n".encode('ascii'))
+    output.write("ADDRESS_RADIX = HEX;\n".encode('ascii'))
+    output.write("string_RADIX = HEX;\n".encode('ascii'))
+    output.write("CONTENT;\n".encode('ascii'))
+    output.write("BEGIN\n".encode('ascii'))
 
     total_lines = offset
 
@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     address = 0
     while address < total_lines:
-        byte_addr = "{0:04X}".format(address>>2)
+        byte_addr = "{0:05X}".format(address>>2)
         if address < start_address:
             string0 = "00"
             string1 = "00"
@@ -72,19 +72,19 @@ if __name__ == '__main__':
             string3 = "00"
         elif address-start_address < lines:
             if (address-start_address+3) < lines:
-                string0 = str(binascii.hexlify(content[address-start_address+3])).upper()
+                string0 = "{:02X}".format(content[address-start_address+3])
             else:
                 string0 = "00"
             if (address-start_address+2) < lines:
-                string1 = str(binascii.hexlify(content[address-start_address+2])).upper()
+                string1 = "{:02X}".format(content[address-start_address+2])
             else:
                 string1 = "00"
             if (address-start_address+1) < lines:
-                string2 = str(binascii.hexlify(content[address-start_address+1])).upper()
+                string2 = "{:02X}".format(content[address-start_address+1])
             else:
                 string2 = "00"
             if (address-start_address) < lines:
-                string3 = str(binascii.hexlify(content[address-start_address])).upper()
+                string3 = "{:02X}".format(content[address-start_address])
             else:
                 string3 = "00"
         else:
@@ -93,5 +93,5 @@ if __name__ == '__main__':
             string2 = "00"
             string3 = "00"
         w_line = byte_addr + " : " + string0 + string1 + string2 + string3 + ";\n"
-        output.writelines(w_line)
+        output.write(w_line.encode('ascii'))
         address = address + 4
