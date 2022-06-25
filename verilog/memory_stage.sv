@@ -7,8 +7,8 @@ module memory_stage
   input logic clk,
   input lsu_out_type lsu_out,
   output lsu_in_type lsu_in,
-  input mem_out_type writebuffer_out,
-  output mem_in_type writebuffer_in,
+  input mem_out_type storebuffer_out,
+  output mem_in_type storebuffer_in,
   output forwarding_memory_in_type forwarding_min,
   output register_write_in_type register_win,
   input csr_out_type csr_out,
@@ -68,14 +68,14 @@ module memory_stage
 
     v.stall = 0;
 
-    writebuffer_in.mem_valid = a.e.load | a.e.store | a.e.fence;
-    writebuffer_in.mem_fence = a.e.fence;
-    writebuffer_in.mem_instr = 0;
-    writebuffer_in.mem_addr = a.e.address;
-    writebuffer_in.mem_wdata = store_data(a.e.sdata,a.e.lsu_op.lsu_sb,a.e.lsu_op.lsu_sh,a.e.lsu_op.lsu_sw);
-    writebuffer_in.mem_wstrb = (a.e.load == 1) ? 4'h0 : a.e.byteenable;
+    storebuffer_in.mem_valid = a.e.load | a.e.store | a.e.fence;
+    storebuffer_in.mem_fence = a.e.fence;
+    storebuffer_in.mem_instr = 0;
+    storebuffer_in.mem_addr = a.e.address;
+    storebuffer_in.mem_wdata = store_data(a.e.sdata,a.e.lsu_op.lsu_sb,a.e.lsu_op.lsu_sh,a.e.lsu_op.lsu_sw);
+    storebuffer_in.mem_wstrb = (a.e.load == 1) ? 4'h0 : a.e.byteenable;
 
-    lsu_in.ldata = writebuffer_out.mem_rdata;
+    lsu_in.ldata = storebuffer_out.mem_rdata;
     lsu_in.byteenable = v.byteenable;
     lsu_in.lsu_op = v.lsu_op;
 
@@ -83,11 +83,11 @@ module memory_stage
 
     if (v.load == 1) begin
       v.wdata = v.ldata;
-      v.stall = ~(writebuffer_out.mem_ready);
+      v.stall = ~(storebuffer_out.mem_ready);
     end else if (v.store == 1) begin
-      v.stall = ~(writebuffer_out.mem_ready);
+      v.stall = ~(storebuffer_out.mem_ready);
     end else if (v.fence == 1) begin
-      v.stall = ~(writebuffer_out.mem_ready);
+      v.stall = ~(storebuffer_out.mem_ready);
     end
 
     v.wren_b = v.wren;

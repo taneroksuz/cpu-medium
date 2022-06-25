@@ -2,8 +2,8 @@ package configure;
   timeunit 1ns;
   timeprecision 1ps;
 
-  parameter prefetch_depth = 4;
-  parameter writebuffer_depth = 4;
+  parameter fetchbuffer_depth = 4;
+  parameter storebuffer_depth = 4;
 
   parameter bram_depth = 13;
 

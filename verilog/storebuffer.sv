@@ -1,37 +1,73 @@
+package store_wires;
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  import configure::*;
+
+  typedef struct packed{
+    logic [0 : 0] wen;
+    logic [storebuffer_depth-1 : 0] waddr;
+    logic [storebuffer_depth-1 : 0] raddr;
+    logic [67 : 0] wdata;
+  } storebuffer_data_in_type;
+
+  typedef struct packed{
+    logic [67 : 0] rdata;
+  } storebuffer_data_out_type;
+
+endpackage
+
 import configure::*;
 import constants::*;
 import wires::*;
+import store_wires::*;
 
-module writebuffer
+module storebuffer_data
+(
+  input logic clk,
+  input storebuffer_data_in_type storebuffer_data_in,
+  output storebuffer_data_out_type storebuffer_data_out
+);
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  logic [67 : 0] storebuffer_data_array[0:2**storebuffer_depth-1] = '{default:'0};
+
+  assign storebuffer_data_out.rdata = storebuffer_data_array[storebuffer_data_in.raddr];
+
+  always_ff @(posedge clk) begin
+    if (storebuffer_data_in.wen == 1) begin
+      storebuffer_data_array[storebuffer_data_in.waddr] <= storebuffer_data_in.wdata;
+    end
+  end
+
+endmodule
+
+module storebuffer_ctrl
 (
   input logic rst,
   input logic clk,
-  input mem_in_type writebuffer_in,
-  output mem_out_type writebuffer_out,
+  input storebuffer_data_out_type storebuffer_data_out,
+  output storebuffer_data_in_type storebuffer_data_in,
+  input mem_in_type storebuffer_in,
+  output mem_out_type storebuffer_out,
   input mem_out_type dmem_out,
   output mem_in_type dmem_in
 );
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [67 : 0] writebuffer_buffer[0:2**writebuffer_depth-1] = '{default:'0};
-
   typedef struct packed{
-    logic [writebuffer_depth-1:0] wbwaddr;
-    logic [writebuffer_depth-1:0] wbraddr;
-    logic [writebuffer_depth-1:0] waddr;
-    logic [writebuffer_depth-1:0] raddr;
+    logic [storebuffer_depth-1:0] waddr;
+    logic [storebuffer_depth-1:0] raddr;
     logic [31:0] addr;
     logic [31:0] baddr;
     logic [31:0] wdata;
     logic [31:0] rdata;
-    logic [67:0] wbwdata;
-    logic [67:0] wbrdata;
     logic [31:0] bwdata;
+    logic [67:0] brdata;
     logic [3:0] wstrb;
     logic [3:0] bwstrb;
-    logic [0:0] wbwren;
-    logic [0:0] wbrden;
     logic [0:0] bstore;
     logic [0:0] bload;
     logic [0:0] bfence;
@@ -49,21 +85,16 @@ module writebuffer
   } reg_type;
 
   parameter reg_type init_reg = '{
-    wbwaddr : 0,
-    wbraddr : 0,
     waddr : 0,
     raddr : 0,
     addr : 0,
     baddr : 0,
     wdata : 0,
     rdata : 0,
-    wbwdata : 0,
-    wbrdata : 0,
     bwdata : 0,
+    brdata : 0,
     wstrb : 0,
     bwstrb : 0,
-    wbwren : 0,
-    wbrden : 0,
     bstore : 0,
     bload : 0,
     bfence : 0,
@@ -116,18 +147,18 @@ module writebuffer
       v.empty = 0;
     end
 
-    writebuffer_out.mem_rdata = v.rdata;
-    writebuffer_out.mem_ready = v.ready;
+    storebuffer_out.mem_rdata = v.rdata;
+    storebuffer_out.mem_ready = v.ready;
 
     v.bstore = 0;
 
-    if (writebuffer_in.mem_valid == 1) begin
-      v.bfence = writebuffer_in.mem_fence;
-      v.bstore = |writebuffer_in.mem_wstrb;
-      v.bload = ~(|writebuffer_in.mem_wstrb);
-      v.baddr = writebuffer_in.mem_addr;
-      v.bwstrb = writebuffer_in.mem_wstrb;
-      v.bwdata = writebuffer_in.mem_wdata;
+    if (storebuffer_in.mem_valid == 1) begin
+      v.bfence = storebuffer_in.mem_fence;
+      v.bstore = |storebuffer_in.mem_wstrb;
+      v.bload = ~(|storebuffer_in.mem_wstrb);
+      v.baddr = storebuffer_in.mem_addr;
+      v.bwstrb = storebuffer_in.mem_wstrb;
+      v.bwdata = storebuffer_in.mem_wdata;
     end
 
     if (r.full == 1 && r.bstore == 1) begin
@@ -148,7 +179,7 @@ module writebuffer
 
     if (dmem_out.mem_ready == 1) begin
       if (v.rden == 1) begin
-        if (v.raddr == 2**writebuffer_depth-1) begin
+        if (v.raddr == 2**storebuffer_depth-1) begin
           v.overflow = 0;
           v.raddr = 0;
         end else begin
@@ -177,14 +208,16 @@ module writebuffer
       end
     end
 
-    v.wbwren = v.wren;
-    v.wbwaddr = v.waddr;
-    v.wbwdata = {v.bwstrb,v.baddr,v.bwdata};
+    storebuffer_data_in.wen = v.wren;
+    storebuffer_data_in.waddr = v.waddr;
+    storebuffer_data_in.wdata = {v.bwstrb,v.baddr,v.bwdata};
 
-    v.wbrdata = writebuffer_buffer[v.raddr];
+    storebuffer_data_in.raddr = v.raddr;
+
+    v.brdata = storebuffer_data_out.rdata;
 
     if (v.wren == 1) begin
-      if (v.waddr == 2**writebuffer_depth-1) begin
+      if (v.waddr == 2**storebuffer_depth-1) begin
         v.overflow = 1;
         v.waddr = 0;
       end else begin
@@ -205,9 +238,9 @@ module writebuffer
     end
 
     if (v.rden == 1) begin
-      v.wstrb = v.wbrdata[67:64];
-      v.addr = v.wbrdata[63:32];
-      v.wdata = v.wbrdata[31:0];
+      v.wstrb = v.brdata[67:64];
+      v.addr = v.brdata[63:32];
+      v.wdata = v.brdata[31:0];
     end else if (v.load == 1) begin
       v.wstrb = v.bwstrb;
       v.addr = v.baddr;
@@ -248,10 +281,40 @@ module writebuffer
     end
   end
 
-  always_ff @(posedge clk) begin
-    if (rin.wbwren == 1) begin
-      writebuffer_buffer[rin.wbwaddr] <= rin.wbwdata;
-    end
-  end
+endmodule
+
+module storebuffer
+(
+  input logic rst,
+  input logic clk,
+  input mem_in_type storebuffer_in,
+  output mem_out_type storebuffer_out,
+  input mem_out_type dmem_out,
+  output mem_in_type dmem_in
+);
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  storebuffer_data_in_type storebuffer_data_in;
+  storebuffer_data_out_type storebuffer_data_out;
+
+  storebuffer_data storebuffer_data_comp
+  (
+    .clk (clk),
+    .storebuffer_data_in (storebuffer_data_in),
+    .storebuffer_data_out (storebuffer_data_out)
+  );
+
+  storebuffer_ctrl storebuffer_ctrl_comp
+  (
+    .rst (rst),
+    .clk (clk),
+    .storebuffer_data_out (storebuffer_data_out),
+    .storebuffer_data_in (storebuffer_data_in),
+    .storebuffer_in (storebuffer_in),
+    .storebuffer_out (storebuffer_out),
+    .dmem_out (dmem_out),
+    .dmem_in (dmem_in)
+  );
 
 endmodule

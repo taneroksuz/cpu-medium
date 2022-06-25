@@ -1,31 +1,74 @@
+package fetch_wires;
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  import configure::*;
+
+  typedef struct packed{
+    logic [0 : 0] wen;
+    logic [fetchbuffer_depth-1 : 0] waddr;
+    logic [fetchbuffer_depth-1 : 0] raddr1;
+    logic [fetchbuffer_depth-1 : 0] raddr2;
+    logic [62 : 0] wdata;
+  } fetchbuffer_data_in_type;
+
+  typedef struct packed{
+    logic [62 : 0] rdata1;
+    logic [62 : 0] rdata2;
+  } fetchbuffer_data_out_type;
+
+endpackage
+
 import configure::*;
 import constants::*;
 import wires::*;
+import fetch_wires::*;
 
-module prefetch
+module fetchbuffer_data
+(
+  input logic clk,
+  input fetchbuffer_data_in_type fetchbuffer_data_in,
+  output fetchbuffer_data_out_type fetchbuffer_data_out
+);
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  logic [62 : 0] fetchbuffer_data_array[0:2**fetchbuffer_depth-1] = '{default:'0};
+
+  assign fetchbuffer_data_out.rdata1 = fetchbuffer_data_array[fetchbuffer_data_in.raddr1];
+  assign fetchbuffer_data_out.rdata2 = fetchbuffer_data_array[fetchbuffer_data_in.raddr2];
+
+  always_ff @(posedge clk) begin
+    if (fetchbuffer_data_in.wen == 1) begin
+      fetchbuffer_data_array[fetchbuffer_data_in.waddr] <= fetchbuffer_data_in.wdata;
+    end
+  end
+
+endmodule
+
+module fetchbuffer_ctrl
 (
   input logic rst,
   input logic clk,
-  input mem_in_type prefetch_in,
-  output mem_out_type prefetch_out,
+  input fetchbuffer_data_out_type fetchbuffer_data_out,
+  output fetchbuffer_data_in_type fetchbuffer_data_in,
+  input mem_in_type fetchbuffer_in,
+  output mem_out_type fetchbuffer_out,
   input mem_out_type imem_out,
   output mem_in_type imem_in
 );
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [62 : 0] prefetch_buffer[0:2**prefetch_depth-1] = '{default:'0};
-
   typedef struct packed{
-    logic [2*prefetch_depth-1:0] incr;
-    logic [2*prefetch_depth-1:0] step;
-    logic [prefetch_depth-1:0] wid;
-    logic [prefetch_depth-1:0] rid1;
-    logic [prefetch_depth-1:0] rid2;
+    logic [2*fetchbuffer_depth-1:0] incr;
+    logic [2*fetchbuffer_depth-1:0] step;
+    logic [fetchbuffer_depth-1:0] wid;
+    logic [fetchbuffer_depth-1:0] rid1;
+    logic [fetchbuffer_depth-1:0] rid2;
     logic [62:0] wdata;
     logic [62:0] rdata1;
     logic [62:0] rdata2;
-    logic [0:0] pwren;
     logic [0:0] wren;
     logic [0:0] rden1;
     logic [0:0] rden2;
@@ -52,7 +95,6 @@ module prefetch
     wdata : 0,
     rdata1 : 0,
     rdata2 : 0,
-    pwren : 0,
     wren : 0,
     rden1 : 0,
     rden2 : 0,
@@ -100,7 +142,7 @@ module prefetch
     v.comp = 0;
 
     if (v.fence == 1) begin
-      if (v.wid == 2**prefetch_depth-1) begin
+      if (v.wid == 2**fetchbuffer_depth-1) begin
         v.wren = 0;
         v.wdata = 0;
         if (imem_out.mem_ready == 1) begin
@@ -115,12 +157,12 @@ module prefetch
       end
     end else if (imem_out.mem_ready == 1) begin
       v.wren = 1;
-      v.wid = v.addr[(prefetch_depth+1):2];
+      v.wid = v.addr[(fetchbuffer_depth+1):2];
       v.wdata = {v.wren,v.addr[31:2],imem_out.mem_rdata};
     end
 
     if (v.wren == 1) begin
-      if (v.incr < 2**prefetch_depth-1) begin
+      if (v.incr < 2**fetchbuffer_depth-1) begin
         v.incr = v.incr + 2;
         v.addr = v.addr + 4;
       end else begin
@@ -128,18 +170,18 @@ module prefetch
       end
     end
 
-    if (prefetch_in.mem_valid == 1) begin
-      v.pvalid = prefetch_in.mem_valid;
-      v.pfence = prefetch_in.mem_fence;
-      v.paddr = prefetch_in.mem_addr;
+    if (fetchbuffer_in.mem_valid == 1) begin
+      v.pvalid = fetchbuffer_in.mem_valid;
+      v.pfence = fetchbuffer_in.mem_fence;
+      v.paddr = fetchbuffer_in.mem_addr;
     end
 
-    v.rid1 = v.paddr[prefetch_depth+1:2];
+    v.rid1 = v.paddr[fetchbuffer_depth+1:2];
 
-    if (v.rid1 == 2**prefetch_depth-1) begin
+    if (v.rid1 == 2**fetchbuffer_depth-1) begin
       v.rid2 = 0;
     end else begin
-      v.rid2 = v.paddr[prefetch_depth+1:2]+1;
+      v.rid2 = v.paddr[fetchbuffer_depth+1:2]+1;
     end
 
     if (v.pfence == 1) begin
@@ -149,10 +191,15 @@ module prefetch
       v.fence = 1;
     end
 
-    v.pwren = v.wren;
+    fetchbuffer_data_in.wen = v.wren;
+    fetchbuffer_data_in.waddr = v.wid;
+    fetchbuffer_data_in.wdata = v.wdata;
 
-    v.rdata1 = prefetch_buffer[v.rid1];
-    v.rdata2 = prefetch_buffer[v.rid2];
+    fetchbuffer_data_in.raddr1 = v.rid1;
+    fetchbuffer_data_in.raddr2 = v.rid2;
+
+    v.rdata1 = fetchbuffer_data_out.rdata1;
+    v.rdata2 = fetchbuffer_data_out.rdata2;
 
     if (v.rdata1[62] == 1 && |(v.rdata1[61:32] ^ v.paddr[31:2]) == 0) begin
       v.rden1 = 1;
@@ -240,8 +287,8 @@ module prefetch
     imem_in.mem_wdata = 0;
     imem_in.mem_wstrb = 0;
 
-    prefetch_out.mem_rdata = v.rdata;
-    prefetch_out.mem_ready = v.ready;
+    fetchbuffer_out.mem_rdata = v.rdata;
+    fetchbuffer_out.mem_ready = v.ready;
 
     rin = v;
 
@@ -255,10 +302,40 @@ module prefetch
     end
   end
 
-  always_ff @(posedge clk) begin
-    if (rin.pwren == 1) begin
-      prefetch_buffer[rin.wid] <= rin.wdata;
-    end
-  end
+endmodule
+
+module fetchbuffer
+(
+  input logic rst,
+  input logic clk,
+  input mem_in_type fetchbuffer_in,
+  output mem_out_type fetchbuffer_out,
+  input mem_out_type imem_out,
+  output mem_in_type imem_in
+);
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  fetchbuffer_data_in_type fetchbuffer_data_in;
+  fetchbuffer_data_out_type fetchbuffer_data_out;
+
+  fetchbuffer_data fetchbuffer_data_comp
+  (
+    .clk (clk),
+    .fetchbuffer_data_in (fetchbuffer_data_in),
+    .fetchbuffer_data_out (fetchbuffer_data_out)
+  );
+
+  fetchbuffer_ctrl fetchbuffer_ctrl_comp
+  (
+    .rst (rst),
+    .clk (clk),
+    .fetchbuffer_data_out (fetchbuffer_data_out),
+    .fetchbuffer_data_in (fetchbuffer_data_in),
+    .fetchbuffer_in (fetchbuffer_in),
+    .fetchbuffer_out (fetchbuffer_out),
+    .imem_out (imem_out),
+    .imem_in (imem_in)
+  );
 
 endmodule

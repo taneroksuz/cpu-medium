@@ -9,8 +9,8 @@ module fetch_stage
   input csr_out_type csr_out,
   input bp_out_type bp_out,
   output bp_in_type bp_in,
-  input mem_out_type prefetch_out,
-  output mem_in_type prefetch_in,
+  input mem_out_type fetchbuffer_out,
+  output mem_in_type fetchbuffer_in,
   input fetch_in_type a,
   input fetch_in_type d,
   output fetch_out_type y,
@@ -76,15 +76,15 @@ module fetch_stage
       v.taken = 0;
     end
 
-    prefetch_in.mem_valid = v.valid;
-    prefetch_in.mem_fence = v.fence;
-    prefetch_in.mem_instr = 1;
-    prefetch_in.mem_addr = v.pc;
-    prefetch_in.mem_wdata = 0;
-    prefetch_in.mem_wstrb = 0;
+    fetchbuffer_in.mem_valid = v.valid;
+    fetchbuffer_in.mem_fence = v.fence;
+    fetchbuffer_in.mem_instr = 1;
+    fetchbuffer_in.mem_addr = v.pc;
+    fetchbuffer_in.mem_wdata = 0;
+    fetchbuffer_in.mem_wstrb = 0;
 
-    if (prefetch_out.mem_ready == 1) begin
-      v.instr = prefetch_out.mem_rdata;
+    if (fetchbuffer_out.mem_ready == 1) begin
+      v.instr = fetchbuffer_out.mem_rdata;
       v.stall = 0;
     end else begin
       v.instr = nop_instr;

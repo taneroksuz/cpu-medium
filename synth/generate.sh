@@ -35,8 +35,8 @@ ${SV2V} ${DIR}/fpga/${FPGA}/configure.sv \
 				${DIR}/verilog/register.sv \
 				${DIR}/verilog/csr.sv \
 				${DIR}/verilog/compress.sv \
-				${DIR}/verilog/prefetch.sv \
-				${DIR}/verilog/writebuffer.sv \
+				${DIR}/verilog/fetchbuffer.sv \
+				${DIR}/verilog/storebuffer.sv \
 				${DIR}/verilog/forwarding.sv \
 				${DIR}/verilog/fetch_stage.sv \
 				${DIR}/verilog/decode_stage.sv \
