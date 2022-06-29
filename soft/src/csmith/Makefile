@@ -8,13 +8,13 @@ srcs = $(wildcard $(src_dir)/common/*.S) $(wildcard $(src_dir)/common/*.c) $(wil
 objs0 = $(srcs:.c=.o)
 objs = $(objs0:.S=.o)
 
-RISCV_GCC ?= $(RISCV)/riscv64-unknown-elf-gcc
+RISCV_GCC ?= $(RISCV)gcc
 RISCV_GCC_OPTS ?= -march=$(MARCH) -mabi=$(MABI) -g -DPREALLOCATE=1 -mcmodel=medany -static -std=gnu99 -O2 -ffast-math -fno-common
 RISCV_LINK_OPTS ?= -static -nostdlib -nostartfiles -lm -lc -lgcc -T $(src_dir)/common/test.ld
-RISCV_OBJDUMP ?= $(RISCV)/riscv64-unknown-elf-objdump -S -Mnumeric,no-aliases --disassemble --disassemble-zeroes
-RISCV_OBJCOPY ?= $(RISCV)/riscv64-unknown-elf-objcopy -O binary
+RISCV_OBJDUMP ?= $(RISCV)objdump -S -Mnumeric,no-aliases --disassemble --disassemble-zeroes
+RISCV_OBJCOPY ?= $(RISCV)objcopy -O binary
 RISCV_INCL ?= -I$(src_dir)/env -I$(csmith_incl) -I$(src_dir)/common -I$(src_dir)/common/env
-RISCV_NM ?= $(RISCV)/riscv64-unknown-elf-nm -A
+RISCV_NM ?= $(RISCV)nm -A
 
 csmith.ref:
 	${GCC} -I$(csmith_incl) -o $(src_dir)/csmith/csmith.o $(src_dir)/csmith/csmith.c

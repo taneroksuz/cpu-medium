@@ -2,9 +2,9 @@ default: none
 
 VERILATOR ?= /opt/verilator/bin/verilator
 SYSTEMC ?= /opt/systemc
-RISCV ?= /opt/riscv/bin
+RISCV ?= /opt/riscv/bin/riscv32-unknown-elf-
 SV2V ?= /opt/sv2v/bin/sv2v
-MARCH ?= rv32imc_zba_zbb_zbc
+MARCH ?= rv32imc_zba_zbb_zbc_zbs_zicsr_zifencei
 MABI ?= ilp32
 ITER ?= 10
 CSMITH ?= /opt/csmith
