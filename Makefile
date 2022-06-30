@@ -25,6 +25,9 @@ generate:
 	@if [ ${TEST} = "isa" ]; \
 	then \
 		soft/isa.sh ${RISCV} ${MARCH} ${MABI} ${PYTHON} ${OFFSET} ${BASEDIR}; \
+	elif [ ${TEST} = "compliance" ]; \
+	then \
+		soft/compliance.sh ${RISCV} ${MARCH} ${MABI} ${PYTHON} ${OFFSET} ${BASEDIR}; \
 	elif [ ${TEST} = "ovp" ]; \
 	then \
 		soft/ovp.sh ${RISCV} ${MARCH} ${MABI} ${XLEN} ${PYTHON} ${OFFSET} ${BASEDIR} ${OVP}; \

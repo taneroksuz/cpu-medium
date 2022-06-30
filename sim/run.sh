@@ -76,17 +76,8 @@ then
       filename=${filename##*/}
       filename=${filename%.dat}
       cp $DIR/build/compliance/elf/${filename}.host host.dat
-      cp $DIR/build/compliance/elf/${filename}.begin_signature begin_signature.dat
-      cp $DIR/build/compliance/elf/${filename}.end_signature end_signature.dat
-      cp $DIR/build/compliance/ref/${filename}.reference_output reference.dat
       echo "${filename}"
     	obj_dir/Vsoc $CYCLES ${filename} 2> /dev/null
-      if [ "$(diff --color reference.dat signature.dat)" != "" ]
-      then
-        echo "${red}RESULTS NOT OK${reset}"
-      else
-        echo "${green}RESULTS OK${reset}"
-      fi
     done
   elif [ "$4" = 'ovp' ]
   then
@@ -193,17 +184,8 @@ else
       filename=${filename##*/}
       filename=${filename%.dat}
       cp $DIR/build/compliance/elf/${filename}.host host.dat
-      cp $DIR/build/compliance/elf/${filename}.begin_signature begin_signature.dat
-      cp $DIR/build/compliance/elf/${filename}.end_signature end_signature.dat
-      cp $DIR/build/compliance/ref/${filename}.reference_output reference.dat
       echo "${filename}"
     	obj_dir/Vsoc $CYCLES 2> /dev/null
-      if [ "$(diff --color reference.dat signature.dat)" != "" ]
-      then
-        echo "${red}RESULTS NOT OK${reset}"
-      else
-        echo "${green}RESULTS OK${reset}"
-      fi
     done
   elif [ "$4" = 'ovp' ]
   then
