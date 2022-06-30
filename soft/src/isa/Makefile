@@ -29,13 +29,13 @@ tests += $$($(1)_tests)
 
 endef
 
-$(eval $(call compile_template,rv32ui,$(src_dir),$(bld_dir),-march=rv32i -mabi=ilp32 -DXLEN=32))
-$(eval $(call compile_template,rv32ua,$(src_dir),$(bld_dir),-march=rv32ia -mabi=ilp32 -DXLEN=32))
-$(eval $(call compile_template,rv32uc,$(src_dir),$(bld_dir),-march=rv32ic -mabi=ilp32 -DXLEN=32))
-$(eval $(call compile_template,rv32um,$(src_dir),$(bld_dir),-march=rv32im -mabi=ilp32 -DXLEN=32))
-$(eval $(call compile_template,rv32uf,$(src_dir),$(bld_dir),-march=rv32if -mabi=ilp32 -DXLEN=32))
-$(eval $(call compile_template,rv32ud,$(src_dir),$(bld_dir),-march=rv32id -mabi=ilp32 -DXLEN=32))
-$(eval $(call compile_template,rv32mi,$(src_dir),$(bld_dir),-march=rv32imfd -mabi=ilp32 -DXLEN=32))
+$(eval $(call compile_template,rv32ui,$(src_dir),$(bld_dir),-march=rv32i_zicsr_zifencei -mabi=ilp32 -DXLEN=32))
+$(eval $(call compile_template,rv32ua,$(src_dir),$(bld_dir),-march=rv32ia_zicsr_zifencei -mabi=ilp32 -DXLEN=32))
+$(eval $(call compile_template,rv32uc,$(src_dir),$(bld_dir),-march=rv32ic_zicsr_zifencei -mabi=ilp32 -DXLEN=32))
+$(eval $(call compile_template,rv32um,$(src_dir),$(bld_dir),-march=rv32im_zicsr_zifencei -mabi=ilp32 -DXLEN=32))
+$(eval $(call compile_template,rv32uf,$(src_dir),$(bld_dir),-march=rv32if_zicsr_zifencei -mabi=ilp32 -DXLEN=32))
+$(eval $(call compile_template,rv32ud,$(src_dir),$(bld_dir),-march=rv32id_zicsr_zifencei -mabi=ilp32 -DXLEN=32))
+$(eval $(call compile_template,rv32mi,$(src_dir),$(bld_dir),-march=rv32imfd_zicsr_zifencei -mabi=ilp32 -DXLEN=32))
 
 all: $(tests)
 
