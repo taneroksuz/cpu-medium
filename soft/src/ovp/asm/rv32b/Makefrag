@@ -23,13 +23,13 @@ rv32b_test = \
 	CLMUL-01 \
 	CLMULH-01 \
 	CLMULR-01 \
-	# BCLR-01 \
-	# BCLRI-01 \
-	# BEXT-01 \
-	# BEXTI-01 \
-	# BINV-01 \
-	# BINVI-01 \
-	# BSET-01 \
-	# BSETI-01 \
+	BCLR-01 \
+	BCLRI-01 \
+	BEXT-01 \
+	BEXTI-01 \
+	BINV-01 \
+	BINVI-01 \
+	BSET-01 \
+	BSETI-01 \
 
 rv32b_tests = $(addprefix rv32b-, $(rv32b_test))
