@@ -41,7 +41,6 @@ module memory_stage
     v.cdata = d.e.cdata;
     v.valid = d.e.valid;
     v.mret = d.e.mret;
-    v.fence = d.e.fence;
     v.byteenable = d.e.byteenable;
     v.exception = d.e.exception;
     v.ecause = d.e.ecause;
