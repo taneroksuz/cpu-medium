@@ -342,24 +342,6 @@ module execute_stage
     y.mul_op = v.mul_op;
     y.bit_op = v.bit_op;
 
-    y.wren_b = v.wren_b;
-    y.cwren_b = v.cwren_b;
-    y.load_b = v.load_b;
-    y.store_b = v.store_b;
-    y.csreg_b = v.csreg_b;
-    y.division_b = v.division_b;
-    y.mult_b = v.mult_b;
-    y.bitm_b = v.bitm_b;
-    y.bitc_b = v.bitc_b;
-    y.fence_b = v.fence_b;
-    y.ecall_b = v.ecall_b;
-    y.ebreak_b = v.ebreak_b;
-    y.mret_b = v.mret_b;
-    y.wfi_b = v.wfi_b;
-    y.jump_b = v.jump_b;
-    y.valid_b = v.valid_b;
-    y.exception_b = v.exception_b;
-
     q.pc = r.pc;
     q.npc = r.npc;
     q.wren = r.wren;
@@ -400,24 +382,6 @@ module execute_stage
     q.div_op = r.div_op;
     q.mul_op = r.mul_op;
     q.bit_op = r.bit_op;
-
-    q.wren_b = r.wren_b;
-    q.cwren_b = r.cwren_b;
-    q.load_b = r.load_b;
-    q.store_b = r.store_b;
-    q.csreg_b = r.csreg_b;
-    q.division_b = r.division_b;
-    q.mult_b = r.mult_b;
-    q.bitm_b = r.bitm_b;
-    q.bitc_b = r.bitc_b;
-    q.fence_b = r.fence_b;
-    q.ecall_b = r.ecall_b;
-    q.ebreak_b = r.ebreak_b;
-    q.mret_b = r.mret_b;
-    q.wfi_b = r.wfi_b;
-    q.jump_b = r.jump_b;
-    q.valid_b = r.valid_b;
-    q.exception_b = r.exception_b;
 
   end
 

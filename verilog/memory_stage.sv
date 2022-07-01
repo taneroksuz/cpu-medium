@@ -137,22 +137,12 @@ module memory_stage
     y.stall = v.stall;
     y.clear = v.clear;
 
-    y.cwren_b = v.cwren_b;
-    y.mret_b = v.mret_b;
-    y.fence_b = v.fence_b;
-    y.exception_b = v.exception_b;
-
     q.cwren = r.cwren;
     q.mret = r.mret;
     q.fence = r.fence;
     q.exception = r.exception;
     q.stall = r.stall;
     q.clear = r.clear;
-
-    q.cwren_b = r.cwren_b;
-    q.mret_b = r.mret_b;
-    q.fence_b = r.fence_b;
-    q.exception_b = r.exception_b;
 
   end
 

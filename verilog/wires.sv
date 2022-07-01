@@ -738,24 +738,6 @@ package wires;
     div_op_type div_op;
     mul_op_type mul_op;
     bit_op_type bit_op;
-    ///////////////////////////
-    logic [0  : 0] wren_b;
-    logic [0  : 0] cwren_b;
-    logic [0  : 0] load_b;
-    logic [0  : 0] store_b;
-    logic [0  : 0] csreg_b;
-    logic [0  : 0] division_b;
-    logic [0  : 0] mult_b;
-    logic [0  : 0] bitm_b;
-    logic [0  : 0] bitc_b;
-    logic [0  : 0] fence_b;
-    logic [0  : 0] ecall_b;
-    logic [0  : 0] ebreak_b;
-    logic [0  : 0] mret_b;
-    logic [0  : 0] wfi_b;
-    logic [0  : 0] valid_b;
-    logic [0  : 0] jump_b;
-    logic [0  : 0] exception_b;
   } execute_out_type;
 
   typedef struct packed{
@@ -945,11 +927,6 @@ package wires;
     logic [0  : 0] exception;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
-    ///////////////////////////
-    logic [0  : 0] cwren_b;
-    logic [0  : 0] mret_b;
-    logic [0  : 0] fence_b;
-    logic [0  : 0] exception_b;
   } memory_out_type;
 
   typedef struct packed{

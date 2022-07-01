@@ -185,17 +185,17 @@ module decode_stage
       v.etval = v.instr;
     end
 
-    if (a.e.cwren_b == 1 || a.m.cwren_b == 1) begin
+    if (a.e.cwren == 1 || a.m.cwren == 1) begin
       v.stall = 1;
-    end else if (a.e.mret_b == 1 || a.m.mret_b == 1) begin
+    end else if (a.e.mret == 1 || a.m.mret == 1) begin
       v.stall = 1;
-    end else if (a.e.fence_b == 1 || a.m.fence_b == 1) begin
+    end else if (a.e.fence == 1 || a.m.fence == 1) begin
       v.stall = 1;
-    end else if (a.e.division_b == 1) begin
+    end else if (a.e.division == 1) begin
       v.stall = 1;
-    end else if (a.e.bitc_b == 1) begin
+    end else if (a.e.bitc == 1) begin
       v.stall = 1;
-    end else if (a.e.load_b == 1 && ((v.rden1 == 1 && a.e.waddr == v.raddr1) || (v.rden2 == 1 && a.e.waddr == v.raddr2))) begin 
+    end else if (a.e.load == 1 && ((v.rden1 == 1 && a.e.waddr == v.raddr1) || (v.rden2 == 1 && a.e.waddr == v.raddr2))) begin 
       v.stall = 1;
     end
 
