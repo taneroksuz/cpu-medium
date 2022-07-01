@@ -26,7 +26,7 @@ module fetch_stage
 
     v = r;
 
-    v.valid = ~(a.d.stall | a.e.stall | a.m.stall | d.w.clear);
+    v.valid = ~(a.d.stall | a.e.stall | a.m.stall | d.w.clear) | d.d.fence;
     v.fence = d.d.fence;
     v.stall = v.stall | a.d.stall | a.e.stall | a.m.stall | d.w.clear;
     v.clear = d.w.clear;
