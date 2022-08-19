@@ -60,9 +60,11 @@ module fetchbuffer_ctrl
   timeunit 1ns;
   timeprecision 1ps;
 
+  localparam max_count = 2**(fetchbuffer_depth+1)-4;
+
   typedef struct packed{
-    logic [2*fetchbuffer_depth-1:0] incr;
-    logic [2*fetchbuffer_depth-1:0] step;
+    logic [fetchbuffer_depth+1:0] incr;
+    logic [fetchbuffer_depth+1:0] step;
     logic [fetchbuffer_depth-1:0] wid;
     logic [fetchbuffer_depth-1:0] rid1;
     logic [fetchbuffer_depth-1:0] rid2;
@@ -162,7 +164,7 @@ module fetchbuffer_ctrl
     end
 
     if (v.wren == 1) begin
-      if (v.incr < 2**fetchbuffer_depth-1) begin
+      if (v.incr < max_count) begin
         v.incr = v.incr + 2;
         v.addr = v.addr + 4;
       end else begin
