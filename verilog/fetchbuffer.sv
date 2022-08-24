@@ -63,8 +63,8 @@ module fetchbuffer_ctrl
   localparam max_count = 2**(fetchbuffer_depth+1)-4;
 
   typedef struct packed{
-    logic [fetchbuffer_depth+1:0] incr;
-    logic [fetchbuffer_depth+1:0] step;
+    logic [fetchbuffer_depth:0] incr;
+    logic [fetchbuffer_depth:0] step;
     logic [fetchbuffer_depth-1:0] wid;
     logic [fetchbuffer_depth-1:0] rid1;
     logic [fetchbuffer_depth-1:0] rid2;
@@ -77,6 +77,7 @@ module fetchbuffer_ctrl
     logic [0:0] wrden1;
     logic [0:0] wrden2;
     logic [31:0] paddr;
+    logic [31:0] paddrn;
     logic [31:0] addr;
     logic [0:0] pfence;
     logic [0:0] fence;
@@ -103,6 +104,7 @@ module fetchbuffer_ctrl
     wrden1 : 0,
     wrden2 : 0,
     paddr : 0,
+    paddrn : 0,
     addr : 0,
     pfence : 0,
     fence : 0,
@@ -176,15 +178,11 @@ module fetchbuffer_ctrl
       v.pvalid = fetchbuffer_in.mem_valid;
       v.pfence = fetchbuffer_in.mem_fence;
       v.paddr = fetchbuffer_in.mem_addr;
+      v.paddrn = v.paddr + 4;
     end
 
     v.rid1 = v.paddr[fetchbuffer_depth+1:2];
-
-    if (v.rid1 == 2**fetchbuffer_depth-1) begin
-      v.rid2 = 0;
-    end else begin
-      v.rid2 = v.paddr[fetchbuffer_depth+1:2]+1;
-    end
+    v.rid2 = v.paddrn[fetchbuffer_depth+1:2];
 
     if (v.pfence == 1) begin
       v.wren = 1;
@@ -206,17 +204,15 @@ module fetchbuffer_ctrl
     if (v.rdata1[62] == 1 && |(v.rdata1[61:32] ^ v.paddr[31:2]) == 0) begin
       v.rden1 = 1;
     end
-    if (v.rdata2[62] == 1 && |(v.rdata2[61:32] ^ (v.paddr[31:2]+1)) == 0) begin
+    if (v.rdata2[62] == 1 && |(v.rdata2[61:32] ^ v.paddrn[31:2]) == 0) begin
       v.rden2 = 1;
     end
 
-    if (v.wren == 1) begin
-      if (|(v.wdata[61:32] ^ v.paddr[31:2]) == 0) begin
-        v.wrden1 = 1;
-      end
-      if (|(v.wdata[61:32] ^ (v.paddr[31:2]+1)) == 0) begin
-        v.wrden2 = 1;
-      end
+    if (|(v.wdata[61:32] ^ v.paddr[31:2]) == 0) begin
+      v.wrden1 = v.wren;
+    end
+    if (|(v.wdata[61:32] ^ v.paddrn[31:2]) == 0) begin
+      v.wrden2 = v.wren;
     end
 
     if (v.paddr[1:1] == 0) begin
@@ -258,7 +254,7 @@ module fetchbuffer_ctrl
           v.addr = {v.paddr[31:2],2'b0};
           v.incr = 0;
         end else if (v.rden2 == 0) begin
-          v.addr = {(v.paddr[31:2]+30'b1),2'b0};
+          v.addr = {v.paddrn[31:2],2'b0};
           v.incr = 0;
         end
       end
@@ -266,7 +262,7 @@ module fetchbuffer_ctrl
 
     if (v.ready == 0) begin
       v.step = 0;
-    end else if (v.rdata[1:0] < 3) begin
+    end else if (&(v.rdata[1:0]) == 0) begin
       v.step = 1;
     end else begin
       v.step = 2;
