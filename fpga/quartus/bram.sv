@@ -3,23 +3,30 @@ import configure::*;
 module bram
 (
   input logic clk,
-  input logic [0   : 0] bram_wen,
+  input logic [0   : 0] bram_valid,
+  input logic [0   : 0] bram_instr,
   input logic [bram_depth-1 : 0] bram_waddr,
   input logic [bram_depth-1 : 0] bram_raddr,
   input logic [31  : 0] bram_wdata,
   input logic [3   : 0] bram_wstrb,
-  output logic [31 : 0] bram_rdata
+  output logic [31 : 0] bram_rdata,
+  output logic [0  : 0] bram_ready
 );
 	timeunit 1ns;
 	timeprecision 1ps;
 
   logic [3 : 0][7 : 0] bram_block[0:2**bram_depth-1];
 
+  logic [0 : 0] bram_wen;
+
   logic [31 : 0] rdata;
+  logic [0  : 0] ready;
 
   initial begin
     $readmemh("bram.dat", bram_block);
   end
+
+  assign bram_wen = bram_valid & |(bram_wstrb);
 
   always_ff @(posedge clk) begin
 
@@ -40,7 +47,18 @@ module bram
 
   end
 
+  always_ff @(posedge clk) begin
+
+    if (bram_valid == 1) begin
+      ready <= 0;
+    end else begin
+      ready <= 1;
+    end
+
+  end
+
   assign bram_rdata = rdata;
+  assign bram_ready = ready;
 
 
 endmodule

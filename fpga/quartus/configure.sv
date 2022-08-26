@@ -35,6 +35,9 @@ package configure;
   parameter clint_base_addr = 32'h2000000;
   parameter clint_top_addr  = 32'h200C000;
 
+  parameter avl_base_addr = 32'h80000000;
+  parameter avl_top_addr  = 32'h90000000;
+
   parameter clk_freq = 50000000; // 50MHz
   parameter clk_pll = 25000000; // 25MHz
   parameter rtc_freq = 32768; // 32768Hz
