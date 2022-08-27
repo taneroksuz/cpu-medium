@@ -129,6 +129,7 @@ module compress
             wren = nonzero_imm_w;
             rden1 = nonzero_imm_w;
             alu_op.alu_add = nonzero_imm_w;
+            valid = nonzero_imm_w;
           end
           c0_lw : begin
             imm = imm_lswr;
@@ -176,11 +177,13 @@ module compress
               wren = nonzero_imm_p;
               rden1 = nonzero_imm_p;
               alu_op.alu_add = nonzero_imm_p;
+              valid = nonzero_imm_p;
             end else begin
               imm = imm_u;
               wren = nonzero_imm_u;
               rden1 = nonzero_imm_u;
               lui = nonzero_imm_u;
+              valid = nonzero_imm_u;
             end
           end
           c1_alu : begin
@@ -193,12 +196,14 @@ module compress
                 wren = nonzero_shamt;
                 rden1 = nonzero_shamt;
                 alu_op.alu_srl = nonzero_shamt;
+                valid = nonzero_shamt;
               end
               1 : begin
                 imm = {27'b0,shamt};
                 wren = nonzero_shamt;
                 rden1 = nonzero_shamt;
                 alu_op.alu_sra = nonzero_shamt;
+                valid = nonzero_shamt;
               end
               2 : begin
                 imm = imm_i;
@@ -271,6 +276,7 @@ module compress
             wren = nonzero_shamt;
             rden1 = nonzero_shamt;
             alu_op.alu_sll = nonzero_shamt;
+            valid = nonzero_shamt;
           end
           c2_lwsp : begin
             imm = imm_lwsp;

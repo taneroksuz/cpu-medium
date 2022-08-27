@@ -26,8 +26,7 @@ module fetch_stage
 
     v = r;
 
-    v.valid = ~(a.d.stall | a.e.stall | a.m.stall | d.w.clear) | d.d.fence;
-    v.fence = d.d.fence;
+    v.valid = ~(a.d.stall | a.e.stall | a.m.stall | d.w.clear) | d.m.fence;
     v.stall = v.stall | a.d.stall | a.e.stall | a.m.stall | d.w.clear;
     v.clear = d.w.clear;
 
@@ -48,32 +47,46 @@ module fetch_stage
     if (csr_out.exception == 1) begin
       v.pc = csr_out.mtvec;
       v.taken = 0;
+      v.fence = 0;
     end else if (csr_out.mret == 1) begin
       v.pc = csr_out.mepc;
       v.taken = 0;
+      v.fence = 0;
     end else if (d.e.jump == 1 && d.f.taken == 0) begin
       v.pc = d.e.address;
       v.taken = 0;
+      v.fence = 0;
     end else if (d.e.jump == 0 && d.f.taken == 1) begin
       v.pc = d.d.npc;
       v.taken = 0;
+      v.fence = 0;
     end else if (d.e.jump == 1 && d.f.taken == 1 && |(d.e.address ^ d.f.pc) == 1) begin
       v.pc = d.e.address;
       v.taken = 0;
+      v.fence = 0;
     end else if (bp_out.pred_return == 1) begin
       v.pc = bp_out.pred_raddr;
       v.taken = 1;
+      v.fence = 0;
     end else if (bp_out.pred_uncond == 1) begin
       v.pc = bp_out.pred_baddr;
       v.taken = 1;
+      v.fence = 0;
     end else if (bp_out.pred_branch == 1 && bp_out.pred_jump == 1) begin
       v.pc = bp_out.pred_baddr;
       v.taken = 1;
+      v.fence = 0;
+    end else if (d.m.fence == 1) begin
+      v.pc = d.e.pc;
+      v.taken = 0;
+      v.fence = 1;
     end else if (v.stall == 0) begin
       v.pc = v.pc + ((v.instr[1:0] == 2'b11) ? 4 : 2);
       v.taken = 0;
+      v.fence = 0;
     end else begin
       v.taken = 0;
+      v.fence = 0;
     end
 
     fetchbuffer_in.mem_valid = v.valid;
