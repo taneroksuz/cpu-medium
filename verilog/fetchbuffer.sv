@@ -220,57 +220,57 @@ module fetchbuffer_ctrl
       v.wrden2 = v.wren;
     end
 
-    if (v.pvalid == 1) begin
-      if (v.paddr[1:1] == 0) begin
-        if (v.wrden1 == 1) begin
-          v.rdata = v.wdata[31:0];
-          v.ready = 1;
-        end else if (v.rden1 == 1) begin
-          v.rdata = v.rdata1[31:0];
-          v.ready = 1;
-        end
-      end else if (v.paddr[1:1] == 1) begin
-        if (v.wrden1 == 1) begin
-          v.rdata[15:0] = v.wdata[31:16];
-          if (&(v.rdata[1:0]) == 0) begin
-            v.ready = 1;
-          end
-          v.comp = 1;
-        end else if (v.rden1 == 1) begin
-          v.rdata[15:0] = v.rdata1[31:16];
-          if (&(v.rdata[1:0]) == 0) begin
-            v.ready = 1;
-          end
-          v.comp = 1;
-        end
-        if (v.comp == 1) begin
-          if (v.wrden2 == 1) begin
-            v.rdata[31:16] = v.wdata[15:0];
-            v.ready = 1;
-          end else if (v.rden2 == 1) begin
-            v.rdata[31:16] = v.rdata2[15:0];
-            v.ready = 1;
-          end
-        end
+    if (v.paddr[1:1] == 0) begin
+      if (v.wrden1 == 1) begin
+        v.rdata = v.wdata[31:0];
+        v.ready = 1;
+      end else if (v.rden1 == 1) begin
+        v.rdata = v.rdata1[31:0];
+        v.ready = 1;
       end
-      if (v.ready == 0 && v.wren == 1) begin
-        if (v.rden1 == 0) begin
-          v.addr = {v.paddr[31:2],2'b0};
-          v.incr = 0;
-        end else if (v.rden2 == 0) begin
-          v.addr = {v.paddrn[31:2],2'b0};
-          v.incr = 0;
-        end
-      end
-      if (v.ready == 1) begin
+    end else if (v.paddr[1:1] == 1) begin
+      if (v.wrden1 == 1) begin
+        v.rdata[15:0] = v.wdata[31:16];
         if (&(v.rdata[1:0]) == 0) begin
-          v.step = 1;
-        end else if (&(v.rdata[1:0]) == 1) begin
-          v.step = 2;
+          v.ready = 1;
         end
-        if (v.step <= v.incr) begin
-          v.incr = v.incr - v.step;
+        v.comp = 1;
+      end else if (v.rden1 == 1) begin
+        v.rdata[15:0] = v.rdata1[31:16];
+        if (&(v.rdata[1:0]) == 0) begin
+          v.ready = 1;
         end
+        v.comp = 1;
+      end
+      if (v.comp == 1) begin
+        if (v.wrden2 == 1) begin
+          v.rdata[31:16] = v.wdata[15:0];
+          v.ready = 1;
+        end else if (v.rden2 == 1) begin
+          v.rdata[31:16] = v.rdata2[15:0];
+          v.ready = 1;
+        end
+      end
+    end
+
+    if (v.ready == 0 && v.wren == 1) begin
+      if (v.rden1 == 0) begin
+        v.addr = {v.paddr[31:2],2'b0};
+        v.incr = 0;
+      end else if (v.rden2 == 0) begin
+        v.addr = {v.paddrn[31:2],2'b0};
+        v.incr = 0;
+      end
+    end
+
+    if (v.ready == 1) begin
+      if (&(v.rdata[1:0]) == 0) begin
+        v.step = 1;
+      end else if (&(v.rdata[1:0]) == 1) begin
+        v.step = 2;
+      end
+      if (v.step <= v.incr) begin
+        v.incr = v.incr - v.step;
       end
     end
 
