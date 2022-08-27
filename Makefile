@@ -40,9 +40,6 @@ generate:
 	elif [ ${TEST} = "csmith" ]; \
 	then \
 		soft/csmith.sh ${RISCV} ${MARCH} ${MABI} ${GCC} ${CSMITH} ${CSMITH_INCL} ${PYTHON} ${OFFSET} ${BASEDIR}; \
-	elif [ ${TEST} = "torture" ]; \
-	then \
-		soft/torture.sh ${RISCV} ${MARCH} ${MABI} ${PYTHON} ${OFFSET} ${BASEDIR}; \
 	elif [ ${TEST} = "uart" ]; \
 	then \
 		soft/uart.sh ${RISCV} ${MARCH} ${MABI} ${ITER} ${PYTHON} ${OFFSET} ${BASEDIR}; \

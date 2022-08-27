@@ -45,10 +45,14 @@ module bram
           $fwrite(sig,"%H\n",bram_block[i/4]);
         end
         if (wdata == 32'h1) begin
+          $write("%c[1;32m",8'h1B);
           $display("TEST SUCCEEDED");
+          $write("%c[0m",8'h1B);
           $finish;
         end else begin
+          $write("%c[1;31m",8'h1B);
           $display("TEST STOPPED");
+          $write("%c[0m",8'h1B);
           $finish;
         end
       end

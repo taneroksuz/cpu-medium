@@ -9,7 +9,7 @@ objs = $(objs0:.S=.o)
 
 RISCV_GCC ?= $(RISCV)gcc
 RISCV_GCC_OPTS ?= -march=$(MARCH) -mabi=$(MABI) -g -DPREALLOCATE=1 -mcmodel=medany -static -std=gnu99 -O2 -fno-inline -ffast-math -fno-common -fno-builtin-printf
-RISCV_LINK_OPTS ?= -static -nostartfiles -lm -lgcc -T $(src_dir)/aapg/link.ld
+RISCV_LINK_OPTS ?= -static -nostartfiles -lm -lgcc -T $(src_dir)/common/link.ld
 RISCV_OBJDUMP ?= $(RISCV)objdump -S -Mnumeric,no-aliases --disassemble --disassemble-zeroes
 RISCV_OBJCOPY ?= $(RISCV)objcopy -O binary
 RISCV_INCL ?= -I$(src_dir)/aapg/setup/common
