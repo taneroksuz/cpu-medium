@@ -145,6 +145,8 @@ module fetchbuffer_ctrl
 
     v.comp = 0;
 
+    v.step = 0;
+
     if (v.fence == 1) begin
       if (v.wid == 2**fetchbuffer_depth-1) begin
         v.wren = 0;
@@ -257,15 +259,15 @@ module fetchbuffer_ctrl
           v.incr = 0;
         end
       end
-      if (v.ready == 0) begin
-        v.step = 0;
-      end else if (&(v.rdata[1:0]) == 0) begin
-        v.step = 1;
-      end else begin
-        v.step = 2;
-      end
-      if (v.step <= v.incr) begin
-        v.incr = v.incr - v.step;
+      if (v.ready == 1) begin
+        if (&(v.rdata[1:0]) == 0) begin
+          v.step = 1;
+        end else if (&(v.rdata[1:0]) == 1) begin
+          v.step = 2;
+        end
+        if (v.step <= v.incr) begin
+          v.incr = v.incr - v.step;
+        end
       end
     end
 
