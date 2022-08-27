@@ -33,6 +33,9 @@ module ahb
   timeunit 1ns;
   timeprecision 1ps;
 
+  logic [0 :0] state;
+  logic [0 :0] state_n;
+
   logic [31:0] haddr;
   logic [31:0] haddr_n;
   logic [31:0] hwdata;
@@ -44,11 +47,11 @@ module ahb
   logic [1 :0] htrans;
   logic [1 :0] htrans_n;
 
-  assign haddr = m_ahb_hready == 1 ? ahb_addr : haddr_n;
-  assign hprot = m_ahb_hready == 1 ? {3'b000,~ahb_instr} : hprot_n;
-  assign htrans = m_ahb_hready == 1 ? {ahb_valid,1'b0} : htrans_n;
-  assign hwdata = m_ahb_hready == 1 ? ahb_wdata : hwdata_n;
-  assign hwrite = m_ahb_hready == 1 ? |ahb_wstrb : hwrite_n;
+  assign haddr = state == 0 ? ahb_addr : haddr_n;
+  assign hprot = state == 0 ? {3'b000,~ahb_instr} : hprot_n;
+  assign htrans = state == 0 ? {ahb_valid,1'b0} : htrans_n;
+  assign hwdata = state == 0 ? ahb_wdata : hwdata_n;
+  assign hwrite = state == 0 ? |ahb_wstrb : hwrite_n;
 
   assign m_ahb_clk = clk;
   assign m_ahb_resetn = rst;
@@ -61,18 +64,28 @@ module ahb
   assign m_ahb_hwdata = hwdata_n;
   assign m_ahb_hwrite = hwrite;
 
-  assign ahb_rdata = m_ahb_hrdata;
-  assign ahb_ready = m_ahb_hready;
+  assign ahb_rdata = state == 1 ? m_ahb_hrdata : 0;
+  assign ahb_ready = state == 1 ? m_ahb_hready : 0;
+
+  always_comb begin
+    state <= state_n;
+    case (state)
+      1'b0 : state = ahb_valid == 1 ? 1 : 0;
+      1'b1 : state = m_ahb_hready == 1 ? 0 : 1;
+    endcase
+  end
 
   always_ff @(posedge m_ahb_hclk) begin
 
     if (m_ahb_hresetn == 0) begin
+      state_n <= 0;
       haddr_n <= 0;
       hprot_n <= 0;
       htrans_n <= 0;
       hwdata_n <= 0;
       hwrite_n <= 0;
     end else begin
+      state_n <= state;
       haddr_n <= haddr;
       hprot_n <= hprot;
       htrans_n <= htrans;
