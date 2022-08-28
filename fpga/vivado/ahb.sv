@@ -11,7 +11,7 @@ module ahb
   input logic [31  : 0] ahb_wdata,
   input logic [3   : 0] ahb_wstrb,
   output logic [31 : 0] ahb_rdata,
-  output logic [0  : 0] ahb_ready
+  output logic [0  : 0] ahb_ready,
   /////////////////////////////////
   output logic m_ahb_hclk,
   output logic m_ahb_hresetn,
