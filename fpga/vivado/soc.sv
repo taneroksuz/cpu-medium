@@ -5,8 +5,7 @@ module soc
   input logic rst,
   input logic clk,
   input logic rx,
-  output logic tx
-  /*
+  output logic tx,
   output logic m_ahb_hclk,
   output logic m_ahb_hresetn,
   output logic [31 : 0] m_ahb_haddr,
@@ -20,7 +19,6 @@ module soc
   input logic [31 : 0] m_ahb_hrdata,
   input logic [0  : 0] m_ahb_hready,
   input logic [0  : 0] m_ahb_hresp
-  */
 );
   timeunit 1ns;
   timeprecision 1ps;
@@ -418,7 +416,6 @@ module soc
     .clint_mtime (mtime)
   );
 
-  /*
   ahb ahb_comp
   (
     .rst (rst),
@@ -444,6 +441,5 @@ module soc
     .m_ahb_hready (m_ahb_hready),
     .m_ahb_hresp (m_ahb_hresp)
   );
-  */
 
 endmodule

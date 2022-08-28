@@ -5,8 +5,7 @@ module soc
   input logic rst,
   input logic clk,
   input logic rx,
-  output logic tx
-  /*
+  output logic tx,
   output logic m_avl_clk,
   output logic m_avl_resetn,
   output logic [31 : 0] m_avl_address,
@@ -21,7 +20,6 @@ module soc
   input logic [0  : 0] m_avl_waitrequest,
   input logic [0  : 0] m_avl_readdatavalid,
   input logic [0  : 0] m_avl_writeresponsevalid
-  */
 );
   timeunit 1ns;
   timeprecision 1ps;
@@ -420,7 +418,6 @@ module soc
     .clint_mtime (mtime)
   );
 
-  /*
   avl avl_comp
   (
     .rst (rst),
@@ -445,8 +442,7 @@ module soc
     .m_avl_response (m_avl_response),
     .m_avl_waitrequest (m_avl_waitrequest),
     .m_avl_readdatavalid (m_avl_readdatavalid),
-    .m_avl_writeresponsevalid (m_avl_writeresponsevalid),
+    .m_avl_writeresponsevalid (m_avl_writeresponsevalid)
   );
-  */
 
 endmodule

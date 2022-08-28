@@ -34,8 +34,12 @@ module avl
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [0 :0] state;
-  logic [0 :0] state_n;
+  localparam [1:0] idle = 0;
+  localparam [1:0] load = 1;
+  localparam [1:0] store = 2;
+
+  logic [1 :0] state;
+  logic [1 :0] state_n;
 
   logic [31:0] address;
   logic [31:0] address_n;
@@ -48,11 +52,16 @@ module avl
   logic [0 :0] write;
   logic [0 :0] write_n;
 
-  assign address = state == 0 ? avl_addr : address_n;
-  assign byteenable = state == 0 ? avl_wstrb : byteenable_n;
-  assign read = state == 0 ? (avl_valid & ~(|avl_wstrb)) : read_n;
-  assign writedata = state == 0 ? avl_wdata : writedata_n;
-  assign write = state == 0 ? (avl_valid & |avl_wstrb) : write_n;
+  logic [31:0] rdata;
+  logic [0 :0] ready;
+
+  assign state = state_n;
+
+  assign address = state == idle ? avl_addr : address_n;
+  assign byteenable = state == idle ? avl_wstrb : byteenable_n;
+  assign read = state == idle ? (avl_valid & ~(|avl_wstrb)) : read_n;
+  assign writedata = state == idle ? avl_wdata : writedata_n;
+  assign write = state == idle ? (avl_valid & |avl_wstrb) : write_n;
 
   assign m_avl_clk = clk;
   assign m_avl_resetn = rst;
@@ -64,20 +73,40 @@ module avl
   assign m_avl_write = write;
   assign m_avl_burstcount = 3'b001;
 
-  assign avl_rdata = state == 1 ? m_avl_readdata : 0;
-  assign avl_ready = state == 1 ? (read_n & m_avl_readdatavalid) | (write_n & m_avl_writeresponsevalid) : 0;
-
   always_comb begin
-    state <= state_n;
+    rdata = 0;
+    ready = 0;
     case (state)
-      1'b0 : state = avl_valid == 1 ? 1 : 0;
-      1'b1 : state = (m_avl_waitrequest == 0 && m_avl_response == 0) ? 0 : 1;
+      idle : begin
+        if (read == 1) begin
+          state = load;
+        end else if (write == 1) begin
+          state = store;
+        end
+      end
+      load : begin
+        if (m_avl_waitrequest == 0 && m_avl_readdatavalid) begin
+          state = idle;
+          rdata = m_avl_readdata;
+          ready = 1;
+        end
+      end
+      store : begin
+        if (m_avl_waitrequest == 0) begin
+          state = idle;
+          ready = 1;
+        end
+      end
+      default : begin
+      end
     endcase
+    avl_rdata = rdata;
+    avl_ready = ready;
   end
 
-  always_ff @(posedge m_avl_hclk) begin
+  always_ff @(posedge clk) begin
 
-    if (m_avl_hresetn == 0) begin
+    if (rst == 0) begin
       state_n <= 0;
       address_n <= 0;
       byteenable_n <= 0;
