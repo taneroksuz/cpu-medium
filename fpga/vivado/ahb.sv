@@ -53,32 +53,24 @@ module ahb
   logic [31:0] rdata;
   logic [0 :0] ready;
 
-  assign state = state_n;
-
-  assign haddr = state == idle ? ahb_addr : haddr_n;
-  assign hprot = state == idle ? {3'b000,~ahb_instr} : hprot_n;
-  assign htrans = state == idle ? {ahb_valid,1'b0} : htrans_n;
-  assign hwdata = state == idle ? ahb_wdata : hwdata_n;
-  assign hwrite = state == idle ? |ahb_wstrb : hwrite_n;
-
-  assign m_ahb_clk = clk;
-  assign m_ahb_resetn = rst;
-  assign m_ahb_haddr = haddr;
-  assign m_ahb_hbrust = 3'b000; // single
-  assign m_ahb_hmastlock = 1'b0; // unlocked
-  assign m_ahb_hprot = hprot;
-  assign m_ahb_hsize = 3'b010; // word
-  assign m_ahb_htrans = htrans;
-  assign m_ahb_hwdata = hwdata_n;
-  assign m_ahb_hwrite = hwrite;
-
   always_comb begin
+    state = state_n;
+    haddr = haddr_n;
+    hprot = hprot_n;
+    htrans = htrans_n;
+    hwdata = hwdata_n;
+    hwrite = hwrite_n;
     rdata = 0;
     ready = 0;
     case (state)
       idle : begin
         if (ahb_valid == 1) begin
           state = activ;
+          haddr = ahb_addr;
+          hprot = {3'b000,~ahb_instr};
+          htrans = {ahb_valid,1'b0};
+          hwdata = ahb_wdata;
+          hwrite = |ahb_wstrb;
         end
       end
       activ : begin
@@ -90,6 +82,17 @@ module ahb
       end
     endcase
   end
+
+  assign m_ahb_clk = clk;
+  assign m_ahb_resetn = rst;
+  assign m_ahb_haddr = haddr;
+  assign m_ahb_hbrust = 3'b000; // single
+  assign m_ahb_hmastlock = 1'b0; // unlocked
+  assign m_ahb_hprot = hprot;
+  assign m_ahb_hsize = 3'b010; // word
+  assign m_ahb_htrans = htrans;
+  assign m_ahb_hwdata = hwdata;
+  assign m_ahb_hwrite = hwrite;
 
   assign ahb_rdata = rdata;
   assign ahb_ready = ready;

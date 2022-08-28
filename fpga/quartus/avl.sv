@@ -55,29 +55,22 @@ module avl
   logic [31:0] rdata;
   logic [0 :0] ready;
 
-  assign state = state_n;
-
-  assign address = state == idle ? avl_addr : address_n;
-  assign byteenable = state == idle ? avl_wstrb : byteenable_n;
-  assign read = state == idle ? (avl_valid & ~(|avl_wstrb)) : read_n;
-  assign writedata = state == idle ? avl_wdata : writedata_n;
-  assign write = state == idle ? (avl_valid & |avl_wstrb) : write_n;
-
-  assign m_avl_clk = clk;
-  assign m_avl_resetn = rst;
-  assign m_avl_address = address;
-  assign m_avl_byteenable = byteenable;
-  assign m_avl_lock = 1'b0;
-  assign m_avl_read = read;
-  assign m_avl_writedata = writedata;
-  assign m_avl_write = write;
-  assign m_avl_burstcount = 3'b001;
-
   always_comb begin
+    state = state_n;
+    address = address_n;
+    byteenable = byteenable_n;
+    read = read_n;
+    writedata = writedata_n;
+    write = write_n;
     rdata = 0;
     ready = 0;
     case (state)
       idle : begin
+        address = avl_addr;
+        byteenable = avl_wstrb;
+        read = avl_valid & ~(|avl_wstrb);
+        writedata = avl_wdata;
+        write = avl_valid & |avl_wstrb;
         if (read == 1) begin
           state = load;
         end else if (write == 1) begin
@@ -100,9 +93,20 @@ module avl
       default : begin
       end
     endcase
-    avl_rdata = rdata;
-    avl_ready = ready;
   end
+
+  assign m_avl_clk = clk;
+  assign m_avl_resetn = rst;
+  assign m_avl_address = address;
+  assign m_avl_byteenable = byteenable;
+  assign m_avl_lock = 1'b0;
+  assign m_avl_read = read;
+  assign m_avl_writedata = writedata;
+  assign m_avl_write = write;
+  assign m_avl_burstcount = 3'b001;
+
+  assign avl_rdata = rdata;
+  assign avl_ready = ready;
 
   always_ff @(posedge clk) begin
 
