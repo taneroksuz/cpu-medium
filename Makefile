@@ -46,6 +46,9 @@ generate:
 	elif [ ${TEST} = "timer" ]; \
 	then \
 		soft/timer.sh ${RISCV} ${MARCH} ${MABI} ${ITER} ${PYTHON} ${OFFSET} ${BASEDIR}; \
+	elif [ ${TEST} = "sram" ]; \
+	then \
+		soft/sram.sh ${RISCV} ${MARCH} ${MABI} ${ITER} ${PYTHON} ${OFFSET} ${BASEDIR}; \
 	elif [ ${TEST} = "aapg" ]; \
 	then \
 		soft/aapg.sh ${RISCV} ${MARCH} ${MABI} ${ITER} ${PYTHON} ${OFFSET} ${BASEDIR} ${AAPG} ${CONFIG}; \

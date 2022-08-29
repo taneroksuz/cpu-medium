@@ -69,6 +69,11 @@ then
     cp $DIR/build/timer/dat/timer.dat bram.dat
     cp $DIR/build/timer/elf/timer.host host.dat
   	obj_dir/Vsoc $CYCLES timer 2> /dev/null
+  elif [ "$4" = 'sram' ]
+  then
+    cp $DIR/build/sram/dat/sram.dat bram.dat
+    cp $DIR/build/sram/elf/sram.host host.dat
+  	obj_dir/Vsoc $CYCLES sram 2> /dev/null
   elif [ "$4" = 'compliance' ]
   then
     for filename in $DIR/build/compliance/dat/*.dat; do
@@ -176,6 +181,11 @@ else
   then
     cp $DIR/build/timer/dat/timer.dat bram.dat
     cp $DIR/build/timer/elf/timer.host host.dat
+  	obj_dir/Vsoc $CYCLES 2> /dev/null
+  elif [ "$4" = 'sram' ]
+  then
+    cp $DIR/build/sram/dat/sram.dat bram.dat
+    cp $DIR/build/sram/elf/sram.host host.dat
   	obj_dir/Vsoc $CYCLES 2> /dev/null
   elif [ "$4" = 'compliance' ]
   then
