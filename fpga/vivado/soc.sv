@@ -256,25 +256,25 @@ module soc
 
     imem_addr = imemory_addr - ibase_addr;
 
-    bram_valid = bram_d ? dmemory_valid : imemory_valid;
+    bram_valid = bram_d | bram_i;
     bram_instr = bram_d ? dmemory_instr : imemory_instr;
     bram_addr = bram_d ? dmem_addr : imem_addr;
     bram_wdata = bram_d ? dmemory_wdata : imemory_wdata;
     bram_wstrb = bram_d ? dmemory_wstrb : imemory_wstrb;
 
-    uart_valid = uart_d ? dmemory_valid : imemory_valid;
+    uart_valid = uart_d | uart_i;
     uart_instr = uart_d ? dmemory_instr : imemory_instr;
     uart_addr = uart_d ? dmem_addr : imem_addr;
     uart_wdata = uart_d ? dmemory_wdata : imemory_wdata;
     uart_wstrb = uart_d ? dmemory_wstrb : imemory_wstrb;
 
-    clint_valid = clint_d ? dmemory_valid : imemory_valid;
+    clint_valid = clint_d | clint_i;
     clint_instr = clint_d ? dmemory_instr : imemory_instr;
     clint_addr = clint_d ? dmem_addr : imem_addr;
     clint_wdata = clint_d ? dmemory_wdata : imemory_wdata;
     clint_wstrb = clint_d ? dmemory_wstrb : imemory_wstrb;
 
-    ahb_valid = ahb_d ? dmemory_valid : imemory_valid;
+    ahb_valid = ahb_d | ahb_i;
     ahb_instr = ahb_d ? dmemory_instr : imemory_instr;
     ahb_addr = ahb_d ? dmem_addr : imem_addr;
     ahb_wdata = ahb_d ? dmemory_wdata : imemory_wdata;

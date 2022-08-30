@@ -169,19 +169,19 @@ module soc
 
     imem_addr = imemory_addr - ibase_addr;
 
-    bram_valid = v.bram_d ? dmemory_valid : imemory_valid;
+    bram_valid = v.bram_d | v.bram_i;
     bram_instr = v.bram_d ? dmemory_instr : imemory_instr;
     bram_addr = v.bram_d ? dmem_addr : imem_addr;
     bram_wdata = v.bram_d ? dmemory_wdata : imemory_wdata;
     bram_wstrb = v.bram_d ? dmemory_wstrb : imemory_wstrb;
 
-    print_valid = v.print_d ? dmemory_valid : imemory_valid;
+    print_valid = v.print_d | v.print_i;
     print_instr = v.print_d ? dmemory_instr : imemory_instr;
     print_addr = v.print_d ? dmem_addr : imem_addr;
     print_wdata = v.print_d ? dmemory_wdata : imemory_wdata;
     print_wstrb = v.print_d ? dmemory_wstrb : imemory_wstrb;
 
-    clint_valid = v.clint_d ? dmemory_valid : imemory_valid;
+    clint_valid = v.clint_d | v.clint_i;
     clint_instr = v.clint_d ? dmemory_instr : imemory_instr;
     clint_addr = v.clint_d ? dmem_addr : imem_addr;
     clint_wdata = v.clint_d ? dmemory_wdata : imemory_wdata;

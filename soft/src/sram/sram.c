@@ -14,11 +14,11 @@ void print(int num)
     putch('-');
     num = -num;
   }
-  if (num/10 > 0)
+  if (num/10)
   {
     print(num/10);
   }
-  putch(((unsigned char) num%10) + '0');
+  putch(num%10 + '0');
 }
 
 void set_matrix(int n,int m,int mat[n][m],int val)
