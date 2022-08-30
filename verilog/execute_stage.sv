@@ -119,7 +119,7 @@ module execute_stage
 
     v.stall = 0;
 
-    v.enable = ~(d.e.stall | a.m.stall | d.w.clear);
+    v.enable = ~(d.e.stall | a.m.stall | v.clear | d.w.clear);
 
     alu_in.rdata1 = v.rdata1;
     alu_in.rdata2 = v.rdata2;
