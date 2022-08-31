@@ -121,8 +121,8 @@ module soc
       end else begin
         v.clint_d = 0;
         v.print_d = 0;
-        v.bram_d = dmemory_valid;
-        dbase_addr = bram_base_addr;
+        v.bram_d = 0;
+        dbase_addr = 0;
       end
     end
 
@@ -152,8 +152,8 @@ module soc
       end else begin
         v.clint_i = 0;
         v.print_i = 0;
-        v.bram_i = imemory_valid;
-        ibase_addr = bram_base_addr;
+        v.bram_i = 0;
+        ibase_addr = 0;
       end
     end
 
