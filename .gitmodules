@@ -1,0 +1,3 @@
+[submodule "soft"]
+	path = soft
+	url = https://github.com/taneroksuz/riscv-test-case-generation.git
