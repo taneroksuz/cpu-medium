@@ -6,8 +6,6 @@ module soc
   input logic clk,
   input logic rx,
   output logic tx,
-  output logic m_ahb_hclk,
-  output logic m_ahb_hresetn,
   output logic [31 : 0] m_ahb_haddr,
   output logic [2  : 0] m_ahb_hbrust,
   output logic [0  : 0] m_ahb_hmastlock,
@@ -22,12 +20,6 @@ module soc
 );
   timeunit 1ns;
   timeprecision 1ps;
-
-  logic rtc = 0;
-  logic [31 : 0] count = 0;
-
-  logic clk_pll = 0;
-  logic [31 : 0] count_pll = 0;
 
   logic [0  : 0] imemory_valid;
   logic [0  : 0] imemory_instr;
@@ -116,21 +108,6 @@ module soc
   logic [0  : 0] ahb_i_rin;
   logic [0  : 0] ahb_d_rin;
 
-  always_ff @(posedge clk) begin
-    if (count == clk_divider_rtc) begin
-      rtc <= ~rtc;
-      count <= 0;
-    end else begin
-      count <= count + 1;
-    end
-    if (count_pll == clk_divider_pll) begin
-      clk_pll <= ~clk_pll;
-      count_pll <= 0;
-    end else begin
-      count_pll <= count_pll + 1;
-    end
-  end
-
   always_comb begin
 
     bram_i = bram_i_r;
@@ -168,7 +145,7 @@ module soc
           clint_d = 0;
           uart_d = 0;
           bram_d = 0;
-          dbase_addr = clint_base_addr;
+          dbase_addr = ahb_base_addr;
         end else if (dmemory_addr >= clint_base_addr &&
         dmemory_addr < clint_top_addr) begin
           ahb_d = 0;
@@ -210,7 +187,7 @@ module soc
           clint_i = 0;
           uart_i = 0;
           bram_i = 0;
-          ibase_addr = clint_base_addr;
+          ibase_addr = ahb_base_addr;
       end else if (imemory_addr >= clint_base_addr &&
         imemory_addr < clint_top_addr) begin
           ahb_i = 0;
@@ -325,7 +302,7 @@ module soc
 
   end
 
-  always_ff @(posedge clk_pll) begin
+  always_ff @(posedge clk) begin
     if (rst == 0) begin
       bram_i_r <= 0;
       bram_d_r <= 0;
@@ -350,7 +327,7 @@ module soc
   cpu cpu_comp
   (
     .rst (rst),
-    .clk (clk_pll),
+    .clk (clk),
     .imemory_valid (imemory_valid),
     .imemory_instr (imemory_instr),
     .imemory_addr (imemory_addr),
@@ -374,7 +351,7 @@ module soc
   bram bram_comp
   (
     .rst (rst),
-    .clk (clk_pll),
+    .clk (clk),
     .bram_valid (bram_valid),
     .bram_instr (bram_instr),
     .bram_addr (bram_addr),
@@ -387,7 +364,7 @@ module soc
   uart uart_comp
   (
     .rst (rst),
-    .clk (clk_pll),
+    .clk (clk),
     .uart_valid (uart_valid),
     .uart_instr (uart_instr),
     .uart_addr (uart_addr),
@@ -402,8 +379,7 @@ module soc
   clint clint_comp
   (
     .rst (rst),
-    .clk (clk_pll),
-    .rtc (rtc),
+    .clk (clk),
     .clint_valid (clint_valid),
     .clint_instr (clint_instr),
     .clint_addr (clint_addr),
@@ -419,7 +395,7 @@ module soc
   ahb ahb_comp
   (
     .rst (rst),
-    .clk (clk_pll),
+    .clk (clk),
     .ahb_valid (ahb_valid),
     .ahb_instr (ahb_instr),
     .ahb_addr (ahb_addr),
@@ -427,8 +403,6 @@ module soc
     .ahb_wstrb (ahb_wstrb),
     .ahb_rdata (ahb_rdata),
     .ahb_ready (ahb_ready),
-    .m_ahb_hclk (m_ahb_hclk),
-    .m_ahb_hresetn (m_ahb_hresetn),
     .m_ahb_haddr (m_ahb_haddr),
     .m_ahb_hbrust (m_ahb_hbrust),
     .m_ahb_hmastlock (m_ahb_hmastlock),

@@ -1,8 +1,7 @@
 module soc
 (
   input logic rst,
-  input logic clk,
-  input logic rtc
+  input logic clk
 );
   timeunit 1ns;
   timeprecision 1ps;
@@ -281,7 +280,6 @@ module soc
   (
     .rst (rst),
     .clk (clk),
-    .rtc (rtc),
     .clint_valid (clint_valid),
     .clint_instr (clint_instr),
     .clint_addr (clint_addr),

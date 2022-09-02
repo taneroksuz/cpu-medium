@@ -13,9 +13,6 @@ module ahb
   output logic [31 : 0] ahb_rdata,
   output logic [0  : 0] ahb_ready,
   /////////////////////////////////
-  output logic m_ahb_hclk,
-  output logic m_ahb_hresetn,
-  /////////////////////////////////
   output logic [31 : 0] m_ahb_haddr,
   output logic [2  : 0] m_ahb_hbrust,
   output logic [0  : 0] m_ahb_hmastlock,
@@ -83,8 +80,6 @@ module ahb
     endcase
   end
 
-  assign m_ahb_clk = clk;
-  assign m_ahb_resetn = rst;
   assign m_ahb_haddr = haddr;
   assign m_ahb_hbrust = 3'b000; // single
   assign m_ahb_hmastlock = 1'b0; // unlocked

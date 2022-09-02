@@ -32,13 +32,11 @@ int sc_main(int argc, char* argv[])
   }
 
   sc_clock clk ("clk", 1,SC_NS, 0.5, 0.5,SC_NS, false);
-  sc_clock rtc ("rst", 30.517578125,SC_US, 15.2587890625, 15.2587890625,SC_US, false);
   sc_signal<bool> rst;
 
   Vsoc* soc = new Vsoc("soc");
 
   soc->clk (clk);
-  soc->rtc (rtc);
   soc->rst (rst);
 
 #if VM_TRACE

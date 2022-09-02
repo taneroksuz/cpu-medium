@@ -6,8 +6,6 @@ module soc
   input logic clk,
   input logic rx,
   output logic tx,
-  output logic m_avl_clk,
-  output logic m_avl_resetn,
   output logic [31 : 0] m_avl_address,
   output logic [3  : 0] m_avl_byteenable,
   output logic [0  : 0] m_avl_lock,
@@ -23,12 +21,6 @@ module soc
 );
   timeunit 1ns;
   timeprecision 1ps;
-
-  logic rtc = 0;
-  logic [31 : 0] count = 0;
-
-  logic clk_pll = 0;
-  logic [31 : 0] count_pll = 0;
 
   logic [0  : 0] imemory_valid;
   logic [0  : 0] imemory_instr;
@@ -118,21 +110,6 @@ module soc
   logic [0  : 0] avl_i_rin;
   logic [0  : 0] avl_d_rin;
 
-  always_ff @(posedge clk) begin
-    if (count == clk_divider_rtc) begin
-      rtc <= ~rtc;
-      count <= 0;
-    end else begin
-      count <= count + 1;
-    end
-    if (count_pll == clk_divider_pll) begin
-      clk_pll <= ~clk_pll;
-      count_pll <= 0;
-    end else begin
-      count_pll <= count_pll + 1;
-    end
-  end
-
   always_comb begin
 
     bram_i = bram_i_r;
@@ -170,7 +147,7 @@ module soc
           clint_d = 0;
           uart_d = 0;
           bram_d = 0;
-          dbase_addr = clint_base_addr;
+          dbase_addr = avl_base_addr;
         end else if (dmemory_addr >= clint_base_addr &&
         dmemory_addr < clint_top_addr) begin
           avl_d = 0;
@@ -212,7 +189,7 @@ module soc
           clint_i = 0;
           uart_i = 0;
           bram_i = 0;
-          ibase_addr = clint_base_addr;
+          ibase_addr = avl_base_addr;
       end else if (imemory_addr >= clint_base_addr &&
         imemory_addr < clint_top_addr) begin
           avl_i = 0;
@@ -327,7 +304,7 @@ module soc
 
   end
 
-  always_ff @(posedge clk_pll) begin
+  always_ff @(posedge clk) begin
     if (rst == 0) begin
       bram_i_r <= 0;
       bram_d_r <= 0;
@@ -352,7 +329,7 @@ module soc
   cpu cpu_comp
   (
     .rst (rst),
-    .clk (clk_pll),
+    .clk (clk),
     .imemory_valid (imemory_valid),
     .imemory_instr (imemory_instr),
     .imemory_addr (imemory_addr),
@@ -375,7 +352,7 @@ module soc
 
   bram bram_comp
   (
-    .clk (clk_pll),
+    .clk (clk),
     .bram_valid (bram_valid),
     .bram_instr (bram_instr),
     .bram_waddr (bram_addr[bram_depth+1:2]),
@@ -389,7 +366,7 @@ module soc
   uart uart_comp
   (
     .rst (rst),
-    .clk (clk_pll),
+    .clk (clk),
     .uart_valid (uart_valid),
     .uart_instr (uart_instr),
     .uart_addr (uart_addr),
@@ -404,8 +381,7 @@ module soc
   clint clint_comp
   (
     .rst (rst),
-    .clk (clk_pll),
-    .rtc (rtc),
+    .clk (clk),
     .clint_valid (clint_valid),
     .clint_instr (clint_instr),
     .clint_addr (clint_addr),
@@ -421,7 +397,7 @@ module soc
   avl avl_comp
   (
     .rst (rst),
-    .clk (clk_pll),
+    .clk (clk),
     .avl_valid (avl_valid),
     .avl_instr (avl_instr),
     .avl_addr (avl_addr),
@@ -429,8 +405,6 @@ module soc
     .avl_wstrb (avl_wstrb),
     .avl_rdata (avl_rdata),
     .avl_ready (avl_ready),
-    .m_avl_clk (m_avl_clk),
-    .m_avl_resetn (m_avl_resetn),
     .m_avl_address (m_avl_address),
     .m_avl_byteenable (m_avl_byteenable),
     .m_avl_lock (m_avl_lock),

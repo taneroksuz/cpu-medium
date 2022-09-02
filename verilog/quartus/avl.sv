@@ -13,9 +13,6 @@ module avl
   output logic [31 : 0] avl_rdata,
   output logic [0  : 0] avl_ready,
   /////////////////////////////////
-  output logic m_avl_clk,
-  output logic m_avl_resetn,
-  /////////////////////////////////
   output logic [31 : 0] m_avl_address,
   output logic [3  : 0] m_avl_byteenable,
   output logic [0  : 0] m_avl_lock,
@@ -95,8 +92,6 @@ module avl
     endcase
   end
 
-  assign m_avl_clk = clk;
-  assign m_avl_resetn = rst;
   assign m_avl_address = address;
   assign m_avl_byteenable = byteenable;
   assign m_avl_lock = 1'b0;

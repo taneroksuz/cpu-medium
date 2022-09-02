@@ -5,7 +5,6 @@ module clint
 (
   input logic rst,
   input logic clk,
-  input logic rtc,
   input logic [0   : 0] clint_valid,
   input logic [0   : 0] clint_instr,
   input logic [31  : 0] clint_addr,
@@ -33,13 +32,12 @@ module clint
   logic [31 : 0] rdata = 0;
   logic [0  : 0] ready = 0;
 
-  logic [0:0] mtip = 0;
-  logic [0:0] msip = 0;
+  logic [0  : 0] mtip = 0;
+  logic [0  : 0] msip = 0;
 
-  logic [0:0] state = 0;
-  logic [0:0] incr  = 0;
-
-  integer i;
+  logic [31 : 0] count = 0;
+  logic [0  : 0] state = 0;
+  logic [0  : 0] incr  = 0;
 
   always_ff @(posedge clk) begin
     if (rst == 0) begin
@@ -105,25 +103,29 @@ module clint
       mtip <= 0;
     end else begin
       if (mtime >= mtimecmp) begin
-        mtip[i] <= 1;
+        mtip <= 1;
       end else begin
-        mtip[i] <= 0;
+        mtip <= 0;
       end
     end
   end
 
   always_ff @(posedge clk) begin
     if (rst == 0) begin
+      count <= 0;
       state <= 0;
       incr <= 0;
     end else begin
-      if (state == 0 && rtc == 1) begin
+      if (state == 0 && count == clk_divider_rtc) begin
+        count <= 0;
         state <= 1;
         incr <= 1;
-      end else if (state == 1 && rtc == 0) begin
+      end else if (state == 1 && count == clk_divider_rtc) begin
+        count <= 0;
         state <= 0;
         incr <= 0;
       end else begin
+        count <= count + 1;
         incr <= 0;
       end
     end
