@@ -58,6 +58,8 @@ module soc
   logic [31 : 0] ibase_addr;
   logic [31 : 0] dbase_addr;
 
+  logic [31 : 0] host[0:0] = '{default:'0};
+
   typedef struct packed{
     logic [0  : 0] bram_i;
     logic [0  : 0] bram_d;
@@ -78,6 +80,10 @@ module soc
 
   reg_type r,rin;
   reg_type v;
+
+  initial begin
+    $readmemh("host.dat", host);
+  end
 
   always_comb begin
 
@@ -117,6 +123,11 @@ module soc
           v.print_d = 0;
           v.bram_d = dmemory_valid;
           dbase_addr = bram_base_addr;
+      end else if (dmemory_addr == host[0]) begin
+          v.clint_d = 0;
+          v.print_d = 0;
+          v.bram_d = dmemory_valid;
+          dbase_addr = bram_base_addr;
       end else begin
         v.clint_d = 0;
         v.print_d = 0;
@@ -144,6 +155,11 @@ module soc
           ibase_addr = print_base_addr;
       end else if (imemory_addr >= bram_base_addr &&
         imemory_addr < bram_top_addr) begin
+          v.clint_i = 0;
+          v.print_i = 0;
+          v.bram_i = imemory_valid;
+          ibase_addr = bram_base_addr;
+      end else if (imemory_addr == host[0]) begin
           v.clint_i = 0;
           v.print_i = 0;
           v.bram_i = imemory_valid;
