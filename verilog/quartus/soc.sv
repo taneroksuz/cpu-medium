@@ -39,7 +39,6 @@ module soc
   logic [0  : 0] dmemory_ready;
 
   logic [0  : 0] bram_valid;
-  logic [0  : 0] bram_wen;
   logic [0  : 0] bram_instr;
   logic [31 : 0] bram_addr;
   logic [31 : 0] bram_wdata;
