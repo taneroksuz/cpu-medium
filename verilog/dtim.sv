@@ -78,6 +78,7 @@ package dtim_wires;
 endpackage
 
 import configure::*;
+import wires::*;
 import dtim_wires::*;
 
 module dtim_tag

@@ -1,3 +1,4 @@
+import configure::*;
 import wires::*;
 
 module cpu

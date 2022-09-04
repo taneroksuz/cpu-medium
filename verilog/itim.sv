@@ -65,6 +65,7 @@ package itim_wires;
 endpackage
 
 import configure::*;
+import wires::*;
 import itim_wires::*;
 
 module itim_tag
