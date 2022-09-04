@@ -46,7 +46,7 @@ module uart
     state_re : 0,
     state_rx : 0,
     data_re : 0,
-    data_rx : 8'hFF,
+    data_rx : 9'h1FF,
     counter_rx : 0,
     ready_re : 0,
     ready_rx : 0

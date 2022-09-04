@@ -12,7 +12,7 @@ module soc
   output logic [0  : 0] m_avl_read,
   output logic [31 : 0] m_avl_writedata,
   output logic [0  : 0] m_avl_write,
-  output logic [0  : 0] m_avl_burstcount,
+  output logic [2  : 0] m_avl_burstcount,
   input logic [31 : 0] m_avl_readdata,
   input logic [1  : 0] m_avl_response,
   input logic [0  : 0] m_avl_waitrequest,
@@ -351,11 +351,11 @@ module soc
 
   bram bram_comp
   (
+    .rst (rst),
     .clk (clk),
     .bram_valid (bram_valid),
     .bram_instr (bram_instr),
-    .bram_waddr (bram_addr[bram_depth+1:2]),
-    .bram_raddr (bram_addr[bram_depth+1:2]),
+    .bram_addr (bram_addr),
     .bram_wdata (bram_wdata),
     .bram_wstrb (bram_wstrb),
     .bram_rdata (bram_rdata),
