@@ -1,3 +1,5 @@
+import configure::*;
+
 module soc
 (
   input logic rst,
