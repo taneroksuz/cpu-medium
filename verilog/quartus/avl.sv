@@ -75,14 +75,14 @@ module avl
         end
       end
       load : begin
-        if (m_avl_waitrequest == 0 && m_avl_readdatavalid) begin
+        if (m_avl_waitrequest == 0 && m_avl_readdatavalid == 1) begin
           state = idle;
           rdata = m_avl_readdata;
           ready = 1;
         end
       end
       store : begin
-        if (m_avl_waitrequest == 0) begin
+        if (m_avl_waitrequest == 0 && m_avl_writeresponsevalid == 1) begin
           state = idle;
           ready = 1;
         end
