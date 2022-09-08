@@ -10,6 +10,6 @@ RISCV Z7 CPU supports currently only riscv32-imfcb instruction set architecture 
 ## Coremark Benchmark ##
 | Cycles | Iteration/s/MHz | Iteration |
 | ------ | --------------- | --------- |
-| 370896 |            2.70 |        10 |
+| 355861 |            2.81 |        10 |
 
 Documentation will be expanded in the future.
