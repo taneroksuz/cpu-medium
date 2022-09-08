@@ -61,26 +61,18 @@ module avl
     write = 0;
     rdata = 0;
     ready = 0;
-    if (m_avl_waitrequest == 0) begin
-      address = address_n;
-      byteenable = byteenable_n;
-      read = read_n;
-      writedata = writedata_n;
-      write = write_n;
-    end
     case (state)
       idle : begin
-        if (m_avl_waitrequest == 1) begin
-          address = avl_addr;
-          byteenable = avl_wstrb;
-          read = avl_valid & ~(|avl_wstrb);
-          writedata = avl_wdata;
-          write = avl_valid & |avl_wstrb;
-          if (read == 1) begin
-            state = load;
-          end else if (write == 1) begin
-            state = store;
-          end
+        address = avl_addr;
+        byteenable = avl_wstrb;
+        read = avl_valid & ~(|avl_wstrb);
+        writedata = avl_wdata;
+        write = avl_valid & |avl_wstrb;
+        if (read == 1) begin
+          state = load;
+          byteenable = 4'hF;
+        end else if (write == 1) begin
+          state = store;
         end
       end
       load : begin
@@ -88,12 +80,24 @@ module avl
           state = idle;
           rdata = m_avl_readdata;
           ready = 1;
+        end else if (m_avl_waitrequest == 0) begin
+          address = address_n;
+          byteenable = byteenable_n;
+          read = read_n;
+          writedata = writedata_n;
+          write = write_n;
         end
       end
       store : begin
         if (m_avl_writeresponsevalid == 1) begin
           state = idle;
           ready = 1;
+        end else if (m_avl_waitrequest == 0) begin
+          address = address_n;
+          byteenable = byteenable_n;
+          read = read_n;
+          writedata = writedata_n;
+          write = write_n;
         end
       end
       default : begin
