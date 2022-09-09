@@ -2,14 +2,14 @@ import configure::*;
 
 module avl
 (
-  input logic rst,
-  input logic clk,
+  input  logic rst,
+  input  logic clk,
   /////////////////////////////////
-  input logic [0   : 0] avl_valid,
-  input logic [0   : 0] avl_instr,
-  input logic [31  : 0] avl_addr,
-  input logic [31  : 0] avl_wdata,
-  input logic [3   : 0] avl_wstrb,
+  input  logic [0  : 0] avl_valid,
+  input  logic [0  : 0] avl_instr,
+  input  logic [31 : 0] avl_addr,
+  input  logic [31 : 0] avl_wdata,
+  input  logic [3  : 0] avl_wstrb,
   output logic [31 : 0] avl_rdata,
   output logic [0  : 0] avl_ready,
   /////////////////////////////////
