@@ -60,14 +60,12 @@ module axi
   timeunit 1ns;
   timeprecision 1ps;
 
-  localparam [2:0] idle = 0;
-  localparam [2:0] read = 1;
-  localparam [2:0] readresponse = 2;
-  localparam [2:0] write = 3;
-  localparam [2:0] writeresponse = 4;
+  localparam [1:0] idle = 0;
+  localparam [1:0] read = 1;
+  localparam [1:0] write = 2;
 
-  logic [2 :0] state;
-  logic [2 :0] state_n;
+  logic [1 :0] state;
+  logic [1 :0] state_n;
 
   logic [0 :0] awvalid;
   logic [0 :0] awvalid_n;
@@ -129,12 +127,8 @@ module axi
         addr = addr_n;
         prot = prot_n;
         if (m_axi_awready == 1) begin
-          state = readresponse;
           arvalid = 0;
         end
-      end
-      readresponse : begin
-        rready = rready_n;
         if (m_axi_rvalid == 1 && m_axi_rlast == 1 && m_axi_rresp == 0) begin
           state = idle;
           rready = 0;
@@ -158,12 +152,6 @@ module axi
           wlast = 0;
           wvalid = 0;
         end
-        if (awvalid == 0 && wvalid == 0) begin
-          state = writeresponse;
-        end
-      end
-      writeresponse : begin
-        bready = bready_n;
         if (m_axi_bvalid == 1 && m_axi_bresp == 0) begin
           state = idle;
           bready = 0;
