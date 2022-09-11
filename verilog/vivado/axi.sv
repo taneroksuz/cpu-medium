@@ -87,6 +87,8 @@ module axi
   logic [31:0] wdata_n;
   logic [3 :0] wstrb;
   logic [3 :0] wstrb_n;
+  logic [0 :0] wlast;
+  logic [0 :0] wlast_n;
 
   logic [31:0] rdata;
   logic [0 :0] ready;
@@ -102,21 +104,23 @@ module axi
     prot = 0;
     wdata = 0;
     wstrb = 0;
+    wlast = 0;
     rdata = 0;
     ready = 0;
     case (state_n)
       idle : begin
         if (axi_valid == 1) begin
           state = (|axi_wstrb) == 1 ? write : read;
-          awvalid = ~|axi_wstrb;
-          wvalid = ~|axi_wstrb;
-          bready = ~|axi_wstrb;
+          awvalid = |axi_wstrb;
+          wvalid = |axi_wstrb;
+          bready = |axi_wstrb;
           arvalid = ~(|axi_wstrb);
           rready = ~(|axi_wstrb);
           addr = axi_addr;
           prot = {axi_instr,2'b00};
           wdata = axi_wdata;
           wstrb = axi_wstrb;
+          wlast = |axi_wstrb;
         end
       end
       read : begin
@@ -146,10 +150,16 @@ module axi
         prot = prot_n;
         wdata = wdata_n;
         wstrb = wstrb_n;
-        if (m_axi_awready == 1 && m_axi_wready == 1) begin
-          state = writeresponse;
+        wlast = wlast_n;
+        if (m_axi_awready == 1) begin
           awvalid = 0;
+        end
+        if (m_axi_wready == 1) begin
+          wlast = 0;
           wvalid = 0;
+        end
+        if (awvalid == 0 && wvalid == 0) begin
+          state = writeresponse;
         end
       end
       writeresponse : begin
@@ -175,7 +185,7 @@ module axi
 
   assign m_axi_wdata = wdata;
   assign m_axi_wstrb = wstrb;
-  assign m_axi_wlast = 1'b1;
+  assign m_axi_wlast = wlast;
   assign m_axi_wvalid = wvalid;
 
   assign m_axi_bready = bready;
@@ -208,6 +218,7 @@ module axi
       prot_n <= 0;
       wdata_n <= 0;
       wstrb_n <= 0;
+      wlast_n <= 0;
     end else begin
       state_n <= state;
       awvalid_n <= awvalid;
@@ -219,6 +230,7 @@ module axi
       prot_n <= prot;
       wdata_n <= wdata;
       wstrb_n <= wstrb;
+      wlast_n <= wlast;
     end
 
   end
