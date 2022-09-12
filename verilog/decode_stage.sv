@@ -10,12 +10,9 @@ module decode_stage
   output decoder_in_type decoder_in,
   input compress_out_type compress_out,
   output compress_in_type compress_in,
-  input register_out_type register_out,
   output register_read_in_type register_rin,
   input csr_out_type csr_out,
   output csr_read_in_type csr_rin,
-  input forwarding_out_type forwarding_out,
-  output forwarding_register_in_type forwarding_rin,
   input decode_in_type a,
   input decode_in_type d,
   output decode_out_type y,
@@ -160,16 +157,6 @@ module decode_stage
     register_rin.rden2 = v.rden2;
     register_rin.raddr1 = v.raddr1;
     register_rin.raddr2 = v.raddr2;
-
-    forwarding_rin.rden1 = v.rden1;
-    forwarding_rin.rden2 = v.rden2;
-    forwarding_rin.raddr1 = v.raddr1;
-    forwarding_rin.raddr2 = v.raddr2;
-    forwarding_rin.rdata1 = register_out.rdata1;
-    forwarding_rin.rdata2 = register_out.rdata2;
-
-    v.rdata1 = forwarding_out.data1;
-    v.rdata2 = forwarding_out.data2;
 
     if (v.valid == 0) begin
       v.exception = 1;

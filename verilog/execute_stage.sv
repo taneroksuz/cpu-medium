@@ -21,6 +21,9 @@ module execute_stage
   output bit_alu_in_type bit_alu_in,
   input bit_clmul_out_type bit_clmul_out,
   output bit_clmul_in_type bit_clmul_in,
+  input register_out_type register_out,
+  input forwarding_out_type forwarding_out,
+  output forwarding_register_in_type forwarding_rin,
   output forwarding_execute_in_type forwarding_ein,
   input csr_out_type csr_out,
   input execute_in_type a,
@@ -87,6 +90,16 @@ module execute_stage
     v.div_op = d.d.div_op;
     v.mul_op = d.d.mul_op;
     v.bit_op = d.d.bit_op;
+
+    forwarding_rin.rden1 = v.rden1;
+    forwarding_rin.rden2 = v.rden2;
+    forwarding_rin.raddr1 = v.raddr1;
+    forwarding_rin.raddr2 = v.raddr2;
+    forwarding_rin.rdata1 = register_out.rdata1;
+    forwarding_rin.rdata2 = register_out.rdata2;
+
+    v.rdata1 = forwarding_out.data1;
+    v.rdata2 = forwarding_out.data2;
 
     if ((d.e.stall | d.m.stall) == 1) begin
       v = r;
@@ -295,11 +308,11 @@ module execute_stage
       v.valid = 0;
     end
 
-    forwarding_ein.wren = v.wren;
-    forwarding_ein.waddr = v.waddr;
-    forwarding_ein.wdata = v.wdata;
-
     rin = v;
+
+    forwarding_ein.wren = r.wren;
+    forwarding_ein.waddr = r.waddr;
+    forwarding_ein.wdata = r.wdata;
 
     y.pc = v.pc;
     y.npc = v.npc;

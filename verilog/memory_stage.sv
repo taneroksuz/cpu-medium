@@ -110,10 +110,6 @@ module memory_stage
       v.stall = 0;
     end
 
-    forwarding_min.wren = v.wren;
-    forwarding_min.waddr = v.waddr;
-    forwarding_min.wdata = v.wdata;
-
     register_win.wren = v.wren & |(v.waddr);
     register_win.waddr = v.waddr;
     register_win.wdata = v.wdata;
@@ -130,6 +126,10 @@ module memory_stage
     csr_ein.etval = v.etval;
     
     rin = v;
+
+    forwarding_min.wren = r.wren;
+    forwarding_min.waddr = r.waddr;
+    forwarding_min.wdata = r.wdata;
 
     y.cwren = v.cwren;
     y.mret = v.mret;
