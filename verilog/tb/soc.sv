@@ -186,23 +186,65 @@ module soc
 
     imem_addr = imemory_addr - ibase_addr;
 
-    bram_valid = v.bram_d | v.bram_i;
-    bram_instr = v.bram_d ? dmemory_instr : imemory_instr;
-    bram_addr = v.bram_d ? dmem_addr : imem_addr;
-    bram_wdata = v.bram_d ? dmemory_wdata : imemory_wdata;
-    bram_wstrb = v.bram_d ? dmemory_wstrb : imemory_wstrb;
+    if (v.bram_d == 1) begin
+      bram_valid = dmemory_valid;
+      bram_instr = dmemory_instr;
+      bram_addr = dmem_addr;
+      bram_wdata = dmemory_wdata;
+      bram_wstrb = dmemory_wstrb;
+    end else if (v.bram_i == 1) begin
+      bram_valid = imemory_valid;
+      bram_instr = imemory_instr;
+      bram_addr = imem_addr;
+      bram_wdata = imemory_wdata;
+      bram_wstrb = imemory_wstrb;
+    end else begin
+      bram_valid = 0;
+      bram_instr = 0;
+      bram_addr = 0;
+      bram_wdata = 0;
+      bram_wstrb = 0;
+    end
 
-    print_valid = v.print_d | v.print_i;
-    print_instr = v.print_d ? dmemory_instr : imemory_instr;
-    print_addr = v.print_d ? dmem_addr : imem_addr;
-    print_wdata = v.print_d ? dmemory_wdata : imemory_wdata;
-    print_wstrb = v.print_d ? dmemory_wstrb : imemory_wstrb;
+    if (v.print_d == 1) begin
+      print_valid = dmemory_valid;
+      print_instr = dmemory_instr;
+      print_addr = dmem_addr;
+      print_wdata = dmemory_wdata;
+      print_wstrb = dmemory_wstrb;
+    end else if (v.print_i == 1) begin
+      print_valid = imemory_valid;
+      print_instr = imemory_instr;
+      print_addr = imem_addr;
+      print_wdata = imemory_wdata;
+      print_wstrb = imemory_wstrb;
+    end else begin
+      print_valid = 0;
+      print_instr = 0;
+      print_addr = 0;
+      print_wdata = 0;
+      print_wstrb = 0;
+    end
 
-    clint_valid = v.clint_d | v.clint_i;
-    clint_instr = v.clint_d ? dmemory_instr : imemory_instr;
-    clint_addr = v.clint_d ? dmem_addr : imem_addr;
-    clint_wdata = v.clint_d ? dmemory_wdata : imemory_wdata;
-    clint_wstrb = v.clint_d ? dmemory_wstrb : imemory_wstrb;
+    if (v.clint_d == 1) begin
+      clint_valid = dmemory_valid;
+      clint_instr = dmemory_instr;
+      clint_addr = dmem_addr;
+      clint_wdata = dmemory_wdata;
+      clint_wstrb = dmemory_wstrb;
+    end else if (v.clint_i == 1) begin
+      clint_valid = imemory_valid;
+      clint_instr = imemory_instr;
+      clint_addr = imem_addr;
+      clint_wdata = imemory_wdata;
+      clint_wstrb = imemory_wstrb;
+    end else begin
+      clint_valid = 0;
+      clint_instr = 0;
+      clint_addr = 0;
+      clint_wdata = 0;
+      clint_wstrb = 0;
+    end
 
     rin = v;
 

@@ -255,29 +255,85 @@ module soc
 
     imem_addr = imemory_addr - ibase_addr;
 
-    bram_valid = bram_d | bram_i;
-    bram_instr = bram_d ? dmemory_instr : imemory_instr;
-    bram_addr = bram_d ? dmem_addr : imem_addr;
-    bram_wdata = bram_d ? dmemory_wdata : imemory_wdata;
-    bram_wstrb = bram_d ? dmemory_wstrb : imemory_wstrb;
+    if (bram_d == 1) begin
+      bram_valid = dmemory_valid;
+      bram_instr = dmemory_instr;
+      bram_addr = dmem_addr;
+      bram_wdata = dmemory_wdata;
+      bram_wstrb = dmemory_wstrb;
+    end else if (bram_i == 1) begin
+      bram_valid = imemory_valid;
+      bram_instr = imemory_instr;
+      bram_addr = imem_addr;
+      bram_wdata = imemory_wdata;
+      bram_wstrb = imemory_wstrb;
+    end else begin
+      bram_valid = 0;
+      bram_instr = 0;
+      bram_addr = 0;
+      bram_wdata = 0;
+      bram_wstrb = 0;
+    end
 
-    uart_valid = uart_d | uart_i;
-    uart_instr = uart_d ? dmemory_instr : imemory_instr;
-    uart_addr = uart_d ? dmem_addr : imem_addr;
-    uart_wdata = uart_d ? dmemory_wdata : imemory_wdata;
-    uart_wstrb = uart_d ? dmemory_wstrb : imemory_wstrb;
+    if (uart_d == 1) begin
+      uart_valid = dmemory_valid;
+      uart_instr = dmemory_instr;
+      uart_addr = dmem_addr;
+      uart_wdata = dmemory_wdata;
+      uart_wstrb = dmemory_wstrb;
+    end else if (uart_i == 1) begin
+      uart_valid = imemory_valid;
+      uart_instr = imemory_instr;
+      uart_addr = imem_addr;
+      uart_wdata = imemory_wdata;
+      uart_wstrb = imemory_wstrb;
+    end else begin
+      uart_valid = 0;
+      uart_instr = 0;
+      uart_addr = 0;
+      uart_wdata = 0;
+      uart_wstrb = 0;
+    end
 
-    clint_valid = clint_d | clint_i;
-    clint_instr = clint_d ? dmemory_instr : imemory_instr;
-    clint_addr = clint_d ? dmem_addr : imem_addr;
-    clint_wdata = clint_d ? dmemory_wdata : imemory_wdata;
-    clint_wstrb = clint_d ? dmemory_wstrb : imemory_wstrb;
+    if (clint_d == 1) begin
+      clint_valid = dmemory_valid;
+      clint_instr = dmemory_instr;
+      clint_addr = dmem_addr;
+      clint_wdata = dmemory_wdata;
+      clint_wstrb = dmemory_wstrb;
+    end else if (clint_i == 1) begin
+      clint_valid = imemory_valid;
+      clint_instr = imemory_instr;
+      clint_addr = imem_addr;
+      clint_wdata = imemory_wdata;
+      clint_wstrb = imemory_wstrb;
+    end else begin
+      clint_valid = 0;
+      clint_instr = 0;
+      clint_addr = 0;
+      clint_wdata = 0;
+      clint_wstrb = 0;
+    end
 
-    axi_valid = axi_d | axi_i;
-    axi_instr = axi_d ? dmemory_instr : imemory_instr;
-    axi_addr = axi_d ? dmem_addr : imem_addr;
-    axi_wdata = axi_d ? dmemory_wdata : imemory_wdata;
-    axi_wstrb = axi_d ? dmemory_wstrb : imemory_wstrb;
+    if (axi_d == 1) begin
+      axi_valid = dmemory_valid;
+      axi_instr = dmemory_instr;
+      axi_addr = dmem_addr;
+      axi_wdata = dmemory_wdata;
+      axi_wstrb = dmemory_wstrb;
+    end else if (axi_i == 1) begin
+      axi_valid = imemory_valid;
+      axi_instr = imemory_instr;
+      axi_addr = imem_addr;
+      axi_wdata = imemory_wdata;
+      axi_wstrb = imemory_wstrb;
+    end else begin
+      axi_valid = 0;
+      axi_instr = 0;
+      axi_addr = 0;
+      axi_wdata = 0;
+      axi_wstrb = 0;
+    end
 
     bram_i_rin = bram_i;
     bram_d_rin = bram_d;
