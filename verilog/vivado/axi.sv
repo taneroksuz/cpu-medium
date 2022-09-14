@@ -108,12 +108,16 @@ module axi
     case (state_n)
       idle : begin
         if (axi_valid == 1) begin
-          state = (|axi_wstrb) == 1 ? write : read;
-          awvalid = |axi_wstrb;
-          wvalid = |axi_wstrb;
-          bready = |axi_wstrb;
-          arvalid = ~(|axi_wstrb);
-          rready = ~(|axi_wstrb);
+          if (m_axi_bvalid == 0 && |axi_wstrb == 1) begin
+            state = write;
+            awvalid = 1;
+            wvalid = 1;
+            bready = 1;
+          end else if (m_axi_rvalid == 0 && |axi_wstrb == 0) begin
+            state = read;
+            arvalid = 1;
+            rready = 1;
+          end
           addr = axi_addr;
           prot = {axi_instr,2'b00};
           wdata = axi_wdata;

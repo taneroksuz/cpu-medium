@@ -249,7 +249,6 @@ module dtim_ctrl
     logic [dtim_width-1:0] wid;
     logic [dtim_width-1:0] cnt;
     logic [31:0] addr;
-    logic [3:0] strb;
     logic [3:0] wstrb;
     logic [31:0] wdata;
     logic [31:0] rdata;
@@ -277,7 +276,6 @@ module dtim_ctrl
     wid : 0,
     cnt : 0,
     addr : 0,
-    strb : 0,
     wdata : 0,
     sdata : 0,
     wstrb : 0,
@@ -350,7 +348,6 @@ module dtim_ctrl
     v_b.hit = 0;
     v_b.miss = 0;
     v_b.ldst = 0;
-    v_b.wstrb = 0;
 
     if (r_b.state == hit) begin
       v_b.wren = r_f.wren;
@@ -359,7 +356,7 @@ module dtim_ctrl
       v_b.fence = r_f.fence;
       v_b.wdata = r_f.data;
       v_b.addr = r_f.addr;
-      v_b.strb = r_f.strb;
+      v_b.wstrb = r_f.strb;
       v_b.tag = r_f.tag;
       v_b.did = r_f.did;
       v_b.wid = r_f.wid;
@@ -395,7 +392,6 @@ module dtim_ctrl
             v_b.valid = 1;
           end else if (v_b.ldst == 1) begin
             v_b.state = ldst;
-            v_b.wstrb = v_b.strb;
             v_b.valid = 1;
           end else begin
             v_b.state = v_b.wren == 1 ? update : hit;
@@ -509,7 +505,7 @@ module dtim_ctrl
     if (v_b.store == 1) begin
       v_b.sdata = v_b.data[32*v_b.wid +: 32];
       for (int i=0; i<4; i=i+1) begin
-        if (v_b.strb[i] == 1) begin
+        if (v_b.wstrb[i] == 1) begin
           v_b.sdata[8*i +: 8] = v_b.wdata[8*i +: 8];
         end
       end
@@ -595,7 +591,7 @@ module dtim_ctrl
 
     dmem_in.mem_valid = v_b.valid;
     dmem_in.mem_fence = 0;
-    dmem_in.mem_instr = 1;
+    dmem_in.mem_instr = 0;
     dmem_in.mem_addr = v_b.addr;
     dmem_in.mem_wdata = v_b.wdata;
     dmem_in.mem_wstrb = v_b.wstrb;
