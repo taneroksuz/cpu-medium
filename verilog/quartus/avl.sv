@@ -64,19 +64,17 @@ module avl
     case (state)
       idle : begin
         if (avl_valid == 1) begin
-          if (m_avl_waitrequest == 1) begin
-            if (|avl_wstrb == 0) begin
-              state = load;
-              read = 1;
-              byteenable = 4'hF;
-            end else if (|avl_wstrb == 1) begin
-              state = store;
-              write = 1;
-              byteenable = avl_wstrb;
-            end
-            address = avl_addr;
-            writedata = avl_wdata;
+          if (|avl_wstrb == 0) begin
+            state = load;
+            read = 1;
+            byteenable = 4'hF;
+          end else if (|avl_wstrb == 1) begin
+            state = store;
+            write = 1;
+            byteenable = avl_wstrb;
           end
+          address = avl_addr;
+          writedata = avl_wdata;
         end
       end
       load : begin

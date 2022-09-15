@@ -108,15 +108,15 @@ module axi
     case (state_n)
       idle : begin
         if (axi_valid == 1) begin
-          if (m_axi_bvalid == 0 && |axi_wstrb == 1) begin
+          if (|axi_wstrb == 0) begin
+            state = read;
+            arvalid = 1;
+            rready = 1;
+          end else if (|axi_wstrb == 1) begin
             state = write;
             awvalid = 1;
             wvalid = 1;
             bready = 1;
-          end else if (m_axi_rvalid == 0 && |axi_wstrb == 0) begin
-            state = read;
-            arvalid = 1;
-            rready = 1;
           end
           addr = axi_addr;
           prot = {axi_instr,2'b00};
@@ -130,7 +130,7 @@ module axi
         rready = rready_n;
         addr = addr_n;
         prot = prot_n;
-        if (m_axi_awready == 1) begin
+        if (m_axi_arready == 1) begin
           arvalid = 0;
         end
         if (m_axi_rvalid == 1 && m_axi_rlast == 1 && m_axi_rresp == 0) begin
