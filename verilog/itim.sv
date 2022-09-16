@@ -340,7 +340,7 @@ module itim_ctrl
 
           if (imem_out.mem_ready == 1) begin
             v_b.data[32*v_b.cnt +: 32] = imem_out.mem_rdata;
-            if (v_b.cnt == 2*itim_width-1) begin
+            if (v_b.cnt == 2**itim_width-1) begin
               v_b.wen = 1;
               v_b.lock = 1;
               v_b.valid = 0;

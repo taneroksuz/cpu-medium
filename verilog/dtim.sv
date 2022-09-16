@@ -412,7 +412,7 @@ module dtim_ctrl
 
           if (dmem_out.mem_ready == 1) begin
             v_b.data[32*v_b.cnt +: 32] = dmem_out.mem_rdata;
-            if (v_b.cnt == 2*dtim_width-1) begin
+            if (v_b.cnt == 2**dtim_width-1) begin
               v_b.wen = 1;
               v_b.lock = 1;
               v_b.valid = 0;
@@ -479,7 +479,7 @@ module dtim_ctrl
           v_b.fence = 1;
 
           if (dmem_out.mem_ready == 1) begin
-            if (v_b.cnt == 2*dtim_width-1) begin
+            if (v_b.cnt == 2**dtim_width-1) begin
               v_b.wen = 1;
               v_b.lock = 0;
               v_b.valid = 0;
