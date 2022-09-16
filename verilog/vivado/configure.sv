@@ -5,7 +5,7 @@ package configure;
   parameter fetchbuffer_depth = 4;
   parameter storebuffer_depth = 4;
 
-  parameter bram_depth = 13;
+  parameter bram_depth = 10;
 
   parameter itim_enable = 1;
   parameter itim_width = 2;
@@ -21,7 +21,7 @@ package configure;
   parameter ras_depth = 2;
 
   parameter bram_base_addr = 32'h0;
-  parameter bram_top_addr  = 32'h8000;
+  parameter bram_top_addr  = 32'h1000;
 
   parameter itim_base_addr = 32'h0;
   parameter itim_top_addr  = 32'h4000;
