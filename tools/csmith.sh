@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 CSMITH_PATH=/opt/csmith
 
@@ -13,6 +14,8 @@ wget https://embed.cs.utah.edu/csmith/csmith-2.3.0.tar.gz
 tar xf csmith-2.3.0.tar.gz
 
 cd csmith-2.3.0
+
+sudo apt-get install build-essentials m4
 
 ./configure --prefix=$CSMITH_PATH
 

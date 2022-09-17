@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 RISCV_PATH=/opt/riscv
 
@@ -20,16 +21,20 @@ sudo apt-get install git autoconf automake autotools-dev curl libmpc-dev \
   libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool \
   patchutils bc zlib1g-dev libexpat-dev texinfo python3 device-tree-compiler
 
-git clone --depth=1 git://gcc.gnu.org/git/gcc.git gcc
-git clone --depth=1 git://sourceware.org/git/binutils-gdb.git
-git clone --depth=1 git://sourceware.org/git/newlib-cygwin.git
+wget https://github.com/gcc-mirror/gcc/archive/refs/tags/releases/gcc-12.2.0.tar.gz
+wget https://github.com/bminor/binutils-gdb/archive/refs/tags/binutils-2_39.tar.gz
+wget https://github.com/mirror/newlib-cygwin/archive/refs/tags/newlib-4.1.0.tar.gz
+
+tar xfz gcc-12.2.0.tar.gz
+tar xfz binutils-2_39.tar.gz
+tar xfz newlib-4.1.0.tar.gz
 
 mkdir combined
 cd combined
 
-ln --force -s ../newlib-cygwin/* .
-ln --force -s ../binutils-gdb/* .
-ln --force -s ../gcc/* .
+ln --force -s ../newlib-cygwin-newlib-4.1.0/* .
+ln --force -s ../binutils-gdb-binutils-2_39/* .
+ln --force -s ../gcc-releases-gcc-12.2.0/* .
 
 mkdir build
 cd build

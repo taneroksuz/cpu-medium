@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 INST_PATH=/opt/verilator
 
