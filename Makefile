@@ -21,37 +21,7 @@ FPGA ?= quartus # tb vivado quartus
 WAVE ?= off # "on" for saving dump file
 
 generate:
-	@if [ ${TEST} = "isa" ]; \
-	then \
-		soft/isa.sh ${RISCV} ${MARCH} ${MABI} ${PYTHON} ${OFFSET} ${BASEDIR}; \
-	elif [ ${TEST} = "compliance" ]; \
-	then \
-		soft/compliance.sh ${RISCV} ${MARCH} ${MABI} ${PYTHON} ${OFFSET} ${BASEDIR}; \
-	elif [ ${TEST} = "ovp" ]; \
-	then \
-		soft/ovp.sh ${RISCV} ${MARCH} ${MABI} ${XLEN} ${PYTHON} ${OFFSET} ${BASEDIR} ${OVP}; \
-	elif [ ${TEST} = "dhrystone" ]; \
-	then \
-		soft/dhrystone.sh ${RISCV} ${MARCH} ${MABI} ${ITER} ${PYTHON} ${OFFSET} ${BASEDIR}; \
-	elif [ ${TEST} = "coremark" ]; \
-	then \
-		soft/coremark.sh ${RISCV} ${MARCH} ${MABI} ${ITER} ${PYTHON} ${OFFSET} ${BASEDIR}; \
-	elif [ ${TEST} = "csmith" ]; \
-	then \
-		soft/csmith.sh ${RISCV} ${MARCH} ${MABI} ${GCC} ${CSMITH} ${CSMITH_INCL} ${PYTHON} ${OFFSET} ${BASEDIR}; \
-	elif [ ${TEST} = "uart" ]; \
-	then \
-		soft/uart.sh ${RISCV} ${MARCH} ${MABI} ${ITER} ${PYTHON} ${OFFSET} ${BASEDIR}; \
-	elif [ ${TEST} = "timer" ]; \
-	then \
-		soft/timer.sh ${RISCV} ${MARCH} ${MABI} ${ITER} ${PYTHON} ${OFFSET} ${BASEDIR}; \
-	elif [ ${TEST} = "sram" ]; \
-	then \
-		soft/sram.sh ${RISCV} ${MARCH} ${MABI} ${ITER} ${PYTHON} ${OFFSET} ${BASEDIR}; \
-	elif [ ${TEST} = "aapg" ]; \
-	then \
-		soft/aapg.sh ${RISCV} ${MARCH} ${MABI} ${ITER} ${PYTHON} ${OFFSET} ${BASEDIR} ${AAPG} ${CONFIG}; \
-	fi
+	soft/compile.sh --riscv ${RISCV} --march ${MARCH} --mabi ${MABI} --iter ${ITER} --python ${PYTHON} --offset ${OFFSET} --basedir ${BASEDIR} --aapg ${AAPG} --ovp ${OVP} --csmith ${CSMITH} --csmith_incl ${CSMITH_INCL} --gcc ${GCC} --config ${CONFIG} --program ${PROGRAM}
 
 simulate:
 	sim/run.sh --basedir ${BASEDIR} --verilator ${VERILATOR} --systemc ${SYSTEMC} --program ${PROGRAM} --cycles ${CYCLES} --wave ${WAVE}
