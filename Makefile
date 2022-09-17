@@ -13,12 +13,12 @@ PYTHON ?= /usr/bin/python3
 BASEDIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 OVP ?= riscv-ovpsim-plus-bitmanip-tests.zip
 OFFSET ?= 0x100000 # Number of dwords in blockram (address range is OFFSET * 8)
-TEST ?= dhrystone
+PROGRAM ?= dhrystone
 AAPG ?= aapg
 CONFIG ?= integer
 CYCLES ?= 10000000000
 FPGA ?= quartus # tb vivado quartus
-WAVE ?= "" # "on" for saving dump file
+WAVE ?= off # "on" for saving dump file
 
 generate:
 	@if [ ${TEST} = "isa" ]; \
@@ -54,6 +54,6 @@ generate:
 	fi
 
 simulate:
-	sim/run.sh ${BASEDIR} ${VERILATOR} ${SYSTEMC} ${TEST} ${CYCLES} ${WAVE}
+	sim/run.sh --basedir ${BASEDIR} --verilator ${VERILATOR} --systemc ${SYSTEMC} --program ${PROGRAM} --cycles ${CYCLES} --wave ${WAVE}
 
 all: generate simulate
