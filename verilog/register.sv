@@ -13,18 +13,18 @@ module register
 
   logic [31:0] reg_file[0:31] = '{default:'0};
   
-  logic [31:0] rdata1 = 0;
-  logic [31:0] rdata2 = 0;
-
-  assign register_out.rdata1 = rdata1; 
-  assign register_out.rdata2 = rdata2;
+  logic [4:0] raddr1 = 0;
+  logic [4:0] raddr2 = 0;
 
   always_ff @(posedge clk) begin
+    raddr1 <= register_rin.raddr1;
+    raddr2 <= register_rin.raddr2;
     if (register_win.wren == 1) begin
       reg_file[register_win.waddr] <= register_win.wdata;
     end
-    rdata1 <= reg_file[register_rin.raddr1];
-    rdata2 <= reg_file[register_rin.raddr2];
   end
+
+  assign register_out.rdata1 = reg_file[raddr1];
+  assign register_out.rdata2 = reg_file[raddr2];
 
 endmodule

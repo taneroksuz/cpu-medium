@@ -78,16 +78,17 @@ module itim_tag
   timeprecision 1ps;
 
   logic [29-(itim_depth+itim_width):0] tag_array[0:2**itim_depth-1] = '{default:'0};
-  logic [29-(itim_depth+itim_width):0] tag_rdata = 0;
 
-  assign itim_tag_out.rdata = tag_rdata;
+  logic [itim_depth-1 : 0] raddr = 0;
 
   always_ff @(posedge clk) begin
+    raddr <= itim_tag_in.raddr;
     if (itim_tag_in.wen == 1) begin
       tag_array[itim_tag_in.waddr] <= itim_tag_in.wdata;
     end
-    tag_rdata <= tag_array[itim_tag_in.raddr];
   end
+
+  assign itim_tag_out.rdata = tag_array[raddr];
 
 endmodule
 
@@ -101,16 +102,17 @@ module itim_data
   timeprecision 1ps;
 
   logic [2**itim_width*32-1 : 0] data_array[0:2**itim_depth-1] = '{default:'0};
-  logic [2**itim_width*32-1 : 0] data_rdata = 0;
 
-  assign itim_data_out.rdata = data_rdata;
+  logic [itim_depth-1 : 0] raddr = 0;
 
   always_ff @(posedge clk) begin
+    raddr <= itim_data_in.raddr;
     if (itim_data_in.wen == 1) begin
       data_array[itim_data_in.waddr] <= itim_data_in.wdata;
     end
-    data_rdata <= data_array[itim_data_in.raddr];
   end
+
+  assign itim_data_out.rdata = data_array[raddr];
 
 endmodule
 
@@ -124,16 +126,17 @@ module itim_valid
   timeprecision 1ps;
 
   logic [0 : 0] valid_array[0:2**itim_depth-1] = '{default:'0};
-  logic [0 : 0] valid_rdata = 0;
 
-  assign itim_valid_out.rdata = valid_rdata;
+  logic [itim_depth-1 : 0] raddr = 0;
 
   always_ff @(posedge clk) begin
+    raddr <= itim_valid_in.raddr;
     if (itim_valid_in.wen == 1) begin
       valid_array[itim_valid_in.waddr] <= itim_valid_in.wdata;
     end
-    valid_rdata <= valid_array[itim_valid_in.raddr];
   end
+
+  assign itim_valid_out.rdata = valid_array[raddr];
 
 endmodule
 
@@ -147,16 +150,17 @@ module itim_lock
   timeprecision 1ps;
 
   logic [0 : 0] lock_array[0:2**itim_depth-1] = '{default:'0};
-  logic [0 : 0] lock_rdata = 0;
 
-  assign itim_lock_out.rdata = lock_rdata;
+  logic [itim_depth-1 : 0] raddr = 0;
 
   always_ff @(posedge clk) begin
+    raddr <= itim_lock_in.raddr;
     if (itim_lock_in.wen == 1) begin
       lock_array[itim_lock_in.waddr] <= itim_lock_in.wdata;
     end
-    lock_rdata <= lock_array[itim_lock_in.raddr];
   end
+
+  assign itim_lock_out.rdata = lock_array[raddr];
 
 endmodule
 

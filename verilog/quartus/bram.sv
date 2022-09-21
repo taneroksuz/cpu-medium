@@ -22,19 +22,19 @@ module bram
 
   logic [0 : 0] bram_wen;
 
-  logic [31 : 0] rdata;
-  logic [0  : 0] ready;
+  logic [0 : 0] ready;
 
   initial begin
     $readmemh("bram.dat", bram_block);
   end
 
   assign bram_waddr = bram_addr[bram_depth+1:2];
-  assign bram_raddr = bram_addr[bram_depth+1:2];
 
   assign bram_wen = bram_valid & |(bram_wstrb);
 
   always_ff @(posedge clk) begin
+
+    bram_raddr = bram_addr[bram_depth+1:2];
 
     if (bram_wen == 1) begin
 
@@ -49,8 +49,6 @@ module bram
 
     end
 
-    rdata <= bram_block[bram_raddr];
-
   end
 
   always_ff @(posedge clk) begin
@@ -63,7 +61,7 @@ module bram
 
   end
 
-  assign bram_rdata = rdata;
+  assign bram_rdata = bram_block[bram_raddr];
   assign bram_ready = ready;
 
 

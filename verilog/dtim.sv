@@ -91,16 +91,17 @@ module dtim_tag
   timeprecision 1ps;
 
   logic [29-(dtim_depth+dtim_width):0] tag_array[0:2**dtim_depth-1] = '{default:'0};
-  logic [29-(dtim_depth+dtim_width):0] tag_rdata = 0;
 
-  assign dtim_tag_out.rdata = tag_rdata;
+  logic [dtim_depth-1 : 0] raddr = 0;
 
   always_ff @(posedge clk) begin
+    raddr <= dtim_tag_in.raddr;
     if (dtim_tag_in.wen == 1) begin
       tag_array[dtim_tag_in.waddr] <= dtim_tag_in.wdata;
     end
-    tag_rdata <= tag_array[dtim_tag_in.raddr];
   end
+
+  assign dtim_tag_out.rdata = tag_array[raddr];
 
 endmodule
 
@@ -114,16 +115,17 @@ module dtim_data
   timeprecision 1ps;
 
   logic [2**dtim_width*32-1 : 0] data_array[0:2**dtim_depth-1] = '{default:'0};
-  logic [2**dtim_width*32-1 : 0] data_rdata = 0;
 
-  assign dtim_data_out.rdata = data_rdata;
+  logic [dtim_depth-1 : 0] raddr = 0;
 
   always_ff @(posedge clk) begin
+    raddr <= dtim_data_in.raddr;
     if (dtim_data_in.wen == 1) begin
       data_array[dtim_data_in.waddr] <= dtim_data_in.wdata;
     end
-    data_rdata <= data_array[dtim_data_in.raddr];
   end
+
+  assign dtim_data_out.rdata = data_array[raddr];
 
 endmodule
 
@@ -137,16 +139,17 @@ module dtim_valid
   timeprecision 1ps;
 
   logic [0 : 0] valid_array[0:2**dtim_depth-1] = '{default:'0};
-  logic [0 : 0] valid_rdata = 0;
 
-  assign dtim_valid_out.rdata = valid_rdata;
+  logic [dtim_depth-1 : 0] raddr = 0;
 
   always_ff @(posedge clk) begin
+    raddr <= dtim_valid_in.raddr;
     if (dtim_valid_in.wen == 1) begin
       valid_array[dtim_valid_in.waddr] <= dtim_valid_in.wdata;
     end
-    valid_rdata <= valid_array[dtim_valid_in.raddr];
   end
+
+  assign dtim_valid_out.rdata = valid_array[raddr];
 
 endmodule
 
@@ -160,16 +163,17 @@ module dtim_lock
   timeprecision 1ps;
 
   logic [0 : 0] lock_array[0:2**dtim_depth-1] = '{default:'0};
-  logic [0 : 0] lock_rdata = 0;
 
-  assign dtim_lock_out.rdata = lock_rdata;
+  logic [dtim_depth-1 : 0] raddr = 0;
 
   always_ff @(posedge clk) begin
+    raddr <= dtim_lock_in.raddr;
     if (dtim_lock_in.wen == 1) begin
       lock_array[dtim_lock_in.waddr] <= dtim_lock_in.wdata;
     end
-    lock_rdata <= lock_array[dtim_lock_in.raddr];
   end
+
+  assign dtim_lock_out.rdata = lock_array[raddr];
 
 endmodule
 
@@ -183,16 +187,17 @@ module dtim_dirty
   timeprecision 1ps;
 
   logic [0 : 0] dirty_array[0:2**dtim_depth-1] = '{default:'0};
-  logic [0 : 0] dirty_rdata = 0;
 
-  assign dtim_dirty_out.rdata = dirty_rdata;
+  logic [dtim_depth-1 : 0] raddr = 0;
 
   always_ff @(posedge clk) begin
+    raddr <= dtim_dirty_in.raddr;
     if (dtim_dirty_in.wen == 1) begin
       dirty_array[dtim_dirty_in.waddr] <= dtim_dirty_in.wdata;
     end
-    dirty_rdata <= dirty_array[dtim_dirty_in.raddr];
   end
+
+  assign dtim_dirty_out.rdata = dirty_array[raddr];
 
 endmodule
 
@@ -249,6 +254,7 @@ module dtim_ctrl
     logic [dtim_width-1:0] wid;
     logic [dtim_width-1:0] cnt;
     logic [31:0] addr;
+    logic [3:0] strb;
     logic [3:0] wstrb;
     logic [31:0] wdata;
     logic [31:0] rdata;
@@ -278,6 +284,7 @@ module dtim_ctrl
     addr : 0,
     wdata : 0,
     sdata : 0,
+    strb : 0,
     wstrb : 0,
     rdata : 0,
     ready : 0,
@@ -388,6 +395,8 @@ module dtim_ctrl
           end else if (v_b.miss == 1) begin
             v_b.state = miss;
             v_b.addr[dtim_width+1:0] = 0;
+            v_b.strb = v_b.wstrb;
+            v_b.wstrb = 0;
             v_b.cnt = 0;
             v_b.valid = 1;
           end else if (v_b.ldst == 1) begin
@@ -414,6 +423,7 @@ module dtim_ctrl
             v_b.data[32*v_b.cnt +: 32] = dmem_out.mem_rdata;
             if (v_b.cnt == 2**dtim_width-1) begin
               v_b.wen = 1;
+              v_b.wstrb = v_b.strb;
               v_b.lock = 1;
               v_b.valid = 0;
               v_b.state = update;
