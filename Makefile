@@ -11,7 +11,8 @@ CSMITH_INCL ?= $(shell ls -d $(CSMITH)/include/csmith-* | head -n1)
 GCC ?= /usr/bin/gcc
 PYTHON ?= /usr/bin/python3
 BASEDIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-OVP ?= riscv-ovpsim-plus-bitmanip-tests.zip
+OVP_BIT ?= riscv-ovpsim-plus-bitmanip-tests.zip
+OVP_FP ?= riscv-ovpsim-plus-fp-tests.zip
 OFFSET ?= 0x100000 # Number of dwords in blockram (address range is OFFSET * 8)
 PROGRAM ?= dhrystone
 AAPG ?= aapg
@@ -21,7 +22,7 @@ FPGA ?= quartus # tb vivado quartus
 WAVE ?= off # "on" for saving dump file
 
 generate:
-	soft/compile.sh --riscv ${RISCV} --march ${MARCH} --mabi ${MABI} --iter ${ITER} --python ${PYTHON} --offset ${OFFSET} --basedir ${BASEDIR} --aapg ${AAPG} --ovp ${OVP} --csmith ${CSMITH} --csmith_incl ${CSMITH_INCL} --gcc ${GCC} --config ${CONFIG} --program ${PROGRAM}
+	soft/compile.sh --riscv ${RISCV} --march ${MARCH} --mabi ${MABI} --iter ${ITER} --python ${PYTHON} --offset ${OFFSET} --basedir ${BASEDIR} --aapg ${AAPG} --ovp-bit ${OVP_BIT} --ovp-fp ${OVP_FP} --csmith ${CSMITH} --csmith_incl ${CSMITH_INCL} --gcc ${GCC} --config ${CONFIG} --program ${PROGRAM}
 
 simulate:
 	sim/run.sh --basedir ${BASEDIR} --verilator ${VERILATOR} --systemc ${SYSTEMC} --program ${PROGRAM} --cycles ${CYCLES} --wave ${WAVE}
