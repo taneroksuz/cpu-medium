@@ -1,3 +1,6 @@
 [submodule "soft"]
 	path = soft
 	url = https://github.com/taneroksuz/riscv-test-case-generation.git
+[submodule "fpu"]
+	path = fpu
+	url = https://github.com/taneroksuz/riscv-sfpu.git
