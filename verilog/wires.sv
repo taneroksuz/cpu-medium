@@ -2,6 +2,8 @@ package wires;
   timeunit 1ns;
   timeprecision 1ps;
 
+  import fp_wire::*;
+
   typedef struct packed{
     logic [0:0] bit_sh1add;
     logic [0:0] bit_sh2add;
@@ -472,6 +474,66 @@ package wires;
     bcu_op_type bcu_op;
     lsu_op_type lsu_op;
   } compress_out_type;
+
+  typedef struct packed{
+    logic [31 : 0] instr;
+  } fp_decode_in_type;
+
+  typedef struct packed{
+    logic [31 : 0] imm;
+    logic [4  : 0] waddr;
+    logic [4  : 0] raddr1;
+    logic [4  : 0] raddr2;
+    logic [4  : 0] raddr3;
+    logic [0  : 0] wren;
+    logic [0  : 0] rden1;
+    logic [0  : 0] fp_wren;
+    logic [0  : 0] fp_rden1;
+    logic [0  : 0] fp_rden2;
+    logic [0  : 0] fp_rden3;
+    logic [0  : 0] fp_load;
+    logic [0  : 0] fp_store;
+    logic [0  : 0] fp;
+    logic [0  : 0] valid;
+    fp_operation_type fp_op;
+  } fp_decode_out_type;
+
+  typedef struct packed{
+    logic [31 : 0] idata;
+    logic [31 : 0] data1;
+    logic [31 : 0] data2;
+    logic [31 : 0] data3;
+    logic [2  : 0] rm;
+    logic [0  : 0] enable;
+    fp_operation_type fp_op;
+  } fp_execute_in_type;
+
+  typedef struct packed{
+    logic [31 : 0] result;
+    logic [4  : 0] flags;
+    logic [0  : 0] ready;
+  } fp_execute_out_type;
+
+  typedef struct packed{
+    logic [0  : 0] rden1;
+    logic [4  : 0] raddr1;
+    logic [0  : 0] rden2;
+    logic [4  : 0] raddr2;
+    logic [0  : 0] rden3;
+    logic [4  : 0] raddr3;
+  } fp_register_read_in_type;
+
+  typedef struct packed{
+    logic [0  : 0] wren;
+    logic [4  : 0] waddr;
+    logic [31 : 0] wdata;
+  } fp_register_write_in_type;
+
+  typedef struct packed{
+    logic [31 : 0] rdata1;
+    logic [31 : 0] rdata2;
+    logic [31 : 0] rdata3;
+  } fp_register_out_type;
 
   typedef struct packed{
     logic [0  : 0] rden1;
@@ -1223,6 +1285,36 @@ package wires;
   typedef struct packed{
     logic [0  : 0] rden1;
     logic [0  : 0] rden2;
+    logic [0  : 0] rden3;
+    logic [4  : 0] raddr1;
+    logic [4  : 0] raddr2;
+    logic [4  : 0] raddr3;
+    logic [31 : 0] rdata1;
+    logic [31 : 0] rdata2;
+    logic [31 : 0] rdata3;
+  } fp_forwarding_register_in_type;
+
+  typedef struct packed{
+    logic [0  : 0] wren;
+    logic [4  : 0] waddr;
+    logic [31 : 0] wdata;
+  } fp_forwarding_execute_in_type;
+
+  typedef struct packed{
+    logic [0  : 0] wren;
+    logic [4  : 0] waddr;
+    logic [31 : 0] wdata;
+  } fp_forwarding_memory_in_type;
+
+  typedef struct packed{
+    logic [31 : 0] data1;
+    logic [31 : 0] data2;
+    logic [31 : 0] data3;
+  } fp_forwarding_out_type;
+
+  typedef struct packed{
+    logic [0  : 0] rden1;
+    logic [0  : 0] rden2;
     logic [4  : 0] raddr1;
     logic [4  : 0] raddr2;
     logic [31 : 0] rdata1;
@@ -1285,6 +1377,23 @@ package wires;
     memory_out_type m;
     writeback_out_type w;
   } writeback_in_type;
+
+  typedef struct packed{
+    fp_decode_in_type fp_decode_in;
+    fp_execute_in_type fp_execute_in;
+    fp_register_read_in_type fp_register_read_in;
+    fp_register_write_in_type fp_register_write_in;
+    fp_forwarding_register_in_type fp_forwarding_register_in;
+    fp_forwarding_execute_in_type fp_forwarding_execute_in;
+    fp_forwarding_memory_in_type fp_forwarding_memory_in;
+  } fpu_in_type;
+
+  typedef struct packed{
+    fp_decode_out_type fp_decode_out;
+    fp_execute_out_type fp_execute_out;
+    fp_register_out_type fp_register_out;
+    fp_forwarding_out_type fp_forwarding_out;
+  } fpu_out_type;
 
   typedef struct packed{
     logic [0  : 0] mem_valid;
