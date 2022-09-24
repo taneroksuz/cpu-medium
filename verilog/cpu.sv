@@ -82,6 +82,8 @@ module cpu
   execute_out_type execute_out_q;
   memory_out_type memory_out_q;
   writeback_out_type writeback_out_q;
+  fpu_in_type fpu_in;
+  fpu_out_type fpu_out;
   mem_in_type fetchbuffer_in;
   mem_out_type fetchbuffer_out;
   mem_in_type storebuffer_in;
@@ -368,6 +370,16 @@ module cpu
     .d (writeback_in_d),
     .y (writeback_out_y),
     .q (writeback_out_q)
+  );
+
+  fpu#(
+    .fpu_enable (fpu_enable)
+  ) fpu_comp
+  (
+    .rst (rst),
+    .clk (clk),
+    .fpu_in (fpu_in),
+    .fpu_out (fpu_out)
   );
 
   itim#(

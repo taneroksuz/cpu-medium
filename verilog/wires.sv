@@ -493,19 +493,22 @@ package wires;
     logic [0  : 0] fp_rden3;
     logic [0  : 0] fp_load;
     logic [0  : 0] fp_store;
+    logic [1  : 0] fmt;
+    logic [2  : 0] rm;
     logic [0  : 0] fp;
     logic [0  : 0] valid;
     fp_operation_type fp_op;
+    lsu_op_type lsu_op;
   } fp_decode_out_type;
 
   typedef struct packed{
-    logic [31 : 0] idata;
     logic [31 : 0] data1;
     logic [31 : 0] data2;
     logic [31 : 0] data3;
+    fp_operation_type fp_op;
+		logic [1  : 0] fmt;
     logic [2  : 0] rm;
     logic [0  : 0] enable;
-    fp_operation_type fp_op;
   } fp_execute_in_type;
 
   typedef struct packed{
@@ -1381,11 +1384,11 @@ package wires;
   typedef struct packed{
     fp_decode_in_type fp_decode_in;
     fp_execute_in_type fp_execute_in;
-    fp_register_read_in_type fp_register_read_in;
-    fp_register_write_in_type fp_register_write_in;
-    fp_forwarding_register_in_type fp_forwarding_register_in;
-    fp_forwarding_execute_in_type fp_forwarding_execute_in;
-    fp_forwarding_memory_in_type fp_forwarding_memory_in;
+    fp_register_read_in_type fp_register_rin;
+    fp_register_write_in_type fp_register_win;
+    fp_forwarding_register_in_type fp_forwarding_rin;
+    fp_forwarding_execute_in_type fp_forwarding_ein;
+    fp_forwarding_memory_in_type fp_forwarding_min;
   } fpu_in_type;
 
   typedef struct packed{
