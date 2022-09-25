@@ -161,7 +161,7 @@ module fpu_decode
             fpu_op.fmax = 1;
           end
           funct_fcomp : begin
-            fwren = 1;
+            wren = 1;
             frden1 = 1;
             frden2 = 1;
             fpu = 1;

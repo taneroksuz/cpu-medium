@@ -226,6 +226,8 @@ module decode_stage
       v.stall = 1;
     end else if (a.e.bitc == 1) begin
       v.stall = 1;
+    end else if (a.e.fpuc == 1) begin
+      v.stall = 1;
     end else if (a.e.load == 1 && ((v.rden1 == 1 && a.e.waddr == v.raddr1) || (v.rden2 == 1 && a.e.waddr == v.raddr2))) begin 
       v.stall = 1;
     end else if (a.e.fload == 1 && ((v.frden1 == 1 && a.e.waddr == v.raddr1) || (v.frden2 == 1 && a.e.waddr == v.raddr2) || (v.frden3 == 1 && a.e.waddr == v.raddr3))) begin 
