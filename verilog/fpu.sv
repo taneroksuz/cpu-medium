@@ -79,47 +79,59 @@ module fpu_decode
     valid = 1;
 
     case (opcode)
-      opcode_fload | opcode_fstore : begin
-        if (opcode[5] == 0) begin
-          imm = imm_i;
-          rden1 = 1;
-          frden2 = 1;
-          fload = 1;
-          fp = 1;
-          if (funct3 == funct_lw) begin
-            lsu_op.lsu_lw = 1;
-          end else begin
-            valid = 0;
-          end
-        end else if (opcode[5] == 1) begin
-          imm = imm_s;
-          rden1 = 1;
-          fwren = 1;
-          fstore = 1;
-          fp = 1;
-          if (funct3 == funct_sw) begin
-            lsu_op.lsu_sw = 1;
-          end else begin
-            valid = 0;
-          end
+      opcode_fload : begin
+        imm = imm_i;
+        rden1 = 1;
+        fwren = 1;
+        fload = 1;
+        fp = 1;
+        if (funct3 == funct_lw) begin
+          lsu_op.lsu_lw = 1;
+        end else begin
+          valid = 0;
+        end
+      end
+      opcode_fstore : begin
+        imm = imm_s;
+        rden1 = 1;
+        frden2 = 1;
+        fstore = 1;
+        fp = 1;
+        if (funct3 == funct_sw) begin
+          lsu_op.lsu_sw = 1;
+        end else begin
+          valid = 0;
         end
       end
       opcode_fp : begin
-        case (funct7[6:2]) 
-          funct_fadd | funct_fsub | funct_fmul | funct_fdiv : begin
+        case (funct7[6:2])
+          funct_fadd : begin 
             fwren = 1;
             frden1 = 1;
             frden2 = 1;
             fp = 1;
-            if (funct7[3:2] == 0) begin
-              fpu_op.fadd = 1;
-            end else if (funct7[3:2] == 1) begin
-              fpu_op.fsub = 1;
-            end else if (funct7[3:2] == 2) begin
-              fpu_op.fmul = 1;
-            end else if (funct7[3:2] == 3) begin
-              fpu_op.fdiv = 1;
-            end
+            fpu_op.fadd = 1;
+          end
+          funct_fsub : begin
+            fwren = 1;
+            frden1 = 1;
+            frden2 = 1;
+            fp = 1;
+            fpu_op.fsub = 1;
+          end
+          funct_fmul : begin
+            fwren = 1;
+            frden1 = 1;
+            frden2 = 1;
+            fp = 1;
+            fpu_op.fmul = 1;
+          end
+          funct_fdiv : begin
+            fwren = 1;
+            frden1 = 1;
+            frden2 = 1;
+            fp = 1;
+            fpu_op.fdiv = 1;
           end
           funct_fsqrt : begin
             fwren = 1;
@@ -148,54 +160,68 @@ module fpu_decode
             fp = 1;
             fpu_op.fcmp = 1;
           end
-          funct_fmv_f2i | funct_fmv_i2f : begin
-            if (funct7[3] == 0) begin
-              wren = 1;
-              frden1 = 1;
-              fp = 1;
-              if (rm == 0) begin
-                fpu_op.fmv_f2i = 1;
-              end else if (rm == 1) begin
-                fpu_op.fclass = 1;
-              end
-            end else if (funct7[3] == 1) begin
-              rden1 = 1;
-              fwren = 1;
-              fp = 1;
-              fpu_op.fmv_i2f = 1;
+          funct_fmv_f2i : begin
+            wren = 1;
+            frden1 = 1;
+            fp = 1;
+            if (rm == 0) begin
+              fpu_op.fmv_f2i = 1;
+            end else if (rm == 1) begin
+              fpu_op.fclass = 1;
             end
           end
-          funct_fconv_f2i | funct_fconv_i2f : begin
-            if (funct7[3] == 0) begin
-              wren = 1;
-              frden1 = 1;
-              fp = 1;
-              fpu_op.fcvt_f2i = 1;
-            end else if (funct7[3] == 1) begin
-              rden1 = 1;
-              fwren = 1;
-              fp = 1;
-              fpu_op.fcvt_i2f = 1;
-            end
+          funct_fmv_i2f : begin
+            rden1 = 1;
+            fwren = 1;
+            fp = 1;
+            fpu_op.fmv_i2f = 1;
+          end
+          funct_fconv_f2i : begin
+            wren = 1;
+            frden1 = 1;
+            fp = 1;
+            fpu_op.fcvt_f2i = 1;
+          end
+          funct_fconv_i2f : begin
+            rden1 = 1;
+            fwren = 1;
+            fp = 1;
+            fpu_op.fcvt_i2f = 1;
           end
           default : valid = 0;
         endcase
       end
-      opcode_fmadd | opcode_fmsub | opcode_fnmsub | opcode_fnmadd : begin
+      opcode_fmadd : begin
         fwren = 1;
         frden1 = 1;
         frden2 = 1;
         frden3 = 1;
         fp = 1;
-        if (opcode[3:2] == 0) begin
-          fpu_op.fmadd = 1;
-        end else if (opcode[3:2] == 1) begin
-          fpu_op.fmsub = 1;
-        end else if (opcode[3:2] == 2) begin
-          fpu_op.fnmsub = 1;
-        end else if (opcode[3:2] == 3) begin
-          fpu_op.fnmadd = 1;
-        end
+        fpu_op.fmadd = 1;
+      end
+      opcode_fmsub : begin
+        fwren = 1;
+        frden1 = 1;
+        frden2 = 1;
+        frden3 = 1;
+        fp = 1;
+        fpu_op.fmsub = 1;
+      end
+      opcode_fnmsub : begin
+        fwren = 1;
+        frden1 = 1;
+        frden2 = 1;
+        frden3 = 1;
+        fp = 1;
+        fpu_op.fnmsub = 1;
+      end
+      opcode_fnmadd : begin
+        fwren = 1;
+        frden1 = 1;
+        frden2 = 1;
+        frden3 = 1;
+        fp = 1;
+        fpu_op.fnmadd = 1;
       end
       default : valid = 0;
     endcase
@@ -301,6 +327,72 @@ module fpu_register
   assign fp_register_out.rdata1 = fp_reg_file[raddr1];
   assign fp_register_out.rdata2 = fp_reg_file[raddr2];
   assign fp_register_out.rdata3 = fp_reg_file[raddr3];
+
+endmodule
+
+module fpu_csr
+(
+  input logic rst,
+  input logic clk,
+  input fp_csr_read_in_type fp_csr_rin,
+  input fp_csr_write_in_type fp_csr_win,
+  input fp_csr_exception_in_type fp_csr_ein,
+  output fp_csr_out_type fp_csr_out
+);
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  typedef struct packed{
+    logic [2 : 0] frm;
+    logic [4 : 0] fflags;
+  } fp_csr_type;
+
+  parameter fp_csr_type init_fp_csr = '{
+    frm : 0,
+    fflags : 0
+  };
+
+  fp_csr_type fp_csr = init_fp_csr;
+
+  always_comb begin
+    fp_csr_out.fflags = fp_csr.fflags;
+    fp_csr_out.frm = fp_csr.frm;
+    fp_csr_out.cdata = 0;
+    if (fp_csr_rin.crden == 1) begin
+      case (fp_csr_rin.craddr)
+        csr_fflags : fp_csr_out.cdata = {27'h0,fp_csr.fflags};
+        csr_frm : fp_csr_out.cdata = {29'h0,fp_csr.frm};
+        csr_fcsr : fp_csr_out.cdata = {24'h0,fp_csr.frm,fp_csr.fflags};
+        default :;
+      endcase
+    end
+  end
+
+  always_ff @(posedge clk) begin
+    if (rst == 0) begin
+      fp_csr <= init_fp_csr;
+    end else begin
+      if (fp_csr_win.cwren == 1) begin
+        case (fp_csr_win.cwaddr)
+          csr_fflags : begin
+            fp_csr.fflags <= fp_csr_win.cdata[4:0];
+          end
+          csr_frm : begin
+            fp_csr.frm <= fp_csr_win.cdata[2:0];
+          end
+          csr_fcsr : begin
+            fp_csr.fflags <= fp_csr_win.cdata[4:0];
+            fp_csr.frm <= fp_csr_win.cdata[7:5];
+          end
+          default : begin
+          end
+        endcase
+      end
+      if (fp_csr_ein.valid == 1) begin
+        fp_csr.fflags <= fp_csr_ein.fflags;
+      end
+    end
+  end
 
 endmodule
 
@@ -543,6 +635,16 @@ module fpu
         .fp_register_rin (fpu_in.fp_register_rin),
         .fp_register_win (fpu_in.fp_register_win),
         .fp_register_out (fpu_out.fp_register_out)
+      );
+
+      fpu_csr fpu_csr_comp
+      (
+        .rst (rst),
+        .clk (clk),
+        .fp_csr_rin (fpu_in.fp_csr_rin),
+        .fp_csr_win (fpu_in.fp_csr_win),
+        .fp_csr_ein (fpu_in.fp_csr_ein),
+        .fp_csr_out (fpu_out.fp_csr_out)
       );
 
       fpu_forwarding fpu_forwarding_comp

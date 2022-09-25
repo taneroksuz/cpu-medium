@@ -1367,6 +1367,28 @@ package wires;
   } csr_out_type;
 
   typedef struct packed{
+    logic [0  : 0] crden;
+    logic [11 : 0] craddr;
+  } fp_csr_read_in_type;
+
+  typedef struct packed{
+    logic [0  : 0] cwren;
+    logic [11 : 0] cwaddr;
+    logic [31 : 0] cdata;
+  } fp_csr_write_in_type;
+
+  typedef struct packed{
+    logic [0  : 0] valid;
+    logic [4  : 0] fflags;
+  } fp_csr_exception_in_type;
+
+  typedef struct packed{
+    logic [4  : 0] fflags;
+    logic [2  : 0] frm;
+    logic [31 : 0] cdata;
+  } fp_csr_out_type;
+
+  typedef struct packed{
     logic [0  : 0] rden1;
     logic [0  : 0] rden2;
     logic [0  : 0] rden3;
@@ -1467,6 +1489,9 @@ package wires;
     fp_execute_in_type fp_execute_in;
     fp_register_read_in_type fp_register_rin;
     fp_register_write_in_type fp_register_win;
+    fp_csr_read_in_type fp_csr_rin;
+    fp_csr_write_in_type fp_csr_win;
+    fp_csr_exception_in_type fp_csr_ein;
     fp_forwarding_register_in_type fp_forwarding_rin;
     fp_forwarding_execute_in_type fp_forwarding_ein;
     fp_forwarding_memory_in_type fp_forwarding_min;
@@ -1476,6 +1501,7 @@ package wires;
     fp_decode_out_type fp_decode_out;
     fp_execute_out_type fp_execute_out;
     fp_register_out_type fp_register_out;
+    fp_csr_out_type fp_csr_out;
     fp_forwarding_out_type fp_forwarding_out;
   } fpu_out_type;
 

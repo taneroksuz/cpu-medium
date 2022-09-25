@@ -69,6 +69,8 @@ module execute_stage
     v.branch = d.d.branch;
     v.load = d.d.load;
     v.store = d.d.store;
+    v.fload = d.d.fload;
+    v.fstore = d.d.fstore;
     v.nop = d.d.nop;
     v.csreg = d.d.csreg;
     v.division = d.d.division;
@@ -185,8 +187,8 @@ module execute_stage
     agu_in.jal = v.jal;
     agu_in.jalr = v.jalr;
     agu_in.branch = v.branch;
-    agu_in.load = v.load;
-    agu_in.store = v.store;
+    agu_in.load = v.load | v.fload;
+    agu_in.store = v.store | v.fstore;
     agu_in.lsu_op = v.lsu_op;
 
     v.address = agu_out.address;
@@ -197,11 +199,13 @@ module execute_stage
       v.ecause = agu_out.ecause;
       v.etval = agu_out.etval;
       if (v.exception == 1) begin
-        if (v.load == 1) begin
+        if ((v.load | v.fload) == 1) begin
           v.load = 0;
+          v.fload = 0;
           v.wren = 0;
-        end else if (v.store == 1) begin
+        end else if ((v.store | v.fstore) == 1) begin
           v.store = 0;
+          v.fstore = 0;
         end else if (v.jump == 1) begin
           v.jump = 0;
           v.wren = 0;

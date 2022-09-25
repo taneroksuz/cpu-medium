@@ -17,6 +17,8 @@ module memory_stage
   input csr_out_type csr_out,
   output csr_write_in_type csr_win,
   output csr_exception_in_type csr_ein,
+  output fp_csr_write_in_type fp_csr_win,
+  output fp_csr_exception_in_type fp_csr_ein,
   input memory_in_type a,
   input memory_in_type d,
   output memory_out_type y,

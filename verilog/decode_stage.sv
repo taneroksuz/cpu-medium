@@ -16,6 +16,8 @@ module decode_stage
   output fp_register_read_in_type fp_register_rin,
   input csr_out_type csr_out,
   output csr_read_in_type csr_rin,
+  input fp_csr_out_type fp_csr_out,
+  output fp_csr_read_in_type fp_csr_rin,
   input decode_in_type a,
   input decode_in_type d,
   output decode_out_type y,
