@@ -17,8 +17,6 @@ module memory_stage
   input csr_out_type csr_out,
   output csr_write_in_type csr_win,
   output csr_exception_in_type csr_ein,
-  output fp_csr_write_in_type fp_csr_win,
-  output fp_csr_exception_in_type fp_csr_ein,
   input memory_in_type a,
   input memory_in_type d,
   output memory_out_type y,
@@ -54,6 +52,8 @@ module memory_stage
     v.exception = d.e.exception;
     v.ecause = d.e.ecause;
     v.etval = d.e.etval;
+    v.fpu = d.e.fpu;
+    v.flags = d.e.flags;
     v.alu_op = d.e.alu_op;
     v.bcu_op = d.e.bcu_op;
     v.lsu_op = d.e.lsu_op;
@@ -145,6 +145,8 @@ module memory_stage
     csr_ein.epc = v.pc;
     csr_ein.ecause = v.ecause;
     csr_ein.etval = v.etval;
+    csr_ein.fpu = v.fpu;
+    csr_ein.fflags = v.flags;
     
     rin = v;
 

@@ -21,6 +21,8 @@ module execute_stage
   output bit_alu_in_type bit_alu_in,
   input bit_clmul_out_type bit_clmul_out,
   output bit_clmul_in_type bit_clmul_in,
+  input fp_execute_out_type fp_execute_out,
+  output fp_execute_in_type fp_execute_in,
   input register_out_type register_out,
   input fp_register_out_type fp_register_out,
   input forwarding_out_type forwarding_out,
@@ -84,7 +86,8 @@ module execute_stage
     v.wfi = d.d.wfi;
     v.fmt = d.d.fmt;
     v.rm = d.d.rm;
-    v.fp = d.d.fp;
+    v.fpu = d.d.fpu;
+    v.fpuc = d.d.fpuc;
     v.valid = d.d.valid;
     v.cdata = d.d.cdata;
     v.return_pop = d.d.return_pop;
@@ -128,6 +131,12 @@ module execute_stage
     v.frdata2 = fp_forwarding_out.data2;
     v.frdata3 = fp_forwarding_out.data3;
 
+    if (v.fpu == 1) begin
+      if (v.rden1 == 1) begin
+        v.frdata1 = v.rdata1;
+      end
+    end
+
     if ((d.e.stall | d.m.stall) == 1) begin
       v = r;
       v.wren = v.wren_b;
@@ -148,7 +157,8 @@ module execute_stage
       v.ebreak = v.ebreak_b;
       v.mret = v.mret_b;
       v.wfi = v.wfi_b;
-      v.fp = v.fp_b;
+      v.fpu = v.fpu_b;
+      v.fpuc = v.fpuc_b;
       v.jump = v.jump_b;
       v.valid = v.valid_b;
       v.return_pop = v.return_pop_b;
@@ -245,6 +255,18 @@ module execute_stage
     v.bcdata = bit_clmul_out.result;
     v.bcready = bit_clmul_out.ready;
 
+    fp_execute_in.data1 = v.frdata1;
+    fp_execute_in.data2 = v.frdata2;
+    fp_execute_in.data3 = v.frdata3;
+    fp_execute_in.fpu_op = v.fpu_op;
+    fp_execute_in.fmt = v.fmt;
+    fp_execute_in.rm = v.rm;
+    fp_execute_in.enable = v.fpu & v.enable;
+
+    v.fdata = fp_execute_out.result;
+    v.flags = fp_execute_out.flags;
+    v.fready = fp_execute_out.ready;
+
     if (v.auipc == 1) begin
       v.wdata = v.address;
     end else if (v.lui == 1) begin
@@ -263,6 +285,8 @@ module execute_stage
         v.wdata = v.bdata;
     end else if (v.bitc == 1) begin
         v.wdata = v.bcdata;
+    end else if (v.fpu == 1) begin
+        v.wdata = v.fdata;
     end
 
     csr_alu_in.cdata = v.cdata;
@@ -279,6 +303,10 @@ module execute_stage
       end
     end else if (v.bitc == 1) begin
       if (v.bcready == 0) begin
+        v.stall = ~(a.m.stall);
+      end
+    end else if (v.fpuc == 1) begin
+      if (v.fready == 0) begin
         v.stall = ~(a.m.stall);
       end
     end
@@ -301,7 +329,8 @@ module execute_stage
     v.ebreak_b = v.ebreak;
     v.mret_b = v.mret;
     v.wfi_b = v.wfi;
-    v.fp_b = v.fp;
+    v.fpu_b = v.fpu;
+    v.fpuc_b = v.fpuc;
     v.jump_b = v.jump;
     v.valid_b = v.valid;
     v.return_pop_b = v.return_pop;
@@ -330,7 +359,8 @@ module execute_stage
       v.ebreak = 0;
       v.mret = 0;
       v.wfi = 0;
-      v.fp = 0;
+      v.fpu = 0;
+      v.fpuc = 0;
       v.jump = 0;
       v.valid = 0;
       v.return_pop = 0;
@@ -379,7 +409,8 @@ module execute_stage
     y.fence = v.fence;
     y.fmt = v.fmt;
     y.rm = v.rm;
-    y.fp = v.fp;
+    y.fpu = v.fpu;
+    y.fpuc = v.fpuc;
     y.valid = v.valid;
     y.jump = v.jump;
     y.wdata = v.wdata;
@@ -397,6 +428,7 @@ module execute_stage
     y.exception = v.exception;
     y.ecause = v.ecause;
     y.etval = v.etval;
+    y.flags = v.flags;
     y.stall = v.stall;
     y.clear = v.clear;
     y.alu_op = v.alu_op;
@@ -428,7 +460,8 @@ module execute_stage
     q.fence = r.fence;
     q.fmt = r.fmt;
     q.rm = r.rm;
-    q.fp = r.fp;
+    q.fpu = r.fpu;
+    q.fpuc = r.fpuc;
     q.valid = r.valid;
     q.jump = r.jump;
     q.wdata = r.wdata;
@@ -446,6 +479,7 @@ module execute_stage
     q.exception = r.exception;
     q.ecause = r.ecause;
     q.etval = r.etval;
+    q.flags = r.flags;
     q.stall = r.stall;
     q.clear = r.clear;
     q.alu_op = r.alu_op;

@@ -88,16 +88,12 @@ module cpu
   fp_execute_in_type fp_execute_in;
   fp_register_read_in_type fp_register_rin;
   fp_register_write_in_type fp_register_win;
-  fp_csr_read_in_type fp_csr_rin;
-  fp_csr_write_in_type fp_csr_win;
-  fp_csr_exception_in_type fp_csr_ein;
   fp_forwarding_register_in_type fp_forwarding_rin;
   fp_forwarding_execute_in_type fp_forwarding_ein;
   fp_forwarding_memory_in_type fp_forwarding_min;
   fp_decode_out_type fp_decode_out;
   fp_execute_out_type fp_execute_out;
   fp_register_out_type fp_register_out;
-  fp_csr_out_type fp_csr_out;
   fp_forwarding_out_type fp_forwarding_out;
   mem_in_type fetchbuffer_in;
   mem_out_type fetchbuffer_out;
@@ -116,9 +112,6 @@ module cpu
   assign fpu_in.fp_execute_in = fp_execute_in;
   assign fpu_in.fp_register_rin = fp_register_rin;
   assign fpu_in.fp_register_win = fp_register_win;
-  assign fpu_in.fp_csr_rin = fp_csr_rin;
-  assign fpu_in.fp_csr_win = fp_csr_win;
-  assign fpu_in.fp_csr_ein = fp_csr_ein;
   assign fpu_in.fp_forwarding_rin = fp_forwarding_rin;
   assign fpu_in.fp_forwarding_ein = fp_forwarding_ein;
   assign fpu_in.fp_forwarding_min = fp_forwarding_min;
@@ -126,7 +119,6 @@ module cpu
   assign fp_decode_out = fpu_out.fp_decode_out;
   assign fp_execute_out = fpu_out.fp_execute_out;
   assign fp_register_out = fpu_out.fp_register_out;
-  assign fp_csr_out = fpu_out.fp_csr_out;
   assign fp_forwarding_out = fpu_out.fp_forwarding_out;
 
   assign fetch_in_a.f = fetch_out_y;
@@ -341,8 +333,6 @@ module cpu
     .fp_register_rin (fp_register_rin),
     .csr_out (csr_out),
     .csr_rin (csr_rin),
-    .fp_csr_out (fp_csr_out),
-    .fp_csr_rin (fp_csr_rin),
     .a (decode_in_a),
     .d (decode_in_d),
     .y (decode_out_y),
@@ -369,6 +359,8 @@ module cpu
     .bit_alu_in (bit_alu_in),
     .bit_clmul_out (bit_clmul_out),
     .bit_clmul_in (bit_clmul_in),
+    .fp_execute_out (fp_execute_out),
+    .fp_execute_in (fp_execute_in),
     .register_out (register_out),
     .fp_register_out (fp_register_out),
     .forwarding_out (forwarding_out),
@@ -399,8 +391,6 @@ module cpu
     .csr_out (csr_out),
     .csr_win (csr_win),
     .csr_ein (csr_ein),
-    .fp_csr_win (fp_csr_win),
-    .fp_csr_ein (fp_csr_ein),
     .a (memory_in_a),
     .d (memory_in_d),
     .y (memory_out_y),

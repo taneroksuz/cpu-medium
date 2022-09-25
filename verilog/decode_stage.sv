@@ -16,8 +16,6 @@ module decode_stage
   output fp_register_read_in_type fp_register_rin,
   input csr_out_type csr_out,
   output csr_read_in_type csr_rin,
-  input fp_csr_out_type fp_csr_out,
-  output fp_csr_read_in_type fp_csr_rin,
   input decode_in_type a,
   input decode_in_type d,
   output decode_out_type y,
@@ -127,6 +125,8 @@ module decode_stage
     v.frden2 = 0;
     v.fload = 0;
     v.fstore = 0;
+    v.fpu = 0;
+    v.fpuc = 0;
 
     if (fp_decode_out.valid == 1) begin
       v.imm = fp_decode_out.imm;
@@ -140,10 +140,15 @@ module decode_stage
       v.fstore = fp_decode_out.fstore;
       v.fmt = fp_decode_out.fmt;
       v.rm = fp_decode_out.rm;
-      v.fp = fp_decode_out.fp;
+      v.fpu = fp_decode_out.fpu;
+      v.fpuc = fp_decode_out.fpuc;
       v.valid = fp_decode_out.valid;
       v.lsu_op = fp_decode_out.lsu_op;
       v.fpu_op = fp_decode_out.fpu_op;
+    end
+
+    if (v.rm == 3'b111) begin
+      v.rm = csr_out.frm;
     end
 
     v.link_waddr = (v.waddr == 1 || v.waddr == 5) ? 1 : 0;
@@ -251,7 +256,8 @@ module decode_stage
       v.ebreak = 0;
       v.mret = 0;
       v.wfi = 0;
-      v.fp = 0;
+      v.fpu = 0;
+      v.fpuc = 0;
       v.valid = 0;
       v.return_pop = 0;
       v.return_push = 0;
@@ -311,7 +317,8 @@ module decode_stage
     y.wfi = v.wfi;
     y.fmt = v.fmt;
     y.rm = v.rm;
-    y.fp = v.fp;
+    y.fpu = v.fpu;
+    y.fpuc = v.fpuc;
     y.valid = v.valid;
     y.cdata = v.cdata;
     y.return_pop = v.return_pop;
@@ -371,7 +378,8 @@ module decode_stage
     q.wfi = r.wfi;
     q.fmt = r.fmt;
     q.rm = r.rm;
-    q.fp = r.fp;
+    q.fpu = r.fpu;
+    q.fpuc = r.fpuc;
     q.valid = r.valid;
     q.cdata = r.cdata;
     q.return_pop = r.return_pop;
