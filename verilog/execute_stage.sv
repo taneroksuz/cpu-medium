@@ -22,9 +22,13 @@ module execute_stage
   input bit_clmul_out_type bit_clmul_out,
   output bit_clmul_in_type bit_clmul_in,
   input register_out_type register_out,
+  input fp_register_out_type fp_register_out,
   input forwarding_out_type forwarding_out,
   output forwarding_register_in_type forwarding_rin,
   output forwarding_execute_in_type forwarding_ein,
+  input fp_forwarding_out_type fp_forwarding_out,
+  output fp_forwarding_register_in_type fp_forwarding_rin,
+  output fp_forwarding_execute_in_type fp_forwarding_ein,
   input csr_out_type csr_out,
   input execute_in_type a,
   input execute_in_type d,
@@ -49,9 +53,14 @@ module execute_stage
     v.rden2 = d.d.rden2;
     v.cwren = d.d.cwren;
     v.crden = d.d.crden;
+    v.fwren = d.d.fwren;
+    v.frden1 = d.d.frden1;
+    v.frden2 = d.d.frden2;
+    v.frden3 = d.d.frden3;
     v.waddr = d.d.waddr;
     v.raddr1 = d.d.raddr1;
     v.raddr2 = d.d.raddr2;
+    v.raddr3 = d.d.raddr3;
     v.caddr = d.d.caddr;
     v.auipc = d.d.auipc;
     v.lui = d.d.lui;
@@ -71,9 +80,10 @@ module execute_stage
     v.ebreak = d.d.ebreak;
     v.mret = d.d.mret;
     v.wfi = d.d.wfi;
+    v.fmt = d.d.fmt;
+    v.rm = d.d.rm;
+    v.fp = d.d.fp;
     v.valid = d.d.valid;
-    v.rdata1 = d.d.rdata1;
-    v.rdata2 = d.d.rdata2;
     v.cdata = d.d.cdata;
     v.return_pop = d.d.return_pop;
     v.return_push = d.d.return_push;
@@ -90,6 +100,7 @@ module execute_stage
     v.div_op = d.d.div_op;
     v.mul_op = d.d.mul_op;
     v.bit_op = d.d.bit_op;
+    v.fpu_op = d.d.fpu_op;
 
     forwarding_rin.rden1 = v.rden1;
     forwarding_rin.rden2 = v.rden2;
@@ -101,13 +112,30 @@ module execute_stage
     v.rdata1 = forwarding_out.data1;
     v.rdata2 = forwarding_out.data2;
 
+    fp_forwarding_rin.rden1 = v.frden1;
+    fp_forwarding_rin.rden2 = v.frden2;
+    fp_forwarding_rin.rden3 = v.frden3;
+    fp_forwarding_rin.raddr1 = v.raddr1;
+    fp_forwarding_rin.raddr2 = v.raddr2;
+    fp_forwarding_rin.raddr3 = v.raddr3;
+    fp_forwarding_rin.rdata1 = fp_register_out.rdata1;
+    fp_forwarding_rin.rdata2 = fp_register_out.rdata2;
+    fp_forwarding_rin.rdata3 = fp_register_out.rdata3;
+
+    v.frdata1 = fp_forwarding_out.data1;
+    v.frdata2 = fp_forwarding_out.data2;
+    v.frdata3 = fp_forwarding_out.data3;
+
     if ((d.e.stall | d.m.stall) == 1) begin
       v = r;
       v.wren = v.wren_b;
       v.cwren = v.cwren_b;
+      v.fwren = v.fwren_b;
       v.branch = v.branch_b;
       v.load = v.load_b;
       v.store = v.store_b;
+      v.fload = v.fload_b;
+      v.fstore = v.fstore_b;
       v.csreg = v.csreg_b;
       v.division = v.division_b;
       v.mult = v.mult_b;
@@ -118,6 +146,7 @@ module execute_stage
       v.ebreak = v.ebreak_b;
       v.mret = v.mret_b;
       v.wfi = v.wfi_b;
+      v.fp = v.fp_b;
       v.jump = v.jump_b;
       v.valid = v.valid_b;
       v.return_pop = v.return_pop_b;
@@ -180,7 +209,7 @@ module execute_stage
       end
     end
 
-    v.sdata = v.rdata2;
+    v.sdata = (v.fstore == 1) ? v.frdata2 : v.rdata2;
 
     mul_in.rdata1 = v.rdata1;
     mul_in.rdata2 = v.rdata2;
@@ -252,9 +281,12 @@ module execute_stage
 
     v.wren_b = v.wren;
     v.cwren_b = v.cwren;
+    v.fwren_b = v.fwren;
     v.branch_b = v.branch;
     v.load_b = v.load;
     v.store_b = v.store;
+    v.fload_b = v.fload;
+    v.fstore_b = v.fstore;
     v.csreg_b = v.csreg;
     v.division_b = v.division;
     v.mult_b = v.mult;
@@ -265,6 +297,7 @@ module execute_stage
     v.ebreak_b = v.ebreak;
     v.mret_b = v.mret;
     v.wfi_b = v.wfi;
+    v.fp_b = v.fp;
     v.jump_b = v.jump;
     v.valid_b = v.valid;
     v.return_pop_b = v.return_pop;
@@ -277,9 +310,12 @@ module execute_stage
     if ((v.stall | a.m.stall | v.clear) == 1) begin
       v.wren = 0;
       v.cwren = 0;
+      v.fwren = 0;
       v.branch = 0;
       v.load = 0;
       v.store = 0;
+      v.fload = 0;
+      v.fstore = 0;
       v.csreg = 0;
       v.division = 0;
       v.mult = 0;
@@ -290,6 +326,7 @@ module execute_stage
       v.ebreak = 0;
       v.mret = 0;
       v.wfi = 0;
+      v.fp = 0;
       v.jump = 0;
       v.valid = 0;
       v.return_pop = 0;
@@ -314,25 +351,36 @@ module execute_stage
     forwarding_ein.waddr = r.waddr;
     forwarding_ein.wdata = r.wdata;
 
+    fp_forwarding_ein.wren = r.fwren;
+    fp_forwarding_ein.waddr = r.waddr;
+    fp_forwarding_ein.wdata = r.fdata;
+
     y.pc = v.pc;
     y.npc = v.npc;
     y.wren = v.wren;
     y.cwren = v.cwren;
+    y.fwren = v.fwren;
     y.waddr = v.waddr;
     y.caddr = v.caddr;
     y.branch = v.branch;
     y.load = v.load;
     y.store = v.store;
+    y.fload = v.fload;
+    y.fstore = v.fstore;
     y.csreg = v.csreg;
     y.division = v.division;
     y.mult = v.mult;
     y.bitm = v.bitm;
     y.bitc = v.bitc;
     y.fence = v.fence;
-    y.jump = v.jump;
+    y.fmt = v.fmt;
+    y.rm = v.rm;
+    y.fp = v.fp;
     y.valid = v.valid;
+    y.jump = v.jump;
     y.wdata = v.wdata;
     y.cdata = v.cdata;
+    y.fdata = v.fdata;
     y.sdata = v.sdata;
     y.address = v.address;
     y.byteenable = v.byteenable;
@@ -354,26 +402,34 @@ module execute_stage
     y.div_op = v.div_op;
     y.mul_op = v.mul_op;
     y.bit_op = v.bit_op;
+    y.fpu_op = v.fpu_op;
 
     q.pc = r.pc;
     q.npc = r.npc;
     q.wren = r.wren;
     q.cwren = r.cwren;
+    q.fwren = r.fwren;
     q.waddr = r.waddr;
     q.caddr = r.caddr;
     q.branch = r.branch;
     q.load = r.load;
     q.store = r.store;
+    q.fload = r.fload;
+    q.fstore = r.fstore;
     q.csreg = r.csreg;
     q.division = r.division;
     q.mult = r.mult;
     q.bitm = r.bitm;
     q.bitc = r.bitc;
     q.fence = r.fence;
-    q.jump = r.jump;
+    q.fmt = r.fmt;
+    q.rm = r.rm;
+    q.fp = r.fp;
     q.valid = r.valid;
+    q.jump = r.jump;
     q.wdata = r.wdata;
     q.cdata = r.cdata;
+    q.fdata = r.fdata;
     q.sdata = r.sdata;
     q.address = r.address;
     q.byteenable = r.byteenable;
@@ -395,6 +451,7 @@ module execute_stage
     q.div_op = r.div_op;
     q.mul_op = r.mul_op;
     q.bit_op = r.bit_op;
+    q.fpu_op = r.fpu_op;
 
   end
 

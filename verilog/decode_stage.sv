@@ -10,7 +10,10 @@ module decode_stage
   output decoder_in_type decoder_in,
   input compress_out_type compress_out,
   output compress_in_type compress_in,
+  input fp_decode_out_type fp_decode_out,
+  output fp_decode_in_type fp_decode_in,
   output register_read_in_type register_rin,
+  output fp_register_read_in_type fp_register_rin,
   input csr_out_type csr_out,
   output csr_read_in_type csr_rin,
   input decode_in_type a,
@@ -54,6 +57,7 @@ module decode_stage
     v.waddr = v.instr[11:7];
     v.raddr1 = v.instr[19:15];
     v.raddr2 = v.instr[24:20];
+    v.raddr3 = v.instr[31:27];
     v.caddr = v.instr[31:20];
 
     decoder_in.instr = v.instr;
@@ -114,6 +118,32 @@ module decode_stage
       v.lsu_op = compress_out.lsu_op;
     end
 
+    fp_decode_in.instr = v.instr;
+
+    v.fwren = 0;
+    v.frden1 = 0;
+    v.frden2 = 0;
+    v.fload = 0;
+    v.fstore = 0;
+
+    if (fp_decode_out.valid == 1) begin
+      v.imm = fp_decode_out.imm;
+      v.wren = fp_decode_out.wren;
+      v.rden1 = fp_decode_out.rden1;
+      v.fwren = fp_decode_out.fwren;
+      v.frden1 = fp_decode_out.frden1;
+      v.frden2 = fp_decode_out.frden2;
+      v.frden3 = fp_decode_out.frden3;
+      v.fload = fp_decode_out.fload;
+      v.fstore = fp_decode_out.fstore;
+      v.fmt = fp_decode_out.fmt;
+      v.rm = fp_decode_out.rm;
+      v.fp = fp_decode_out.fp;
+      v.valid = fp_decode_out.valid;
+      v.lsu_op = fp_decode_out.lsu_op;
+      v.fpu_op = fp_decode_out.fpu_op;
+    end
+
     v.link_waddr = (v.waddr == 1 || v.waddr == 5) ? 1 : 0;
     v.link_raddr1 = (v.raddr1 == 1 || v.raddr1 == 5) ? 1 : 0;
     v.equal_waddr_raddr1 = (v.waddr == v.raddr1) ? 1 : 0;
@@ -158,6 +188,13 @@ module decode_stage
     register_rin.raddr1 = v.raddr1;
     register_rin.raddr2 = v.raddr2;
 
+    fp_register_rin.rden1 = v.frden1;
+    fp_register_rin.rden2 = v.frden2;
+    fp_register_rin.rden3 = v.frden3;
+    fp_register_rin.raddr1 = v.raddr1;
+    fp_register_rin.raddr2 = v.raddr2;
+    fp_register_rin.raddr3 = v.raddr3;
+
     if (v.valid == 0) begin
       v.exception = 1;
       v.ecause = except_illegal_instruction;
@@ -184,11 +221,14 @@ module decode_stage
       v.stall = 1;
     end else if (a.e.load == 1 && ((v.rden1 == 1 && a.e.waddr == v.raddr1) || (v.rden2 == 1 && a.e.waddr == v.raddr2))) begin 
       v.stall = 1;
+    end else if (a.e.fload == 1 && ((v.frden1 == 1 && a.e.waddr == v.raddr1) || (v.frden2 == 1 && a.e.waddr == v.raddr2) || (v.frden3 == 1 && a.e.waddr == v.raddr3))) begin 
+      v.stall = 1;
     end
 
     if ((v.stall | a.e.stall | a.m.stall | v.clear) == 1) begin
       v.wren = 0;
       v.cwren = 0;
+      v.fwren = 0;
       v.auipc = 0;
       v.lui = 0;
       v.jal = 0;
@@ -196,6 +236,8 @@ module decode_stage
       v.branch = 0;
       v.load = 0;
       v.store = 0;
+      v.fload = 0;
+      v.fstore = 0;
       v.nop = 0;
       v.csreg = 0;
       v.division = 0;
@@ -207,6 +249,7 @@ module decode_stage
       v.ebreak = 0;
       v.mret = 0;
       v.wfi = 0;
+      v.fp = 0;
       v.valid = 0;
       v.return_pop = 0;
       v.return_push = 0;
@@ -235,9 +278,14 @@ module decode_stage
     y.rden2 = v.rden2;
     y.cwren = v.cwren;
     y.crden = v.crden;
+    y.fwren = v.fwren;
+    y.frden1 = v.frden1;
+    y.frden2 = v.frden2;
+    y.frden3 = v.frden3;
     y.waddr = v.waddr;
     y.raddr1 = v.raddr1;
     y.raddr2 = v.raddr2;
+    y.raddr3 = v.raddr3;
     y.caddr = v.caddr;
     y.auipc = v.auipc;
     y.lui = v.lui;
@@ -246,6 +294,8 @@ module decode_stage
     y.branch = v.branch;
     y.load = v.load;
     y.store = v.store;
+    y.fload = v.fload;
+    y.fstore = v.fstore;
     y.nop = v.nop;
     y.csreg = v.csreg;
     y.division = v.division;
@@ -257,9 +307,10 @@ module decode_stage
     y.ebreak = v.ebreak;
     y.mret = v.mret;
     y.wfi = v.wfi;
+    y.fmt = v.fmt;
+    y.rm = v.rm;
+    y.fp = v.fp;
     y.valid = v.valid;
-    y.rdata1 = v.rdata1;
-    y.rdata2 = v.rdata2;
     y.cdata = v.cdata;
     y.return_pop = v.return_pop;
     y.return_push = v.return_push;
@@ -277,6 +328,7 @@ module decode_stage
     y.div_op = v.div_op;
     y.mul_op = v.mul_op;
     y.bit_op = v.bit_op;
+    y.fpu_op = v.fpu_op;
 
     q.pc = r.pc;
     q.npc = r.npc;
@@ -286,9 +338,14 @@ module decode_stage
     q.rden2 = r.rden2;
     q.cwren = r.cwren;
     q.crden = r.crden;
+    q.fwren = r.fwren;
+    q.frden1 = r.frden1;
+    q.frden2 = r.frden2;
+    q.frden3 = r.frden3;
     q.waddr = r.waddr;
     q.raddr1 = r.raddr1;
     q.raddr2 = r.raddr2;
+    q.raddr3 = r.raddr3;
     q.caddr = r.caddr;
     q.auipc = r.auipc;
     q.lui = r.lui;
@@ -297,6 +354,8 @@ module decode_stage
     q.branch = r.branch;
     q.load = r.load;
     q.store = r.store;
+    q.fload = r.fload;
+    q.fstore = r.fstore;
     q.nop = r.nop;
     q.csreg = r.csreg;
     q.division = r.division;
@@ -308,9 +367,10 @@ module decode_stage
     q.ebreak = r.ebreak;
     q.mret = r.mret;
     q.wfi = r.wfi;
+    q.fmt = r.fmt;
+    q.rm = r.rm;
+    q.fp = r.fp;
     q.valid = r.valid;
-    q.rdata1 = r.rdata1;
-    q.rdata2 = r.rdata2;
     q.cdata = r.cdata;
     q.return_pop = r.return_pop;
     q.return_push = r.return_push;
@@ -328,6 +388,7 @@ module decode_stage
     q.div_op = r.div_op;
     q.mul_op = r.mul_op;
     q.bit_op = r.bit_op;
+    q.fpu_op = r.fpu_op;
 
   end
 

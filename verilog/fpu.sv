@@ -22,30 +22,25 @@ module fpu_decode
   logic [2  : 0] funct3;
   logic [6  : 0] funct7;
 
-  logic [4  : 0] waddr;
-  logic [4  : 0] raddr1;
-  logic [4  : 0] raddr2;
-  logic [4  : 0] raddr3;
-
   logic [0  : 0] wren;
   logic [0  : 0] rden1;
 
-  logic [0  : 0] fp_wren;
-  logic [0  : 0] fp_rden1;
-  logic [0  : 0] fp_rden2;
-  logic [0  : 0] fp_rden3;
+  logic [0  : 0] fwren;
+  logic [0  : 0] frden1;
+  logic [0  : 0] frden2;
+  logic [0  : 0] frden3;
 
-  logic [0  : 0] fp_load;
-  logic [0  : 0] fp_store;
+  logic [0  : 0] fload;
+  logic [0  : 0] fstore;
 
   logic [1  : 0] fmt;
   logic [2  : 0] rm;
 
   logic [0  : 0] fp;
 
-  fp_operation_type fp_op;
-
   lsu_op_type lsu_op;
+
+  fp_operation_type fpu_op;
 
   logic [0  : 0] valid;
 
@@ -64,27 +59,22 @@ module fpu_decode
 
     imm = 0;
 
-    waddr = instr[11:7];
-    raddr1 = instr[19:15];
-    raddr2 = instr[24:20];
-    raddr3 = instr[31:27];
-
     wren = 0;
     rden1 = 0;
 
-    fp_wren = 0;
-    fp_rden1 = 0;
-    fp_rden2 = 0;
-    fp_rden3 = 0;
+    fwren = 0;
+    frden1 = 0;
+    frden2 = 0;
+    frden3 = 0;
 
-    fp_load = 0;
-    fp_store = 0;
+    fload = 0;
+    fstore = 0;
 
     fp = 0;
 
-    fp_op = init_fp_operation;
-
     lsu_op = init_lsu_op;
+
+    fpu_op = init_fp_operation;
 
     valid = 1;
 
@@ -93,8 +83,8 @@ module fpu_decode
         if (opcode[5] == 0) begin
           imm = imm_i;
           rden1 = 1;
-          fp_rden2 = 1;
-          fp_load = 1;
+          frden2 = 1;
+          fload = 1;
           fp = 1;
           if (funct3 == funct_lw) begin
             lsu_op.lsu_lw = 1;
@@ -104,8 +94,8 @@ module fpu_decode
         end else if (opcode[5] == 1) begin
           imm = imm_s;
           rden1 = 1;
-          fp_wren = 1;
-          fp_store = 1;
+          fwren = 1;
+          fstore = 1;
           fp = 1;
           if (funct3 == funct_sw) begin
             lsu_op.lsu_sw = 1;
@@ -117,118 +107,114 @@ module fpu_decode
       opcode_fp : begin
         case (funct7[6:2]) 
           funct_fadd | funct_fsub | funct_fmul | funct_fdiv : begin
-            fp_wren = 1;
-            fp_rden1 = 1;
-            fp_rden2 = 1;
+            fwren = 1;
+            frden1 = 1;
+            frden2 = 1;
             fp = 1;
             if (funct7[3:2] == 0) begin
-              fp_op.fadd = 1;
+              fpu_op.fadd = 1;
             end else if (funct7[3:2] == 1) begin
-              fp_op.fsub = 1;
+              fpu_op.fsub = 1;
             end else if (funct7[3:2] == 2) begin
-              fp_op.fmul = 1;
+              fpu_op.fmul = 1;
             end else if (funct7[3:2] == 3) begin
-              fp_op.fdiv = 1;
+              fpu_op.fdiv = 1;
             end
           end
           funct_fsqrt : begin
-            fp_wren = 1;
-            fp_rden1 = 1;
+            fwren = 1;
+            frden1 = 1;
             fp = 1;
-            fp_op.fsqrt = 1;
+            fpu_op.fsqrt = 1;
           end
           funct_fsgnj : begin
-            fp_wren = 1;
-            fp_rden1 = 1;
-            fp_rden2 = 1;
+            fwren = 1;
+            frden1 = 1;
+            frden2 = 1;
             fp = 1;
-            fp_op.fsgnj = 1;
+            fpu_op.fsgnj = 1;
           end
           funct_fminmax : begin
-            fp_wren = 1;
-            fp_rden1 = 1;
-            fp_rden2 = 1;
+            fwren = 1;
+            frden1 = 1;
+            frden2 = 1;
             fp = 1;
-            fp_op.fmax = 1;
+            fpu_op.fmax = 1;
           end
           funct_fcomp : begin
-            fp_wren = 1;
-            fp_rden1 = 1;
-            fp_rden2 = 1;
+            fwren = 1;
+            frden1 = 1;
+            frden2 = 1;
             fp = 1;
-            fp_op.fcmp = 1;
+            fpu_op.fcmp = 1;
           end
           funct_fmv_f2i | funct_fmv_i2f : begin
             if (funct7[3] == 0) begin
               wren = 1;
-              fp_rden1 = 1;
+              frden1 = 1;
               fp = 1;
               if (rm == 0) begin
-                fp_op.fmv_f2i = 1;
+                fpu_op.fmv_f2i = 1;
               end else if (rm == 1) begin
-                fp_op.fclass = 1;
+                fpu_op.fclass = 1;
               end
             end else if (funct7[3] == 1) begin
               rden1 = 1;
-              fp_wren = 1;
+              fwren = 1;
               fp = 1;
-              fp_op.fmv_i2f = 1;
+              fpu_op.fmv_i2f = 1;
             end
           end
           funct_fconv_f2i | funct_fconv_i2f : begin
             if (funct7[3] == 0) begin
               wren = 1;
-              fp_rden1 = 1;
+              frden1 = 1;
               fp = 1;
-              fp_op.fcvt_f2i = 1;
+              fpu_op.fcvt_f2i = 1;
             end else if (funct7[3] == 1) begin
               rden1 = 1;
-              fp_wren = 1;
+              fwren = 1;
               fp = 1;
-              fp_op.fcvt_i2f = 1;
+              fpu_op.fcvt_i2f = 1;
             end
           end
           default : valid = 0;
         endcase
       end
       opcode_fmadd | opcode_fmsub | opcode_fnmsub | opcode_fnmadd : begin
-        fp_wren = 1;
-        fp_rden1 = 1;
-        fp_rden2 = 1;
-        fp_rden3 = 1;
+        fwren = 1;
+        frden1 = 1;
+        frden2 = 1;
+        frden3 = 1;
         fp = 1;
         if (opcode[3:2] == 0) begin
-          fp_op.fmadd = 1;
+          fpu_op.fmadd = 1;
         end else if (opcode[3:2] == 1) begin
-          fp_op.fmsub = 1;
+          fpu_op.fmsub = 1;
         end else if (opcode[3:2] == 2) begin
-          fp_op.fnmsub = 1;
+          fpu_op.fnmsub = 1;
         end else if (opcode[3:2] == 3) begin
-          fp_op.fnmadd = 1;
+          fpu_op.fnmadd = 1;
         end
       end
       default : valid = 0;
     endcase
 
     fp_decode_out.imm = imm;
-    fp_decode_out.waddr = waddr;
-    fp_decode_out.raddr1 = raddr1;
-    fp_decode_out.raddr2 = raddr2;
-    fp_decode_out.raddr3 = raddr3;
     fp_decode_out.wren = wren;
+    fp_decode_out.fwren = fwren;
     fp_decode_out.rden1 = rden1;
-    fp_decode_out.fp_wren = fp_wren;
-    fp_decode_out.fp_rden1 = fp_rden1;
-    fp_decode_out.fp_rden2 = fp_rden2;
-    fp_decode_out.fp_rden3 = fp_rden3;
-    fp_decode_out.fp_load = fp_load;
-    fp_decode_out.fp_store = fp_store;
+    fp_decode_out.frden1 = frden1;
+    fp_decode_out.frden2 = frden2;
+    fp_decode_out.frden3 = frden3;
+    fp_decode_out.fload = fload;
+    fp_decode_out.fstore = fstore;
     fp_decode_out.fmt = fmt;
     fp_decode_out.rm = rm;
     fp_decode_out.fp = fp;
     fp_decode_out.valid = valid;
-    fp_decode_out.fp_op = fp_op;
     fp_decode_out.lsu_op = lsu_op;
+    fp_decode_out.fpu_op = fpu_op;
 
   end
 

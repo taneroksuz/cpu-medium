@@ -84,6 +84,17 @@ module cpu
   writeback_out_type writeback_out_q;
   fpu_in_type fpu_in;
   fpu_out_type fpu_out;
+  fp_decode_in_type fp_decode_in;
+  fp_execute_in_type fp_execute_in;
+  fp_register_read_in_type fp_register_rin;
+  fp_register_write_in_type fp_register_win;
+  fp_forwarding_register_in_type fp_forwarding_rin;
+  fp_forwarding_execute_in_type fp_forwarding_ein;
+  fp_forwarding_memory_in_type fp_forwarding_min;
+  fp_decode_out_type fp_decode_out;
+  fp_execute_out_type fp_execute_out;
+  fp_register_out_type fp_register_out;
+  fp_forwarding_out_type fp_forwarding_out;
   mem_in_type fetchbuffer_in;
   mem_out_type fetchbuffer_out;
   mem_in_type storebuffer_in;
@@ -303,7 +314,10 @@ module cpu
     .decoder_in (decoder_in),
     .compress_out (compress_out),
     .compress_in (compress_in),
+    .fp_decode_out (fp_decode_out),
+    .fp_decode_in (fp_decode_in),
     .register_rin (register_rin),
+    .fp_register_rin (fp_register_rin),
     .csr_out (csr_out),
     .csr_rin (csr_rin),
     .a (decode_in_a),
@@ -333,9 +347,13 @@ module cpu
     .bit_clmul_out (bit_clmul_out),
     .bit_clmul_in (bit_clmul_in),
     .register_out (register_out),
+    .fp_register_out (fp_register_out),
     .forwarding_out (forwarding_out),
     .forwarding_rin (forwarding_rin),
     .forwarding_ein (forwarding_ein),
+    .fp_forwarding_out (fp_forwarding_out),
+    .fp_forwarding_rin (fp_forwarding_rin),
+    .fp_forwarding_ein (fp_forwarding_ein),
     .csr_out (csr_out),
     .a (execute_in_a),
     .d (execute_in_d),
@@ -352,7 +370,9 @@ module cpu
     .storebuffer_out (storebuffer_out),
     .storebuffer_in (storebuffer_in),
     .forwarding_min (forwarding_min),
+    .fp_forwarding_min (fp_forwarding_min),
     .register_win (register_win),
+    .fp_register_win (fp_register_win),
     .csr_out (csr_out),
     .csr_win (csr_win),
     .csr_ein (csr_ein),
