@@ -38,6 +38,7 @@ module fpu_decode
 
   logic [0  : 0] fpu;
   logic [0  : 0] fpuc;
+  logic [0  : 0] fpuf;
 
   lsu_op_type lsu_op;
 
@@ -73,10 +74,13 @@ module fpu_decode
 
     fpu = 0;
     fpuc = 0;
+    fpuf = 0;
 
     lsu_op = init_lsu_op;
 
     fpu_op = init_fp_operation;
+
+    fpu_op.fcvt_op = instr[21:20];
 
     valid = 1;
 
@@ -113,6 +117,7 @@ module fpu_decode
             frden2 = 1;
             fpu = 1;
             fpuc = 1;
+            fpuf = 1;
             fpu_op.fadd = 1;
           end
           funct_fsub : begin
@@ -121,6 +126,7 @@ module fpu_decode
             frden2 = 1;
             fpu = 1;
             fpuc = 1;
+            fpuf = 1;
             fpu_op.fsub = 1;
           end
           funct_fmul : begin
@@ -129,6 +135,7 @@ module fpu_decode
             frden2 = 1;
             fpu = 1;
             fpuc = 1;
+            fpuf = 1;
             fpu_op.fmul = 1;
           end
           funct_fdiv : begin
@@ -137,6 +144,7 @@ module fpu_decode
             frden2 = 1;
             fpu = 1;
             fpuc = 1;
+            fpuf = 1;
             fpu_op.fdiv = 1;
           end
           funct_fsqrt : begin
@@ -144,6 +152,7 @@ module fpu_decode
             frden1 = 1;
             fpu = 1;
             fpuc = 1;
+            fpuf = 1;
             fpu_op.fsqrt = 1;
           end
           funct_fsgnj : begin
@@ -158,6 +167,7 @@ module fpu_decode
             frden1 = 1;
             frden2 = 1;
             fpu = 1;
+            fpuf = 1;
             fpu_op.fmax = 1;
           end
           funct_fcomp : begin
@@ -165,6 +175,7 @@ module fpu_decode
             frden1 = 1;
             frden2 = 1;
             fpu = 1;
+            fpuf = 1;
             fpu_op.fcmp = 1;
           end
           funct_fmv_f2i : begin
@@ -187,12 +198,14 @@ module fpu_decode
             wren = 1;
             frden1 = 1;
             fpu = 1;
+            fpuf = 1;
             fpu_op.fcvt_f2i = 1;
           end
           funct_fconv_i2f : begin
             rden1 = 1;
             fwren = 1;
             fpu = 1;
+            fpuf = 1;
             fpu_op.fcvt_i2f = 1;
           end
           default : valid = 0;
@@ -205,6 +218,7 @@ module fpu_decode
         frden3 = 1;
         fpu = 1;
         fpuc = 1;
+        fpuf = 1;
         fpu_op.fmadd = 1;
       end
       opcode_fmsub : begin
@@ -214,6 +228,7 @@ module fpu_decode
         frden3 = 1;
         fpu = 1;
         fpuc = 1;
+        fpuf = 1;
         fpu_op.fmsub = 1;
       end
       opcode_fnmsub : begin
@@ -223,6 +238,7 @@ module fpu_decode
         frden3 = 1;
         fpu = 1;
         fpuc = 1;
+        fpuf = 1;
         fpu_op.fnmsub = 1;
       end
       opcode_fnmadd : begin
@@ -232,6 +248,7 @@ module fpu_decode
         frden3 = 1;
         fpu = 1;
         fpuc = 1;
+        fpuf = 1;
         fpu_op.fnmadd = 1;
       end
       default : valid = 0;
@@ -250,6 +267,7 @@ module fpu_decode
     fp_decode_out.rm = rm;
     fp_decode_out.fpu = fpu;
     fp_decode_out.fpuc = fpuc;
+    fp_decode_out.fpuf = fpuf;
     fp_decode_out.valid = valid;
     fp_decode_out.lsu_op = lsu_op;
     fp_decode_out.fpu_op = fpu_op;
@@ -515,8 +533,8 @@ module fpu_execute
 
   fp_exe fp_exe_comp
   (
-  .fp_exe_i ( fpu_in.fp_execute_in ),
-  .fp_exe_o ( fpu_out.fp_execute_out ),
+  .fp_exe_i ( fp_execute_in ),
+  .fp_exe_o ( fp_execute_out ),
   .fp_ext1_o ( fp_ext1_o ),
   .fp_ext1_i ( fp_ext1_i ),
   .fp_ext2_o ( fp_ext2_o ),

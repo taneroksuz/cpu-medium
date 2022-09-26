@@ -88,6 +88,7 @@ module execute_stage
     v.rm = d.d.rm;
     v.fpu = d.d.fpu;
     v.fpuc = d.d.fpuc;
+    v.fpuf = d.d.fpuf;
     v.valid = d.d.valid;
     v.cdata = d.d.cdata;
     v.return_pop = d.d.return_pop;
@@ -159,6 +160,7 @@ module execute_stage
       v.wfi = v.wfi_b;
       v.fpu = v.fpu_b;
       v.fpuc = v.fpuc_b;
+      v.fpuf = v.fpuf_b;
       v.jump = v.jump_b;
       v.valid = v.valid_b;
       v.return_pop = v.return_pop_b;
@@ -331,6 +333,7 @@ module execute_stage
     v.wfi_b = v.wfi;
     v.fpu_b = v.fpu;
     v.fpuc_b = v.fpuc;
+    v.fpuf_b = v.fpuf;
     v.jump_b = v.jump;
     v.valid_b = v.valid;
     v.return_pop_b = v.return_pop;
@@ -361,6 +364,7 @@ module execute_stage
       v.wfi = 0;
       v.fpu = 0;
       v.fpuc = 0;
+      v.fpuf = 0;
       v.jump = 0;
       v.valid = 0;
       v.return_pop = 0;
@@ -411,6 +415,7 @@ module execute_stage
     y.rm = v.rm;
     y.fpu = v.fpu;
     y.fpuc = v.fpuc;
+    y.fpuf = v.fpuf;
     y.valid = v.valid;
     y.jump = v.jump;
     y.wdata = v.wdata;
@@ -462,6 +467,7 @@ module execute_stage
     q.rm = r.rm;
     q.fpu = r.fpu;
     q.fpuc = r.fpuc;
+    q.fpuf = r.fpuf;
     q.valid = r.valid;
     q.jump = r.jump;
     q.wdata = r.wdata;

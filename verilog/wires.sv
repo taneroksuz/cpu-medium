@@ -493,6 +493,7 @@ package wires;
     logic [2  : 0] rm;
     logic [0  : 0] fpu;
     logic [0  : 0] fpuc;
+    logic [0  : 0] fpuf;
     logic [0  : 0] valid;
     lsu_op_type lsu_op;
     fp_operation_type fpu_op;
@@ -630,6 +631,7 @@ package wires;
     logic [2  : 0] rm;
     logic [0  : 0] fpu;
     logic [0  : 0] fpuc;
+    logic [0  : 0] fpuf;
     logic [0  : 0] valid;
     logic [31 : 0] cdata;
     logic [0  : 0] return_pop;
@@ -694,6 +696,7 @@ package wires;
     logic [2  : 0] rm;
     logic [0  : 0] fpu;
     logic [0  : 0] fpuc;
+    logic [0  : 0] fpuf;
     logic [0  : 0] valid;
     logic [31 : 0] cdata;
     logic [0  : 0] return_pop;
@@ -763,6 +766,7 @@ package wires;
     rm : 0,
     fpu : 0,
     fpuc : 0,
+    fpuf : 0,
     valid : 0,
     cdata : 0,
     return_pop : 0,
@@ -812,6 +816,7 @@ package wires;
     logic [2  : 0] rm;
     logic [0  : 0] fpu;
     logic [0  : 0] fpuc;
+    logic [0  : 0] fpuf;
     logic [0  : 0] valid;
     logic [0  : 0] jump;
     logic [31 : 0] wdata;
@@ -884,6 +889,7 @@ package wires;
     logic [2  : 0] rm;
     logic [0  : 0] fpu;
     logic [0  : 0] fpuc;
+    logic [0  : 0] fpuf;
     logic [0  : 0] valid;
     logic [0  : 0] jump;
     logic [31 : 0] rdata1;
@@ -945,6 +951,7 @@ package wires;
     logic [0  : 0] wfi_b;
     logic [0  : 0] fpu_b;
     logic [0  : 0] fpuc_b;
+    logic [0  : 0] fpuf_b;
     logic [0  : 0] valid_b;
     logic [0  : 0] jump_b;
     logic [0  : 0] return_pop_b;
@@ -998,6 +1005,7 @@ package wires;
     rm : 0,
     fpu : 0,
     fpuc : 0,
+    fpuf : 0,
     valid : 0,
     rdata1 : 0,
     rdata2 : 0,
@@ -1058,6 +1066,7 @@ package wires;
     wfi_b : 0,
     fpu_b : 0,
     fpuc_b : 0,
+    fpuf_b : 0,
     jump_b : 0,
     valid_b : 0,
     return_pop_b : 0,
@@ -1070,6 +1079,7 @@ package wires;
 
   typedef struct packed{
     logic [0  : 0] cwren;
+    logic [0  : 0] fpu;
     logic [0  : 0] mret;
     logic [0  : 0] fence;
     logic [0  : 0] exception;
@@ -1100,6 +1110,7 @@ package wires;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
     logic [0  : 0] fpu;
+    logic [0  : 0] fpuf;
     logic [4  : 0] flags;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
@@ -1115,6 +1126,8 @@ package wires;
     logic [0  : 0] wren_b;
     logic [0  : 0] cwren_b;
     logic [0  : 0] fwren_b;
+    logic [0  : 0] fpu_b;
+    logic [0  : 0] fpuf_b;
     logic [0  : 0] valid_b;
     logic [0  : 0] mret_b;
     logic [0  : 0] fence_b;
@@ -1144,6 +1157,7 @@ package wires;
     ecause : 0,
     etval : 0,
     fpu : 0,
+    fpuf : 0,
     flags : 0,
     stall : 0,
     clear : 0,
@@ -1159,6 +1173,8 @@ package wires;
     wren_b : 0,
     cwren_b : 0,
     fwren_b : 0,
+    fpu_b : 0,
+    fpuf_b : 0,
     valid_b : 0,
     mret_b : 0,
     fence_b : 0,

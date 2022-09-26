@@ -46,13 +46,14 @@ module memory_stage
     v.wdata = d.e.wdata;
     v.cdata = d.e.cdata;
     v.fdata = d.e.fdata;
+    v.fpu = d.e.fpu;
+    v.fpuf = d.e.fpuf;
     v.valid = d.e.valid;
     v.mret = d.e.mret;
     v.byteenable = d.e.byteenable;
     v.exception = d.e.exception;
     v.ecause = d.e.ecause;
     v.etval = d.e.etval;
-    v.fpu = d.e.fpu;
     v.flags = d.e.flags;
     v.alu_op = d.e.alu_op;
     v.bcu_op = d.e.bcu_op;
@@ -68,6 +69,8 @@ module memory_stage
       v.wren = v.wren_b;
       v.cwren = v.cwren_b;
       v.fwren = v.fwren_b;
+      v.fpu = v.fpu_b;
+      v.fpuf = v.fpuf_b;
       v.valid = v.valid_b;
       v.mret = v.mret_b;
       v.fence = v.fence_b;
@@ -108,6 +111,8 @@ module memory_stage
     v.wren_b = v.wren;
     v.cwren_b = v.cwren;
     v.fwren_b = v.fwren;
+    v.fpu_b = v.fpu;
+    v.fpuf_b = v.fpuf;
     v.valid_b = v.valid;
     v.mret_b = v.mret;
     v.fence_b = v.fence;
@@ -117,6 +122,8 @@ module memory_stage
       v.wren = 0;
       v.cwren = 0;
       v.fwren = 0;
+      v.fpu = 0;
+      v.fpuf = 0;
       v.valid = 0;
       v.mret = 0;
       v.fence = 0;
@@ -145,7 +152,7 @@ module memory_stage
     csr_ein.epc = v.pc;
     csr_ein.ecause = v.ecause;
     csr_ein.etval = v.etval;
-    csr_ein.fpu = v.fpu;
+    csr_ein.fpu = v.fpuf;
     csr_ein.fflags = v.flags;
     
     rin = v;
@@ -159,6 +166,7 @@ module memory_stage
     fp_forwarding_min.wdata = r.fdata;
 
     y.cwren = v.cwren;
+    y.fpu = v.fpu;
     y.mret = v.mret;
     y.fence = v.fence;
     y.exception = v.exception;
@@ -166,6 +174,7 @@ module memory_stage
     y.clear = v.clear;
 
     q.cwren = r.cwren;
+    q.fpu = r.fpu;
     q.mret = r.mret;
     q.fence = r.fence;
     q.exception = r.exception;

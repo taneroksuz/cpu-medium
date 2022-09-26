@@ -1,6 +1,7 @@
 import constants::*;
 import wires::*;
 import functions::*;
+import fp_wire::*;
 
 module decode_stage
 (
@@ -123,10 +124,15 @@ module decode_stage
     v.fwren = 0;
     v.frden1 = 0;
     v.frden2 = 0;
+    v.frden3 = 0;
     v.fload = 0;
     v.fstore = 0;
+    v.fmt = 0;
+    v.rm = 0;
     v.fpu = 0;
     v.fpuc = 0;
+    v.fpuf = 0;
+    v.fpu_op = init_fp_operation;
 
     if (fp_decode_out.valid == 1) begin
       v.imm = fp_decode_out.imm;
@@ -142,6 +148,7 @@ module decode_stage
       v.rm = fp_decode_out.rm;
       v.fpu = fp_decode_out.fpu;
       v.fpuc = fp_decode_out.fpuc;
+      v.fpuf = fp_decode_out.fpuf;
       v.valid = fp_decode_out.valid;
       v.lsu_op = fp_decode_out.lsu_op;
       v.fpu_op = fp_decode_out.fpu_op;
@@ -228,6 +235,8 @@ module decode_stage
       v.stall = 1;
     end else if (a.e.fpuc == 1) begin
       v.stall = 1;
+    end else if (v.crden == 1 && v.caddr == csr_fflags && (a.e.fpu == 1 || a.m.fpu == 1)) begin
+      v.stall = 1;
     end else if (a.e.load == 1 && ((v.rden1 == 1 && a.e.waddr == v.raddr1) || (v.rden2 == 1 && a.e.waddr == v.raddr2))) begin 
       v.stall = 1;
     end else if (a.e.fload == 1 && ((v.frden1 == 1 && a.e.waddr == v.raddr1) || (v.frden2 == 1 && a.e.waddr == v.raddr2) || (v.frden3 == 1 && a.e.waddr == v.raddr3))) begin 
@@ -260,6 +269,7 @@ module decode_stage
       v.wfi = 0;
       v.fpu = 0;
       v.fpuc = 0;
+      v.fpuf = 0;
       v.valid = 0;
       v.return_pop = 0;
       v.return_push = 0;
@@ -321,6 +331,7 @@ module decode_stage
     y.rm = v.rm;
     y.fpu = v.fpu;
     y.fpuc = v.fpuc;
+    y.fpuf = v.fpuf;
     y.valid = v.valid;
     y.cdata = v.cdata;
     y.return_pop = v.return_pop;
@@ -382,6 +393,7 @@ module decode_stage
     q.rm = r.rm;
     q.fpu = r.fpu;
     q.fpuc = r.fpuc;
+    q.fpuf = r.fpuf;
     q.valid = r.valid;
     q.cdata = r.cdata;
     q.return_pop = r.return_pop;
