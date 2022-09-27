@@ -235,7 +235,7 @@ module decode_stage
       v.stall = 1;
     end else if (a.e.fpuc == 1) begin
       v.stall = 1;
-    end else if (v.crden == 1 && v.caddr == csr_fflags && (a.e.fpu == 1 || a.m.fpu == 1)) begin
+    end else if (v.crden == 1 && (v.caddr == csr_fflags || v.caddr == csr_fcsr) && (a.e.fpuf == 1 || a.m.fpuf == 1)) begin
       v.stall = 1;
     end else if (a.e.load == 1 && ((v.rden1 == 1 && a.e.waddr == v.raddr1) || (v.rden2 == 1 && a.e.waddr == v.raddr2))) begin 
       v.stall = 1;

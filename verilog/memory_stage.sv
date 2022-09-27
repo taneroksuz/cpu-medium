@@ -167,6 +167,7 @@ module memory_stage
 
     y.cwren = v.cwren;
     y.fpu = v.fpu;
+    y.fpuf = v.fpuf;
     y.mret = v.mret;
     y.fence = v.fence;
     y.exception = v.exception;
@@ -175,6 +176,7 @@ module memory_stage
 
     q.cwren = r.cwren;
     q.fpu = r.fpu;
+    q.fpuf = r.fpuf;
     q.mret = r.mret;
     q.fence = r.fence;
     q.exception = r.exception;

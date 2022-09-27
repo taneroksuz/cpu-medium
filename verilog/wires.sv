@@ -1080,6 +1080,7 @@ package wires;
   typedef struct packed{
     logic [0  : 0] cwren;
     logic [0  : 0] fpu;
+    logic [0  : 0] fpuf;
     logic [0  : 0] mret;
     logic [0  : 0] fence;
     logic [0  : 0] exception;
