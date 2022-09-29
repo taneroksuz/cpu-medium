@@ -279,8 +279,8 @@ endmodule
 module fpu_forwarding
 (
   input fp_forwarding_register_in_type fp_forwarding_rin,
-  input fp_forwarding_execute_in_type fp_forwarding_ein,
   input fp_forwarding_memory_in_type fp_forwarding_min,
+  input fp_forwarding_writeback_in_type fp_forwarding_win,
   output fp_forwarding_out_type fp_forwarding_out
 );
   timeunit 1ns;
@@ -296,29 +296,29 @@ module fpu_forwarding
     res3 = 0;
     if (fp_forwarding_rin.rden1 == 1) begin
       res1 = fp_forwarding_rin.rdata1;
+      if (fp_forwarding_win.wren == 1 & fp_forwarding_rin.raddr1 == fp_forwarding_win.waddr) begin
+        res1 = fp_forwarding_win.wdata;
+      end
       if (fp_forwarding_min.wren == 1 & fp_forwarding_rin.raddr1 == fp_forwarding_min.waddr) begin
         res1 = fp_forwarding_min.wdata;
-      end
-      if (fp_forwarding_ein.wren == 1 & fp_forwarding_rin.raddr1 == fp_forwarding_ein.waddr) begin
-        res1 = fp_forwarding_ein.wdata;
       end
     end
     if (fp_forwarding_rin.rden2 == 1) begin
       res2 = fp_forwarding_rin.rdata2;
+      if (fp_forwarding_win.wren == 1 & fp_forwarding_rin.raddr2 == fp_forwarding_win.waddr) begin
+        res2 = fp_forwarding_win.wdata;
+      end
       if (fp_forwarding_min.wren == 1 & fp_forwarding_rin.raddr2 == fp_forwarding_min.waddr) begin
         res2 = fp_forwarding_min.wdata;
-      end
-      if (fp_forwarding_ein.wren == 1 & fp_forwarding_rin.raddr2 == fp_forwarding_ein.waddr) begin
-        res2 = fp_forwarding_ein.wdata;
       end
     end
     if (fp_forwarding_rin.rden3 == 1) begin
       res3 = fp_forwarding_rin.rdata3;
+      if (fp_forwarding_win.wren == 1 & fp_forwarding_rin.raddr3 == fp_forwarding_win.waddr) begin
+        res3 = fp_forwarding_win.wdata;
+      end
       if (fp_forwarding_min.wren == 1 & fp_forwarding_rin.raddr3 == fp_forwarding_min.waddr) begin
         res3 = fp_forwarding_min.wdata;
-      end
-      if (fp_forwarding_ein.wren == 1 & fp_forwarding_rin.raddr3 == fp_forwarding_ein.waddr) begin
-        res3 = fp_forwarding_ein.wdata;
       end
     end
     fp_forwarding_out.data1 = res1;
@@ -604,8 +604,8 @@ module fpu
       fpu_forwarding fpu_forwarding_comp
       (
         .fp_forwarding_rin (fpu_in.fp_forwarding_rin),
-        .fp_forwarding_ein (fpu_in.fp_forwarding_ein),
         .fp_forwarding_min (fpu_in.fp_forwarding_min),
+        .fp_forwarding_win (fpu_in.fp_forwarding_win),
         .fp_forwarding_out (fpu_out.fp_forwarding_out)
       );
 

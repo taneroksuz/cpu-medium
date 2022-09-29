@@ -12,8 +12,6 @@ module memory_stage
   output mem_in_type storebuffer_in,
   output forwarding_memory_in_type forwarding_min,
   output fp_forwarding_memory_in_type fp_forwarding_min,
-  output register_write_in_type register_win,
-  output fp_register_write_in_type fp_register_win,
   input csr_out_type csr_out,
   output csr_write_in_type csr_win,
   output csr_exception_in_type csr_ein,
@@ -134,14 +132,6 @@ module memory_stage
       v.stall = 0;
     end
 
-    register_win.wren = v.wren & |(v.waddr);
-    register_win.waddr = v.waddr;
-    register_win.wdata = v.wdata;
-
-    fp_register_win.wren = v.fwren;
-    fp_register_win.waddr = v.waddr;
-    fp_register_win.wdata = v.fdata;
-
     csr_win.cwren = v.cwren;
     csr_win.cwaddr = v.caddr;
     csr_win.cdata = v.cdata;
@@ -154,18 +144,23 @@ module memory_stage
     csr_ein.etval = v.etval;
     csr_ein.fpu = v.fpuf;
     csr_ein.fflags = v.flags;
+
+    forwarding_min.wren = v.wren;
+    forwarding_min.waddr = v.waddr;
+    forwarding_min.wdata = v.wdata;
+
+    fp_forwarding_min.wren = v.fwren;
+    fp_forwarding_min.waddr = v.waddr;
+    fp_forwarding_min.wdata = v.fdata;
     
     rin = v;
 
-    forwarding_min.wren = r.wren;
-    forwarding_min.waddr = r.waddr;
-    forwarding_min.wdata = r.wdata;
-
-    fp_forwarding_min.wren = r.fwren;
-    fp_forwarding_min.waddr = r.waddr;
-    fp_forwarding_min.wdata = r.fdata;
-
+    y.wren = v.wren;
     y.cwren = v.cwren;
+    y.fwren = v.fwren;
+    y.waddr = v.waddr;
+    y.wdata = v.wdata;
+    y.fdata = v.fdata;
     y.fpu = v.fpu;
     y.fpuf = v.fpuf;
     y.mret = v.mret;
@@ -174,6 +169,12 @@ module memory_stage
     y.stall = v.stall;
     y.clear = v.clear;
 
+    q.wren = r.wren;
+    q.cwren = r.cwren;
+    q.fwren = r.fwren;
+    q.waddr = r.waddr;
+    q.wdata = r.wdata;
+    q.fdata = r.fdata;
     q.cwren = r.cwren;
     q.fpu = r.fpu;
     q.fpuf = r.fpuf;

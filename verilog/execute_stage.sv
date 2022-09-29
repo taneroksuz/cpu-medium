@@ -27,10 +27,8 @@ module execute_stage
   input fp_register_out_type fp_register_out,
   input forwarding_out_type forwarding_out,
   output forwarding_register_in_type forwarding_rin,
-  output forwarding_execute_in_type forwarding_ein,
   input fp_forwarding_out_type fp_forwarding_out,
   output fp_forwarding_register_in_type fp_forwarding_rin,
-  output fp_forwarding_execute_in_type fp_forwarding_ein,
   input csr_out_type csr_out,
   input execute_in_type a,
   input execute_in_type d,
@@ -384,14 +382,6 @@ module execute_stage
     end
 
     rin = v;
-
-    forwarding_ein.wren = r.wren;
-    forwarding_ein.waddr = r.waddr;
-    forwarding_ein.wdata = r.wdata;
-
-    fp_forwarding_ein.wren = r.fwren;
-    fp_forwarding_ein.waddr = r.waddr;
-    fp_forwarding_ein.wdata = r.fdata;
 
     y.pc = v.pc;
     y.npc = v.npc;
