@@ -15,7 +15,7 @@ tar xf csmith-2.3.0.tar.gz
 
 cd csmith-2.3.0
 
-sudo apt-get install build-essentials m4
+sudo apt-get install build-essential m4
 
 ./configure --prefix=$CSMITH_PATH
 
