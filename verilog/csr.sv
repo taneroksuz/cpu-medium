@@ -128,6 +128,7 @@ module csr
     end else begin
       csr_out.mtvec = {csr_machine_reg.mtvec[31:2],2'b0};
     end
+    csr_out.fs = csr_machine_reg.mstatus.fs;
     csr_out.frm = csr_user_reg.frm;
 
   end

@@ -1426,6 +1426,7 @@ package wires;
     logic [31 : 0] mtvec;
     logic [31 : 0] mepc;
     logic [31 : 0] cdata;
+    logic [1  : 0] fs;
     logic [2  : 0] frm;
   } csr_out_type;
 

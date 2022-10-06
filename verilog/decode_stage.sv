@@ -154,6 +154,22 @@ module decode_stage
       v.fpu_op = fp_decode_out.fpu_op;
     end
 
+    /*
+    if (csr_out.fs == 2'b00) begin
+      v.fwren = 0;
+      v.frden1 = 0;
+      v.frden2 = 0;
+      v.frden3 = 0;
+      v.fload = 0;
+      v.fstore = 0;
+      v.fmt = 0;
+      v.rm = 0;
+      v.fpu = 0;
+      v.fpuc = 0;
+      v.fpuf = 0;
+    end
+    */
+
     if (v.rm == 3'b111) begin
       v.rm = csr_out.frm;
     end
