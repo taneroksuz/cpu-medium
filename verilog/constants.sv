@@ -112,7 +112,9 @@ package constants;
 
 	parameter [2  : 0] c0_addispn                 = 3'b000;
 	parameter [2  : 0] c0_lw                      = 3'b010;
+	parameter [2  : 0] c0_flw                     = 3'b011;
 	parameter [2  : 0] c0_sw                      = 3'b110;
+	parameter [2  : 0] c0_fsw                     = 3'b111;
 
 	parameter [2  : 0] c1_addi                    = 3'b000;
 	parameter [2  : 0] c1_jal                     = 3'b001;
@@ -125,8 +127,10 @@ package constants;
 
 	parameter [2  : 0] c2_slli                    = 3'b000;
 	parameter [2  : 0] c2_lwsp                    = 3'b010;
+	parameter [2  : 0] c2_flwsp                   = 3'b011;
 	parameter [2  : 0] c2_alu                     = 3'b100;
 	parameter [2  : 0] c2_swsp                    = 3'b110;
+	parameter [2  : 0] c2_fswsp                   = 3'b111;
 
 	parameter [1  : 0] opcode_c0                  = 2'b00;
 	parameter [1  : 0] opcode_c1                  = 2'b01;

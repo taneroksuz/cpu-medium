@@ -61,6 +61,19 @@ module decode_stage
     v.raddr3 = v.instr[31:27];
     v.caddr = v.instr[31:20];
 
+    v.fwren = 0;
+    v.frden1 = 0;
+    v.frden2 = 0;
+    v.frden3 = 0;
+    v.fload = 0;
+    v.fstore = 0;
+    v.fmt = 0;
+    v.rm = 0;
+    v.fpu = 0;
+    v.fpuc = 0;
+    v.fpuf = 0;
+    v.fpu_op = init_fp_operation;
+
     decoder_in.instr = v.instr;
 
     v.imm = decoder_out.imm;
@@ -106,12 +119,19 @@ module decode_stage
       v.wren = compress_out.wren;
       v.rden1 = compress_out.rden1;
       v.rden2 = compress_out.rden2;
+      v.fwren = compress_out.fwren;
+      v.frden1 = compress_out.frden1;
+      v.frden2 = compress_out.frden2;
+      v.frden3 = compress_out.frden3;
       v.lui = compress_out.lui;
       v.jal = compress_out.jal;
       v.jalr = compress_out.jalr;
       v.branch = compress_out.branch;
       v.load = compress_out.load;
       v.store = compress_out.store;
+      v.fload = compress_out.fload;
+      v.fstore = compress_out.fstore;
+      v.fpu = compress_out.fpu;
       v.ebreak = compress_out.ebreak;
       v.valid = compress_out.valid;
       v.alu_op = compress_out.alu_op;
@@ -120,19 +140,6 @@ module decode_stage
     end
 
     fp_decode_in.instr = v.instr;
-
-    v.fwren = 0;
-    v.frden1 = 0;
-    v.frden2 = 0;
-    v.frden3 = 0;
-    v.fload = 0;
-    v.fstore = 0;
-    v.fmt = 0;
-    v.rm = 0;
-    v.fpu = 0;
-    v.fpuc = 0;
-    v.fpuf = 0;
-    v.fpu_op = init_fp_operation;
 
     if (fp_decode_out.valid == 1) begin
       v.imm = fp_decode_out.imm;
