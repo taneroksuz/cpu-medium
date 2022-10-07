@@ -65,6 +65,11 @@ then
     cp $DIR/build/dhrystone/dat/dhrystone.dat bram.dat
     cp $DIR/build/dhrystone/elf/dhrystone.host host.dat
   	obj_dir/Vsoc $CYCLES dhrystone 2> /dev/null
+  elif [ "$PROGRAM" = 'whetstone' ]
+  then
+    cp $DIR/build/whetstone/dat/whetstone.dat bram.dat
+    cp $DIR/build/whetstone/elf/whetstone.host host.dat
+  	obj_dir/Vsoc $CYCLES whetstone 2> /dev/null
   elif [ "$PROGRAM" = 'coremark' ]
   then
     cp $DIR/build/coremark/dat/coremark.dat bram.dat
@@ -177,6 +182,11 @@ else
   then
     cp $DIR/build/dhrystone/dat/dhrystone.dat bram.dat
     cp $DIR/build/dhrystone/elf/dhrystone.host host.dat
+  	obj_dir/Vsoc $CYCLES 2> /dev/null
+  elif [ "$PROGRAM" = 'whetstone' ]
+  then
+    cp $DIR/build/whetstone/dat/whetstone.dat bram.dat
+    cp $DIR/build/whetstone/elf/whetstone.host host.dat
   	obj_dir/Vsoc $CYCLES 2> /dev/null
   elif [ "$PROGRAM" = 'coremark' ]
   then
