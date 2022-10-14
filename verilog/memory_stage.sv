@@ -15,6 +15,9 @@ module memory_stage
   input csr_out_type csr_out,
   output csr_write_in_type csr_win,
   output csr_exception_in_type csr_ein,
+  input fp_csr_out_type fp_csr_out,
+  output fp_csr_write_in_type fp_csr_win,
+  output fp_csr_exception_in_type fp_csr_ein,
   input memory_in_type a,
   input memory_in_type d,
   output memory_out_type y,
@@ -142,8 +145,13 @@ module memory_stage
     csr_ein.epc = v.pc;
     csr_ein.ecause = v.ecause;
     csr_ein.etval = v.etval;
-    csr_ein.fpu = v.fpuf;
-    csr_ein.fflags = v.flags;
+
+    fp_csr_win.cwren = v.cwren;
+    fp_csr_win.cwaddr = v.caddr;
+    fp_csr_win.cdata = v.cdata;
+
+    fp_csr_ein.fpu = v.fpuf;
+    fp_csr_ein.fflags = v.flags;
 
     forwarding_min.wren = v.wren;
     forwarding_min.waddr = v.waddr;

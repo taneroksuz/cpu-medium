@@ -17,6 +17,8 @@ module decode_stage
   output fp_register_read_in_type fp_register_rin,
   input csr_out_type csr_out,
   output csr_read_in_type csr_rin,
+  input fp_csr_out_type fp_csr_out,
+  output fp_csr_read_in_type fp_csr_rin,
   input decode_in_type a,
   input decode_in_type d,
   output decode_out_type y,
@@ -178,7 +180,7 @@ module decode_stage
     */
 
     if (v.rm == 3'b111) begin
-      v.rm = csr_out.frm;
+      v.rm = fp_csr_out.frm;
     end
 
     v.link_waddr = (v.waddr == 1 || v.waddr == 5) ? 1 : 0;
@@ -309,7 +311,10 @@ module decode_stage
     csr_rin.crden = v.crden;
     csr_rin.craddr = v.caddr;
 
-    v.cdata = csr_out.cdata;
+    fp_csr_rin.crden = v.crden;
+    fp_csr_rin.craddr = v.caddr;
+
+    v.cdata = (fp_csr_out.ready == 1) ? fp_csr_out.cdata : csr_out.cdata;
 
     rin = v;
 

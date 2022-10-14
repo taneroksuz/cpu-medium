@@ -90,7 +90,7 @@ module fpu_decode
         rden1 = 1;
         fwren = 1;
         fload = 1;
-        fpu = 1;
+        // fpu = 1;
         if (funct3 == funct_lw) begin
           lsu_op.lsu_lw = 1;
         end else begin
@@ -102,7 +102,7 @@ module fpu_decode
         rden1 = 1;
         frden2 = 1;
         fstore = 1;
-        fpu = 1;
+        // fpu = 1;
         if (funct3 == funct_sw) begin
           lsu_op.lsu_sw = 1;
         end else begin
@@ -360,6 +360,74 @@ module fpu_register
 
 endmodule
 
+module fpu_csr
+(
+  input logic rst,
+  input logic clk,
+  input fp_csr_read_in_type fp_csr_rin,
+  input fp_csr_write_in_type fp_csr_win,
+  input fp_csr_exception_in_type fp_csr_ein,
+  output fp_csr_out_type fp_csr_out
+);
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  logic [2 : 0] frm = 0;
+  logic [4 : 0] fflags = 0;
+
+  always_comb begin
+    if (fp_csr_rin.crden == 1) begin
+      case (fp_csr_rin.craddr)
+        csr_fflags : begin
+          fp_csr_out.cdata = {27'h0,fflags};
+          fp_csr_out.ready = 1;
+        end
+        csr_frm : begin
+          fp_csr_out.cdata = {29'h0,frm};
+          fp_csr_out.ready = 1;
+        end
+        csr_fcsr : begin
+          fp_csr_out.cdata = {24'h0,frm,fflags};
+          fp_csr_out.ready = 1;
+        end
+        default : begin
+          fp_csr_out.cdata = 0;
+          fp_csr_out.ready = 0;
+        end
+      endcase
+    end else begin
+      fp_csr_out.cdata = 0;
+      fp_csr_out.ready = 0;
+    end
+    fp_csr_out.frm = frm;
+
+  end
+  always_ff @(posedge clk) begin
+
+    if (rst == 0) begin
+      frm <= 0;
+      fflags <= 0;
+    end else begin
+      if (fp_csr_win.cwren == 1) begin
+        case (fp_csr_win.cwaddr)
+          csr_fflags : fflags <= fp_csr_win.cdata[4:0];
+          csr_frm : frm <= fp_csr_win.cdata[2:0];
+          csr_fcsr : begin
+            fflags <= fp_csr_win.cdata[4:0];
+            frm <= fp_csr_win.cdata[7:5];
+          end
+          default :;
+        endcase
+      end
+      if (fp_csr_ein.fpu == 1) begin
+        fflags <= fp_csr_ein.fflags;
+      end
+    end
+
+  end
+
+endmodule
+
 module fpu_execute
 (
   input logic rst,
@@ -599,6 +667,16 @@ module fpu
         .fp_register_rin (fpu_in.fp_register_rin),
         .fp_register_win (fpu_in.fp_register_win),
         .fp_register_out (fpu_out.fp_register_out)
+      );
+
+      fpu_csr fpu_csr_comp
+      (
+        .rst (rst),
+        .clk (clk),
+        .fp_csr_rin (fpu_in.fp_csr_rin),
+        .fp_csr_win (fpu_in.fp_csr_win),
+        .fp_csr_ein (fpu_in.fp_csr_ein),
+        .fp_csr_out (fpu_out.fp_csr_out)
       );
 
       fpu_forwarding fpu_forwarding_comp

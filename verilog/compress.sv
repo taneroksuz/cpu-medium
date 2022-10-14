@@ -163,7 +163,7 @@ module compress
             fwren = 1;
             rden1 = 1;
             fload = 1;
-            fpu = 1;
+            // fpu = 1;
             lsu_op.lsu_lw = 1;
           end
           c0_sw : begin
@@ -182,7 +182,7 @@ module compress
             rden1 = 1;
             frden2 = 1;
             fstore = 1;
-            fpu = 1;
+            // fpu = 1;
             lsu_op.lsu_sw = 1;
           end
           default : valid = 0;
@@ -328,7 +328,7 @@ module compress
             rden1 = 1;
             raddr1 = 2;
             fload = 1;
-            fpu = 1;
+            // fpu = 1;
             lsu_op.lsu_lw = 1;
           end
           c2_alu : begin
@@ -382,7 +382,7 @@ module compress
             frden2 = 1;
             raddr1 = 2;
             fstore = 1;
-            fpu = 1;
+            // fpu = 1;
             lsu_op.lsu_sw = 1;
           end
           default : valid = 0;
