@@ -144,7 +144,9 @@ module csr
             csr_machine_reg.mstatus.mprv <= csr_win.cdata[17];
             csr_machine_reg.mstatus.xs <= csr_win.cdata[16:15];
             csr_machine_reg.mstatus.fs <= csr_win.cdata[14:13];
-            csr_machine_reg.mstatus.mpp <= csr_win.cdata[12:11];
+            if (csr_win.cdata[12:11] == m_mode || csr_win.cdata[12:11] == u_mode) begin
+              csr_machine_reg.mstatus.mpp <= csr_win.cdata[12:11];
+            end
             csr_machine_reg.mstatus.spp <= csr_win.cdata[8];
             csr_machine_reg.mstatus.mpie <= csr_win.cdata[7];
             csr_machine_reg.mstatus.spie <= csr_win.cdata[5];
