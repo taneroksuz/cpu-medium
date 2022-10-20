@@ -1308,68 +1308,7 @@ package wires;
   };
 
   typedef struct packed{
-    logic [31:30] mxl;
-    logic [25:25] z;
-    logic [24:24] y;
-    logic [23:23] x;
-    logic [22:22] w;
-    logic [21:21] v;
-    logic [20:20] u;
-    logic [19:19] t;
-    logic [18:18] s;
-    logic [17:17] r;
-    logic [16:16] q;
-    logic [15:15] p;
-    logic [14:14] o;
-    logic [13:13] n;
-    logic [12:12] m;
-    logic [11:11] l;
-    logic [10:10] k;
-    logic [9:9] j;
-    logic [8:8] i;
-    logic [7:7] h;
-    logic [6:6] g;
-    logic [5:5] f;
-    logic [4:4] e;
-    logic [3:3] d;
-    logic [2:2] c;
-    logic [1:1] b;
-    logic [0:0] a;
-  } csr_misa_reg_type;
-
-  parameter csr_misa_reg_type init_csr_misa_reg = '{
-    mxl : 1,
-    z : 0,
-    y : 0,
-    x : 0,
-    w : 0,
-    v : 0,
-    u : 0,
-    t : 0,
-    s : 0,
-    r : 0,
-    q : 0,
-    p : 0,
-    o : 0,
-    n : 0,
-    m : 1,
-    l : 0,
-    k : 0,
-    j : 0,
-    i : 1,
-    h : 0,
-    g : 0,
-    f : 1,
-    e : 0,
-    d : 0,
-    c : 1,
-    b : 0,
-    a : 0
-  };
-
-  typedef struct packed{
     csr_mstatus_reg_type mstatus;
-    csr_misa_reg_type misa;
     logic [31 : 0] mtvec;
     logic [63 : 0] mcycle;
     logic [63 : 0] minstret;
@@ -1383,7 +1322,6 @@ package wires;
 
   parameter csr_machine_reg_type init_csr_machine_reg = '{
     mstatus : init_csr_mstatus_reg,
-    misa : init_csr_misa_reg,
     mtvec : 0,
     mscratch : 0,
     mepc : 0,

@@ -25,6 +25,11 @@ module csr
   always_comb begin
     if (csr_rin.crden == 1) begin
       case (csr_rin.craddr)
+        csr_misa : csr_out.cdata = 32'h40001124;
+        csr_mvendorid : csr_out.cdata = 32'h00000000;
+        csr_marchid : csr_out.cdata = 32'h00000000;
+        csr_mimpid : csr_out.cdata = 32'h00000000;
+        csr_mhartid : csr_out.cdata = 32'h00000000;
         csr_mstatus : csr_out.cdata = {csr_machine_reg.mstatus.sd,
                                        8'h0,
                                        csr_machine_reg.mstatus.tsr,
@@ -46,34 +51,6 @@ module csr
                                        1'h0,
                                        csr_machine_reg.mstatus.sie,
                                        csr_machine_reg.mstatus.uie};
-        csr_misa : csr_out.cdata = {csr_machine_reg.misa.mxl,
-                                    4'h0,
-                                    csr_machine_reg.misa.z,
-                                    csr_machine_reg.misa.y,
-                                    csr_machine_reg.misa.x,
-                                    csr_machine_reg.misa.w,
-                                    csr_machine_reg.misa.v,
-                                    csr_machine_reg.misa.u,
-                                    csr_machine_reg.misa.t,
-                                    csr_machine_reg.misa.s,
-                                    csr_machine_reg.misa.r,
-                                    csr_machine_reg.misa.q,
-                                    csr_machine_reg.misa.p,
-                                    csr_machine_reg.misa.o,
-                                    csr_machine_reg.misa.n,
-                                    csr_machine_reg.misa.m,
-                                    csr_machine_reg.misa.l,
-                                    csr_machine_reg.misa.k,
-                                    csr_machine_reg.misa.j,
-                                    csr_machine_reg.misa.i,
-                                    csr_machine_reg.misa.h,
-                                    csr_machine_reg.misa.g,
-                                    csr_machine_reg.misa.f,
-                                    csr_machine_reg.misa.e,
-                                    csr_machine_reg.misa.d,
-                                    csr_machine_reg.misa.c,
-                                    csr_machine_reg.misa.b,
-                                    csr_machine_reg.misa.a};
         csr_mie : csr_out.cdata = {20'h0,
                                    csr_machine_reg.mie.meie,
                                    1'h0,
