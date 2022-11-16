@@ -80,6 +80,11 @@ then
     cp $DIR/build/aapg/dat/aapg.dat bram.dat
     cp $DIR/build/aapg/elf/aapg.host host.dat
   	obj_dir/Vsoc $CYCLES aapg 2> /dev/null
+  elif [ "$PROGRAM" = 'riscv-dv' ]
+  then
+    cp $DIR/build/riscv-dv/dat/riscv-dv.dat bram.dat
+    cp $DIR/build/riscv-dv/elf/riscv-dv.host host.dat
+  	obj_dir/Vsoc $CYCLES riscv-dv 2> /dev/null
   elif [ "$PROGRAM" = 'csmith' ]
   then
     cp $DIR/build/csmith/dat/csmith.dat bram.dat
@@ -197,6 +202,11 @@ else
   then
     cp $DIR/build/aapg/dat/aapg.dat bram.dat
     cp $DIR/build/aapg/elf/aapg.host host.dat
+  	obj_dir/Vsoc $CYCLES 2> /dev/null
+  elif [ "$PROGRAM" = 'riscv-dv' ]
+  then
+    cp $DIR/build/riscv-dv/dat/riscv-dv.dat bram.dat
+    cp $DIR/build/riscv-dv/elf/riscv-dv.host host.dat
   	obj_dir/Vsoc $CYCLES 2> /dev/null
   elif [ "$PROGRAM" = 'csmith' ]
   then

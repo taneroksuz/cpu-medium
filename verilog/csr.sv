@@ -188,7 +188,8 @@ module csr
 
       csr_machine_reg.mcycle <= csr_machine_reg.mcycle + 1;
 
-      if (csr_ein.exception == 1) begin
+      if (csr_machine_reg.mstatus.mie == 1 &&
+          csr_ein.exception == 1) begin
         csr_machine_reg.mstatus.mpie <= csr_machine_reg.mstatus.mie;
         csr_machine_reg.mstatus.mie <= 0;
         csr_machine_reg.mepc <= csr_ein.epc;

@@ -2,6 +2,7 @@ default: none
 
 VERILATOR ?= /opt/verilator/bin/verilator
 SYSTEMC ?= /opt/systemc
+RISCVDV ?= /opt/riscv-dv
 RISCV ?= /opt/riscv/bin/riscv32-unknown-elf-
 MARCH ?= rv32imfc_zba_zbb_zbc_zbs_zicsr_zifencei
 MABI ?= ilp32
@@ -22,7 +23,7 @@ FPGA ?= quartus # tb vivado quartus
 WAVE ?= off # "on" for saving dump file
 
 generate:
-	soft/compile.sh --riscv ${RISCV} --march ${MARCH} --mabi ${MABI} --iter ${ITER} --python ${PYTHON} --offset ${OFFSET} --basedir ${BASEDIR} --aapg ${AAPG} --ovp-bit ${OVP_BIT} --ovp-fp ${OVP_FP} --csmith ${CSMITH} --csmith_incl ${CSMITH_INCL} --gcc ${GCC} --config ${CONFIG} --program ${PROGRAM}
+	soft/compile.sh --riscv ${RISCV} --march ${MARCH} --mabi ${MABI} --iter ${ITER} --python ${PYTHON} --offset ${OFFSET} --basedir ${BASEDIR} --aapg ${AAPG} --ovp-bit ${OVP_BIT} --ovp-fp ${OVP_FP} --csmith ${CSMITH} --csmith_incl ${CSMITH_INCL} --riscvdv ${RISCVDV} --gcc ${GCC} --config ${CONFIG} --program ${PROGRAM}
 
 simulate:
 	sim/run.sh --basedir ${BASEDIR} --verilator ${VERILATOR} --systemc ${SYSTEMC} --program ${PROGRAM} --cycles ${CYCLES} --wave ${WAVE}
