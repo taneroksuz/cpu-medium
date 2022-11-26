@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-RISCV_PATH=/opt/riscv
+RISCV_PATH=/opt/rv32imfcb
 
 if [ -d "$RISCV_PATH" ]
 then
@@ -42,7 +42,7 @@ cd build
 ../configure --target=riscv32-unknown-elf --enable-languages=c \
   --disable-shared --disable-threads --disable-multilib --disable-gdb \
   --disable-libssp --with-newlib \
-  --with-arch=rv32imc --with-abi=ilp32 --prefix=$RISCV_PATH
+  --with-arch=rv32imfc_zba_zbb_zbc --with-abi=ilp32f --prefix=$RISCV_PATH
 
 make -j$(nproc)
 make install

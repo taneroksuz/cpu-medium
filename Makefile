@@ -3,9 +3,9 @@ default: none
 VERILATOR ?= /opt/verilator/bin/verilator
 SYSTEMC ?= /opt/systemc
 RISCVDV ?= /opt/riscv-dv
-RISCV ?= /opt/riscv/bin/riscv32-unknown-elf-
+RISCV ?= /opt/rv32imfcb/bin/riscv32-unknown-elf-
 MARCH ?= rv32imfc_zba_zbb_zbc_zbs_zicsr_zifencei
-MABI ?= ilp32
+MABI ?= ilp32f
 ITER ?= 10
 CSMITH ?= /opt/csmith
 CSMITH_INCL ?= $(shell ls -d $(CSMITH)/include/csmith-* | head -n1)
