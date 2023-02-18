@@ -45,7 +45,7 @@ module decode_stage
     //   v = r;
     // end
 
-    v.clear = csr_out.exception | csr_out.mret | d.w.clear;
+    v.clear = csr_out.trap | csr_out.mret | d.w.clear;
 
     if (d.e.jump == 1 && d.f.taken == 0) begin
       v.clear = 1;

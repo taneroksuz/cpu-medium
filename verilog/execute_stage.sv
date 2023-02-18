@@ -169,7 +169,7 @@ module execute_stage
       v.exception = v.exception_b;
     end
 
-    v.clear = csr_out.exception | csr_out.mret | d.e.jump | d.w.clear;
+    v.clear = csr_out.trap | csr_out.mret | d.e.jump | d.w.clear;
 
     v.stall = 0;
 

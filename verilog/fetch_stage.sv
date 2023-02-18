@@ -44,7 +44,7 @@ module fetch_stage
     bp_in.stall = v.stall;
     bp_in.clear = v.clear;
 
-    if (csr_out.exception == 1) begin
+    if (csr_out.trap == 1) begin
       v.pc = csr_out.mtvec;
       v.taken = 0;
       v.fence = 0;
