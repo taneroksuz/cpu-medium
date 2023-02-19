@@ -85,7 +85,7 @@ module fetch_stage
       v.fence = 0;
       v.valid = 1;
     end else if (d.e.fence == 1) begin
-      v.pc = d.f.pc;
+      v.pc = d.d.pc;
       v.taken = 0;
       v.fence = 1;
       v.valid = 1;
