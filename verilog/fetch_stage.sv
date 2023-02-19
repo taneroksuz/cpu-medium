@@ -26,7 +26,7 @@ module fetch_stage
 
     v = r;
 
-    v.valid = ~(a.d.stall | a.e.stall | a.m.stall | d.w.clear) | d.m.fence;
+    v.valid = ~(a.d.stall | a.e.stall | a.m.stall | d.w.clear) | d.e.fence;
     v.stall = v.stall | a.d.stall | a.e.stall | a.m.stall | d.w.clear;
     v.clear = d.w.clear;
 
@@ -84,8 +84,8 @@ module fetch_stage
       v.taken = 1;
       v.fence = 0;
       v.valid = 1;
-    end else if (d.m.fence == 1) begin
-      v.pc = d.e.pc;
+    end else if (d.e.fence == 1) begin
+      v.pc = d.f.pc;
       v.taken = 0;
       v.fence = 1;
       v.valid = 1;
