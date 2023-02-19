@@ -145,28 +145,24 @@ module fetchbuffer_ctrl
 
     v.comp = 0;
 
-    v.step = 0;
-
-    if (imem_out.mem_ready == 1) begin
-      if (v.fence == 1) begin
-        v.fence = 0;
-      end else begin
-        v.wren = 1;
-        v.wid = v.addr[(fetchbuffer_depth+1):2];
-        v.wdata = {v.wren,v.addr[31:2],imem_out.mem_rdata};
-      end
-    end
-
     if (v.fence == 1) begin
       if (v.wid == 2**fetchbuffer_depth-1) begin
         v.wren = 0;
         v.wdata = 0;
-      end else begin
-        v.valid = 0;
+        if (imem_out.mem_ready == 1) begin
+          v.wid = 0;
+          v.fence = 0;
+        end
+      end else begin 
         v.wren = 1;
         v.wid = v.wid + 1;
         v.wdata = 0;
+        v.fence = 1;
       end
+    end else if (imem_out.mem_ready == 1) begin
+      v.wren = 1;
+      v.wid = v.addr[(fetchbuffer_depth+1):2];
+      v.wdata = {v.wren,v.addr[31:2],imem_out.mem_rdata};
     end
 
     if (v.wren == 1) begin
@@ -189,11 +185,10 @@ module fetchbuffer_ctrl
     v.rid2 = v.paddrn[fetchbuffer_depth+1:2];
 
     if (v.pfence == 1) begin
-      v.valid = 0;
-      v.fence = 1;
       v.wren = 1;
       v.wid = 0;
       v.wdata = 0;
+      v.fence = 1;
     end
 
     fetchbuffer_data_in.wen = v.wren;
@@ -253,22 +248,27 @@ module fetchbuffer_ctrl
       end
     end
 
-    if (v.ready == 0 && v.wren == 1) begin
-      if (v.rden1 == 0) begin
-        v.addr = {v.paddr[31:2],2'b0};
-        v.incr = 0;
-      end else if (v.rden2 == 0) begin
-        v.addr = {v.paddrn[31:2],2'b0};
-        v.incr = 0;
+    if (v.pvalid == 1) begin
+      if (v.ready == 0 && v.wren == 1) begin
+        if (v.rden1 == 0) begin
+          v.addr = {v.paddr[31:2],2'b0};
+          v.incr = 0;
+        end else if (v.rden2 == 0) begin
+          v.addr = {v.paddrn[31:2],2'b0};
+          v.incr = 0;
+        end
       end
     end
 
-    if (v.ready == 1) begin
-      if (&(v.rdata[1:0]) == 0) begin
-        v.step = 1;
-      end else if (&(v.rdata[1:0]) == 1) begin
-        v.step = 2;
-      end
+    if (v.ready == 0) begin
+      v.step = 0;
+    end else if (&(v.rdata[1:0]) == 0) begin
+      v.step = 1;
+    end else begin
+      v.step = 2;
+    end
+
+    if (v.pvalid == 1) begin
       if (v.step <= v.incr) begin
         v.incr = v.incr - v.step;
       end
