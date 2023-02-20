@@ -415,7 +415,7 @@ module itim_ctrl
 
     if (v_b.state == fence) begin
       if (v_b.did == 2**itim_depth-1) begin
-        v_b.state = hit;
+        v_b.state = update;
       end else begin
         v_b.did = v_b.did + 1;
       end
