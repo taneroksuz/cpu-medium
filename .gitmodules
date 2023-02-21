@@ -1,6 +1,8 @@
 [submodule "soft"]
 	path = soft
 	url = https://github.com/taneroksuz/riscv-test-case-generation.git
+	branch = rv32imfcb
 [submodule "fpu"]
 	path = fpu
 	url = https://github.com/taneroksuz/riscv-sfpu.git
+	branch = main
