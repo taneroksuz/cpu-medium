@@ -5,4 +5,4 @@
 [submodule "fpu"]
 	path = fpu
 	url = https://github.com/taneroksuz/riscv-sfpu.git
-	branch = main
+	branch = riscv
