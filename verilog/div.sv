@@ -13,8 +13,6 @@ module div
   div_reg_type r,rin;
   div_reg_type v;
 
-  integer i;
-
   always_comb begin
 
     v = r;
@@ -43,7 +41,7 @@ module div
         end else begin
           v.op2 = v.data2;
         end
-        for (i=31; i>=0; i=i-1) begin
+        for (int i=31; i>=0; i=i-1) begin
           v.counter = i[5:0];
           if (v.op1[i] == 1) begin
             break;
