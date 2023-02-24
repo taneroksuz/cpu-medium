@@ -3,8 +3,8 @@ import wires::*;
 
 module execute_stage
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input alu_out_type alu_out,
   output alu_in_type alu_in,
   input agu_out_type agu_out,
@@ -489,8 +489,8 @@ module execute_stage
 
   end
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
+  always_ff @(posedge clock) begin
+    if (reset == 1) begin
       r <= init_execute_reg;
     end else begin
       r <= rin;

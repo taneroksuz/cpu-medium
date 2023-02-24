@@ -83,7 +83,7 @@ import dtim_wires::*;
 
 module dtim_tag
 (
-  input logic clk,
+  input logic clock,
   input dtim_tag_in_type dtim_tag_in,
   output dtim_tag_out_type dtim_tag_out
 );
@@ -94,7 +94,7 @@ module dtim_tag
 
   logic [dtim_depth-1 : 0] raddr = 0;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     raddr <= dtim_tag_in.raddr;
     if (dtim_tag_in.wen == 1) begin
       tag_array[dtim_tag_in.waddr] <= dtim_tag_in.wdata;
@@ -107,7 +107,7 @@ endmodule
 
 module dtim_data
 (
-  input logic clk,
+  input logic clock,
   input dtim_data_in_type dtim_data_in,
   output dtim_data_out_type dtim_data_out
 );
@@ -118,7 +118,7 @@ module dtim_data
 
   logic [dtim_depth-1 : 0] raddr = 0;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     raddr <= dtim_data_in.raddr;
     if (dtim_data_in.wen == 1) begin
       data_array[dtim_data_in.waddr] <= dtim_data_in.wdata;
@@ -131,7 +131,7 @@ endmodule
 
 module dtim_valid
 (
-  input logic clk,
+  input logic clock,
   input dtim_valid_in_type dtim_valid_in,
   output dtim_valid_out_type dtim_valid_out
 );
@@ -142,7 +142,7 @@ module dtim_valid
 
   logic [dtim_depth-1 : 0] raddr = 0;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     raddr <= dtim_valid_in.raddr;
     if (dtim_valid_in.wen == 1) begin
       valid_array[dtim_valid_in.waddr] <= dtim_valid_in.wdata;
@@ -155,7 +155,7 @@ endmodule
 
 module dtim_lock
 (
-  input logic clk,
+  input logic clock,
   input dtim_lock_in_type dtim_lock_in,
   output dtim_lock_out_type dtim_lock_out
 );
@@ -166,7 +166,7 @@ module dtim_lock
 
   logic [dtim_depth-1 : 0] raddr = 0;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     raddr <= dtim_lock_in.raddr;
     if (dtim_lock_in.wen == 1) begin
       lock_array[dtim_lock_in.waddr] <= dtim_lock_in.wdata;
@@ -179,7 +179,7 @@ endmodule
 
 module dtim_dirty
 (
-  input logic clk,
+  input logic clock,
   input dtim_dirty_in_type dtim_dirty_in,
   output dtim_dirty_out_type dtim_dirty_out
 );
@@ -190,7 +190,7 @@ module dtim_dirty
 
   logic [dtim_depth-1 : 0] raddr = 0;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     raddr <= dtim_dirty_in.raddr;
     if (dtim_dirty_in.wen == 1) begin
       dirty_array[dtim_dirty_in.waddr] <= dtim_dirty_in.wdata;
@@ -203,8 +203,8 @@ endmodule
 
 module dtim_ctrl
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input dtim_ctrl_in_type dctrl_in,
   output dtim_ctrl_out_type dctrl_out,
   input mem_in_type dtim_in,
@@ -220,8 +220,7 @@ module dtim_ctrl
   parameter [2:0] ldst = 2;
   parameter [2:0] update = 3;
   parameter [2:0] fence = 4;
-  parameter [2:0] reset = 5;
-  parameter [2:0] writeback = 6;
+  parameter [2:0] writeback = 5;
 
   typedef struct packed{
     logic [29-(dtim_depth+dtim_width):0] tag;
@@ -613,8 +612,8 @@ module dtim_ctrl
 
   end
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
+  always_ff @(posedge clock) begin
+    if (reset == 1) begin
       r_f <= init_front;
       r_b <= init_back;
     end else begin
@@ -630,8 +629,8 @@ module dtim
   parameter dtim_enable = 1
 )
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input mem_in_type dtim_in,
   output mem_out_type dtim_out,
   input mem_out_type dmem_out,
@@ -649,43 +648,43 @@ module dtim
 
       dtim_tag dtim_tag_comp
       (
-        .clk (clk),
+        .clock (clock),
         .dtim_tag_in (dctrl_out.tag_in),
         .dtim_tag_out (dctrl_in.tag_out)
       );
 
       dtim_data dtim_data_comp
       (
-        .clk (clk),
+        .clock (clock),
         .dtim_data_in (dctrl_out.data_in),
         .dtim_data_out (dctrl_in.data_out)
       );
 
       dtim_valid dtim_valid_comp
       (
-        .clk (clk),
+        .clock (clock),
         .dtim_valid_in (dctrl_out.valid_in),
         .dtim_valid_out (dctrl_in.valid_out)
       );
 
       dtim_dirty dtim_dirty_comp
       (
-        .clk (clk),
+        .clock (clock),
         .dtim_dirty_in (dctrl_out.dirty_in),
         .dtim_dirty_out (dctrl_in.dirty_out)
       );
 
       dtim_lock dtim_lock_comp
       (
-        .clk (clk),
+        .clock (clock),
         .dtim_lock_in (dctrl_out.lock_in),
         .dtim_lock_out (dctrl_in.lock_out)
       );
 
       dtim_ctrl dtim_ctrl_comp
       (
-        .rst (rst),
-        .clk (clk),
+        .reset (reset),
+        .clock (clock),
         .dctrl_in (dctrl_in),
         .dctrl_out (dctrl_out),
         .dtim_in (dtim_in),

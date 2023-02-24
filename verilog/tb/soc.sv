@@ -2,8 +2,8 @@ import configure::*;
 
 module soc
 (
-  input logic rst,
-  input logic clk
+  input logic reset,
+  input logic clock
 );
   timeunit 1ns;
   timeprecision 1ps;
@@ -278,8 +278,8 @@ module soc
 
   end
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
+  always_ff @(posedge clock) begin
+    if (reset == 1) begin
       r <= init_reg;
     end else begin
       r <= rin;
@@ -288,8 +288,8 @@ module soc
 
   cpu cpu_comp
   (
-    .rst (rst),
-    .clk (clk),
+    .reset (reset),
+    .clock (clock),
     .imemory_valid (imemory_valid),
     .imemory_instr (imemory_instr),
     .imemory_addr (imemory_addr),
@@ -312,8 +312,8 @@ module soc
 
   bram bram_comp
   (
-    .rst (rst),
-    .clk (clk),
+    .reset (reset),
+    .clock (clock),
     .bram_valid (bram_valid),
     .bram_instr (bram_instr),
     .bram_addr (bram_addr),
@@ -325,8 +325,8 @@ module soc
 
   print print_comp
   (
-    .rst (rst),
-    .clk (clk),
+    .reset (reset),
+    .clock (clock),
     .print_valid (print_valid),
     .print_instr (print_instr),
     .print_addr (print_addr),
@@ -338,8 +338,8 @@ module soc
 
   clint clint_comp
   (
-    .rst (rst),
-    .clk (clk),
+    .reset (reset),
+    .clock (clock),
     .clint_valid (clint_valid),
     .clint_instr (clint_instr),
     .clint_addr (clint_addr),

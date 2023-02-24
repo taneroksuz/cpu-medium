@@ -2,8 +2,8 @@ import configure::*;
 
 module avl
 (
-  input  logic rst,
-  input  logic clk,
+  input  logic reset,
+  input  logic clock,
   /////////////////////////////////
   input  logic [0  : 0] avl_valid,
   input  logic [0  : 0] avl_instr,
@@ -36,24 +36,24 @@ module avl
   localparam [1:0] store = 2;
 
   logic [1 :0] state;
-  logic [1 :0] state_n;
+  logic [1 :0] state_reg;
 
   logic [31:0] address;
-  logic [31:0] address_n;
+  logic [31:0] address_reg;
   logic [3 :0] byteenable;
-  logic [3 :0] byteenable_n;
+  logic [3 :0] byteenable_reg;
   logic [0 :0] read;
-  logic [0 :0] read_n;
+  logic [0 :0] read_reg;
   logic [31:0] writedata;
-  logic [31:0] writedata_n;
+  logic [31:0] writedata_reg;
   logic [0 :0] write;
-  logic [0 :0] write_n;
+  logic [0 :0] write_reg;
 
   logic [31:0] rdata;
   logic [0 :0] ready;
 
   always_comb begin
-    state = state_n;
+    state = state_reg;
     address = 0;
     byteenable = 0;
     read = 0;
@@ -83,11 +83,11 @@ module avl
           rdata = m_avl_readdata;
           ready = 1;
         end else if (m_avl_waitrequest == 0) begin
-          address = address_n;
-          byteenable = byteenable_n;
-          read = read_n;
-          writedata = writedata_n;
-          write = write_n;
+          address = address_reg;
+          byteenable = byteenable_reg;
+          read = read_reg;
+          writedata = writedata_reg;
+          write = write_reg;
         end
       end
       store : begin
@@ -95,11 +95,11 @@ module avl
           state = idle;
           ready = 1;
         end else if (m_avl_waitrequest == 0) begin
-          address = address_n;
-          byteenable = byteenable_n;
-          read = read_n;
-          writedata = writedata_n;
-          write = write_n;
+          address = address_reg;
+          byteenable = byteenable_reg;
+          read = read_reg;
+          writedata = writedata_reg;
+          write = write_reg;
         end
       end
       default : begin
@@ -118,22 +118,22 @@ module avl
   assign avl_rdata = rdata;
   assign avl_ready = ready;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
 
-    if (rst == 0) begin
-      state_n <= 0;
-      address_n <= 0;
-      byteenable_n <= 0;
-      read_n <= 0;
-      writedata_n <= 0;
-      write_n <= 0;
+    if (reset == 1) begin
+      state_reg <= 0;
+      address_reg <= 0;
+      byteenable_reg <= 0;
+      read_reg <= 0;
+      writedata_reg <= 0;
+      write_reg <= 0;
     end else begin
-      state_n <= state;
-      address_n <= address;
-      byteenable_n <= byteenable;
-      read_n <= read;
-      writedata_n <= writedata;
-      write_n <= write;
+      state_reg <= state;
+      address_reg <= address;
+      byteenable_reg <= byteenable;
+      read_reg <= read;
+      writedata_reg <= writedata;
+      write_reg <= write;
     end
 
   end

@@ -47,7 +47,7 @@ import bp_wires::*;
 
 module btb
 (
-  input logic clk,
+  input logic clock,
   input btb_in_type btb_in,
   output btb_out_type btb_out
 );
@@ -58,7 +58,7 @@ module btb
 
   assign btb_out.rdata = btb_array[btb_in.raddr];
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     if (btb_in.wen == 1) begin
       btb_array[btb_in.waddr] <= btb_in.wdata;
     end
@@ -68,7 +68,7 @@ endmodule
 
 module bht
 (
-  input logic clk,
+  input logic clock,
   input bht_in_type bht_in,
   output bht_out_type bht_out
 );
@@ -80,7 +80,7 @@ module bht
   assign bht_out.rdata1 = bht_array[bht_in.raddr1];
   assign bht_out.rdata2 = bht_array[bht_in.raddr2];
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     if (bht_in.wen == 1) begin
       bht_array[bht_in.waddr] <= bht_in.wdata;
     end
@@ -90,7 +90,7 @@ endmodule
 
 module ras
 (
-  input logic clk,
+  input logic clock,
   input ras_in_type ras_in,
   output ras_out_type ras_out
 );
@@ -101,7 +101,7 @@ module ras
 
   assign ras_out.rdata = ras_array[ras_in.raddr];
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     if (ras_in.wen == 1) begin
       ras_array[ras_in.waddr] <= ras_in.wdata;
     end
@@ -111,8 +111,8 @@ endmodule
 
 module bp_ctrl
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input bp_in_type bp_in,
   output bp_out_type bp_out,
   input btb_out_type btb_out,
@@ -313,8 +313,8 @@ module bp_ctrl
     
   end
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
+  always_ff @(posedge clock) begin
+    if (reset == 1) begin
       r_btb <= init_btb_reg;
       r_bht <= init_bht_reg;
       r_ras <= init_ras_reg;
@@ -329,8 +329,8 @@ endmodule
 
 module bp
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input bp_in_type bp_in,
   output bp_out_type bp_out
 );
@@ -350,29 +350,29 @@ module bp
 
       btb btb_comp
       (
-        .clk (clk),
+        .clock (clock),
         .btb_in (btb_in),
         .btb_out (btb_out)
       );
 
       bht bht_comp
       (
-        .clk (clk),
+        .clock (clock),
         .bht_in (bht_in),
         .bht_out (bht_out)
       );
 
       ras ras_comp
       (
-        .clk (clk),
+        .clock (clock),
         .ras_in (ras_in),
         .ras_out (ras_out)
       );
 
       bp_ctrl bp_ctrl_comp
       (
-        .rst (rst),
-        .clk (clk),
+        .reset (reset),
+        .clock (clock),
         .bp_in (bp_in),
         .bp_out (bp_out),
         .btb_in (btb_in),

@@ -26,7 +26,7 @@ import fetch_wires::*;
 
 module fetchbuffer_data
 (
-  input logic clk,
+  input logic clock,
   input fetchbuffer_data_in_type fetchbuffer_data_in,
   output fetchbuffer_data_out_type fetchbuffer_data_out
 );
@@ -38,7 +38,7 @@ module fetchbuffer_data
   assign fetchbuffer_data_out.rdata1 = fetchbuffer_data_array[fetchbuffer_data_in.raddr1];
   assign fetchbuffer_data_out.rdata2 = fetchbuffer_data_array[fetchbuffer_data_in.raddr2];
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     if (fetchbuffer_data_in.wen == 1) begin
       fetchbuffer_data_array[fetchbuffer_data_in.waddr] <= fetchbuffer_data_in.wdata;
     end
@@ -48,8 +48,8 @@ endmodule
 
 module fetchbuffer_ctrl
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input fetchbuffer_data_out_type fetchbuffer_data_out,
   output fetchbuffer_data_in_type fetchbuffer_data_in,
   input mem_in_type fetchbuffer_in,
@@ -292,8 +292,8 @@ module fetchbuffer_ctrl
 
   end
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
+  always_ff @(posedge clock) begin
+    if (reset == 1) begin
       r <= init_reg;
     end else begin
       r <= rin;
@@ -304,8 +304,8 @@ endmodule
 
 module fetchbuffer
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input mem_in_type fetchbuffer_in,
   output mem_out_type fetchbuffer_out,
   input mem_out_type imem_out,
@@ -319,15 +319,15 @@ module fetchbuffer
 
   fetchbuffer_data fetchbuffer_data_comp
   (
-    .clk (clk),
+    .clock (clock),
     .fetchbuffer_data_in (fetchbuffer_data_in),
     .fetchbuffer_data_out (fetchbuffer_data_out)
   );
 
   fetchbuffer_ctrl fetchbuffer_ctrl_comp
   (
-    .rst (rst),
-    .clk (clk),
+    .reset (reset),
+    .clock (clock),
     .fetchbuffer_data_out (fetchbuffer_data_out),
     .fetchbuffer_data_in (fetchbuffer_data_in),
     .fetchbuffer_in (fetchbuffer_in),

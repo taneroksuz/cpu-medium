@@ -2,8 +2,8 @@ import configure::*;
 
 module bram
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input logic [0   : 0] bram_valid,
   input logic [0   : 0] bram_instr,
   input logic [31  : 0] bram_addr,
@@ -32,7 +32,7 @@ module bram
 
   assign bram_wen = bram_valid & |(bram_wstrb);
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
 
     bram_raddr = bram_addr[bram_depth+1:2];
 
@@ -51,7 +51,7 @@ module bram
 
   end
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
 
     if (bram_valid == 1) begin
       ready <= 1;

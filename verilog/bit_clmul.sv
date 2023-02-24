@@ -3,8 +3,8 @@ import functions::*;
 
 module bit_clmul
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input bit_clmul_in_type bit_clmul_in,
   output bit_clmul_out_type bit_clmul_out
 );
@@ -75,8 +75,8 @@ module bit_clmul
 
   end
 
-  always_ff @ (posedge clk) begin
-    if (rst == 0) begin
+  always_ff @ (posedge clock) begin
+    if (reset == 1) begin
       r <= init_bit_clmul_reg;
     end else begin
       r <= rin;

@@ -3,8 +3,8 @@ import wires::*;
 
 module writeback_stage
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   output register_write_in_type register_win,
   output fp_register_write_in_type fp_register_win,
   output forwarding_writeback_in_type forwarding_win,
@@ -59,8 +59,8 @@ module writeback_stage
 
   end
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
+  always_ff @(posedge clock) begin
+    if (reset == 1) begin
       r <= init_writeback_reg;
     end else begin
       r <= rin;

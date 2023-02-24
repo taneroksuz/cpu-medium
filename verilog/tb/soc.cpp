@@ -31,13 +31,13 @@ int sc_main(int argc, char* argv[])
     dumpfile = filename.c_str();
   }
 
-  sc_clock clk ("clk", 1,SC_NS, 0.5, 0.5,SC_NS, false);
-  sc_signal<bool> rst;
+  sc_clock clock ("clock", 1,SC_NS, 0.5, 0.5,SC_NS, false);
+  sc_signal<bool> reset;
 
   Vsoc* soc = new Vsoc("soc");
 
-  soc->clk (clk);
-  soc->rst (rst);
+  soc->clock (clock);
+  soc->reset (reset);
 
 #if VM_TRACE
   Verilated::traceEverOn(true);
@@ -55,13 +55,13 @@ int sc_main(int argc, char* argv[])
 #if VM_TRACE
     if (dump) dump->flush();
 #endif
-    if (VL_TIME_Q() > 0 && VL_TIME_Q() < 10)
+    if (VL_TIME_Q() >= 10000)
     {
-      rst = !1;
+      reset = 0;
     }
-    else if (VL_TIME_Q() > 0)
+    else
     {
-      rst = !0;
+      reset = 1;
     }
     if (VL_TIME_Q() > time)
     {

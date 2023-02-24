@@ -70,7 +70,7 @@ import itim_wires::*;
 
 module itim_tag
 (
-  input logic clk,
+  input logic clock,
   input itim_tag_in_type itim_tag_in,
   output itim_tag_out_type itim_tag_out
 );
@@ -81,7 +81,7 @@ module itim_tag
 
   logic [itim_depth-1 : 0] raddr = 0;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     raddr <= itim_tag_in.raddr;
     if (itim_tag_in.wen == 1) begin
       tag_array[itim_tag_in.waddr] <= itim_tag_in.wdata;
@@ -94,7 +94,7 @@ endmodule
 
 module itim_data
 (
-  input logic clk,
+  input logic clock,
   input itim_data_in_type itim_data_in,
   output itim_data_out_type itim_data_out
 );
@@ -105,7 +105,7 @@ module itim_data
 
   logic [itim_depth-1 : 0] raddr = 0;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     raddr <= itim_data_in.raddr;
     if (itim_data_in.wen == 1) begin
       data_array[itim_data_in.waddr] <= itim_data_in.wdata;
@@ -118,7 +118,7 @@ endmodule
 
 module itim_valid
 (
-  input logic clk,
+  input logic clock,
   input itim_valid_in_type itim_valid_in,
   output itim_valid_out_type itim_valid_out
 );
@@ -129,7 +129,7 @@ module itim_valid
 
   logic [itim_depth-1 : 0] raddr = 0;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     raddr <= itim_valid_in.raddr;
     if (itim_valid_in.wen == 1) begin
       valid_array[itim_valid_in.waddr] <= itim_valid_in.wdata;
@@ -142,7 +142,7 @@ endmodule
 
 module itim_lock
 (
-  input logic clk,
+  input logic clock,
   input itim_lock_in_type itim_lock_in,
   output itim_lock_out_type itim_lock_out
 );
@@ -153,7 +153,7 @@ module itim_lock
 
   logic [itim_depth-1 : 0] raddr = 0;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     raddr <= itim_lock_in.raddr;
     if (itim_lock_in.wen == 1) begin
       lock_array[itim_lock_in.waddr] <= itim_lock_in.wdata;
@@ -166,8 +166,8 @@ endmodule
 
 module itim_ctrl
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input itim_ctrl_in_type ictrl_in,
   output itim_ctrl_out_type ictrl_out,
   input mem_in_type itim_in,
@@ -183,7 +183,6 @@ module itim_ctrl
   parameter [2:0] load = 2;
   parameter [2:0] update = 3;
   parameter [2:0] fence = 4;
-  parameter [2:0] reset = 5;
 
   typedef struct packed{
     logic [29-(itim_depth+itim_width):0] tag;
@@ -468,8 +467,8 @@ module itim_ctrl
 
   end
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
+  always_ff @(posedge clock) begin
+    if (reset == 1) begin
       r_f <= init_front;
       r_b <= init_back;
     end else begin
@@ -485,8 +484,8 @@ module itim
   parameter itim_enable = 1
 )
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input mem_in_type itim_in,
   output mem_out_type itim_out,
   input mem_out_type imem_out,
@@ -504,36 +503,36 @@ module itim
 
       itim_tag itim_tag_comp
       (
-        .clk (clk),
+        .clock (clock),
         .itim_tag_in (ictrl_out.tag_in),
         .itim_tag_out (ictrl_in.tag_out)
       );
 
       itim_data itim_data_comp
       (
-        .clk (clk),
+        .clock (clock),
         .itim_data_in (ictrl_out.data_in),
         .itim_data_out (ictrl_in.data_out)
       );
 
       itim_valid itim_valid_comp
       (
-        .clk (clk),
+        .clock (clock),
         .itim_valid_in (ictrl_out.valid_in),
         .itim_valid_out (ictrl_in.valid_out)
       );
 
       itim_lock itim_lock_comp
       (
-        .clk (clk),
+        .clock (clock),
         .itim_lock_in (ictrl_out.lock_in),
         .itim_lock_out (ictrl_in.lock_out)
       );
 
       itim_ctrl itim_ctrl_comp
       (
-        .rst (rst),
-        .clk (clk),
+        .reset (reset),
+        .clock (clock),
         .ictrl_in (ictrl_in),
         .ictrl_out (ictrl_out),
         .itim_in (itim_in),

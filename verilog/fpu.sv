@@ -330,8 +330,8 @@ endmodule
 
 module fpu_register
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input fp_register_read_in_type fp_register_rin,
   input fp_register_write_in_type fp_register_win,
   output fp_register_out_type fp_register_out
@@ -345,7 +345,7 @@ module fpu_register
   logic [4:0] raddr2 = 0;
   logic [4:0] raddr3 = 0;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     raddr1 <= fp_register_rin.raddr1;
     raddr2 <= fp_register_rin.raddr2;
     raddr3 <= fp_register_rin.raddr3;
@@ -362,8 +362,8 @@ endmodule
 
 module fpu_csr
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input fp_csr_read_in_type fp_csr_rin,
   input fp_csr_write_in_type fp_csr_win,
   input fp_csr_exception_in_type fp_csr_ein,
@@ -402,9 +402,9 @@ module fpu_csr
     fp_csr_out.frm = frm;
 
   end
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
 
-    if (rst == 0) begin
+    if (reset == 1) begin
       frm <= 0;
       fflags <= 0;
     end else begin
@@ -430,8 +430,8 @@ endmodule
 
 module fpu_execute
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input fp_execute_in_type fp_execute_in,
   output fp_execute_out_type fp_execute_out
 );
@@ -567,8 +567,8 @@ module fpu_execute
 
   fp_fma fp_fma_comp
   (
-  .reset ( rst ),
-  .clock ( clk ),
+  .reset ( reset ),
+  .clock ( clock ),
   .fp_fma_i ( fp_fma_i ),
   .fp_fma_o ( fp_fma_o ),
   .lzc_o ( lzc_128_o ),
@@ -577,16 +577,16 @@ module fpu_execute
 
   fp_mac fp_mac_comp
   (
-  .reset (rst),
-  .clock (clk),
+  .reset (reset),
+  .clock (clock),
   .fp_mac_i (fp_mac_i),
   .fp_mac_o (fp_mac_o)
   );
 
   fp_fdiv fp_fdiv_comp
   (
-  .reset (rst),
-  .clock (clk),
+  .reset (reset),
+  .clock (clock),
   .fp_fdiv_i (fp_fdiv_i),
   .fp_fdiv_o (fp_fdiv_o),
   .fp_mac_o (fp_mac_o),
@@ -634,8 +634,8 @@ module fpu
   parameter fpu_enable = 1
 )
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input fpu_in_type fpu_in,
   output fpu_out_type fpu_out
 );
@@ -654,16 +654,16 @@ module fpu
 
       fpu_execute fpu_execute_comp
       (
-        .rst (rst),
-        .clk (clk),
+        .reset (reset),
+        .clock (clock),
         .fp_execute_in (fpu_in.fp_execute_in),
         .fp_execute_out (fpu_out.fp_execute_out)
       );
 
       fpu_register fpu_register_comp
       (
-        .rst (rst),
-        .clk (clk),
+        .reset (reset),
+        .clock (clock),
         .fp_register_rin (fpu_in.fp_register_rin),
         .fp_register_win (fpu_in.fp_register_win),
         .fp_register_out (fpu_out.fp_register_out)
@@ -671,8 +671,8 @@ module fpu
 
       fpu_csr fpu_csr_comp
       (
-        .rst (rst),
-        .clk (clk),
+        .reset (reset),
+        .clock (clock),
         .fp_csr_rin (fpu_in.fp_csr_rin),
         .fp_csr_win (fpu_in.fp_csr_win),
         .fp_csr_ein (fpu_in.fp_csr_ein),

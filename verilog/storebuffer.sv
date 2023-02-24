@@ -24,7 +24,7 @@ import store_wires::*;
 
 module storebuffer_data
 (
-  input logic clk,
+  input logic clock,
   input storebuffer_data_in_type storebuffer_data_in,
   output storebuffer_data_out_type storebuffer_data_out
 );
@@ -35,7 +35,7 @@ module storebuffer_data
 
   assign storebuffer_data_out.rdata = storebuffer_data_array[storebuffer_data_in.raddr];
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
     if (storebuffer_data_in.wen == 1) begin
       storebuffer_data_array[storebuffer_data_in.waddr] <= storebuffer_data_in.wdata;
     end
@@ -45,8 +45,8 @@ endmodule
 
 module storebuffer_ctrl
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input storebuffer_data_out_type storebuffer_data_out,
   output storebuffer_data_in_type storebuffer_data_in,
   input mem_in_type storebuffer_in,
@@ -273,8 +273,8 @@ module storebuffer_ctrl
 
   end
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
+  always_ff @(posedge clock) begin
+    if (reset == 1) begin
       r <= init_reg;
     end else begin
       r <= rin;
@@ -285,8 +285,8 @@ endmodule
 
 module storebuffer
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input mem_in_type storebuffer_in,
   output mem_out_type storebuffer_out,
   input mem_out_type dmem_out,
@@ -300,15 +300,15 @@ module storebuffer
 
   storebuffer_data storebuffer_data_comp
   (
-    .clk (clk),
+    .clock (clock),
     .storebuffer_data_in (storebuffer_data_in),
     .storebuffer_data_out (storebuffer_data_out)
   );
 
   storebuffer_ctrl storebuffer_ctrl_comp
   (
-    .rst (rst),
-    .clk (clk),
+    .reset (reset),
+    .clock (clock),
     .storebuffer_data_out (storebuffer_data_out),
     .storebuffer_data_in (storebuffer_data_in),
     .storebuffer_in (storebuffer_in),

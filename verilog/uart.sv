@@ -3,8 +3,8 @@ import wires::*;
 
 module uart
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input logic [0   : 0] uart_valid,
   input logic [0   : 0] uart_instr,
   input logic [31  : 0] uart_addr,
@@ -143,8 +143,8 @@ module uart
   assign uart_rdata = {24'b0,r_rx.data_re};
   assign uart_ready = r_tx.ready_tx | r_rx.ready_re;
 
-  always_ff @ (posedge clk) begin
-    if (rst == 0) begin
+  always_ff @ (posedge clock) begin
+    if (reset == 1) begin
       r_tx <= init_tx_register;
       r_rx <= init_rx_register;
     end else begin

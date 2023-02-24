@@ -2,8 +2,8 @@ import configure::*;
 
 module print
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input logic [0   : 0] print_valid,
   input logic [0   : 0] print_instr,
   input logic [31  : 0] print_addr,
@@ -18,7 +18,7 @@ module print
   logic [31 : 0] rdata;
   logic [0  : 0] ready;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
 
     if (print_valid == 1) begin
 

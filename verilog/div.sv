@@ -2,8 +2,8 @@ import wires::*;
 
 module div
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input div_in_type div_in,
   output div_out_type div_out
 );
@@ -138,8 +138,8 @@ module div
 
   end
 
-  always_ff @ (posedge clk) begin
-    if (rst == 0) begin
+  always_ff @ (posedge clock) begin
+    if (reset == 1) begin
       r <= init_div_reg;
     end else begin
       r <= rin;

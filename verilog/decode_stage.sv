@@ -5,8 +5,8 @@ import fp_wire::*;
 
 module decode_stage
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input decoder_out_type decoder_out,
   output decoder_in_type decoder_in,
   input compress_out_type compress_out,
@@ -442,8 +442,8 @@ module decode_stage
 
   end
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
+  always_ff @(posedge clock) begin
+    if (reset == 1) begin
       r <= init_decode_reg;
     end else begin
       r <= rin;

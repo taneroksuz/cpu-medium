@@ -3,8 +3,8 @@ import wires::*;
 
 module clint
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input logic [0   : 0] clint_valid,
   input logic [0   : 0] clint_instr,
   input logic [31  : 0] clint_addr,
@@ -39,8 +39,8 @@ module clint
   logic [0  : 0] state = 0;
   logic [0  : 0] incr  = 0;
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
+  always_ff @(posedge clock) begin
+    if (reset == 1) begin
       mtimecmp <= '{default:0};
       mtime <= 0;
       rdata <= 0;
@@ -98,8 +98,8 @@ module clint
     end
   end
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
+  always_ff @(posedge clock) begin
+    if (reset == 1) begin
       mtip <= 0;
     end else begin
       if (mtime >= mtimecmp) begin
@@ -110,8 +110,8 @@ module clint
     end
   end
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
+  always_ff @(posedge clock) begin
+    if (reset == 1) begin
       count <= 0;
       state <= 0;
       incr <= 0;

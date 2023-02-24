@@ -4,8 +4,8 @@ import functions::*;
 
 module memory_stage
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input lsu_out_type lsu_out,
   output lsu_in_type lsu_in,
   input mem_out_type storebuffer_out,
@@ -194,8 +194,8 @@ module memory_stage
 
   end
 
-  always_ff @(posedge clk) begin
-    if (rst == 0) begin
+  always_ff @(posedge clock) begin
+    if (reset == 1) begin
       r <= init_memory_reg;
     end else begin
       r <= rin;

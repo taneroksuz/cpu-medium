@@ -2,8 +2,8 @@ import configure::*;
 
 module bram
 (
-  input logic rst,
-  input logic clk,
+  input logic reset,
+  input logic clock,
   input logic [0   : 0] bram_valid,
   input logic [0   : 0] bram_instr,
   input logic [31  : 0] bram_addr,
@@ -24,7 +24,7 @@ module bram
     $readmemh("bram.dat", bram_block);
   end
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
 
     raddr <= bram_addr;
 

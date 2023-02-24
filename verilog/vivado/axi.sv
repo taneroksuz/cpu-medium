@@ -2,8 +2,8 @@ import configure::*;
 
 module axi
 (
-  input  logic rst,
-  input  logic clk,
+  input  logic reset,
+  input  logic clock,
   /////////////////////////////////
   input  logic [0  : 0] axi_valid,
   input  logic [0  : 0] axi_instr,
@@ -65,34 +65,34 @@ module axi
   localparam [1:0] write = 2;
 
   logic [1 :0] state;
-  logic [1 :0] state_n;
+  logic [1 :0] state_reg;
 
   logic [0 :0] awvalid;
-  logic [0 :0] awvalid_n;
+  logic [0 :0] awvalid_reg;
   logic [0 :0] wvalid;
-  logic [0 :0] wvalid_n;
+  logic [0 :0] wvalid_reg;
   logic [0 :0] bready;
-  logic [0 :0] bready_n;
+  logic [0 :0] bready_reg;
   logic [0 :0] arvalid;
-  logic [0 :0] arvalid_n;
+  logic [0 :0] arvalid_reg;
   logic [0 :0] rready;
-  logic [0 :0] rready_n;
+  logic [0 :0] rready_reg;
   logic [31:0] addr;
-  logic [31:0] addr_n;
+  logic [31:0] addr_reg;
   logic [2 :0] prot;
-  logic [2 :0] prot_n;
+  logic [2 :0] prot_reg;
   logic [31:0] wdata;
-  logic [31:0] wdata_n;
+  logic [31:0] wdata_reg;
   logic [3 :0] wstrb;
-  logic [3 :0] wstrb_n;
+  logic [3 :0] wstrb_reg;
   logic [0 :0] wlast;
-  logic [0 :0] wlast_n;
+  logic [0 :0] wlast_reg;
 
   logic [31:0] rdata;
   logic [0 :0] ready;
 
   always_comb begin
-    state = state_n;
+    state = state_reg;
     awvalid = 0;
     wvalid = 0;
     bready = 0;
@@ -105,7 +105,7 @@ module axi
     wlast = 0;
     rdata = 0;
     ready = 0;
-    case (state_n)
+    case (state_reg)
       idle : begin
         if (axi_valid == 1) begin
           if (|axi_wstrb == 0) begin
@@ -126,10 +126,10 @@ module axi
         end
       end
       read : begin
-        arvalid = arvalid_n;
-        rready = rready_n;
-        addr = addr_n;
-        prot = prot_n;
+        arvalid = arvalid_reg;
+        rready = rready_reg;
+        addr = addr_reg;
+        prot = prot_reg;
         if (m_axi_arready == 1) begin
           arvalid = 0;
         end
@@ -141,14 +141,14 @@ module axi
         end
       end
       write : begin
-        awvalid = awvalid_n;
-        wvalid = wvalid_n;
-        bready = bready_n;
-        addr = addr_n;
-        prot = prot_n;
-        wdata = wdata_n;
-        wstrb = wstrb_n;
-        wlast = wlast_n;
+        awvalid = awvalid_reg;
+        wvalid = wvalid_reg;
+        bready = bready_reg;
+        addr = addr_reg;
+        prot = prot_reg;
+        wdata = wdata_reg;
+        wstrb = wstrb_reg;
+        wlast = wlast_reg;
         if (m_axi_awready == 1) begin
           awvalid = 0;
         end
@@ -197,32 +197,32 @@ module axi
   assign axi_rdata = rdata;
   assign axi_ready = ready;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clock) begin
 
-    if (rst == 0) begin
-      state_n <= 0;
-      awvalid_n <= 0;
-      wvalid_n <= 0;
-      bready_n <= 0;
-      arvalid_n <= 0;
-      rready_n <= 0;
-      addr_n <= 0;
-      prot_n <= 0;
-      wdata_n <= 0;
-      wstrb_n <= 0;
-      wlast_n <= 0;
+    if (reset == 1) begin
+      state_reg <= 0;
+      awvalid_reg <= 0;
+      wvalid_reg <= 0;
+      bready_reg <= 0;
+      arvalid_reg <= 0;
+      rready_reg <= 0;
+      addr_reg <= 0;
+      prot_reg <= 0;
+      wdata_reg <= 0;
+      wstrb_reg <= 0;
+      wlast_reg <= 0;
     end else begin
-      state_n <= state;
-      awvalid_n <= awvalid;
-      wvalid_n <= wvalid;
-      bready_n <= bready;
-      arvalid_n <= arvalid;
-      rready_n <= rready;
-      addr_n <= addr;
-      prot_n <= prot;
-      wdata_n <= wdata;
-      wstrb_n <= wstrb;
-      wlast_n <= wlast;
+      state_reg <= state;
+      awvalid_reg <= awvalid;
+      wvalid_reg <= wvalid;
+      bready_reg <= bready;
+      arvalid_reg <= arvalid;
+      rready_reg <= rready;
+      addr_reg <= addr;
+      prot_reg <= prot;
+      wdata_reg <= wdata;
+      wstrb_reg <= wstrb;
+      wlast_reg <= wlast;
     end
 
   end
