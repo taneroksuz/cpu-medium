@@ -1,6 +1,6 @@
-# RISCV Z7 CPU #
+# Graywolv Z7 CPU core #
 
-RISCV Z7 CPU supports currently only riscv32-imfcb instruction set architecture and is implemented with 5-stage pipeline and Harvard bus architecture. It contains dynamic branch prediction (gshare), instruction and data tightly integrated memory together with fetch and store buffer.
+Graywolv Z7 CPU core supports currently only riscv32-imfcb instruction set architecture and is implemented with 5-stage pipeline and Harvard bus architecture. It contains dynamic branch prediction (gshare), instruction and data tightly integrated memory together with fetch and store buffer.
 
 ## Dhrystone Benchmark ##
 | Cycles | Dhrystone/s/MHz | DMIPS/s/MHz | Iteration |
