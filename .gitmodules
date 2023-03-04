@@ -4,5 +4,5 @@
 	branch = rv32imfcb
 [submodule "fpu"]
 	path = fpu
-	url = https://github.com/taneroksuz/riscv-sfpu.git
-	branch = riscv
+	url = https://github.com/taneroksuz/fpu-sp.git
+	branch = main
