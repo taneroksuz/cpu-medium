@@ -57,11 +57,11 @@ then
     cp $BASEDIR/build/torture/dat/torture.dat bram.dat
     cp $BASEDIR/build/torture/elf/torture.host host.dat
   	obj_dir/Vsoc $CYCLES torture 2> /dev/null
-  elif [ "$PROGRAM" = 'uart' ]
+  elif [ "$PROGRAM" = 'bootloader' ]
   then
-    cp $BASEDIR/build/uart/dat/uart.dat bram.dat
-    cp $BASEDIR/build/uart/elf/uart.host host.dat
-  	obj_dir/Vsoc $CYCLES uart 2> /dev/null
+    cp $BASEDIR/build/bootloader/dat/bootloader.dat bram.dat
+    cp $BASEDIR/build/bootloader/elf/bootloader.host host.dat
+  	obj_dir/Vsoc $CYCLES bootloader 2> /dev/null
   elif [ "$PROGRAM" = 'timer' ]
   then
     cp $BASEDIR/build/timer/dat/timer.dat bram.dat
@@ -161,10 +161,10 @@ else
     cp $BASEDIR/build/torture/dat/torture.dat bram.dat
     cp $BASEDIR/build/torture/elf/torture.host host.dat
   	obj_dir/Vsoc $CYCLES 2> /dev/null
-  elif [ "$PROGRAM" = 'uart' ]
+  elif [ "$PROGRAM" = 'bootloader' ]
   then
-    cp $BASEDIR/build/uart/dat/uart.dat bram.dat
-    cp $BASEDIR/build/uart/elf/uart.host host.dat
+    cp $BASEDIR/build/bootloader/dat/bootloader.dat bram.dat
+    cp $BASEDIR/build/bootloader/elf/bootloader.host host.dat
   	obj_dir/Vsoc $CYCLES 2> /dev/null
   elif [ "$PROGRAM" = 'timer' ]
   then
