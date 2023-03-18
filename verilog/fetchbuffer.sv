@@ -116,8 +116,8 @@ module fetchbuffer_ctrl
     stall : 0
   };
 
-  reg_type r,rin = init_reg;
-  reg_type v = init_reg;
+  reg_type r,rin;
+  reg_type v;
 
   always_comb begin
 
