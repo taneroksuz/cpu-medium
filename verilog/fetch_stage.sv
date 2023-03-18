@@ -19,8 +19,8 @@ module fetch_stage
   timeunit 1ns;
   timeprecision 1ps;
 
-  fetch_reg_type r,rin = init_fetch_reg;
-  fetch_reg_type v = init_fetch_reg;
+  fetch_reg_type r,rin;
+  fetch_reg_type v;
 
   always_comb begin
 

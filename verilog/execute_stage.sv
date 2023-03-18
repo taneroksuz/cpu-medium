@@ -38,8 +38,8 @@ module execute_stage
   timeunit 1ns;
   timeprecision 1ps;
 
-  execute_reg_type r,rin = init_execute_reg;
-  execute_reg_type v = init_execute_reg;
+  execute_reg_type r,rin;
+  execute_reg_type v;
 
   always_comb begin
 

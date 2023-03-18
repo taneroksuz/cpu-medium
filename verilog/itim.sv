@@ -244,11 +244,11 @@ module itim_ctrl
     state : 0
   };
 
-  front_type r_f,rin_f = init_front;
-  front_type v_f = init_front;
+  front_type r_f,rin_f;
+  front_type v_f;
 
-  back_type r_b,rin_b = init_back;
-  back_type v_b = init_back;
+  back_type r_b,rin_b;
+  back_type v_b;
 
   always_comb begin
 

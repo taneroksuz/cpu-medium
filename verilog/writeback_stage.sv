@@ -17,8 +17,8 @@ module writeback_stage
   timeunit 1ns;
   timeprecision 1ps;
 
-  writeback_reg_type r,rin = init_writeback_reg;
-  writeback_reg_type v = init_writeback_reg;
+  writeback_reg_type r,rin;
+  writeback_reg_type v;
 
   always_comb begin
 

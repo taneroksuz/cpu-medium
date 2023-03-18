@@ -177,9 +177,9 @@ module bp_ctrl
     update : 0
   };
 
-  btb_reg_type r_btb, rin_btb, v_btb = init_btb_reg;
-  bht_reg_type r_bht, rin_bht, v_bht = init_bht_reg;
-  ras_reg_type r_ras, rin_ras, v_ras = init_ras_reg;
+  btb_reg_type r_btb, rin_btb, v_btb;
+  bht_reg_type r_bht, rin_bht, v_bht;
+  ras_reg_type r_ras, rin_ras, v_ras;
 
   always_comb begin : branch_target_buffer
 

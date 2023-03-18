@@ -27,8 +27,8 @@ module decode_stage
   timeunit 1ns;
   timeprecision 1ps;
 
-  decode_reg_type r,rin = init_decode_reg;
-  decode_reg_type v = init_decode_reg;
+  decode_reg_type r,rin;
+  decode_reg_type v;
 
   always_comb begin
 

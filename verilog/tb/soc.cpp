@@ -65,6 +65,7 @@ int sc_main(int argc, char* argv[])
     }
     if (VL_TIME_Q() > time)
     {
+      cout << "\033[1;33mTEST STOPPED\033[0m" << endl;
       break;
     }
     sc_start(1,SC_NS);

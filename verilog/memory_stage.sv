@@ -26,8 +26,8 @@ module memory_stage
   timeunit 1ns;
   timeprecision 1ps;
 
-  memory_reg_type r,rin = init_memory_reg;
-  memory_reg_type v = init_memory_reg;
+  memory_reg_type r,rin;
+  memory_reg_type v;
 
   always_comb begin
 
