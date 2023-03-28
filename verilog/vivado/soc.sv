@@ -381,7 +381,7 @@ module soc
   end
 
   always_ff @(posedge clock) begin
-    if (reset == 1) begin
+    if (reset == 0) begin
       bram_i_r <= 0;
       bram_d_r <= 0;
       uart_i_r <= 0;

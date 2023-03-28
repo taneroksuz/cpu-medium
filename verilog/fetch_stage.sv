@@ -132,7 +132,7 @@ module fetch_stage
   end
 
   always_ff @(posedge clock) begin
-    if (reset == 1) begin
+    if (reset == 0) begin
       r <= init_fetch_reg;
     end else begin
       r <= rin;

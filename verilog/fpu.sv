@@ -404,7 +404,7 @@ module fpu_csr
   end
   always_ff @(posedge clock) begin
 
-    if (reset == 1) begin
+    if (reset == 0) begin
       frm <= 0;
       fflags <= 0;
     end else begin

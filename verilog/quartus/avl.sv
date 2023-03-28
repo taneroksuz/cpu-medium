@@ -120,7 +120,7 @@ module avl
 
   always_ff @(posedge clock) begin
 
-    if (reset == 1) begin
+    if (reset == 0) begin
       state_reg <= 0;
       address_reg <= 0;
       byteenable_reg <= 0;

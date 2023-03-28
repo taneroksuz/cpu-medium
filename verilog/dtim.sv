@@ -613,7 +613,7 @@ module dtim_ctrl
   end
 
   always_ff @(posedge clock) begin
-    if (reset == 1) begin
+    if (reset == 0) begin
       r_f <= init_front;
       r_b <= init_back;
     end else begin

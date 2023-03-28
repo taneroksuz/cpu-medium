@@ -57,11 +57,11 @@ int sc_main(int argc, char* argv[])
 #endif
     if (VL_TIME_Q() >= 10000)
     {
-      reset = 0;
+      reset = 1;
     }
     else
     {
-      reset = 1;
+      reset = 0;
     }
     if (VL_TIME_Q() > time)
     {

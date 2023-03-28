@@ -44,7 +44,7 @@ module clint
   logic [0  : 0] ready_mtc = 0;
 
   always_ff @(posedge clock) begin
-    if (reset == 1) begin
+    if (reset == 0) begin
       rdata_ms <= 0;
       ready_ms <= 0;
       msip <= 0;
@@ -66,7 +66,7 @@ module clint
   end
 
   always_ff @(posedge clock) begin
-    if (reset == 1) begin
+    if (reset == 0) begin
       rdata_mt <= 0;
       ready_mt <= 0;
       mtime <= 0;
@@ -99,7 +99,7 @@ module clint
   end
 
   always_ff @(posedge clock) begin
-    if (reset == 1) begin
+    if (reset == 0) begin
       rdata_mtc <= 0;
       ready_mtc <= 0;
       mtimecmp <= 0;
@@ -129,7 +129,7 @@ module clint
   end
 
   always_ff @(posedge clock) begin
-    if (reset == 1) begin
+    if (reset == 0) begin
       mtip <= 0;
     end else begin
       if (mtime >= mtimecmp) begin
@@ -141,7 +141,7 @@ module clint
   end
 
   always_ff @(posedge clock) begin
-    if (reset == 1) begin
+    if (reset == 0) begin
       count <= 0;
       enable <= 0;
     end else begin

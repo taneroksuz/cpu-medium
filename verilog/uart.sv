@@ -46,7 +46,7 @@ module uart
     state_re : 0,
     state_rx : 0,
     data_re : 0,
-    data_rx : 9'h1FF,
+    data_rx : 0,
     counter_rx : 0,
     ready_re : 0,
     ready_rx : 0
@@ -144,7 +144,7 @@ module uart
   assign uart_ready = r_tx.ready_tx | r_rx.ready_re;
 
   always_ff @ (posedge clock) begin
-    if (reset == 1) begin
+    if (reset == 0) begin
       r_tx <= init_tx_register;
       r_rx <= init_rx_register;
     end else begin

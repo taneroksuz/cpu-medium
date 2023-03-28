@@ -314,7 +314,7 @@ module bp_ctrl
   end
 
   always_ff @(posedge clock) begin
-    if (reset == 1) begin
+    if (reset == 0) begin
       r_btb <= init_btb_reg;
       r_bht <= init_bht_reg;
       r_ras <= init_ras_reg;

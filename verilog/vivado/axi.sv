@@ -199,7 +199,7 @@ module axi
 
   always_ff @(posedge clock) begin
 
-    if (reset == 1) begin
+    if (reset == 0) begin
       state_reg <= 0;
       awvalid_reg <= 0;
       wvalid_reg <= 0;
