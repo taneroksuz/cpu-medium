@@ -1,10 +1,7 @@
 import configure::*;
 
-module soc
-(
-  input logic reset,
-  input logic clock
-);
+module soc;
+
   timeunit 1ns;
   timeprecision 1ps;
 
@@ -82,6 +79,18 @@ module soc
 
   reg_type r,rin;
   reg_type v;
+
+	logic reset = 0;
+	logic clock = 0;
+
+	initial begin
+		$timeformat(-9,0,"ns",0);
+		#10ns reset = 1;
+	end
+
+	always begin
+		#1ns clock=~clock;
+	end
 
   initial begin
     $readmemh("host.dat", host);

@@ -7,10 +7,6 @@ fi
 
 rm -rf $BASEDIR/sim/work/*
 
-export SYSTEMC_LIBDIR=$SYSTEMC/lib-linux64/
-export SYSTEMC_INCLUDE=$SYSTEMC/include/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SYSTEMC/lib-linux64/
-
 red=`tput setaf 1`
 green=`tput setaf 2`
 reset=`tput sgr0`
@@ -20,7 +16,7 @@ cd $BASEDIR/sim/work
 start=`date +%s`
 if [ "$WAVE" = 'on' ]
 then
-	${VERILATOR} --sc -Wno-UNOPTFLAT -Wno-UNSIGNED --trace -trace-max-array 128 --trace-structs -f $BASEDIR/sim/files.f --top-module soc --exe $BASEDIR/verilog/tb/soc.cpp
+	${VERILATOR} --binary -Wno-UNOPTFLAT -Wno-UNSIGNED --trace -trace-max-array 128 --trace-structs -f $BASEDIR/sim/files.f --top-module soc 2>&1 > /dev/null
 	make -s -j -C obj_dir/ -f Vsoc.mk Vsoc
   if [ "$PROGRAM" = 'dhrystone' ]
   then
@@ -124,7 +120,7 @@ then
     fi
   fi
 else
-	${VERILATOR} --sc -Wno-UNOPTFLAT -Wno-UNSIGNED -f $BASEDIR/sim/files.f --top-module soc --exe $BASEDIR/verilog/tb/soc.cpp
+	${VERILATOR} --binary -Wno-UNOPTFLAT -Wno-UNSIGNED -f $BASEDIR/sim/files.f --top-module soc 2>&1 > /dev/null
 	make -s -j -C obj_dir/ -f Vsoc.mk Vsoc
   if [ "$PROGRAM" = 'dhrystone' ]
   then
