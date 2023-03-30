@@ -38,13 +38,11 @@ module soc
   logic [31 : 0] dmemory_rdata;
   logic [0  : 0] dmemory_ready;
 
-  logic [0  : 0] bram_valid;
-  logic [0  : 0] bram_instr;
-  logic [31 : 0] bram_addr;
-  logic [31 : 0] bram_wdata;
-  logic [3  : 0] bram_wstrb;
-  logic [31 : 0] bram_rdata;
-  logic [0  : 0] bram_ready;
+  logic [0  : 0] rom_valid;
+  logic [0  : 0] rom_instr;
+  logic [31 : 0] rom_addr;
+  logic [31 : 0] rom_rdata;
+  logic [0  : 0] rom_ready;
 
   logic [0  : 0] uart_valid;
   logic [0  : 0] uart_instr;
@@ -82,8 +80,8 @@ module soc
   logic [31 : 0] ibase_addr;
   logic [31 : 0] dbase_addr;
 
-  logic [0  : 0] bram_i;
-  logic [0  : 0] bram_d;
+  logic [0  : 0] rom_i;
+  logic [0  : 0] rom_d;
   logic [0  : 0] uart_i;
   logic [0  : 0] uart_d;
   logic [0  : 0] clint_i;
@@ -91,8 +89,8 @@ module soc
   logic [0  : 0] avl_i;
   logic [0  : 0] avl_d;
 
-  logic [0  : 0] bram_i_r;
-  logic [0  : 0] bram_d_r;
+  logic [0  : 0] rom_i_r;
+  logic [0  : 0] rom_d_r;
   logic [0  : 0] uart_i_r;
   logic [0  : 0] uart_d_r;
   logic [0  : 0] clint_i_r;
@@ -100,8 +98,8 @@ module soc
   logic [0  : 0] avl_i_r;
   logic [0  : 0] avl_d_r;
 
-  logic [0  : 0] bram_i_rin;
-  logic [0  : 0] bram_d_rin;
+  logic [0  : 0] rom_i_rin;
+  logic [0  : 0] rom_d_rin;
   logic [0  : 0] uart_i_rin;
   logic [0  : 0] uart_d_rin;
   logic [0  : 0] clint_i_rin;
@@ -111,8 +109,8 @@ module soc
 
   always_comb begin
 
-    bram_i = bram_i_r;
-    bram_d = bram_d_r;
+    rom_i = rom_i_r;
+    rom_d = rom_d_r;
     uart_i = uart_i_r;
     uart_d = uart_d_r;
     clint_i = clint_i_r;
@@ -122,9 +120,9 @@ module soc
 
     dbase_addr = 0;
 
-    if (bram_ready == 1) begin
-      bram_i = 0;
-      bram_d = 0;
+    if (rom_ready == 1) begin
+      rom_i = 0;
+      rom_d = 0;
     end
     if (uart_ready == 1) begin
       uart_i = 0;
@@ -145,34 +143,34 @@ module soc
           avl_d = dmemory_valid;
           clint_d = 0;
           uart_d = 0;
-          bram_d = 0;
+          rom_d = 0;
           dbase_addr = avl_base_addr;
         end else if (dmemory_addr >= clint_base_addr &&
         dmemory_addr < clint_top_addr) begin
           avl_d = 0;
           clint_d = dmemory_valid;
           uart_d = 0;
-          bram_d = 0;
+          rom_d = 0;
           dbase_addr = clint_base_addr;
       end else if (dmemory_addr >= uart_base_addr &&
         dmemory_addr < uart_top_addr) begin
           avl_d = 0;
           clint_d = 0;
           uart_d = dmemory_valid;
-          bram_d = 0;
+          rom_d = 0;
           dbase_addr = uart_base_addr;
-      end else if (dmemory_addr >= bram_base_addr &&
-        dmemory_addr < bram_top_addr) begin
+      end else if (dmemory_addr >= rom_base_addr &&
+        dmemory_addr < rom_top_addr) begin
           avl_d = 0;
           clint_d = 0;
           uart_d = 0;
-          bram_d = dmemory_valid;
-          dbase_addr = bram_base_addr;
+          rom_d = dmemory_valid;
+          dbase_addr = rom_base_addr;
       end else begin
         avl_d = 0;
         clint_d = 0;
         uart_d = 0;
-        bram_d = 0;
+        rom_d = 0;
         dbase_addr = 0;
       end
     end
@@ -187,40 +185,40 @@ module soc
           avl_i = imemory_valid;
           clint_i = 0;
           uart_i = 0;
-          bram_i = 0;
+          rom_i = 0;
           ibase_addr = avl_base_addr;
       end else if (imemory_addr >= clint_base_addr &&
         imemory_addr < clint_top_addr) begin
           avl_i = 0;
           clint_i = imemory_valid;
           uart_i = 0;
-          bram_i = 0;
+          rom_i = 0;
           ibase_addr = clint_base_addr;
       end else if (imemory_addr >= uart_base_addr &&
         imemory_addr < uart_top_addr) begin
           avl_i = 0;
           clint_i = 0;
           uart_i = imemory_valid;
-          bram_i = 0;
+          rom_i = 0;
           ibase_addr = uart_base_addr;
-      end else if (imemory_addr >= bram_base_addr &&
-        imemory_addr < bram_top_addr) begin
+      end else if (imemory_addr >= rom_base_addr &&
+        imemory_addr < rom_top_addr) begin
           avl_i = 0;
           clint_i = 0;
           uart_i = 0;
-          bram_i = imemory_valid;
-          ibase_addr = bram_base_addr;
+          rom_i = imemory_valid;
+          ibase_addr = rom_base_addr;
       end else begin
         avl_i = 0;
         clint_i = 0;
         uart_i = 0;
-        bram_i = 0;
+        rom_i = 0;
         ibase_addr = 0;
       end
     end
 
-    if (bram_i == 1 && bram_d == 1) begin
-      bram_i = 0;
+    if (rom_i == 1 && rom_d == 1) begin
+      rom_i = 0;
     end
     if (uart_i == 1 && uart_d == 1) begin
       uart_i = 0;
@@ -234,24 +232,18 @@ module soc
 
     imem_addr = imemory_addr - ibase_addr;
 
-    if (bram_d == 1) begin
-      bram_valid = dmemory_valid;
-      bram_instr = dmemory_instr;
-      bram_addr = dmem_addr;
-      bram_wdata = dmemory_wdata;
-      bram_wstrb = dmemory_wstrb;
-    end else if (bram_i == 1) begin
-      bram_valid = imemory_valid;
-      bram_instr = imemory_instr;
-      bram_addr = imem_addr;
-      bram_wdata = imemory_wdata;
-      bram_wstrb = imemory_wstrb;
+    if (rom_d == 1) begin
+      rom_valid = dmemory_valid;
+      rom_instr = dmemory_instr;
+      rom_addr = dmem_addr;
+    end else if (rom_i == 1) begin
+      rom_valid = imemory_valid;
+      rom_instr = imemory_instr;
+      rom_addr = imem_addr;
     end else begin
-      bram_valid = 0;
-      bram_instr = 0;
-      bram_addr = 0;
-      bram_wdata = 0;
-      bram_wstrb = 0;
+      rom_valid = 0;
+      rom_instr = 0;
+      rom_addr = 0;
     end
 
     if (uart_d == 1) begin
@@ -314,8 +306,8 @@ module soc
       avl_wstrb = 0;
     end
 
-    bram_i_rin = bram_i;
-    bram_d_rin = bram_d;
+    rom_i_rin = rom_i;
+    rom_d_rin = rom_d;
     uart_i_rin = uart_i;
     uart_d_rin = uart_d;
     clint_i_rin = clint_i;
@@ -323,9 +315,9 @@ module soc
     avl_i_rin = avl_i;
     avl_d_rin = avl_d;
 
-    if (bram_i_r == 1 && bram_ready == 1) begin
-      imemory_rdata = bram_rdata;
-      imemory_ready = bram_ready;
+    if (rom_i_r == 1 && rom_ready == 1) begin
+      imemory_rdata = rom_rdata;
+      imemory_ready = rom_ready;
     end else if (uart_i_r == 1 && uart_ready == 1) begin
       imemory_rdata = uart_rdata;
       imemory_ready = uart_ready;
@@ -340,9 +332,9 @@ module soc
       imemory_ready = 0;
     end
 
-    if (bram_d_r == 1 && bram_ready == 1) begin
-      dmemory_rdata = bram_rdata;
-      dmemory_ready = bram_ready;
+    if (rom_d_r == 1 && rom_ready == 1) begin
+      dmemory_rdata = rom_rdata;
+      dmemory_ready = rom_ready;
     end else if (uart_d_r == 1 && uart_ready == 1) begin
       dmemory_rdata = uart_rdata;
       dmemory_ready = uart_ready;
@@ -361,8 +353,8 @@ module soc
 
   always_ff @(posedge clock) begin
     if (reset == 0) begin
-      bram_i_r <= 0;
-      bram_d_r <= 0;
+      rom_i_r <= 0;
+      rom_d_r <= 0;
       uart_i_r <= 0;
       uart_d_r <= 0;
       clint_i_r <= 0;
@@ -370,8 +362,8 @@ module soc
       avl_i_r <= 0;
       avl_d_r <= 0;
     end else begin
-      bram_i_r <= bram_i_rin;
-      bram_d_r <= bram_d_rin;
+      rom_i_r <= rom_i_rin;
+      rom_d_r <= rom_d_rin;
       uart_i_r <= uart_i_rin;
       uart_d_r <= uart_d_rin;
       clint_i_r <= clint_i_rin;
@@ -405,17 +397,15 @@ module soc
     .mtime (mtime)
   );
 
-  bram bram_comp
+  rom rom_comp
   (
     .reset (reset),
     .clock (clock),
-    .bram_valid (bram_valid),
-    .bram_instr (bram_instr),
-    .bram_addr (bram_addr),
-    .bram_wdata (bram_wdata),
-    .bram_wstrb (bram_wstrb),
-    .bram_rdata (bram_rdata),
-    .bram_ready (bram_ready)
+    .rom_valid (rom_valid),
+    .rom_instr (rom_instr),
+    .rom_addr (rom_addr),
+    .rom_rdata (rom_rdata),
+    .rom_ready (rom_ready)
   );
 
   uart uart_comp

@@ -89,7 +89,9 @@ module axi
   logic [0 :0] wlast_reg;
 
   logic [31:0] rdata;
+  logic [31:0] rdata_reg;
   logic [0 :0] ready;
+  logic [0 :0] ready_reg;
 
   always_comb begin
     state = state_reg;
@@ -165,37 +167,37 @@ module axi
     endcase
   end
 
-  assign m_axi_awaddr = addr;
+  assign m_axi_awaddr = addr_reg;
   assign m_axi_awlen = 8'b00000000;
   assign m_axi_awsize = 3'b010; // 4 Byte
   assign m_axi_awburst = 2'b00;
   assign m_axi_awlock = 1'b0;
   assign m_axi_awcache = 4'b0000;
-  assign m_axi_awprot = prot;
+  assign m_axi_awprot = prot_reg;
   assign m_axi_awqos = 4'b0000;
-  assign m_axi_awvalid = awvalid;
+  assign m_axi_awvalid = awvalid_reg;
 
-  assign m_axi_wdata = wdata;
-  assign m_axi_wstrb = wstrb;
-  assign m_axi_wlast = wlast;
-  assign m_axi_wvalid = wvalid;
+  assign m_axi_wdata = wdata_reg;
+  assign m_axi_wstrb = wstrb_reg;
+  assign m_axi_wlast = wlast_reg;
+  assign m_axi_wvalid = wvalid_reg;
 
-  assign m_axi_bready = bready;
+  assign m_axi_bready = bready_reg;
 
-  assign m_axi_araddr = addr;
+  assign m_axi_araddr = addr_reg;
   assign m_axi_arlen = 8'b00000000;
   assign m_axi_arsize = 3'b010; // 4 Byte
   assign m_axi_arburst = 2'b00;
   assign m_axi_arlock = 1'b0;
   assign m_axi_arcache = 4'b0000;
-  assign m_axi_arprot = prot;
+  assign m_axi_arprot = prot_reg;
   assign m_axi_arqos = 4'b0000;
-  assign m_axi_arvalid = arvalid;
+  assign m_axi_arvalid = arvalid_reg;
 
-  assign m_axi_rready = rready;
+  assign m_axi_rready = rready_reg;
 
-  assign axi_rdata = rdata;
-  assign axi_ready = ready;
+  assign axi_rdata = rdata_reg;
+  assign axi_ready = ready_reg;
 
   always_ff @(posedge clock) begin
 
@@ -211,6 +213,8 @@ module axi
       wdata_reg <= 0;
       wstrb_reg <= 0;
       wlast_reg <= 0;
+      rdata_reg <= 0;
+      ready_reg <= 0;
     end else begin
       state_reg <= state;
       awvalid_reg <= awvalid;
@@ -223,6 +227,8 @@ module axi
       wdata_reg <= wdata;
       wstrb_reg <= wstrb;
       wlast_reg <= wlast;
+      rdata_reg <= rdata;
+      ready_reg <= ready;
     end
 
   end

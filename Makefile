@@ -10,12 +10,13 @@ export ITER ?= 10
 export CSMITH ?= /opt/csmith
 export GCC ?= /usr/bin/gcc
 export PYTHON ?= /usr/bin/python3
+export SERIAL ?= /dev/ttyUSB0
 export BASEDIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-export OFFSET ?= 0x100000# Number of dwords in blockram (address range is OFFSET * 8)
+export PLATFORM ?= tb# tb vivado quartus
 export PROGRAM ?= dhrystone# aapg bootloader compliance coremark csmith dhrystone isa riscv-dv sram timer
 export AAPG ?= aapg
 export CYCLES ?= 10000000000
-export FPGA ?= quartus# tb vivado quartus
+export OFFSET ?= 0x100000
 export WAVE ?= off# "on" for saving dump file
 
 generate:
@@ -23,5 +24,8 @@ generate:
 
 simulate:
 	sim/run.sh
+
+send:
+	serial/transfer.sh
 
 all: generate simulate

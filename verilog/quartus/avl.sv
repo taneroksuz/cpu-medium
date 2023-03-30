@@ -50,7 +50,9 @@ module avl
   logic [0 :0] write_reg;
 
   logic [31:0] rdata;
+  logic [31:0] rdata_reg;
   logic [0 :0] ready;
+  logic [0 :0] ready_reg;
 
   always_comb begin
     state = state_reg;
@@ -73,7 +75,7 @@ module avl
             write = 1;
             byteenable = avl_wstrb;
           end
-          address = avl_addr;
+          address = {avl_addr[31:2],2'b0};
           writedata = avl_wdata;
         end
       end
@@ -82,7 +84,7 @@ module avl
           state = idle;
           rdata = m_avl_readdata;
           ready = 1;
-        end else if (m_avl_waitrequest == 0) begin
+        end else if (m_avl_waitrequest == 1) begin
           address = address_reg;
           byteenable = byteenable_reg;
           read = read_reg;
@@ -91,10 +93,10 @@ module avl
         end
       end
       store : begin
-        if (m_avl_writeresponsevalid == 1) begin
+        if (m_avl_waitrequest == 0) begin
           state = idle;
           ready = 1;
-        end else if (m_avl_waitrequest == 0) begin
+        end else if (m_avl_waitrequest == 1) begin
           address = address_reg;
           byteenable = byteenable_reg;
           read = read_reg;
@@ -107,16 +109,16 @@ module avl
     endcase
   end
 
-  assign m_avl_address = address;
-  assign m_avl_byteenable = byteenable;
+  assign m_avl_address = address_reg;
+  assign m_avl_byteenable = byteenable_reg;
   assign m_avl_lock = 1'b0;
-  assign m_avl_read = read;
-  assign m_avl_writedata = writedata;
-  assign m_avl_write = write;
+  assign m_avl_read = read_reg;
+  assign m_avl_writedata = writedata_reg;
+  assign m_avl_write = write_reg;
   assign m_avl_burstcount = 3'b001;
 
-  assign avl_rdata = rdata;
-  assign avl_ready = ready;
+  assign avl_rdata = rdata_reg;
+  assign avl_ready = ready_reg;
 
   always_ff @(posedge clock) begin
 
@@ -127,6 +129,8 @@ module avl
       read_reg <= 0;
       writedata_reg <= 0;
       write_reg <= 0;
+      rdata_reg <= 0;
+      ready_reg <= 0;
     end else begin
       state_reg <= state;
       address_reg <= address;
@@ -134,6 +138,8 @@ module avl
       read_reg <= read;
       writedata_reg <= writedata;
       write_reg <= write;
+      rdata_reg <= rdata;
+      ready_reg <= ready;
     end
 
   end
