@@ -13,214 +13,59 @@ reset=`tput sgr0`
 
 cd $BASEDIR/sim/work
 
+declare -A benchmark=([aapg]=1 [bootloader]=1 [coremark]=1 [csmith]=1 [dhrystone]=1 [riscv-dv]=1 [sram]=1 [timer]=1 [whetstone]=1)
+declare -A verification=([compliance]=1 [isa]=1)
+
 start=`date +%s`
 if [ "$WAVE" = 'on' ]
 then
-	${VERILATOR} --binary -Wno-UNOPTFLAT -Wno-UNSIGNED --trace -trace-max-array 128 --trace-structs -f $BASEDIR/sim/files.f --top-module soc 2>&1 > /dev/null
-	make -s -j -C obj_dir/ -f Vsoc.mk Vsoc
-  if [ "$PROGRAM" = 'dhrystone' ]
-  then
-    cp $BASEDIR/build/dhrystone/dat/dhrystone.dat bram.dat
-    cp $BASEDIR/build/dhrystone/elf/dhrystone.host host.dat
-  	obj_dir/Vsoc $CYCLES dhrystone 2> /dev/null
-  elif [ "$PROGRAM" = 'whetstone' ]
-  then
-    cp $BASEDIR/build/whetstone/dat/whetstone.dat bram.dat
-    cp $BASEDIR/build/whetstone/elf/whetstone.host host.dat
-  	obj_dir/Vsoc $CYCLES whetstone 2> /dev/null
-  elif [ "$PROGRAM" = 'coremark' ]
-  then
-    cp $BASEDIR/build/coremark/dat/coremark.dat bram.dat
-    cp $BASEDIR/build/coremark/elf/coremark.host host.dat
-  	obj_dir/Vsoc $CYCLES coremark 2> /dev/null
-  elif [ "$PROGRAM" = 'aapg' ]
-  then
-    cp $BASEDIR/build/aapg/dat/aapg.dat bram.dat
-    cp $BASEDIR/build/aapg/elf/aapg.host host.dat
-  	obj_dir/Vsoc $CYCLES aapg 2> /dev/null
-  elif [ "$PROGRAM" = 'riscv-dv' ]
-  then
-    cp $BASEDIR/build/riscv-dv/dat/riscv-dv.dat bram.dat
-    cp $BASEDIR/build/riscv-dv/elf/riscv-dv.host host.dat
-  	obj_dir/Vsoc $CYCLES riscv-dv 2> /dev/null
-  elif [ "$PROGRAM" = 'csmith' ]
-  then
-    cp $BASEDIR/build/csmith/dat/csmith.dat bram.dat
-    cp $BASEDIR/build/csmith/elf/csmith.host host.dat
-  	obj_dir/Vsoc $CYCLES csmith 2> /dev/null
-  elif [ "$PROGRAM" = 'torture' ]
-  then
-    cp $BASEDIR/build/torture/dat/torture.dat bram.dat
-    cp $BASEDIR/build/torture/elf/torture.host host.dat
-  	obj_dir/Vsoc $CYCLES torture 2> /dev/null
-  elif [ "$PROGRAM" = 'bootloader' ]
-  then
-    cp $BASEDIR/build/bootloader/dat/bootloader.dat bram.dat
-    cp $BASEDIR/build/bootloader/elf/bootloader.host host.dat
-  	obj_dir/Vsoc $CYCLES bootloader 2> /dev/null
-  elif [ "$PROGRAM" = 'timer' ]
-  then
-    cp $BASEDIR/build/timer/dat/timer.dat bram.dat
-    cp $BASEDIR/build/timer/elf/timer.host host.dat
-  	obj_dir/Vsoc $CYCLES timer 2> /dev/null
-  elif [ "$PROGRAM" = 'sram' ]
-  then
-    cp $BASEDIR/build/sram/dat/sram.dat bram.dat
-    cp $BASEDIR/build/sram/elf/sram.host host.dat
-  	obj_dir/Vsoc $CYCLES sram 2> /dev/null
-  elif [ "$PROGRAM" = 'compliance' ]
-  then
-    for filename in $BASEDIR/build/compliance/dat/*.dat; do
-      cp $filename bram.dat
-      filename=${filename##*/}
-      filename=${filename%.dat}
-      cp $BASEDIR/build/compliance/elf/${filename}.host host.dat
-      echo "${filename}"
-    	obj_dir/Vsoc $CYCLES ${filename} 2> /dev/null
-    done
-  elif [ "$PROGRAM" = 'isa' ]
-  then
-    for filename in $BASEDIR/build/isa/dat/*.dat; do
-      cp $filename bram.dat
-      filename=${filename##*/}
-      filename=${filename%.dat}
-      cp $BASEDIR/build/isa/elf/${filename}.host host.dat
-      echo "${filename}"
-    	obj_dir/Vsoc $CYCLES ${filename} 2> /dev/null
-    done
-  else
-    cp $BASEDIR/$PROGRAM bram.dat
-    filename="$PROGRAM"
-    dirname="$PROGRAM"
-    filename=${filename##*/}
-    filename=${filename%.dat}
-    subpath=${dirname%/dat*}
-    cp $BASEDIR/${subpath}/elf/${filename}.host host.dat
-    if [ -e $BASEDIR/${subpath}/elf/${filename}.begin_signature ]
-    then
-      cp $BASEDIR/${subpath}/elf/${filename}.begin_signature begin_signature.dat
-    fi
-    if [ -e $BASEDIR/${subpath}/elf/${filename}.end_signature ]
-    then
-      cp $BASEDIR/${subpath}/elf/${filename}.end_signature end_signature.dat
-    fi
-    if [ -e $BASEDIR/${subpath}/ref/${filename}.reference_output ]
-    then
-      cp $BASEDIR/${subpath}/ref/${filename}.reference_output reference.dat
-    fi
-    obj_dir/Vsoc $CYCLES ${filename} 2> /dev/null
-    if [ -f "reference.dat" ]
-    then
-      if [ "$(diff --color reference.dat signature.dat)" != "" ]
-      then
-        echo "${red}RESULTS NOT OK${reset}"
-      else
-        echo "${green}RESULTS OK${reset}"
-      fi
-    fi
-  fi
+  ${VERILATOR} --binary -Wno-UNOPTFLAT -Wno-UNSIGNED --trace -trace-max-array 128 --trace-structs -f $BASEDIR/sim/files.f --top-module soc 2>&1 > /dev/null
+  make -s -j -C obj_dir/ -f Vsoc.mk Vsoc
 else
-	${VERILATOR} --binary -Wno-UNOPTFLAT -Wno-UNSIGNED -f $BASEDIR/sim/files.f --top-module soc 2>&1 > /dev/null
-	make -s -j -C obj_dir/ -f Vsoc.mk Vsoc
-  if [ "$PROGRAM" = 'dhrystone' ]
-  then
-    cp $BASEDIR/build/dhrystone/dat/dhrystone.dat bram.dat
-    cp $BASEDIR/build/dhrystone/elf/dhrystone.host host.dat
-  	obj_dir/Vsoc $CYCLES 2> /dev/null
-  elif [ "$PROGRAM" = 'whetstone' ]
-  then
-    cp $BASEDIR/build/whetstone/dat/whetstone.dat bram.dat
-    cp $BASEDIR/build/whetstone/elf/whetstone.host host.dat
-  	obj_dir/Vsoc $CYCLES 2> /dev/null
-  elif [ "$PROGRAM" = 'coremark' ]
-  then
-    cp $BASEDIR/build/coremark/dat/coremark.dat bram.dat
-    cp $BASEDIR/build/coremark/elf/coremark.host host.dat
-  	obj_dir/Vsoc $CYCLES 2> /dev/null
-  elif [ "$PROGRAM" = 'aapg' ]
-  then
-    cp $BASEDIR/build/aapg/dat/aapg.dat bram.dat
-    cp $BASEDIR/build/aapg/elf/aapg.host host.dat
-  	obj_dir/Vsoc $CYCLES 2> /dev/null
-  elif [ "$PROGRAM" = 'riscv-dv' ]
-  then
-    cp $BASEDIR/build/riscv-dv/dat/riscv-dv.dat bram.dat
-    cp $BASEDIR/build/riscv-dv/elf/riscv-dv.host host.dat
-  	obj_dir/Vsoc $CYCLES 2> /dev/null
-  elif [ "$PROGRAM" = 'csmith' ]
-  then
-    cp $BASEDIR/build/csmith/dat/csmith.dat bram.dat
-    cp $BASEDIR/build/csmith/elf/csmith.host host.dat
-  	obj_dir/Vsoc $CYCLES 2> /dev/null
-  elif [ "$PROGRAM" = 'torture' ]
-  then
-    cp $BASEDIR/build/torture/dat/torture.dat bram.dat
-    cp $BASEDIR/build/torture/elf/torture.host host.dat
-  	obj_dir/Vsoc $CYCLES 2> /dev/null
-  elif [ "$PROGRAM" = 'bootloader' ]
-  then
-    cp $BASEDIR/build/bootloader/dat/bootloader.dat bram.dat
-    cp $BASEDIR/build/bootloader/elf/bootloader.host host.dat
-  	obj_dir/Vsoc $CYCLES 2> /dev/null
-  elif [ "$PROGRAM" = 'timer' ]
-  then
-    cp $BASEDIR/build/timer/dat/timer.dat bram.dat
-    cp $BASEDIR/build/timer/elf/timer.host host.dat
-  	obj_dir/Vsoc $CYCLES 2> /dev/null
-  elif [ "$PROGRAM" = 'sram' ]
-  then
-    cp $BASEDIR/build/sram/dat/sram.dat bram.dat
-    cp $BASEDIR/build/sram/elf/sram.host host.dat
-  	obj_dir/Vsoc $CYCLES 2> /dev/null
-  elif [ "$PROGRAM" = 'compliance' ]
-  then
-    for filename in $BASEDIR/build/compliance/dat/*.dat; do
-      cp $filename bram.dat
-      filename=${filename##*/}
-      filename=${filename%.dat}
-      cp $BASEDIR/build/compliance/elf/${filename}.host host.dat
-      echo "${filename}"
-    	obj_dir/Vsoc $CYCLES 2> /dev/null
-    done
-  elif [ "$PROGRAM" = 'isa' ]
-  then
-    for filename in $BASEDIR/build/isa/dat/*.dat; do
-      cp $filename bram.dat
-      filename=${filename##*/}
-      filename=${filename%.dat}
-      cp $BASEDIR/build/isa/elf/${filename}.host host.dat
-      echo "${filename}"
-    	obj_dir/Vsoc $CYCLES 2> /dev/null
-    done
-  else
-    cp $BASEDIR/$PROGRAM bram.dat
-    filename="$PROGRAM"
-    dirname="$PROGRAM"
+  ${VERILATOR} --binary -Wno-UNOPTFLAT -Wno-UNSIGNED -f $BASEDIR/sim/files.f --top-module soc 2>&1 > /dev/null
+  make -s -j -C obj_dir/ -f Vsoc.mk Vsoc
+fi
+if [[ -n "${benchmark[$PROGRAM]}" ]]
+then
+  cp $BASEDIR/build/$PROGRAM/dat/$PROGRAM.dat bram.dat
+  cp $BASEDIR/build/$PROGRAM/elf/$PROGRAM.host host.dat
+  obj_dir/Vsoc
+elif [[ -n "${verification[$PROGRAM]}" ]]
+then
+  for filename in $BASEDIR/build/$PROGRAM/dat/*.dat; do
     filename=${filename##*/}
     filename=${filename%.dat}
-    subpath=${dirname%/dat*}
-    cp $BASEDIR/${subpath}/elf/${filename}.host host.dat
-    if [ -e $BASEDIR/${subpath}/elf/${filename}.begin_signature ]
+    echo "$filename"
+    cp $BASEDIR/build/$PROGRAM/dat/$filename.dat bram.dat
+    cp $BASEDIR/build/$PROGRAM/elf/$filename.host host.dat
+    obj_dir/Vsoc
+  done
+else
+  subpath=${PROGRAM%/dat*}
+  filename=${PROGRAM##*/}
+  filename=${filename%.dat}
+  cp $BASEDIR/$subpath/dat/$filename.dat bram.dat
+  cp $BASEDIR/$subpath/elf/$filename.host host.dat
+  if [ -e $BASEDIR/$subpath/elf/$filename.begin_signature ]
+  then
+    cp $BASEDIR/$subpath/elf/$filename.begin_signature begin_signature.dat
+  fi
+  if [ -e $BASEDIR/$subpath/elf/$filename.end_signature ]
+  then
+    cp $BASEDIR/$subpath/elf/$filename.end_signature end_signature.dat
+  fi
+  if [ -e $BASEDIR/$subpath/elf/$filename.reference_output ]
+  then
+    cp $BASEDIR/$subpath/elf/$filename.reference_output reference.dat
+  fi
+  obj_dir/Vsoc
+  if [ -f "reference.dat" ]
+  then
+    if [ "$(diff --color reference.dat signature.dat)" != "" ]
     then
-      cp $BASEDIR/${subpath}/elf/${filename}.begin_signature begin_signature.dat
-    fi
-    if [ -e $BASEDIR/${subpath}/elf/${filename}.end_signature ]
-    then
-      cp $BASEDIR/${subpath}/elf/${filename}.end_signature end_signature.dat
-    fi
-    if [ -e $BASEDIR/${subpath}/ref/${filename}.reference_output ]
-    then
-      cp $BASEDIR/${subpath}/ref/${filename}.reference_output reference.dat
-    fi
-    obj_dir/Vsoc $CYCLES 2> /dev/null
-    if [ -f "reference.dat" ]
-    then
-      if [ "$(diff --color reference.dat signature.dat)" != "" ]
-      then
-        echo "${red}RESULTS NOT OK${reset}"
-      else
-        echo "${green}RESULTS OK${reset}"
-      fi
+      echo "${red}RESULTS INCORRECT${reset}"
+    else
+      echo "${green}RESULTS CORRECT${reset}"
     fi
   fi
 fi
