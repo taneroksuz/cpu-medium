@@ -53,7 +53,7 @@ module decode_stage
       v.clear = 1;
     end else if (d.e.jump == 1 && d.f.taken == 1 && |(d.e.address ^ d.f.pc) == 1) begin
       v.clear = 1;
-    end else if (d.e.fence == 1) begin
+    end else if (d.d.fence == 1) begin
       v.clear = 1;
     end
 
