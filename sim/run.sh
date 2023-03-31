@@ -34,7 +34,7 @@ then
     echo "$filename"
     cp $BASEDIR/build/$PROGRAM/dat/$filename.dat bram.dat
     cp $BASEDIR/build/$PROGRAM/elf/$filename.host host.dat
-    obj_dir/Vsoc $MAXTIME $PROGRAM.vcd
+    obj_dir/Vsoc $MAXTIME $filename.vcd
   done
 else
   subpath=${PROGRAM%/dat*}
@@ -42,7 +42,7 @@ else
   filename=${filename%.dat}
   cp $BASEDIR/$subpath/dat/$filename.dat bram.dat
   cp $BASEDIR/$subpath/elf/$filename.host host.dat
-  obj_dir/Vsoc $MAXTIME $PROGRAM.vcd
+  obj_dir/Vsoc $MAXTIME $filename.vcd
 fi
 end=`date +%s`
 echo Execution time was `expr $end - $start` seconds.
