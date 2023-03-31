@@ -1,23 +1,32 @@
 #include <stdlib.h>
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 #include "Vsoc.h"
 
 vluint64_t sim_time = 0;
 
-#define TRACE
-
 int main(int argc, char** argv, char** env)
 {
   vluint64_t max_sim_time = 10000000;
+  const char *filename = "soc.vcd";
 
   if (argc >= 2)
     max_sim_time = atoi(argv[1]);
+  if (argc >= 3)
+    filename = argv[2];
 
   Verilated::commandArgs(argc, argv);
   Vsoc *dut = new Vsoc;
+
+#if VM_TRACE
+  Verilated::traceEverOn(true);
+  VerilatedVcdC *trace = new VerilatedVcdC;
+  dut->trace(trace, 0);
+  trace->open(filename);
+#endif
 
   bool finished = false;
 
@@ -31,6 +40,10 @@ int main(int argc, char** argv, char** env)
     dut->clock ^= 1;
 
     dut->eval();
+
+#if VM_TRACE
+    trace->dump(sim_time);
+#endif
 
     sim_time++;
 
@@ -49,6 +62,10 @@ int main(int argc, char** argv, char** env)
   }
 
   std::cout << "simulation finished @" << sim_time << "ps" << std::endl;
+
+#if VM_TRACE
+  trace->close();
+#endif
 
   delete dut;
   exit(EXIT_SUCCESS);
