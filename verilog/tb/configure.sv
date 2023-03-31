@@ -38,8 +38,8 @@ package configure;
   parameter clint_base_addr = 32'h2000000;
   parameter clint_top_addr  = 32'h200C000;
 
-  parameter clk_freq = 1000000000; // 1000MHz
-  parameter rtc_freq = 32768; // 32768Hz
+  parameter clk_freq = 1000000000; // 1GHz
+  parameter rtc_freq = 100000000; // 100MHz
 
   parameter clk_divider_rtc = (clk_freq/rtc_freq)/2-1;
 

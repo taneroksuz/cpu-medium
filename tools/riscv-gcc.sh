@@ -21,20 +21,16 @@ sudo apt-get install git autoconf automake autotools-dev curl libmpc-dev \
   libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool \
   patchutils bc zlib1g-dev libexpat-dev texinfo python3 device-tree-compiler
 
-wget https://github.com/gcc-mirror/gcc/archive/refs/tags/releases/gcc-12.2.0.tar.gz
-wget https://github.com/bminor/binutils-gdb/archive/refs/tags/binutils-2_39.tar.gz
-wget https://github.com/mirror/newlib-cygwin/archive/refs/tags/newlib-4.1.0.tar.gz
-
-tar xfz gcc-12.2.0.tar.gz
-tar xfz binutils-2_39.tar.gz
-tar xfz newlib-4.1.0.tar.gz
+git clone --depth 1 https://github.com/gcc-mirror/gcc.git
+git clone --depth 1 https://github.com/bminor/binutils-gdb.git
+git clone --depth 1 https://github.com/bminor/newlib.git
 
 mkdir combined
 cd combined
 
-ln --force -s ../newlib-cygwin-newlib-4.1.0/* .
-ln --force -s ../binutils-gdb-binutils-2_39/* .
-ln --force -s ../gcc-releases-gcc-12.2.0/* .
+ln --force -s ../newlib/* .
+ln --force -s ../binutils-gdb/* .
+ln --force -s ../gcc/* .
 
 mkdir build
 cd build
@@ -42,7 +38,7 @@ cd build
 ../configure --target=riscv32-unknown-elf --enable-languages=c \
   --disable-shared --disable-threads --disable-multilib --disable-gdb \
   --disable-libssp --with-newlib \
-  --with-arch=rv32imfc_zba_zbb_zbc --with-abi=ilp32f --prefix=$RISCV_PATH
+  --with-arch=rv32imfc_zba_zbb_zbc_zbs --with-abi=ilp32f --prefix=$RISCV_PATH
 
 make -j$(nproc)
 make install
