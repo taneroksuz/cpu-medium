@@ -84,6 +84,7 @@ module memory_stage
 
     storebuffer_in.mem_valid = a.e.load | a.e.store | a.e.fload | a.e.fstore | a.e.fence;
     storebuffer_in.mem_fence = a.e.fence;
+    storebuffer_in.mem_spec = 0;
     storebuffer_in.mem_instr = 0;
     storebuffer_in.mem_addr = a.e.address;
     storebuffer_in.mem_wdata = store_data(a.e.sdata,a.e.lsu_op.lsu_sb,a.e.lsu_op.lsu_sh,a.e.lsu_op.lsu_sw);

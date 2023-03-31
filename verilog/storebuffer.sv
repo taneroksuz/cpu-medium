@@ -4,10 +4,12 @@ package store_wires;
 
   import configure::*;
 
+  localparam depth = $clog2(storebuffer_depth-1);
+
   typedef struct packed{
     logic [0 : 0] wen;
-    logic [storebuffer_depth-1 : 0] waddr;
-    logic [storebuffer_depth-1 : 0] raddr;
+    logic [depth-1 : 0] waddr;
+    logic [depth-1 : 0] raddr;
     logic [67 : 0] wdata;
   } storebuffer_data_in_type;
 
@@ -31,7 +33,7 @@ module storebuffer_data
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [67 : 0] storebuffer_data_array[0:2**storebuffer_depth-1] = '{default:'0};
+  logic [67 : 0] storebuffer_data_array[0:storebuffer_depth-1] = '{default:'0};
 
   assign storebuffer_data_out.rdata = storebuffer_data_array[storebuffer_data_in.raddr];
 
@@ -57,9 +59,11 @@ module storebuffer_ctrl
   timeunit 1ns;
   timeprecision 1ps;
 
+  localparam depth = $clog2(storebuffer_depth-1);
+
   typedef struct packed{
-    logic [storebuffer_depth-1:0] waddr;
-    logic [storebuffer_depth-1:0] raddr;
+    logic [depth-1:0] waddr;
+    logic [depth-1:0] raddr;
     logic [31:0] addr;
     logic [31:0] baddr;
     logic [31:0] wdata;
@@ -179,7 +183,7 @@ module storebuffer_ctrl
 
     if (dmem_out.mem_ready == 1) begin
       if (v.rden == 1) begin
-        if (v.raddr == 2**storebuffer_depth-1) begin
+        if (&(v.raddr) == 1) begin
           v.overflow = 0;
           v.raddr = 0;
         end else begin
@@ -217,7 +221,7 @@ module storebuffer_ctrl
     v.brdata = storebuffer_data_out.rdata;
 
     if (v.wren == 1) begin
-      if (v.waddr == 2**storebuffer_depth-1) begin
+      if (&(v.waddr) == 1) begin
         v.overflow = 1;
         v.waddr = 0;
       end else begin
@@ -264,6 +268,7 @@ module storebuffer_ctrl
 
     dmem_in.mem_valid = v.valid;
     dmem_in.mem_fence = v.fence;
+    dmem_in.mem_spec = 0;
     dmem_in.mem_instr = 0;
     dmem_in.mem_addr = v.addr;
     dmem_in.mem_wdata = v.wdata;

@@ -568,6 +568,7 @@ package wires;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
+    logic [0  : 0] stall;
   } fetch_out_type;
 
   typedef struct packed{
@@ -575,6 +576,7 @@ package wires;
     logic [31 : 0] instr;
     logic [0  : 0] valid;
     logic [0  : 0] fence;
+    logic [0  : 0] spec;
     logic [0  : 0] taken;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
@@ -588,6 +590,7 @@ package wires;
     instr : 0,
     valid : 0,
     fence : 0,
+    spec : 0,
     taken : 0,
     exception : 0,
     ecause : 0,
@@ -1504,6 +1507,7 @@ package wires;
   typedef struct packed{
     logic [0  : 0] mem_valid;
     logic [0  : 0] mem_fence;
+    logic [0  : 0] mem_spec;
     logic [0  : 0] mem_instr;
     logic [31 : 0] mem_addr;
     logic [31 : 0] mem_wdata;

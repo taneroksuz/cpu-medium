@@ -6,7 +6,7 @@ package configure;
   parameter fetchbuffer_depth = 4;
   parameter storebuffer_depth = 4;
 
-  parameter bram_depth = 18;
+  parameter bram_depth = 262144;
 
   parameter fpu_enable = 1;
 

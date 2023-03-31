@@ -41,9 +41,9 @@ module decode_stage
     v.ecause = d.f.ecause;
     v.etval = d.f.etval;
 
-    // if ((d.d.stall | d.e.stall | d.m.stall) == 1) begin
-    //   v = r;
-    // end
+    if ((d.d.stall | d.e.stall | d.m.stall) == 1) begin
+      v = r;
+    end
 
     v.clear = csr_out.trap | csr_out.mret | d.w.clear;
 
