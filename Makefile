@@ -15,7 +15,7 @@ export BASEDIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 export PLATFORM ?= tb# tb vivado quartus
 export PROGRAM ?= dhrystone# aapg bootloader compliance coremark csmith dhrystone isa riscv-dv sram timer whetstone
 export AAPG ?= aapg
-export CYCLES ?= 10000000000
+export MAXTIME ?= 10000000
 export OFFSET ?= 0x100000
 export WAVE ?= off# "on" for saving dump file
 
