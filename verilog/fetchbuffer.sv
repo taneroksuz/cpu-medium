@@ -89,6 +89,7 @@ module fetchbuffer_ctrl
     logic [31:0] paddr2;
     logic [31:0] addr;
     logic [0:0] pfence;
+    logic [0:0] fence;
     logic [0:0] pspec;
     logic [0:0] pvalid;
     logic [0:0] valid;
@@ -120,6 +121,7 @@ module fetchbuffer_ctrl
     paddr2 : 0,
     addr : 0,
     pfence : 0,
+    fence : 0,
     pspec : 0,
     pvalid : 0,
     valid : 0,
@@ -137,6 +139,8 @@ module fetchbuffer_ctrl
   always_comb begin
 
     v = r;
+
+    v.fence = 0;
 
     v.halt = 0;
 
@@ -211,6 +215,7 @@ module fetchbuffer_ctrl
         if (v.pfence == 1) begin
           v.state = active;
           v.pfence = 0;
+          v.fence = 1;
           v.halt = 0;
           v.addr = {v.paddr1[31:2],2'b0};
         end else if (v.pspec == 1) begin
@@ -309,7 +314,7 @@ module fetchbuffer_ctrl
     end
 
     imem_in.mem_valid = v.valid;
-    imem_in.mem_fence = 0;
+    imem_in.mem_fence = v.fence;
     imem_in.mem_spec = 0;
     imem_in.mem_instr = 1;
     imem_in.mem_addr = v.addr;
