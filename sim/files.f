@@ -14,7 +14,7 @@
 ../../fpu/verilog/src/float/fp_cmp.sv
 ../../fpu/verilog/src/float/fp_max.sv
 ../../fpu/verilog/src/float/fp_sgnj.sv
-../../fpu/verilog/src/float/fp_cvt.sv
+../../fpu/verilog/src/float/fp_cvt_rv.sv
 ../../fpu/verilog/src/float/fp_fma.sv
 ../../fpu/verilog/src/float/fp_mac.sv
 ../../fpu/verilog/src/float/fp_fdiv.sv
