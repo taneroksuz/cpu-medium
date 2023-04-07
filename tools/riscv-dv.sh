@@ -1,28 +1,26 @@
 #!/bin/bash
 set -e
 
-INSTALL_PATH=/opt/riscv-dv
+PREFIX=/opt/riscv-dv
 
-if [ -d "$INSTALL_PATH" ]
+if [ -d "$PREFIX" ]
 then
-  sudo rm -rf $INSTALL_PATH
+  sudo rm -rf $PREFIX
 fi
-sudo mkdir $INSTALL_PATH
-sudo chown -R $USER $INSTALL_PATH/
+sudo mkdir $PREFIX
+sudo chown -R $USER:$USER $PREFIX/
 
-if [ -d "riscv-dv" ]; then
-  rm -rf riscv-dv
-fi
+sudo apt-get install -y python3-pip python3-setuptools
 
-git clone https://github.com/google/riscv-dv.git $INSTALL_PATH
+git clone https://github.com/google/riscv-dv.git $PREFIX
 
-cd $INSTALL_PATH
+cd $PREFIX
 
 pip3 install --user -r requirements.txt
 
 pip3 install --user -e .
 
-if ! grep -q  "export PATH=\$HOME/.local/bin/:\$PATH" "$HOME/.bashrc"; then
+if [[ ":$PATH:" =~ *":$HOME/.local/bin:"* ]]; then
   echo "export PATH=\$HOME/.local/bin/:\$PATH" >> $HOME/.bashrc
 fi
 
