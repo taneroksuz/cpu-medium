@@ -333,10 +333,10 @@ module dtim_ctrl
       end
     end
 
-    if (v_f.fence == 1) begin
-      v_f.did = 0;
-    end else if (rin_b.fence == 1) begin
+    if (rin_b.fence == 1) begin
       v_f.did = rin_b.did;
+    end else if (v_f.fence == 1) begin
+      v_f.did = 0;
     end
 
     rin_f = v_f;
