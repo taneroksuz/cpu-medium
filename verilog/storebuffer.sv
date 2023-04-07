@@ -258,11 +258,17 @@ module storebuffer_ctrl
         v.bload = 0;
         v.rdata = dmem_out.mem_rdata;
         v.ready = dmem_out.mem_ready;
+        if (dmem_out.mem_ready == 1) begin
+          v.state = idle;
+        end
       end
       fence : begin
         v.bfence = 0;
         v.rdata = 0;
         v.ready = dmem_out.mem_ready;
+        if (dmem_out.mem_ready == 1) begin
+          v.state = idle;
+        end
       end
       default : begin
       end
@@ -286,7 +292,7 @@ module storebuffer_ctrl
       v.bwren = 0;
     end
 
-    case(r.state)
+    case(v.state)
       idle : begin
         if (v.bstore == 1) begin
           v.state = active;
@@ -305,22 +311,6 @@ module storebuffer_ctrl
         if (dmem_out.mem_ready == 1) begin
           v.state = active;
           v.brden = 1;
-        end else begin
-          v.brden = 0;
-        end
-      end
-      load : begin
-        if (dmem_out.mem_ready == 1) begin
-          v.state = idle;
-          v.brden = 0;
-        end else begin
-          v.brden = 0;
-        end
-      end
-      fence : begin
-        if (dmem_out.mem_ready == 1) begin
-          v.state = idle;
-          v.brden = 0;
         end else begin
           v.brden = 0;
         end
@@ -362,7 +352,7 @@ module storebuffer_ctrl
             v.addr = 0;
             v.wdata = 0;
             v.wstrb = 0;
-            v.state = 0;
+            v.state = idle;
           end
         end
       end
