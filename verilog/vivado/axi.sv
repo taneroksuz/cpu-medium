@@ -120,7 +120,7 @@ module axi
             wvalid = 1;
             bready = 1;
           end
-          addr = axi_addr;
+          addr = {axi_addr[31:2],2'b0};
           prot = {axi_instr,2'b00};
           wdata = axi_wdata;
           wstrb = axi_wstrb;
@@ -135,7 +135,7 @@ module axi
         if (m_axi_arready == 1) begin
           arvalid = 0;
         end
-        if (m_axi_rvalid == 1 && m_axi_rlast == 1 && m_axi_rresp == 0) begin
+        if (m_axi_rvalid == 1) begin
           state = idle;
           rready = 0;
           rdata = m_axi_rdata;
@@ -155,14 +155,15 @@ module axi
           awvalid = 0;
         end
         if (m_axi_wready == 1) begin
-          wlast = 0;
           wvalid = 0;
         end
-        if (m_axi_bvalid == 1 && m_axi_bresp == 0) begin
+        if (m_axi_bvalid == 1) begin
           state = idle;
           bready = 0;
           ready = 1;
         end
+      end
+      default : begin
       end
     endcase
   end
