@@ -61,8 +61,8 @@ module axi
   timeprecision 1ps;
 
   localparam [1:0] idle = 0;
-  localparam [1:0] read = 1;
-  localparam [1:0] write = 2;
+  localparam [1:0] load = 1;
+  localparam [1:0] store = 2;
 
   logic [1 :0] state;
   logic [1 :0] state_reg;
@@ -95,27 +95,27 @@ module axi
 
   always_comb begin
     state = state_reg;
-    awvalid = 0;
-    wvalid = 0;
-    bready = 0;
     arvalid = 0;
-    rready = 0;
+    awvalid = 0;
     addr = 0;
     prot = 0;
+    wvalid = 0;
     wdata = 0;
     wstrb = 0;
     wlast = 0;
+    rready = 0;
+    bready = 0;
     rdata = 0;
     ready = 0;
     case (state_reg)
       idle : begin
         if (axi_valid == 1) begin
           if (|axi_wstrb == 0) begin
-            state = read;
+            state = load;
             arvalid = 1;
             rready = 1;
           end else if (|axi_wstrb == 1) begin
-            state = write;
+            state = store;
             awvalid = 1;
             wvalid = 1;
             bready = 1;
@@ -127,40 +127,37 @@ module axi
           wlast = |axi_wstrb;
         end
       end
-      read : begin
-        arvalid = arvalid_reg;
-        rready = rready_reg;
-        addr = addr_reg;
-        prot = prot_reg;
-        if (m_axi_arready == 1) begin
-          arvalid = 0;
+      load : begin
+        if (m_axi_arready == 0) begin
+          arvalid = arvalid_reg;
+          addr = addr_reg;
+          prot = prot_reg;
         end
         if (m_axi_rvalid == 1) begin
           state = idle;
-          rready = 0;
           rdata = m_axi_rdata;
           ready = 1;
+        end else if (m_axi_rvalid == 0) begin
+          rready = rready_reg;
         end
       end
-      write : begin
-        awvalid = awvalid_reg;
-        wvalid = wvalid_reg;
-        bready = bready_reg;
-        addr = addr_reg;
-        prot = prot_reg;
-        wdata = wdata_reg;
-        wstrb = wstrb_reg;
-        wlast = wlast_reg;
-        if (m_axi_awready == 1) begin
-          awvalid = 0;
+      store : begin
+        if (m_axi_awready == 0) begin
+          awvalid = awvalid_reg;
+          addr = addr_reg;
+          prot = prot_reg;
         end
-        if (m_axi_wready == 1) begin
-          wvalid = 0;
+        if (m_axi_wready == 0) begin
+          wvalid = wvalid_reg;
+          wdata = wdata_reg;
+          wstrb = wstrb_reg;
+          wlast = wlast_reg;
         end
         if (m_axi_bvalid == 1) begin
           state = idle;
-          bready = 0;
           ready = 1;
+        end else if (m_axi_bvalid == 0) begin
+          bready = bready_reg;
         end
       end
       default : begin
@@ -170,7 +167,7 @@ module axi
 
   assign m_axi_awaddr = addr_reg;
   assign m_axi_awlen = 8'b00000000;
-  assign m_axi_awsize = 3'b010; // 4 Byte
+  assign m_axi_awsize = 3'b000;
   assign m_axi_awburst = 2'b00;
   assign m_axi_awlock = 1'b0;
   assign m_axi_awcache = 4'b0000;
@@ -187,7 +184,7 @@ module axi
 
   assign m_axi_araddr = addr_reg;
   assign m_axi_arlen = 8'b00000000;
-  assign m_axi_arsize = 3'b010; // 4 Byte
+  assign m_axi_arsize = 3'b000;
   assign m_axi_arburst = 2'b00;
   assign m_axi_arlock = 1'b0;
   assign m_axi_arcache = 4'b0000;
@@ -204,30 +201,30 @@ module axi
 
     if (reset == 0) begin
       state_reg <= 0;
-      awvalid_reg <= 0;
-      wvalid_reg <= 0;
-      bready_reg <= 0;
       arvalid_reg <= 0;
-      rready_reg <= 0;
+      awvalid_reg <= 0;
       addr_reg <= 0;
       prot_reg <= 0;
+      wvalid_reg <= 0;
       wdata_reg <= 0;
       wstrb_reg <= 0;
       wlast_reg <= 0;
+      rready_reg <= 0;
+      bready_reg <= 0;
       rdata_reg <= 0;
       ready_reg <= 0;
     end else begin
       state_reg <= state;
-      awvalid_reg <= awvalid;
-      wvalid_reg <= wvalid;
-      bready_reg <= bready;
       arvalid_reg <= arvalid;
-      rready_reg <= rready;
+      awvalid_reg <= awvalid;
       addr_reg <= addr;
       prot_reg <= prot;
+      wvalid_reg <= wvalid;
       wdata_reg <= wdata;
       wstrb_reg <= wstrb;
       wlast_reg <= wlast;
+      rready_reg <= rready;
+      bready_reg <= bready;
       rdata_reg <= rdata;
       ready_reg <= ready;
     end
