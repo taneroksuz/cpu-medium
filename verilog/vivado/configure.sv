@@ -23,11 +23,11 @@ package configure;
   parameter rom_base_addr = 32'h0;
   parameter rom_top_addr  = 32'h80;
 
-  parameter itim_base_addr = 32'h0;
-  parameter itim_top_addr  = 32'h4000;
+  parameter itim_base_addr = 32'h00000;
+  parameter itim_top_addr  = 32'h20000;
 
-  parameter dtim_base_addr = 32'h4000;
-  parameter dtim_top_addr  = 32'h8000;
+  parameter dtim_base_addr = 32'h00000;
+  parameter dtim_top_addr  = 32'h20000;
 
   parameter uart_base_addr = 32'h1000000;
   parameter uart_top_addr  = 32'h1000004;
