@@ -67,7 +67,8 @@ module fetchbuffer_ctrl
 
   localparam [1:0] idle = 0;
   localparam [1:0] active = 1;
-  localparam [1:0] control = 2;
+  localparam [1:0] fence = 2;
+  localparam [1:0] spec = 3;
 
   typedef struct packed{
     logic [fetchbuffer_depth-1:0] enable;
@@ -176,26 +177,22 @@ module fetchbuffer_ctrl
           v.paddr2 = v.paddr1 + 4;
         end
         if (v.pfence == 1) begin
-          v.state = control;
+          v.state = fence;
           v.enable = 0;
           v.count = 0;
         end else if (v.pspec == 1) begin
-          v.state = control;
+          v.state = spec;
           v.enable = 0;
           v.count = 0;
-        end else if (v.pvalid == 1) begin
-          v.state = active;
         end
       end
-      control : begin
-        if (fetchbuffer_in.mem_spec == 1) begin
-          v.paddr1 = fetchbuffer_in.mem_addr;
-          v.paddr2 = v.paddr1 + 4;
-        end
+      fence : begin
+        v.halt = 1;
+      end
+      spec : begin
         v.halt = 1;
       end
       default : begin
-
       end
     endcase
 
@@ -203,27 +200,25 @@ module fetchbuffer_ctrl
       if (v.state == active) begin
         v.wren = 1;
         v.wid = v.addr[(depth+1):2];
-        v.enable[v.wid] = 1;
         v.wdata = {v.addr[31:2],imem_out.mem_rdata};
+        v.enable[v.wid] = 1;
         v.addr = v.addr + 4;
         v.count = v.count + 2;
       end
     end
 
-    if (v.full == 1 || imem_out.mem_ready == 1) begin
-      if (v.state == control) begin
-        if (v.pfence == 1) begin
-          v.state = active;
-          v.pfence = 0;
-          v.fence = 1;
-          v.halt = 0;
-          v.addr = {v.paddr1[31:2],2'b0};
-        end else if (v.pspec == 1) begin
-          v.state = active;
-          v.pspec = 0;
-          v.halt = 0;
-          v.addr = {v.paddr1[31:2],2'b0};
-        end
+    if (imem_out.mem_ready == 1 || v.full == 1) begin
+      if (v.state == fence) begin
+        v.state = active;
+        v.pfence = 0;
+        v.fence = 1;
+        v.halt = 0;
+        v.addr = {v.paddr1[31:2],2'b0};
+      end else if (v.state == spec) begin
+        v.state = active;
+        v.pspec = 0;
+        v.halt = 0;
+        v.addr = {v.paddr1[31:2],2'b0};
       end
     end
 
@@ -240,11 +235,11 @@ module fetchbuffer_ctrl
     v.rdata1 = fetchbuffer_data_out.rdata1;
     v.rdata2 = fetchbuffer_data_out.rdata2;
 
-    if (v.enable[v.rid1] == 1 && |(v.rdata1[61:32] ^ v.paddr1[31:2]) == 0) begin
-      v.rden1 = 1;
+    if (|(v.rdata1[61:32] ^ v.paddr1[31:2]) == 0) begin
+      v.rden1 = v.enable[v.rid1];
     end
-    if (v.enable[v.rid2] == 1 && |(v.rdata2[61:32] ^ v.paddr2[31:2]) == 0) begin
-      v.rden2 = 1;
+    if (|(v.rdata2[61:32] ^ v.paddr2[31:2]) == 0) begin
+      v.rden2 = v.enable[v.rid2];
     end
 
     if (|(v.wdata[61:32] ^ v.paddr1[31:2]) == 0) begin
