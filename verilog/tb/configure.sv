@@ -11,12 +11,12 @@ package configure;
   parameter fpu_enable = 1;
 
   parameter itim_enable = 1;
-  parameter itim_width = 2;
-  parameter itim_depth = 13;
+  parameter itim_width = 4;
+  parameter itim_depth = 8192;
 
   parameter dtim_enable = 1;
-  parameter dtim_width = 2;
-  parameter dtim_depth = 13;
+  parameter dtim_width = 4;
+  parameter dtim_depth = 8192;
 
   parameter bp_enable = 1;
   parameter btb_depth = 6;
