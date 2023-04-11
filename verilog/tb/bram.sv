@@ -19,14 +19,7 @@ module bram
 
   logic [31 : 0] bram_block[0:bram_depth-1];
 
-  logic [31 : 0] sig_b[0:0] = '{default:'0};
-  logic [31 : 0] sig_e[0:0] = '{default:'0};
-
   logic [31 : 0] host[0:0] = '{default:'0};
-
-  int sig_beg;
-  int sig_end;
-  int sig;
 
   logic [31 : 0] raddr;
   logic [0  : 0] ready;
@@ -38,17 +31,8 @@ module bram
     input logic [31 : 0] addr;
     input logic [31 : 0] wdata;
     input logic [3  : 0] wstrb;
-    integer i;
-    logic ok;
     begin
-      ok = 0;
       if (addr[31:2] == host[0][31:2] && |wstrb == 1) begin
-        ok = 1;
-      end
-      if (ok == 1) begin
-        for (i=sig_b[0]; i<sig_e[0]; i=i+4) begin
-          $fwrite(sig,"%H\n",bram_block[i/4]);
-        end
         if (wdata == 32'h1) begin
           $write("%c[1;32m",8'h1B);
           $display("TEST SUCCEEDED");
@@ -67,18 +51,6 @@ module bram
   initial begin
     $readmemh("bram.dat", bram_block);
     $readmemh("host.dat", host);
-  end
-
-  initial begin
-    sig_beg = $fopen("begin_signature.dat","r");
-    sig_end = $fopen("end_signature.dat","r");
-    sig = $fopen("signature.dat","w");
-    if (sig_beg != 0) begin
-      $readmemh("begin_signature.dat", sig_b);
-    end
-    if (sig_end != 0) begin
-      $readmemh("end_signature.dat", sig_e);
-    end
   end
 
   always_ff @(posedge clock) begin
