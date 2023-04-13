@@ -106,6 +106,7 @@ module dtim_ctrl
     logic [29-(depth+width):0] dtag;
     logic [29-(depth+width):0] tag;
     logic [depth-1:0] did;
+    logic [depth-1:0] id;
     logic [width-1:0] wid;
     logic [31:0] addr;
     logic [3:0] strb;
@@ -128,9 +129,10 @@ module dtim_ctrl
     logic [0:0] rden;
     logic [0:0] store;
     logic [0:0] inv;
-    logic [0:0] rinv;
+    logic [0:0] pass;
     logic [0:0] clear;
     logic [0:0] wen;
+    logic [0:0] en;
     logic [0:0] hit;
     logic [0:0] miss;
     logic [0:0] ldst;
@@ -141,6 +143,7 @@ module dtim_ctrl
     dtag : 0,
     tag : 0,
     did : 0,
+    id : 0,
     wid : 0,
     addr : 0,
     strb : 0,
@@ -163,9 +166,10 @@ module dtim_ctrl
     rden : 0,
     store : 0,
     inv : 0,
-    rinv : 0,
+    pass : 0,
     clear : 0,
     wen : 0,
+    en : 0,
     hit : 0,
     miss : 0,
     ldst : 0,
@@ -193,7 +197,7 @@ module dtim_ctrl
         v_f.rden = ~(|dtim_in.mem_wstrb);
         v_f.data = dtim_in.mem_wdata;
         v_f.strb = dtim_in.mem_wstrb;
-        v_f.addr = dtim_in.mem_addr;
+        v_f.addr = {dtim_in.mem_addr[31:2],2'b00};
         v_f.tag = dtim_in.mem_addr[31:(depth+width+2)];
         v_f.did = dtim_in.mem_addr[(depth+width+1):(width+2)];
         v_f.wid = dtim_in.mem_addr[(width+1):2];
@@ -214,6 +218,7 @@ module dtim_ctrl
     v_b.lock = 0;
     v_b.dirty = 0;
     v_b.wen = 0;
+    v_b.en = 0;
     v_b.inv = 0;
     v_b.clear = 0;
     v_b.hit = 0;
@@ -263,18 +268,17 @@ module dtim_ctrl
             v_b.state = fence;
             v_b.did = 0;
             v_b.wid = 0;
-            v_b.rinv = 1;
+            v_b.inv = 1;
+            v_b.pass = 1;
             v_b.valid = 0;
           end else if (v_b.miss == 1) begin
             v_b.state = miss;
-            v_b.addr[1:0] = 0;
             v_b.valid = 1;
             v_b.store = v_b.wren;
             v_b.sstrb = v_b.wren ? v_b.strb : 0;
             v_b.sdata = v_b.wren ? v_b.data : 0;
           end else if (v_b.ldst == 1) begin
             v_b.state = ldst;
-            v_b.addr[1:0] = 0;
             v_b.valid = 1;
             v_b.wstrb = v_b.wren ? v_b.strb : 0;
             v_b.wdata = v_b.wren ? v_b.data : 0;
@@ -331,15 +335,18 @@ module dtim_ctrl
       fence :
         begin
           if (dmem_out.mem_ready == 1 || v_b.valid == 0) begin
+            v_b.inv = 1;
+            v_b.en = 1;
             if (&(v_b.wid) == 1) begin
               if (&(v_b.did) == 1) begin
                 v_b.state = hit;
-                v_b.rinv = 0;
+                v_b.en = 0;
+                v_b.pass = 0;
+                v_b.did = 0;
                 v_b.ready = 1;
               end else begin
                 v_b.did = v_b.did + 1;
               end
-              v_b.inv = 1;
               v_b.wid = 0;
             end else begin
               v_b.wid = v_b.wid + 1;
@@ -363,7 +370,7 @@ module dtim_ctrl
 
     dvec_in[rin_f.wid].raddr = rin_f.did;
 
-    if (v_b.rinv == 1) begin
+    if (v_b.pass == 1) begin
       for (int i=0; i<dtim_width; i=i+1) begin
         dvec_in[i].raddr = v_b.did;
       end
@@ -375,9 +382,15 @@ module dtim_ctrl
 
     if (v_b.inv == 1) begin
       for (int i=0; i<dtim_width; i=i+1) begin
-        dvec_in[i].wen = v_b.inv;
-        dvec_in[i].waddr = r_b.did;
-        dvec_in[i].wdata = 0;
+        if (i[width-1:0] == v_b.wid) begin
+          dvec_in[i].wen = v_b.en;
+          dvec_in[i].waddr = v_b.did;
+          dvec_in[i].wdata = 0;
+        end else begin
+          dvec_in[i].wen = 0;
+          dvec_in[i].waddr = v_b.did;
+          dvec_in[i].wdata = 0;
+        end
       end
     end
 

@@ -292,26 +292,6 @@ module cpu
     .mtime (mtime)
   );
 
-  fetchbuffer fetchbuffer_comp
-  (
-    .reset (reset),
-    .clock (clock),
-    .fetchbuffer_in (fetchbuffer_in),
-    .fetchbuffer_out (fetchbuffer_out),
-    .imem_out (itim_out),
-    .imem_in (itim_in)
-  );
-
-  storebuffer storebuffer_comp
-  (
-    .reset (reset),
-    .clock (clock),
-    .storebuffer_in (storebuffer_in),
-    .storebuffer_out (storebuffer_out),
-    .dmem_in (dtim_in),
-    .dmem_out (dtim_out)
-  );
-
   fetch_stage fetch_stage_comp
   (
     .reset (reset),
@@ -319,8 +299,8 @@ module cpu
     .csr_out (csr_out),
     .bp_out (bp_out),
     .bp_in (bp_in),
-    .fetchbuffer_out (fetchbuffer_out),
-    .fetchbuffer_in (fetchbuffer_in),
+    .imem_out (itim_out),
+    .imem_in (itim_in),
     .a (fetch_in_a),
     .d (fetch_in_d),
     .y (fetch_out_y),
@@ -390,8 +370,8 @@ module cpu
     .clock (clock),
     .lsu_out (lsu_out),
     .lsu_in (lsu_in),
-    .storebuffer_out (storebuffer_out),
-    .storebuffer_in (storebuffer_in),
+    .dmem_out (dtim_out),
+    .dmem_in (dtim_in),
     .forwarding_min (forwarding_min),
     .fp_forwarding_min (fp_forwarding_min),
     .csr_out (csr_out),
@@ -420,16 +400,6 @@ module cpu
     .q (writeback_out_q)
   );
 
-  fpu#(
-    .fpu_enable (fpu_enable)
-  ) fpu_comp
-  (
-    .reset (reset),
-    .clock (clock),
-    .fpu_in (fpu_in),
-    .fpu_out (fpu_out)
-  );
-
   itim#(
     .itim_enable (itim_enable)
   ) itim_comp
@@ -452,6 +422,16 @@ module cpu
     .dtim_out (dtim_out),
     .dmem_out (dmem_out),
     .dmem_in (dmem_in)
+  );
+
+  fpu#(
+    .fpu_enable (fpu_enable)
+  ) fpu_comp
+  (
+    .reset (reset),
+    .clock (clock),
+    .fpu_in (fpu_in),
+    .fpu_out (fpu_out)
   );
 
   assign imemory_valid = imem_in.mem_valid;

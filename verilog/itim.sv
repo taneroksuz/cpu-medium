@@ -72,73 +72,115 @@ module itim_ctrl
   localparam width = $clog2(itim_width-1);
 
   localparam [2:0] hit = 0;
-  localparam [2:0] miss = 1;
-  localparam [2:0] load = 2;
-  localparam [2:0] fence = 3;
+  localparam [2:0] miss1 = 1;
+  localparam [2:0] miss2 = 2;
+  localparam [2:0] load1 = 3;
+  localparam [2:0] load2 = 4;
+  localparam [2:0] fence = 5;
 
   typedef struct packed{
-    logic [29-(depth+width):0] tag;
-    logic [width-1:0] wid;
-    logic [depth-1:0] did;
-    logic [31:0] addr;
+    logic [29-(depth+width):0] tag1;
+    logic [29-(depth+width):0] tag2;
+    logic [depth-1:0] did1;
+    logic [depth-1:0] did2;
+    logic [width-1:0] wid1;
+    logic [width-1:0] wid2;
+    logic [31:0] addr1;
+    logic [31:0] addr2;
+    logic [0:0] align;
     logic [0:0] fence;
     logic [0:0] enable;
   } front_type;
 
   parameter front_type init_front = '{
-    tag : 0,
-    wid : 0,
-    did : 0,
-    addr : 0,
+    tag1 : 0,
+    tag2 : 0,
+    did1 : 0,
+    did2 : 0,
+    wid1 : 0,
+    wid2 : 0,
+    addr1 : 0,
+    addr2 : 0,
+    align : 0,
     fence : 0,
     enable : 0
   };
 
   typedef struct packed{
-    logic [29-(depth+width):0] itag;
+    logic [29-(depth+width):0] itag1;
+    logic [29-(depth+width):0] itag2;
     logic [29-(depth+width):0] tag;
+    logic [29-(depth+width):0] tag1;
+    logic [29-(depth+width):0] tag2;
     logic [depth-1:0] did;
+    logic [depth-1:0] did1;
+    logic [depth-1:0] did2;
     logic [width-1:0] wid;
+    logic [width-1:0] wid1;
+    logic [width-1:0] wid2;
     logic [31:0] addr;
-    logic [31:0] idata;
+    logic [31:0] addr1;
+    logic [31:0] addr2;
+    logic [31:0] idata1;
+    logic [31:0] idata2;
     logic [31:0] data;
     logic [31:0] rdata;
     logic [0:0] ready;
     logic [0:0] valid;
-    logic [0:0] ilock;
+    logic [0:0] ilock1;
+    logic [0:0] ilock2;
     logic [0:0] lock;
     logic [0:0] enable;
     logic [0:0] fence;
+    logic [0:0] align;
     logic [0:0] wen;
+    logic [0:0] en;
     logic [0:0] inv;
     logic [0:0] clear;
     logic [0:0] hit;
-    logic [0:0] miss;
-    logic [0:0] load;
+    logic [0:0] miss1;
+    logic [0:0] miss2;
+    logic [0:0] load1;
+    logic [0:0] load2;
     logic [2:0] state;
   } back_type;
 
   parameter back_type init_back = '{
-    itag : 0,
+    itag1 : 0,
+    itag2 : 0,
     tag : 0,
+    tag1 : 0,
+    tag2 : 0,
     did : 0,
+    did1 : 0,
+    did2 : 0,
     wid : 0,
+    wid1 : 0,
+    wid2 : 0,
     addr : 0,
-    idata : 0,
+    addr1 : 0,
+    addr2 : 0,
+    idata1 : 0,
+    idata2 : 0,
     data : 0,
     rdata : 0,
     ready : 0,
     valid : 0,
-    ilock : 0,
+    ilock1 : 0,
+    ilock2 : 0,
     lock : 0,
     enable : 0,
     fence : 0,
+    align : 0,
     wen : 0,
+    en : 0,
     inv : 0,
     clear : 0,
     hit : 0,
-    miss : 0,
-    load : 0,
+    miss1 : 0,
+    miss2 : 0,
+    load1 : 0,
+    load2 : 0,
     state : 0
   };
 
@@ -157,10 +199,15 @@ module itim_ctrl
     if (itim_in.mem_valid == 1) begin
       v_f.enable = itim_in.mem_valid;
       v_f.fence = itim_in.mem_fence;
-      v_f.addr = itim_in.mem_addr;
-      v_f.tag = itim_in.mem_addr[31:(depth+width+2)];
-      v_f.did = itim_in.mem_addr[(depth+width+1):(width+2)];
-      v_f.wid = itim_in.mem_addr[(width+1):2];
+      v_f.addr1 = itim_in.mem_addr;
+      v_f.align = v_f.addr1[1];
+      v_f.tag1 = v_f.addr1[31:(depth+width+2)];
+      v_f.did1 = v_f.addr1[(depth+width+1):(width+2)];
+      v_f.wid1 = v_f.addr1[(width+1):2];
+      v_f.addr2 = v_f.addr1 + 4;
+      v_f.tag2 = v_f.addr2[31:(depth+width+2)];
+      v_f.did2 = v_f.addr2[(depth+width+1):(width+2)];
+      v_f.wid2 = v_f.addr2[(width+1):2];
     end
 
     rin_f = v_f;
@@ -175,37 +222,54 @@ module itim_ctrl
     v_b.fence = 0;
     v_b.lock = 0;
     v_b.wen = 0;
+    v_b.en = 0;
+    v_b.inv = 0;
     v_b.clear = 0;
     v_b.hit = 0;
-    v_b.miss = 0;
-    v_b.load = 0;
-
-    v_b.rdata = 0;
-    v_b.ready = 0;
+    v_b.miss1 = 0;
+    v_b.miss2 = 0;
+    v_b.load1 = 0;
+    v_b.load2 = 0;
 
     if (r_b.state == hit) begin
       v_b.enable = r_f.enable;
       v_b.fence = r_f.fence;
-      v_b.addr = r_f.addr;
-      v_b.tag = r_f.tag;
-      v_b.did = r_f.did;
-      v_b.wid = r_f.wid;
+      v_b.addr1 = r_f.addr1;
+      v_b.addr2 = r_f.addr2;
+      v_b.align = r_f.align;
+      v_b.tag1 = r_f.tag1;
+      v_b.tag2 = r_f.tag2;
+      v_b.did1 = r_f.did1;
+      v_b.did2 = r_f.did2;
+      v_b.wid1 = r_f.wid1;
+      v_b.wid2 = r_f.wid2;
     end
 
     case(r_b.state)
       hit :
         begin
-          v_b.itag = ivec_out[v_b.wid].rdata[61-(depth+width):32];
-          v_b.ilock = ivec_out[v_b.wid].rdata[62-(depth+width)];
-          v_b.idata = ivec_out[v_b.wid].rdata[31:0];
+          v_b.rdata = 0;
+          v_b.ready = 0;
+          v_b.itag1 = ivec_out[v_b.wid1].rdata[61-(depth+width):32];
+          v_b.itag2 = ivec_out[v_b.wid2].rdata[61-(depth+width):32];
+          v_b.ilock1 = ivec_out[v_b.wid1].rdata[62-(depth+width)];
+          v_b.ilock2 = ivec_out[v_b.wid2].rdata[62-(depth+width)];
+          v_b.idata1 = ivec_out[v_b.wid1].rdata[31:0];
+          v_b.idata2 = ivec_out[v_b.wid2].rdata[31:0];
           if (v_b.fence == 1) begin
             v_b.clear = v_b.enable;
-          end else if (v_b.addr < itim_base_addr || v_b.addr >= itim_top_addr) begin
-            v_b.load = v_b.enable;
-          end else if (v_b.ilock == 0) begin
-            v_b.miss = v_b.enable;
-          end else if (|(v_b.itag ^ v_b.tag) == 1) begin
-            v_b.load = v_b.enable;
+          end else if ((v_b.addr1 < itim_base_addr || v_b.addr1 >= itim_top_addr)) begin
+            v_b.load1 = v_b.enable;
+          end else if (v_b.align == 1 && (v_b.addr2 < itim_base_addr || v_b.addr2 >= itim_top_addr)) begin
+            v_b.load2 = v_b.enable;
+          end else if (v_b.ilock1 == 0) begin
+            v_b.miss1 = v_b.enable;
+          end else if (v_b.align == 1 && v_b.ilock2 == 0) begin
+            v_b.miss2 = v_b.enable;
+          end else if (|(v_b.itag1 ^ v_b.tag1) == 1) begin
+            v_b.load1 = v_b.enable;
+          end else if (v_b.align == 1 && |(v_b.itag2 ^ v_b.tag2) == 1) begin
+            v_b.load2 = v_b.enable;
           end else begin
             v_b.hit = v_b.enable;
           end
@@ -214,55 +278,136 @@ module itim_ctrl
             v_b.inv = 1;
             v_b.did = 0;
             v_b.valid = 0;
-          end if (v_b.miss == 1) begin
-            v_b.state = miss;
+          end if (v_b.miss1 == 1) begin
+            v_b.state = miss1;
             v_b.valid = 1;
-          end else if (v_b.load == 1) begin
-            v_b.state = load;
+            v_b.addr = v_b.addr1;
+          end if (v_b.miss2 == 1) begin
+            v_b.state = miss2;
             v_b.valid = 1;
+            v_b.addr = v_b.addr2;
+            v_b.rdata[15:0] = v_b.idata1[31:16];
+            v_b.ready = ~(&(v_b.rdata[1:0]));
+          end else if (v_b.load1 == 1) begin
+            v_b.state = load1;
+            v_b.valid = 1;
+            v_b.addr = v_b.addr1;
+          end else if (v_b.load2 == 1) begin
+            v_b.state = load2;
+            v_b.valid = 1;
+            v_b.addr = v_b.addr2;
+            v_b.rdata[15:0] = v_b.idata1[31:16];
+            v_b.ready = ~(&(v_b.rdata[1:0]));
           end else if (v_b.hit == 1) begin
             v_b.valid = 0;
-            v_b.rdata = v_b.idata;
+            v_b.rdata = v_b.align ? {v_b.idata2[15:0],v_b.idata1[31:16]} : v_b.idata1;
             v_b.ready = 1;
           end
+          if (v_b.miss2 == 1 || v_b.load2 == 1) begin
+            if (v_b.ready == 1) begin
+              v_b.state = hit;
+              v_b.valid = 0;
+            end
+          end
         end
-      miss :
+      miss1 :
         begin
           if (imem_out.mem_ready == 1) begin
             v_b.wen = 1;
             v_b.lock = 1;
+            v_b.tag = v_b.tag1;
+            v_b.did = v_b.did1;
+            v_b.wid = v_b.wid1;
+            v_b.data = imem_out.mem_rdata;
+            if (imem_out.mem_ready == 1) begin
+              if (v_b.align == 1) begin
+                if (&(v_b.rdata[1:0]) == 1) begin
+                  v_b.valid = 1;
+                  v_b.state = miss2;
+                end else begin
+                  v_b.valid = 0;
+                  v_b.state = hit;
+                end
+                v_b.rdata[15:0] = imem_out.mem_rdata[31:16];
+                v_b.ready = ~(&(v_b.rdata[1:0]));
+              end else begin
+                v_b.valid = 0;
+                v_b.state = hit;
+                v_b.rdata = imem_out.mem_rdata;
+                v_b.ready = 1;
+              end
+            end
+          end
+        end
+      miss2 :
+        begin
+          v_b.ready = 0;
+          if (imem_out.mem_ready == 1) begin
+            v_b.wen = 1;
+            v_b.lock = 1;
+            v_b.tag = v_b.tag2;
+            v_b.did = v_b.did2;
+            v_b.wid = v_b.wid2;
             v_b.data = imem_out.mem_rdata;
             v_b.valid = 0;
             v_b.state = hit;
-            v_b.rdata = imem_out.mem_rdata;
+            v_b.rdata[31:16] = imem_out.mem_rdata[15:0];
             v_b.ready = 1;
           end
         end
-      load :
+      load1 :
         begin
+          if (imem_out.mem_ready == 1) begin
+            if (v_b.align == 1) begin
+              if (&(v_b.rdata[1:0]) == 1) begin
+                v_b.valid = 1;
+                v_b.state = load2;
+              end else begin
+                v_b.valid = 0;
+                v_b.state = hit;
+              end
+              v_b.rdata[15:0] = imem_out.mem_rdata[31:16];
+              v_b.ready = ~(&(v_b.rdata[1:0]));
+            end else begin
+              v_b.valid = 0;
+              v_b.state = hit;
+              v_b.rdata = imem_out.mem_rdata;
+              v_b.ready = 1;
+            end
+          end
+        end
+      load2 :
+        begin
+          v_b.ready = 0;
           if (imem_out.mem_ready == 1) begin
             v_b.valid = 0;
             v_b.state = hit;
-            v_b.rdata = imem_out.mem_rdata;
+            v_b.rdata[31:16] = imem_out.mem_rdata[15:0];
             v_b.ready = 1;
           end
         end
       fence :
         begin
           if (&(v_b.did) == 1) begin
-            v_b.inv = 0;
             v_b.state = hit;
-            v_b.ready = 1;
+            v_b.inv = 1;
+            v_b.en = 0;
+            v_b.did = 0;
           end else begin
+            v_b.inv = 1;
+            v_b.en = 1;
             v_b.did = v_b.did + 1;
           end
         end
       default :
         begin
+          v_b.rdata = 0;
+          v_b.ready = 0;
         end
     endcase
 
-    ivec_in[rin_f.wid].raddr = rin_f.did;
+    ivec_in[rin_f.wid1].raddr = rin_f.did1;
+    ivec_in[rin_f.wid2].raddr = rin_f.did2;
 
     ivec_in[v_b.wid].wen = v_b.wen;
     ivec_in[v_b.wid].waddr = v_b.did;
@@ -270,7 +415,7 @@ module itim_ctrl
 
     if (v_b.inv == 1) begin
       for (int i=0; i<itim_width; i=i+1) begin
-        ivec_in[i].wen = v_b.inv;
+        ivec_in[i].wen = v_b.en;
         ivec_in[i].waddr = v_b.did;
         ivec_in[i].wdata = 0;
       end

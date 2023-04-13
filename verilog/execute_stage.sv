@@ -93,7 +93,6 @@ module execute_stage
     v.return_push = d.d.return_push;
     v.jump_uncond = d.d.jump_uncond;
     v.jump_rest = d.d.jump_rest;
-    v.taken = d.d.taken;
     v.exception = d.d.exception;
     v.ecause = d.d.ecause;
     v.etval = d.d.etval;
@@ -165,7 +164,6 @@ module execute_stage
       v.return_push = v.return_push_b;
       v.jump_uncond = v.jump_uncond_b;
       v.jump_rest = v.jump_rest_b;
-      v.taken = v.taken_b;
       v.exception = v.exception_b;
     end
 
@@ -338,7 +336,6 @@ module execute_stage
     v.return_push_b = v.return_push;
     v.jump_uncond_b = v.jump_uncond;
     v.jump_rest_b = v.jump_rest;
-    v.taken_b = v.taken;
     v.exception_b = v.exception;
 
     if ((v.stall | a.m.stall | v.clear) == 1) begin
@@ -369,7 +366,6 @@ module execute_stage
       v.return_push = 0;
       v.jump_uncond = 0;
       v.jump_rest = 0;
-      v.taken = 0;
       v.exception = 0;
     end
 
@@ -419,7 +415,6 @@ module execute_stage
     y.return_push = v.return_push;
     y.jump_uncond = v.jump_uncond;
     y.jump_rest = v.jump_rest;
-    y.taken = v.taken;
     y.exception = v.exception;
     y.ecause = v.ecause;
     y.etval = v.etval;
@@ -471,7 +466,6 @@ module execute_stage
     q.return_push = r.return_push;
     q.jump_uncond = r.jump_uncond;
     q.jump_rest = r.jump_rest;
-    q.taken = r.taken;
     q.exception = r.exception;
     q.ecause = r.ecause;
     q.etval = r.etval;

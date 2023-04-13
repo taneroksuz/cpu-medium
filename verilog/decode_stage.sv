@@ -36,7 +36,6 @@ module decode_stage
 
     v.pc = d.f.pc;
     v.instr = d.f.instr;
-    v.taken = d.f.taken;
     v.exception = d.f.exception;
     v.ecause = d.f.ecause;
     v.etval = d.f.etval;
@@ -45,17 +44,7 @@ module decode_stage
       v = r;
     end
 
-    v.clear = csr_out.trap | csr_out.mret | d.w.clear;
-
-    if (d.e.jump == 1 && d.f.taken == 0) begin
-      v.clear = 1;
-    end else if (d.e.jump == 0 && d.f.taken == 1) begin
-      v.clear = 1;
-    end else if (d.e.jump == 1 && d.f.taken == 1 && |(d.e.address ^ d.f.pc) == 1) begin
-      v.clear = 1;
-    end else if (d.d.fence == 1) begin
-      v.clear = 1;
-    end
+    v.clear = d.d.fence | d.e.jump | csr_out.trap | csr_out.mret | d.w.clear;
 
     v.stall = 0;
 
@@ -300,7 +289,6 @@ module decode_stage
       v.return_push = 0;
       v.jump_uncond = 0;
       v.jump_rest = 0;
-      v.taken = 0;
       v.exception = 0;
     end
 
@@ -366,7 +354,6 @@ module decode_stage
     y.return_push = v.return_push;
     y.jump_uncond = v.jump_uncond;
     y.jump_rest = v.jump_rest;
-    y.taken = v.taken;
     y.exception = v.exception;
     y.ecause = v.ecause;
     y.etval = v.etval;
@@ -428,7 +415,6 @@ module decode_stage
     q.return_push = r.return_push;
     q.jump_uncond = r.jump_uncond;
     q.jump_rest = r.jump_rest;
-    q.taken = r.taken;
     q.exception = r.exception;
     q.ecause = r.ecause;
     q.etval = r.etval;

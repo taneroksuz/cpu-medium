@@ -564,7 +564,6 @@ package wires;
   typedef struct packed{
     logic [31 : 0] pc;
     logic [31 : 0] instr;
-    logic [0  : 0] taken;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
@@ -573,30 +572,28 @@ package wires;
 
   typedef struct packed{
     logic [31 : 0] pc;
+    logic [31 : 0] npc;
     logic [31 : 0] instr;
     logic [0  : 0] valid;
-    logic [0  : 0] fence;
     logic [0  : 0] spec;
-    logic [0  : 0] taken;
+    logic [0  : 0] busy;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
     logic [0  : 0] stall;
-    logic [0  : 0] clear;
   } fetch_reg_type;
 
   parameter fetch_reg_type init_fetch_reg = '{
     pc : 0,
+    npc : 0,
     instr : 0,
     valid : 0,
-    fence : 0,
     spec : 0,
-    taken : 0,
+    busy : 0,
     exception : 0,
     ecause : 0,
     etval : 0,
-    stall : 0,
-    clear : 0
+    stall : 0
   };
 
   typedef struct packed{
@@ -648,7 +645,6 @@ package wires;
     logic [0  : 0] return_push;
     logic [0  : 0] jump_uncond;
     logic [0  : 0] jump_rest;
-    logic [0  : 0] taken;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
@@ -713,7 +709,6 @@ package wires;
     logic [0  : 0] return_push;
     logic [0  : 0] jump_uncond;
     logic [0  : 0] jump_rest;
-    logic [0  : 0] taken;
     logic [0  : 0] link_waddr;
     logic [0  : 0] link_raddr1;
     logic [0  : 0] equal_waddr_raddr1;
@@ -783,7 +778,6 @@ package wires;
     return_push : 0,
     jump_uncond : 0,
     jump_rest : 0,
-    taken : 0,
     link_waddr : 0,
     link_raddr1 : 0,
     equal_waddr_raddr1 : 0,
@@ -840,7 +834,6 @@ package wires;
     logic [0  : 0] return_push;
     logic [0  : 0] jump_uncond;
     logic [0  : 0] jump_rest;
-    logic [0  : 0] taken;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
@@ -924,7 +917,6 @@ package wires;
     logic [0  : 0] return_push;
     logic [0  : 0] jump_uncond;
     logic [0  : 0] jump_rest;
-    logic [0  : 0] taken;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
@@ -968,7 +960,6 @@ package wires;
     logic [0  : 0] return_push_b;
     logic [0  : 0] jump_uncond_b;
     logic [0  : 0] jump_rest_b;
-    logic [0  : 0] taken_b;
     logic [0  : 0] exception_b;
   } execute_reg_type;
 
@@ -1039,7 +1030,6 @@ package wires;
     return_push : 0,
     jump_uncond : 0,
     jump_rest : 0,
-    taken : 0,
     exception : 0,
     ecause : 0,
     etval : 0,
@@ -1083,7 +1073,6 @@ package wires;
     return_push_b : 0,
     jump_uncond_b : 0,
     jump_rest_b : 0,
-    taken_b : 0,
     exception_b : 0
   };
 

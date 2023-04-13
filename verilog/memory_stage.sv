@@ -8,8 +8,8 @@ module memory_stage
   input logic clock,
   input lsu_out_type lsu_out,
   output lsu_in_type lsu_in,
-  input mem_out_type storebuffer_out,
-  output mem_in_type storebuffer_in,
+  input mem_out_type dmem_out,
+  output mem_in_type dmem_in,
   output forwarding_memory_in_type forwarding_min,
   output fp_forwarding_memory_in_type fp_forwarding_min,
   input csr_out_type csr_out,
@@ -82,15 +82,15 @@ module memory_stage
 
     v.stall = 0;
 
-    storebuffer_in.mem_valid = a.e.load | a.e.store | a.e.fload | a.e.fstore | a.e.fence;
-    storebuffer_in.mem_fence = a.e.fence;
-    storebuffer_in.mem_spec = 0;
-    storebuffer_in.mem_instr = 0;
-    storebuffer_in.mem_addr = a.e.address;
-    storebuffer_in.mem_wdata = store_data(a.e.sdata,a.e.lsu_op.lsu_sb,a.e.lsu_op.lsu_sh,a.e.lsu_op.lsu_sw);
-    storebuffer_in.mem_wstrb = ((a.e.load | a.e.fload) == 1) ? 4'h0 : a.e.byteenable;
+    dmem_in.mem_valid = a.e.load | a.e.store | a.e.fload | a.e.fstore | a.e.fence;
+    dmem_in.mem_fence = a.e.fence;
+    dmem_in.mem_spec = 0;
+    dmem_in.mem_instr = 0;
+    dmem_in.mem_addr = a.e.address;
+    dmem_in.mem_wdata = store_data(a.e.sdata,a.e.lsu_op.lsu_sb,a.e.lsu_op.lsu_sh,a.e.lsu_op.lsu_sw);
+    dmem_in.mem_wstrb = ((a.e.load | a.e.fload) == 1) ? 4'h0 : a.e.byteenable;
 
-    lsu_in.ldata = storebuffer_out.mem_rdata;
+    lsu_in.ldata = dmem_out.mem_rdata;
     lsu_in.byteenable = v.byteenable;
     lsu_in.lsu_op = v.lsu_op;
 
@@ -98,16 +98,16 @@ module memory_stage
 
     if (v.load == 1) begin
       v.wdata = v.ldata;
-      v.stall = ~(storebuffer_out.mem_ready);
+      v.stall = ~(dmem_out.mem_ready);
     end else if (v.store == 1) begin
-      v.stall = ~(storebuffer_out.mem_ready);
+      v.stall = ~(dmem_out.mem_ready);
     end else if (v.fload == 1) begin
       v.fdata = v.ldata;
-      v.stall = ~(storebuffer_out.mem_ready);
+      v.stall = ~(dmem_out.mem_ready);
     end else if (v.fstore == 1) begin
-      v.stall = ~(storebuffer_out.mem_ready);
+      v.stall = ~(dmem_out.mem_ready);
     end else if (v.fence == 1) begin
-      v.stall = ~(storebuffer_out.mem_ready);
+      v.stall = ~(dmem_out.mem_ready);
     end
 
     v.wren_b = v.wren;
