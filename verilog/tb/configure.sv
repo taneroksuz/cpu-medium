@@ -19,9 +19,9 @@ package configure;
   parameter dtim_depth = 8192;
 
   parameter bp_enable = 1;
-  parameter btb_depth = 6;
-  parameter bht_depth = 6;
-  parameter ras_depth = 2;
+  parameter branchtarget_depth = 64;
+  parameter branchhistory_depth = 64;
+  parameter returnaddress_depth = 4;
 
   parameter bram_base_addr = 32'h000000;
   parameter bram_top_addr  = 32'h100000;
