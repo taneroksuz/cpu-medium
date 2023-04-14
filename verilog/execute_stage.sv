@@ -30,6 +30,7 @@ module execute_stage
   input fp_forwarding_out_type fp_forwarding_out,
   output fp_forwarding_register_in_type fp_forwarding_rin,
   input csr_out_type csr_out,
+  input bp_out_type bp_out,
   input execute_in_type a,
   input execute_in_type d,
   output execute_out_type y,
@@ -171,7 +172,7 @@ module execute_stage
 
     v.stall = 0;
 
-    v.enable = ~(d.e.stall | a.m.stall | v.clear | d.w.clear);
+    v.enable = ~(d.e.stall | a.m.stall | v.clear);
 
     alu_in.rdata1 = v.rdata1;
     alu_in.rdata2 = v.rdata2;
@@ -371,6 +372,7 @@ module execute_stage
 
     if (v.clear == 1) begin
       v.stall = 0;
+      v.fence = 0;
     end
 
     if (v.nop == 1) begin

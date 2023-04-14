@@ -143,16 +143,14 @@ module bp_ctrl
     logic [btb_depth-1 : 0] wid;
     logic [btb_depth-1 : 0] rid;
     logic [31 : 0] wpc;
-    logic [31 : 0] rpc;
     logic [31 : 0] waddr; 
-    logic [0  : 0] update; 
+    logic [0  : 0] update;
   } btb_reg_type;
 
   parameter btb_reg_type init_btb_reg = '{
     wid : 0,
     rid : 0,
     wpc : 0,
-    rpc : 0,
     waddr : 0,
     update : 0
   };
@@ -164,6 +162,7 @@ module bp_ctrl
     logic [1 : 0] get_sat;
     logic [1 : 0] upd_sat;
     logic [0 : 0] update;
+    logic [0 : 0] branch;
   } bht_reg_type;
 
   parameter bht_reg_type init_bht_reg = '{
@@ -172,7 +171,8 @@ module bp_ctrl
     upd_ind : 0,
     get_sat : 0,
     upd_sat : 0,
-    update : 0
+    update : 0,
+    branch : 0
   };
 
   typedef struct packed{
@@ -200,27 +200,21 @@ module bp_ctrl
     v_btb = r_btb;
 
     if (bp_in.clear == 0) begin
-      v_btb.rpc = bp_in.get_pc;
-      v_btb.rid = v_btb.rpc[btb_depth:1];
+      v_btb.rid = bp_in.get_pc[btb_depth:1];
     end
 
     if (bp_in.clear == 0) begin
       v_btb.wpc = bp_in.upd_pc;
+      v_btb.wid = bp_in.upd_pc[btb_depth:1];
       v_btb.waddr = bp_in.upd_addr;
-      v_btb.wid = v_btb.wpc[btb_depth:1];
     end
 
     btb_in.raddr = v_btb.rid;
 
-    if (bp_in.upd_jump == 0 && bp_in.stall == 0 && bp_in.clear == 0 &&
-          |(btb_out.rdata[62-btb_depth:32] ^ v_btb.rpc[31:(btb_depth+1)]) == 0) begin
+    if (bp_in.upd_jump == 0 && bp_in.clear == 0) begin
         bp_out.pred_baddr = btb_out.rdata[31:0];
-        bp_out.pred_branch = bp_in.get_branch;
-        bp_out.pred_uncond = bp_in.get_uncond;
     end else begin
         bp_out.pred_baddr = 0;
-        bp_out.pred_branch = 0;
-        bp_out.pred_uncond = 0;
     end
 
     v_btb.update = (bp_in.upd_branch & bp_in.upd_jump) | bp_in.upd_uncond;
@@ -237,14 +231,14 @@ module bp_ctrl
 
     v_bht = r_bht;
 
-    if (bp_in.clear == 0) begin
+    if (bp_in.upd_branch == 1 && bp_in.clear == 0) begin
       v_bht.upd_ind = v_bht.history ^ bp_in.upd_pc[bht_depth:1];
     end
 
     bht_in.raddr1 = v_bht.upd_ind;
     v_bht.upd_sat = bht_out.rdata1;
 
-    if (bp_in.clear == 0) begin
+    if (bp_in.get_branch == 1 && bp_in.clear == 0) begin
       v_bht.get_ind = v_bht.history ^ bp_in.get_pc[bht_depth:1];
     end
 
@@ -265,10 +259,22 @@ module bp_ctrl
       end
     end
 
-    if (bp_in.get_branch == 1 && bp_in.upd_jump == 0 && bp_in.stall == 0 && bp_in.clear == 0) begin
-      bp_out.pred_jump = v_bht.get_sat[1];
-    end else begin 
-      bp_out.pred_jump = 0;
+    if (bp_in.get_uncond == 1 && bp_in.clear == 0) begin
+      v_bht.branch = ~(|(btb_out.rdata[62-btb_depth:32] ^ bp_in.get_pc[31:(btb_depth+1)]));
+      bp_out.pred_branch = v_bht.branch;
+    end else if (bp_in.get_branch == 1 && bp_in.clear == 0) begin
+      v_bht.branch = v_bht.get_sat[1] & ~(|(btb_out.rdata[62-btb_depth:32] ^ bp_in.get_pc[31:(btb_depth+1)]));
+      bp_out.pred_branch = v_bht.branch;
+    end else begin
+      bp_out.pred_branch = 0;
+    end
+
+    if (bp_in.upd_branch == 1 && bp_in.clear == 0) begin
+      bp_out.pred_maddr = bp_in.upd_jump ? bp_in.upd_addr : bp_in.get_pc;
+      bp_out.pred_miss = bp_in.upd_jump ^ v_bht.branch;
+    end else begin
+      bp_out.pred_maddr = 0;
+      bp_out.pred_miss = 0;
     end
 
     v_bht.update = bp_in.upd_branch;
@@ -301,7 +307,7 @@ module bp_ctrl
 
     ras_in.raddr = v_ras.rid;
 
-    if (bp_in.get_return == 1 && bp_in.upd_jump == 0 && bp_in.stall == 0 && bp_in.clear == 0 &&
+    if (bp_in.get_return == 1 && bp_in.upd_jump == 0 && bp_in.clear == 0 &&
           v_ras.count > 0) begin
       bp_out.pred_raddr = ras_out.rdata;
       bp_out.pred_return = 1;
@@ -401,10 +407,10 @@ module bp
 
       assign bp_out.pred_baddr = 0;
       assign bp_out.pred_branch = 0;
-      assign bp_out.pred_jump = 0;
       assign bp_out.pred_raddr = 0;
       assign bp_out.pred_return = 0;
-      assign bp_out.pred_uncond = 0;
+      assign bp_out.pred_maddr = 0;
+      assign bp_out.pred_miss = 0;
 
     end
 

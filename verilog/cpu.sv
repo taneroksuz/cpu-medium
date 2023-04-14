@@ -3,26 +3,26 @@ import wires::*;
 
 module cpu
 (
-  input logic reset,
-  input logic clock,
+  input  logic reset,
+  input  logic clock,
   output logic [0  : 0] imemory_valid,
   output logic [0  : 0] imemory_instr,
   output logic [31 : 0] imemory_addr,
   output logic [31 : 0] imemory_wdata,
   output logic [3  : 0] imemory_wstrb,
-  input logic [31  : 0] imemory_rdata,
-  input logic [0   : 0] imemory_ready,
+  input  logic [31 : 0] imemory_rdata,
+  input  logic [0  : 0] imemory_ready,
   output logic [0  : 0] dmemory_valid,
   output logic [0  : 0] dmemory_instr,
   output logic [31 : 0] dmemory_addr,
   output logic [31 : 0] dmemory_wdata,
   output logic [3  : 0] dmemory_wstrb,
-  input logic [31  : 0] dmemory_rdata,
-  input logic [0   : 0] dmemory_ready,
-  input logic [0   : 0] meip,
-  input logic [0   : 0] msip,
-  input logic [0   : 0] mtip,
-  input logic [63  : 0] mtime
+  input  logic [31 : 0] dmemory_rdata,
+  input  logic [0  : 0] dmemory_ready,
+  input  logic [0  : 0] meip,
+  input  logic [0  : 0] msip,
+  input  logic [0  : 0] mtip,
+  input  logic [63 : 0] mtime
 );
   timeunit 1ns;
   timeprecision 1ps;
@@ -323,6 +323,7 @@ module cpu
     .csr_rin (csr_rin),
     .fp_csr_out (fp_csr_out),
     .fp_csr_rin (fp_csr_rin),
+    .bp_out (bp_out),
     .a (decode_in_a),
     .d (decode_in_d),
     .y (decode_out_y),
@@ -358,6 +359,7 @@ module cpu
     .fp_forwarding_out (fp_forwarding_out),
     .fp_forwarding_rin (fp_forwarding_rin),
     .csr_out (csr_out),
+    .bp_out (bp_out),
     .a (execute_in_a),
     .d (execute_in_d),
     .y (execute_out_y),

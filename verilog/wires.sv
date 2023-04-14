@@ -388,6 +388,7 @@ package wires;
 
   typedef struct packed{
     logic [31 : 0] get_pc;
+    logic [31 : 0] get_npc;
     logic [0  : 0] get_branch;
     logic [0  : 0] get_return;
     logic [0  : 0] get_uncond;
@@ -405,10 +406,10 @@ package wires;
   typedef struct packed{
     logic [31 : 0] pred_baddr;
     logic [0  : 0] pred_branch;
-    logic [0  : 0] pred_jump;
     logic [31 : 0] pred_raddr;
     logic [0  : 0] pred_return;
-    logic [0  : 0] pred_uncond;
+    logic [31 : 0] pred_maddr;
+    logic [0  : 0] pred_miss;
   } bp_out_type;
 
   typedef struct packed{

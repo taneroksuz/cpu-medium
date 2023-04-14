@@ -49,6 +49,7 @@ module fetch_stage
     end
 
     bp_in.get_pc = d.d.pc;
+    bp_in.get_npc = d.d.npc;
     bp_in.get_branch = d.d.branch;
     bp_in.get_return = d.d.return_pop;
     bp_in.get_uncond = d.d.jump_uncond;
@@ -68,20 +69,20 @@ module fetch_stage
     end else if (csr_out.mret == 1) begin
       v.npc = csr_out.mepc;
       v.spec = 1;
+    end else if (bp_out.pred_branch == 1) begin
+      v.npc = bp_out.pred_baddr;
+      v.spec = 1;
+    end else if (bp_out.pred_return == 1) begin
+      v.npc = bp_out.pred_raddr;
+      v.spec = 1;
+    end else if (bp_out.pred_miss == 1) begin
+      v.npc = bp_out.pred_maddr;
+      v.spec = 1;
     end else if (d.e.jump == 1) begin
       v.npc = d.e.address;
       v.spec = 1;
-    //end else if (bp_out.pred_return == 1) begin
-    //  v.npc = bp_out.pred_raddr;
-    //  v.spec = 1;
-    //end else if (bp_out.pred_uncond == 1) begin
-    //  v.npc = bp_out.pred_baddr;
-    //  v.spec = 1;
-    //end else if (bp_out.pred_branch == 1 && bp_out.pred_jump == 1) begin
-    //  v.npc = bp_out.pred_baddr;
-    //  v.spec = 1;
-    end else if (d.d.fence == 1) begin
-      v.npc = d.d.npc;
+    end else if (d.e.fence == 1) begin
+      v.npc = d.e.npc;
       v.spec = 1;
     end else if ((v.stall | a.d.stall | a.e.stall | a.m.stall) == 0) begin
       v.npc = v.pc + ((v.instr[1:0] == 2'b11) ? 4 : 2);

@@ -19,6 +19,7 @@ module decode_stage
   output csr_read_in_type csr_rin,
   input fp_csr_out_type fp_csr_out,
   output fp_csr_read_in_type fp_csr_rin,
+  input bp_out_type bp_out,
   input decode_in_type a,
   input decode_in_type d,
   output decode_out_type y,
@@ -44,7 +45,7 @@ module decode_stage
       v = r;
     end
 
-    v.clear = d.d.fence | d.e.jump | csr_out.trap | csr_out.mret | d.w.clear;
+    v.clear = csr_out.trap | csr_out.mret | bp_out.pred_branch | bp_out.pred_miss | bp_out.pred_return | d.e.fence | d.e.jump | d.w.clear;
 
     v.stall = 0;
 
@@ -239,10 +240,6 @@ module decode_stage
 
     if (a.e.cwren == 1 || a.m.cwren == 1) begin
       v.stall = 1;
-    end else if (a.e.mret == 1 || a.m.mret == 1) begin
-      v.stall = 1;
-    end else if (a.e.fence == 1 || a.m.fence == 1) begin
-      v.stall = 1;
     end else if (a.e.division == 1) begin
       v.stall = 1;
     end else if (a.e.bitc == 1) begin
@@ -257,7 +254,7 @@ module decode_stage
       v.stall = 1;
     end
 
-    if ((v.stall | a.e.stall | a.m.stall | v.clear) == 1) begin
+    if ((v.stall | a.e.stall | a.m.stall | a.e.jump | a.e.fence | a.e.mret | a.e.exception | v.clear) == 1) begin
       v.wren = 0;
       v.cwren = 0;
       v.fwren = 0;
