@@ -270,7 +270,7 @@ module bp_ctrl
     end
 
     if (bp_in.upd_branch == 1 && bp_in.clear == 0) begin
-      bp_out.pred_maddr = bp_in.upd_jump ? bp_in.upd_addr : bp_in.get_pc;
+      bp_out.pred_maddr = bp_in.upd_jump ? bp_in.upd_addr : bp_in.upd_npc;
       bp_out.pred_miss = bp_in.upd_jump ^ v_bht.branch;
     end else begin
       bp_out.pred_maddr = 0;
