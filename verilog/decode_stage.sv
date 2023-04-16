@@ -20,6 +20,7 @@ module decode_stage
   input fp_csr_out_type fp_csr_out,
   output fp_csr_read_in_type fp_csr_rin,
   input bp_out_type bp_out,
+  input mem_out_type imem_out,
   input decode_in_type a,
   input decode_in_type d,
   output decode_out_type y,
@@ -36,18 +37,26 @@ module decode_stage
     v = r;
 
     v.pc = d.f.pc;
-    v.instr = d.f.instr;
-    v.exception = d.f.exception;
-    v.ecause = d.f.ecause;
-    v.etval = d.f.etval;
 
-    if ((d.d.stall | d.e.stall | d.m.stall) == 1) begin
-      v = r;
-    end
+    //if ((d.d.stall | d.e.stall | d.m.stall) == 1) begin
+    //  v = r;
+    //end
 
     v.clear = csr_out.trap | csr_out.mret | bp_out.pred_branch | bp_out.pred_miss | bp_out.pred_return | d.e.fence | d.e.jump | d.w.clear;
 
-    v.stall = 0;
+    if (imem_out.mem_ready == 1) begin
+      v.instr = imem_out.mem_rdata;
+      v.stall = 0;
+      if (v.busy == 1) begin
+        v.instr = nop_instr;
+        v.stall = 1;
+        v.busy = 0;
+      end
+    end else begin
+      v.instr = nop_instr;
+      v.stall = 1;
+      v.busy = v.clear;
+    end
 
     v.waddr = v.instr[11:7];
     v.raddr1 = v.instr[19:15];
@@ -210,7 +219,9 @@ module decode_stage
       end
     end
 
-    v.npc = v.pc + ((v.instr[1:0] == 2'b11) ? 4 : 2);
+    if (v.stall == 0) begin
+      v.npc = v.pc + ((v.instr[1:0] == 2'b11) ? 4 : 2);
+    end
 
     register_rin.rden1 = v.rden1;
     register_rin.rden2 = v.rden2;
