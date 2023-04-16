@@ -41,7 +41,7 @@ module rom
       5'b01111 : rdata = 32'h02B74F81;
       5'b10000 : rdata = 32'h03370100;
       5'b10001 : rdata = 32'h03B78000;
-      5'b10010 : rdata = 32'hCE030800;
+      5'b10010 : rdata = 32'hCE030008;
       5'b10011 : rdata = 32'h00230002;
       5'b10100 : rdata = 32'h0E8501C3;
       5'b10101 : rdata = 32'hCAE30305;
