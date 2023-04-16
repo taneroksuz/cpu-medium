@@ -52,10 +52,13 @@ module decode_stage
         v.stall = 1;
         v.busy = 0;
       end
-    end else begin
+    end else if (v.busy == 0) begin
       v.instr = nop_instr;
       v.stall = 1;
       v.busy = v.clear;
+    end else begin
+      v.instr = nop_instr;
+      v.stall = 1;
     end
 
     v.waddr = v.instr[11:7];
