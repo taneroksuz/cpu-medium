@@ -42,7 +42,7 @@ module decode_stage
     //  v = r;
     //end
 
-    v.clear = csr_out.trap | csr_out.mret | bp_out.pred_branch | bp_out.pred_miss | bp_out.pred_return | d.e.fence | d.e.jump | d.w.clear;
+    v.clear = csr_out.trap | csr_out.mret | bp_out.pred_branch | bp_out.pred_miss | bp_out.pred_return | d.e.jump | d.m.fence | d.w.clear;
 
     if (imem_out.mem_ready == 1) begin
       v.instr = imem_out.mem_rdata;

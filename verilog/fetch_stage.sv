@@ -26,6 +26,10 @@ module fetch_stage
     v = r;
 
     v.valid = ~d.w.clear;
+    v.stall = a.d.stall | a.e.stall | a.m.stall;
+
+    v.fence = 0;
+    v.spec = 0;
 
     bp_in.get_pc = d.d.pc;
     bp_in.get_npc = d.d.npc;
@@ -43,33 +47,41 @@ module fetch_stage
     bp_in.clear = d.w.clear;
 
     if (csr_out.trap == 1) begin
+      v.fence = 0;
+      v.spec = 1;
       v.pc = csr_out.mtvec;
-      v.spec = 1;
     end else if (csr_out.mret == 1) begin
+      v.fence = 0;
+      v.spec = 1;
       v.pc = csr_out.mepc;
-      v.spec = 1;
     end else if (bp_out.pred_branch == 1) begin
+      v.fence = 0;
+      v.spec = 1;
       v.pc = bp_out.pred_baddr;
-      v.spec = 1;
     end else if (bp_out.pred_return == 1) begin
+      v.fence = 0;
+      v.spec = 1;
       v.pc = bp_out.pred_raddr;
-      v.spec = 1;
     end else if (bp_out.pred_miss == 1) begin
+      v.fence = 0;
+      v.spec = 1;
       v.pc = bp_out.pred_maddr;
-      v.spec = 1;
     end else if (d.e.jump == 1) begin
+      v.fence = 0;
+      v.spec = 1;
       v.pc = d.e.address;
+    end else if (d.m.fence == 1) begin
+      v.fence = 1;
       v.spec = 1;
-    end else if (d.e.fence == 1) begin
-      v.pc = d.e.npc;
-      v.spec = 1;
-    end else if ((v.stall | a.d.stall | a.e.stall | a.m.stall) == 0) begin
-      v.pc = a.d.npc;
+      v.pc = d.m.npc;
+    end else if (v.stall == 0) begin
+      v.fence = 0;
       v.spec = 0;
+      v.pc = a.d.npc;
     end
 
     imem_in.mem_valid = v.valid;
-    imem_in.mem_fence = d.d.fence;
+    imem_in.mem_fence = v.fence;
     imem_in.mem_spec = v.spec;
     imem_in.mem_instr = 1;
     imem_in.mem_addr = v.pc;

@@ -34,6 +34,7 @@ module memory_stage
     v = r;
 
     v.pc = d.e.pc;
+    v.npc = d.e.npc;
     v.wren = d.e.wren;
     v.cwren = d.e.cwren;
     v.fwren = d.e.fwren;
@@ -74,7 +75,6 @@ module memory_stage
       v.fpuf = v.fpuf_b;
       v.valid = v.valid_b;
       v.mret = v.mret_b;
-      v.fence = v.fence_b;
       v.exception = v.exception_b;
     end
 
@@ -117,7 +117,6 @@ module memory_stage
     v.fpuf_b = v.fpuf;
     v.valid_b = v.valid;
     v.mret_b = v.mret;
-    v.fence_b = v.fence;
     v.exception_b = v.exception;
 
     if ((v.stall | v.clear) == 1) begin
@@ -128,7 +127,6 @@ module memory_stage
       v.fpuf = 0;
       v.valid = 0;
       v.mret = 0;
-      v.fence = 0;
       v.exception = 0;
     end
 
@@ -164,6 +162,8 @@ module memory_stage
     
     rin = v;
 
+    y.pc = v.pc;
+    y.npc = v.npc;
     y.wren = v.wren;
     y.cwren = v.cwren;
     y.fwren = v.fwren;
@@ -178,6 +178,8 @@ module memory_stage
     y.stall = v.stall;
     y.clear = v.clear;
 
+    q.pc = r.pc;
+    q.npc = r.npc;
     q.wren = r.wren;
     q.cwren = r.cwren;
     q.fwren = r.fwren;
