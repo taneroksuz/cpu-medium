@@ -4,6 +4,7 @@ export VERILATOR ?= /opt/verilator/bin/verilator
 export SYSTEMC ?= /opt/systemc
 export RISCVDV ?= /opt/riscv-dv
 export RISCV ?= /opt/rv32imfcb/bin/riscv32-unknown-elf-
+export OPTS ?= -O2 -fno-common -funroll-loops -finline-functions -falign-functions=16 -falign-jumps=4 -falign-loops=4 -finline-limit=1000 -fno-if-conversion2 -fselective-scheduling -fno-tree-dominator-opts
 export MARCH ?= rv32imfc_zba_zbb_zbc_zbs_zicsr_zifencei
 export MABI ?= ilp32f
 export ITER ?= 10
