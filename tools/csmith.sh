@@ -10,21 +10,17 @@ fi
 sudo mkdir $PREFIX
 sudo chown -R $USER:$USER $PREFIX/
 
-sudo apt-get -y install build-essential m4
+sudo apt-get -y install build-essential g++ cmake m4
 
-if [ -d "csmith-2.3.0" ]; then
-  rm -rf csmith-2.3.0
-fi
-if [ -f "csmith-2.3.0.tar.gz" ]; then
-  rm  csmith-2.3.0.tar.gz
+if [ -d "csmith" ]; then
+  rm -rf csmith
 fi
 
-wget https://embed.cs.utah.edu/csmith/csmith-2.3.0.tar.gz
-tar xf csmith-2.3.0.tar.gz
+git clone https://github.com/csmith-project/csmith.git
 
-cd csmith-2.3.0
+cd csmith
 
-./configure --prefix=$PREFIX
+cmake -DCMAKE_INSTALL_PREFIX=$PREFIX
 
 make -j$(nproc)
 make install
