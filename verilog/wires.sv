@@ -574,44 +574,49 @@ package wires;
 
   typedef struct packed{
     logic [31 : 0] pc;
+    logic [31 : 0] instr;
   } fetch_out_type;
 
   typedef struct packed{
     logic [31 : 0] pc;
+    logic [31 : 0] instr;
     logic [0  : 0] valid;
     logic [0  : 0] fence;
     logic [0  : 0] spec;
+    logic [0  : 0] busy;
     logic [0  : 0] stall;
   } fetch_reg_type;
 
   parameter fetch_reg_type init_fetch_reg = '{
     pc : 0,
+    instr : 0,
     valid : 0,
     fence : 0,
     spec : 0,
+    busy : 0,
     stall : 0
   };
 
   typedef struct packed{
     logic [31 : 0] pc;
-    logic [31 : 0] npc;
     logic [31 : 0] instr;
+    logic [0  : 0] stall;
   } buffer_out_type;
 
   typedef struct packed{
     logic [31 : 0] pc;
-    logic [31 : 0] npc;
-    logic [31 : 0] instr0;
-    logic [31 : 0] instr1;
+    logic [31 : 0] instr;
+    logic [0  : 0] busy;
+    logic [0  : 0] control;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } buffer_reg_type;
 
   parameter buffer_reg_type init_buffer_reg = '{
     pc : 0,
-    npc : 0,
-    instr0 : 0,
-    instr1 : 0,
+    instr : 0,
+    busy : 0,
+    control : 0,
     stall : 0,
     clear : 0
   };
@@ -681,8 +686,8 @@ package wires;
 
   typedef struct packed{
     logic [31 : 0] pc;
-    logic [31 : 0] instr;
     logic [31 : 0] npc;
+    logic [31 : 0] instr;
     logic [31 : 0] imm;
     logic [0  : 0] wren;
     logic [0  : 0] rden1;
@@ -750,8 +755,8 @@ package wires;
 
   parameter decode_reg_type init_decode_reg = '{
     pc : 0,
-    instr : 0,
     npc : 0,
+    instr : 0,
     imm : 0,
     wren : 0,
     rden1 : 0,

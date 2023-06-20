@@ -261,10 +261,10 @@ module bp_ctrl
 
     if (bp_in.get_uncond == 1 && bp_in.clear == 0) begin
       v_bht.branch = ~(|(btb_out.rdata[62-btb_depth:32] ^ bp_in.get_pc[31:(btb_depth+1)]));
-      bp_out.pred_branch = v_bht.branch;
+      bp_out.pred_branch = v_bht.branch & |(btb_out.rdata);
     end else if (bp_in.get_branch == 1 && bp_in.clear == 0) begin
       v_bht.branch = v_bht.get_sat[1] & ~(|(btb_out.rdata[62-btb_depth:32] ^ bp_in.get_pc[31:(btb_depth+1)]));
-      bp_out.pred_branch = v_bht.branch;
+      bp_out.pred_branch = v_bht.branch & |(btb_out.rdata);
     end else begin
       bp_out.pred_branch = 0;
     end

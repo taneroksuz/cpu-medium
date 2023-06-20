@@ -36,7 +36,6 @@ module decode_stage
     v = r;
 
     v.pc = d.b.pc;
-    v.npc = d.b.npc;
     v.instr = d.b.instr;
 
     if ((d.d.stall | d.e.stall | d.m.stall) == 1) begin
@@ -65,6 +64,8 @@ module decode_stage
     v.fpuc = 0;
     v.fpuf = 0;
     v.fpu_op = init_fp_operation;
+
+    v.npc = v.pc + ((v.instr[1:0] == 2'b11) ? 4 : 2);
 
     decoder_in.instr = v.instr;
 
