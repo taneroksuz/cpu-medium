@@ -39,9 +39,14 @@ module buffer_stage
       v.npc = v.pc + ((v.instr0[1:0] == 2'b11) ? 4 : 2);
     end
 
-    if ((v.stall | a.d.stall | a.e.stall | a.m.stall | a.e.jump | a.e.fence | a.e.mret | a.e.exception) == 1) begin
+    if ((d.e.jump | d.e.fence | d.e.mret | d.e.exception) == 1) begin
+      v.clear = ~imem_out.mem_ready;
+    end
+
+    if ((v.stall | a.d.stall | a.e.stall | a.m.stall | a.e.jump | a.e.fence | a.e.mret | a.e.exception | v.clear) == 1) begin
       v.instr0 = nop_instr;
       v.instr1 = nop_instr;
+      v.clear = ~imem_out.mem_ready;
     end
 
     rin = v;

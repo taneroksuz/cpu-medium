@@ -604,6 +604,7 @@ package wires;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
     logic [0  : 0] stall;
+    logic [0  : 0] clear;
   } buffer_reg_type;
 
   parameter buffer_reg_type init_buffer_reg = '{
@@ -611,7 +612,8 @@ package wires;
     npc : 0,
     instr0 : 0,
     instr1 : 0,
-    stall : 0
+    stall : 0,
+    clear : 0
   };
 
   typedef struct packed{
@@ -735,7 +737,6 @@ package wires;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
     logic [0  : 0] stall;
-    logic [0  : 0] busy;
     logic [0  : 0] clear;
     alu_op_type alu_op;
     bcu_op_type bcu_op;
@@ -805,7 +806,6 @@ package wires;
     ecause : 0,
     etval : 0,
     stall : 0,
-    busy : 0,
     clear : 0,
     alu_op : init_alu_op,
     bcu_op : init_bcu_op,
