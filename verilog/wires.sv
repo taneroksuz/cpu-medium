@@ -413,6 +413,16 @@ package wires;
   } bp_out_type;
 
   typedef struct packed{
+    logic [63 : 0] rdata;
+    logic [0  : 0] ready;
+  } hazard_in_type;
+
+  typedef struct packed{
+    logic [31 : 0] instr0;
+    logic [31 : 0] instr1;
+  } hazard_out_type;
+
+  typedef struct packed{
     logic [31 : 0] instr;
   } decoder_in_type;
 
@@ -579,6 +589,28 @@ package wires;
     valid : 0,
     fence : 0,
     spec : 0,
+    stall : 0
+  };
+
+  typedef struct packed{
+    logic [31 : 0] pc;
+    logic [31 : 0] npc;
+    logic [31 : 0] instr;
+  } buffer_out_type;
+
+  typedef struct packed{
+    logic [31 : 0] pc;
+    logic [31 : 0] npc;
+    logic [31 : 0] instr0;
+    logic [31 : 0] instr1;
+    logic [0  : 0] stall;
+  } buffer_reg_type;
+
+  parameter buffer_reg_type init_buffer_reg = '{
+    pc : 0,
+    npc : 0,
+    instr0 : 0,
+    instr1 : 0,
     stall : 0
   };
 
@@ -1424,6 +1456,7 @@ package wires;
 
   typedef struct packed{
     fetch_out_type f;
+    buffer_out_type b;
     decode_out_type d;
     execute_out_type e;
     memory_out_type m;
@@ -1432,6 +1465,16 @@ package wires;
 
   typedef struct packed{
     fetch_out_type f;
+    buffer_out_type b;
+    decode_out_type d;
+    execute_out_type e;
+    memory_out_type m;
+    writeback_out_type w;
+  } buffer_in_type;
+
+  typedef struct packed{
+    fetch_out_type f;
+    buffer_out_type b;
     decode_out_type d;
     execute_out_type e;
     memory_out_type m;
@@ -1440,6 +1483,7 @@ package wires;
 
   typedef struct packed{
     fetch_out_type f;
+    buffer_out_type b;
     decode_out_type d;
     execute_out_type e;
     memory_out_type m;
@@ -1448,6 +1492,7 @@ package wires;
 
   typedef struct packed{
     fetch_out_type f;
+    buffer_out_type b;
     decode_out_type d;
     execute_out_type e;
     memory_out_type m;
@@ -1456,6 +1501,7 @@ package wires;
 
   typedef struct packed{
     fetch_out_type f;
+    buffer_out_type b;
     decode_out_type d;
     execute_out_type e;
     memory_out_type m;

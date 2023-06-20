@@ -77,7 +77,7 @@ module fetch_stage
     end else if (v.stall == 0) begin
       v.fence = 0;
       v.spec = 0;
-      v.pc = a.d.npc;
+      v.pc = a.b.npc;
     end
 
     imem_in.mem_valid = v.valid;

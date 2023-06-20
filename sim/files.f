@@ -35,11 +35,13 @@
 ../../verilog/decoder.sv
 ../../verilog/register.sv
 ../../verilog/csr.sv
+../../verilog/hazard.sv
 ../../verilog/compress.sv
 ../../verilog/fetchbuffer.sv
 ../../verilog/storebuffer.sv
 ../../verilog/forwarding.sv
 ../../verilog/fetch_stage.sv
+../../verilog/buffer_stage.sv
 ../../verilog/decode_stage.sv
 ../../verilog/execute_stage.sv
 ../../verilog/memory_stage.sv

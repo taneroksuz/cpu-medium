@@ -47,6 +47,8 @@ module cpu
   bit_clmul_out_type bit_clmul_out;
   bp_in_type bp_in;
   bp_out_type bp_out;
+  hazard_in_type hazard_in;
+  hazard_out_type hazard_out;
   decoder_in_type decoder_in;
   decoder_out_type decoder_out;
   compress_in_type compress_in;
@@ -63,21 +65,25 @@ module cpu
   register_write_in_type register_win;
   register_out_type register_out;
   fetch_in_type fetch_in_a;
+  buffer_in_type buffer_in_a;
   decode_in_type decode_in_a;
   execute_in_type execute_in_a;
   memory_in_type memory_in_a;
   writeback_in_type writeback_in_a;
   fetch_out_type fetch_out_y;
+  buffer_out_type buffer_out_y;
   decode_out_type decode_out_y;
   execute_out_type execute_out_y;
   memory_out_type memory_out_y;
   writeback_out_type writeback_out_y;
   fetch_in_type fetch_in_d;
+  buffer_in_type buffer_in_d;
   decode_in_type decode_in_d;
   execute_in_type execute_in_d;
   memory_in_type memory_in_d;
   writeback_in_type writeback_in_d;
   fetch_out_type fetch_out_q;
+  buffer_out_type buffer_out_q;
   decode_out_type decode_out_q;
   execute_out_type execute_out_q;
   memory_out_type memory_out_q;
@@ -130,52 +136,74 @@ module cpu
   assign fp_forwarding_out = fpu_out.fp_forwarding_out;
 
   assign fetch_in_a.f = fetch_out_y;
+  assign fetch_in_a.b = buffer_out_y;
   assign fetch_in_a.d = decode_out_y;
   assign fetch_in_a.e = execute_out_y;
   assign fetch_in_a.m = memory_out_y;
   assign fetch_in_a.w = writeback_out_y;
+  assign buffer_in_a.f = fetch_out_y;
+  assign buffer_in_a.b = buffer_out_y;
+  assign buffer_in_a.d = decode_out_y;
+  assign buffer_in_a.e = execute_out_y;
+  assign buffer_in_a.m = memory_out_y;
+  assign buffer_in_a.w = writeback_out_y;
   assign decode_in_a.f = fetch_out_y;
+  assign decode_in_a.b = buffer_out_y;
   assign decode_in_a.d = decode_out_y;
   assign decode_in_a.e = execute_out_y;
   assign decode_in_a.m = memory_out_y;
   assign decode_in_a.w = writeback_out_y;
   assign execute_in_a.f = fetch_out_y;
+  assign execute_in_a.b = buffer_out_y;
   assign execute_in_a.d = decode_out_y;
   assign execute_in_a.e = execute_out_y;
   assign execute_in_a.m = memory_out_y;
   assign execute_in_a.w = writeback_out_y;
   assign memory_in_a.f = fetch_out_y;
+  assign memory_in_a.b = buffer_out_y;
   assign memory_in_a.d = decode_out_y;
   assign memory_in_a.e = execute_out_y;
   assign memory_in_a.m = memory_out_y;
   assign memory_in_a.w = writeback_out_y;
   assign writeback_in_a.f = fetch_out_y;
+  assign writeback_in_a.b = buffer_out_y;
   assign writeback_in_a.d = decode_out_y;
   assign writeback_in_a.e = execute_out_y;
   assign writeback_in_a.m = memory_out_y;
   assign writeback_in_a.w = writeback_out_y;
 
   assign fetch_in_d.f = fetch_out_q;
+  assign fetch_in_d.b = buffer_out_q;
   assign fetch_in_d.d = decode_out_q;
   assign fetch_in_d.e = execute_out_q;
   assign fetch_in_d.m = memory_out_q;
   assign fetch_in_d.w = writeback_out_q;
+  assign buffer_in_d.f = fetch_out_q;
+  assign buffer_in_d.b = buffer_out_q;
+  assign buffer_in_d.d = decode_out_q;
+  assign buffer_in_d.e = execute_out_q;
+  assign buffer_in_d.m = memory_out_q;
+  assign buffer_in_d.w = writeback_out_q;
   assign decode_in_d.f = fetch_out_q;
+  assign decode_in_d.b = buffer_out_q;
   assign decode_in_d.d = decode_out_q;
   assign decode_in_d.e = execute_out_q;
   assign decode_in_d.m = memory_out_q;
   assign decode_in_d.w = writeback_out_q;
   assign execute_in_d.f = fetch_out_q;
+  assign execute_in_d.b = buffer_out_q;
   assign execute_in_d.d = decode_out_q;
   assign execute_in_d.e = execute_out_q;
   assign execute_in_d.m = memory_out_q;
   assign execute_in_d.w = writeback_out_q;
   assign memory_in_d.f = fetch_out_q;
+  assign memory_in_d.b = buffer_out_q;
   assign memory_in_d.d = decode_out_q;
   assign memory_in_d.e = execute_out_q;
   assign memory_in_d.m = memory_out_q;
   assign memory_in_d.w = writeback_out_q;
   assign writeback_in_d.f = fetch_out_q;
+  assign writeback_in_d.b = buffer_out_q;
   assign writeback_in_d.d = decode_out_q;
   assign writeback_in_d.e = execute_out_q;
   assign writeback_in_d.m = memory_out_q;
@@ -257,6 +285,12 @@ module cpu
     .bp_out (bp_out)
   );
 
+  hazard hazard_comp
+  (
+    .hazard_in (hazard_in),
+    .hazard_out (hazard_out)
+  );
+
   decoder decoder_comp
   (
     .decoder_in (decoder_in),
@@ -306,6 +340,19 @@ module cpu
     .q (fetch_out_q)
   );
 
+  buffer_stage buffer_stage_comp
+  (
+    .reset (reset),
+    .clock (clock),
+    .hazard_out (hazard_out),
+    .hazard_in (hazard_in),
+    .imem_out (itim_out),
+    .a (buffer_in_a),
+    .d (buffer_in_d),
+    .y (buffer_out_y),
+    .q (buffer_out_q)
+  );
+
   decode_stage decode_stage_comp
   (
     .reset (reset),
@@ -323,7 +370,6 @@ module cpu
     .fp_csr_out (fp_csr_out),
     .fp_csr_rin (fp_csr_rin),
     .bp_out (bp_out),
-    .imem_out (itim_out),
     .a (decode_in_a),
     .d (decode_in_d),
     .y (decode_out_y),
