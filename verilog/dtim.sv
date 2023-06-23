@@ -60,8 +60,8 @@ module dtim_ctrl
   input logic clock,
   input dtim_vec_out_type dvec_out,
   output dtim_vec_in_type dvec_in,
-  input mem_in_type dtim_in,
-  output mem_out_type dtim_out,
+  input dtim_in_type dtim_in,
+  output dtim_out_type dtim_out,
   input mem_out_type dmem_out,
   output mem_in_type dmem_in
 );
@@ -427,8 +427,8 @@ module dtim
 (
   input logic reset,
   input logic clock,
-  input mem_in_type dtim_in,
-  output mem_out_type dtim_out,
+  input dtim_in_type dtim_in,
+  output dtim_out_type dtim_out,
   input mem_out_type dmem_out,
   output mem_in_type dmem_in
 );

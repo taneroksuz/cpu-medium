@@ -574,12 +574,14 @@ package wires;
 
   typedef struct packed{
     logic [31 : 0] pc;
-    logic [31 : 0] instr;
+    logic [63 : 0] rdata;
+    logic [0  : 0] ready;
   } fetch_out_type;
 
   typedef struct packed{
     logic [31 : 0] pc;
-    logic [31 : 0] instr;
+    logic [63 : 0] rdata;
+    logic [0  : 0] ready;
     logic [0  : 0] valid;
     logic [0  : 0] fence;
     logic [0  : 0] spec;
@@ -589,7 +591,8 @@ package wires;
 
   parameter fetch_reg_type init_fetch_reg = '{
     pc : 0,
-    instr : 0,
+    rdata : 0,
+    ready : 0,
     valid : 0,
     fence : 0,
     spec : 0,
@@ -605,6 +608,8 @@ package wires;
 
   typedef struct packed{
     logic [31 : 0] pc;
+    logic [63 : 0] rdata;
+    logic [0  : 0] ready;
     logic [31 : 0] instr;
     logic [0  : 0] busy;
     logic [0  : 0] control;
@@ -614,6 +619,8 @@ package wires;
 
   parameter buffer_reg_type init_buffer_reg = '{
     pc : 0,
+    rdata : 0,
+    ready : 0,
     instr : 0,
     busy : 0,
     control : 0,
@@ -1533,6 +1540,36 @@ package wires;
     fp_csr_out_type fp_csr_out;
     fp_forwarding_out_type fp_forwarding_out;
   } fpu_out_type;
+
+  typedef struct packed{
+    logic [0  : 0] mem_valid;
+    logic [0  : 0] mem_fence;
+    logic [0  : 0] mem_spec;
+    logic [0  : 0] mem_instr;
+    logic [31 : 0] mem_addr;
+    logic [63 : 0] mem_wdata;
+    logic [3  : 0] mem_wstrb;
+  } itim_in_type;
+
+  typedef struct packed{
+    logic [0  : 0] mem_ready;
+    logic [63 : 0] mem_rdata;
+  } itim_out_type;
+
+  typedef struct packed{
+    logic [0  : 0] mem_valid;
+    logic [0  : 0] mem_fence;
+    logic [0  : 0] mem_spec;
+    logic [0  : 0] mem_instr;
+    logic [31 : 0] mem_addr;
+    logic [31 : 0] mem_wdata;
+    logic [3  : 0] mem_wstrb;
+  } dtim_in_type;
+
+  typedef struct packed{
+    logic [0  : 0] mem_ready;
+    logic [31 : 0] mem_rdata;
+  } dtim_out_type;
 
   typedef struct packed{
     logic [0  : 0] mem_valid;

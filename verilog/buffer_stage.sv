@@ -27,7 +27,10 @@ module buffer_stage
     v = r;
 
     v.pc = d.f.pc;
-    v.instr = a.f.instr;
+    v.rdata = a.f.rdata;
+    v.ready = a.f.ready;
+
+    v.instr = nop_instr;
 
     if ((v.stall | a.e.stall | a.m.stall | a.e.jump | a.e.fence | a.e.mret | a.e.exception | v.clear) == 1) begin
       v.instr = nop_instr;

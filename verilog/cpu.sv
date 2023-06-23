@@ -105,14 +105,10 @@ module cpu
   fp_register_out_type fp_register_out;
   fp_csr_out_type fp_csr_out;
   fp_forwarding_out_type fp_forwarding_out;
-  mem_in_type fetchbuffer_in;
-  mem_out_type fetchbuffer_out;
-  mem_in_type storebuffer_in;
-  mem_out_type storebuffer_out;
-  mem_in_type itim_in;
-  mem_out_type itim_out;
-  mem_in_type dtim_in;
-  mem_out_type dtim_out;
+  itim_in_type itim_in;
+  itim_out_type itim_out;
+  dtim_in_type dtim_in;
+  dtim_out_type dtim_out;
   mem_in_type imem_in;
   mem_out_type imem_out;
   mem_in_type dmem_in;

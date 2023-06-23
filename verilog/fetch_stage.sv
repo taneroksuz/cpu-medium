@@ -9,8 +9,8 @@ module fetch_stage
   input csr_out_type csr_out,
   input bp_out_type bp_out,
   output bp_in_type bp_in,
-  input mem_out_type imem_out,
-  output mem_in_type imem_in,
+  input itim_out_type imem_out,
+  output itim_in_type imem_in,
   input fetch_in_type a,
   input fetch_in_type d,
   output fetch_out_type y,
@@ -31,11 +31,11 @@ module fetch_stage
 
     v.fence = 0;
     v.spec = 0;
+    
+    v.rdata = imem_out.mem_rdata;
+    v.ready = imem_out.mem_ready;
 
-    if (imem_out.mem_ready == 1) begin
-      v.instr = imem_out.mem_rdata;
-    end else begin
-      v.instr = nop_instr;
+    if (v.ready == 0) begin
       v.stall = 1;
     end
 
@@ -85,15 +85,13 @@ module fetch_stage
     end else if (v.stall == 0) begin
       v.fence = 0;
       v.spec = 0;
-      v.pc = v.pc + ((v.instr[1:0] == 2'b11) ? 4 : 2);
+      v.pc = v.pc + 8;
     end
 
     if (v.busy == 1) begin
       v.pc = r.pc;
-      v.instr = nop_instr;
       v.busy = ~imem_out.mem_ready;
     end else if (v.spec == 1) begin
-      v.instr = nop_instr;
       v.busy = ~imem_out.mem_ready;
     end
 
@@ -108,10 +106,12 @@ module fetch_stage
     rin = v;
 
     y.pc = v.pc;
-    y.instr = v.instr;
+    y.rdata = v.rdata;
+    y.ready = v.ready;
 
     q.pc = r.pc;
-    q.instr = r.instr;
+    q.rdata = r.rdata;
+    q.ready = r.ready;
 
   end
 

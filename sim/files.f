@@ -37,8 +37,6 @@
 ../../verilog/csr.sv
 ../../verilog/hazard.sv
 ../../verilog/compress.sv
-../../verilog/fetchbuffer.sv
-../../verilog/storebuffer.sv
 ../../verilog/forwarding.sv
 ../../verilog/fetch_stage.sv
 ../../verilog/buffer_stage.sv
