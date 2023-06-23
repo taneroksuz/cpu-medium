@@ -463,38 +463,6 @@ package wires;
 
   typedef struct packed{
     logic [31 : 0] instr;
-  } compress_in_type;
-
-  typedef struct packed{
-    logic [31 : 0] imm;
-    logic [4  : 0] waddr;
-    logic [4  : 0] raddr1;
-    logic [4  : 0] raddr2;
-    logic [0  : 0] wren;
-    logic [0  : 0] rden1;
-    logic [0  : 0] rden2;
-    logic [0  : 0] fwren;
-    logic [0  : 0] frden1;
-    logic [0  : 0] frden2;
-    logic [0  : 0] frden3;
-    logic [0  : 0] lui;
-    logic [0  : 0] jal;
-    logic [0  : 0] jalr;
-    logic [0  : 0] branch;
-    logic [0  : 0] load;
-    logic [0  : 0] store;
-    logic [0  : 0] fload;
-    logic [0  : 0] fstore;
-    logic [0  : 0] fpu;
-    logic [0  : 0] ebreak;
-    logic [0  : 0] valid;
-    alu_op_type alu_op;
-    bcu_op_type bcu_op;
-    lsu_op_type lsu_op;
-  } compress_out_type;
-
-  typedef struct packed{
-    logic [31 : 0] instr;
   } fp_decode_in_type;
 
   typedef struct packed{

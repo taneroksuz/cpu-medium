@@ -51,8 +51,6 @@ module cpu
   hazard_out_type hazard_out;
   decoder_in_type decoder_in;
   decoder_out_type decoder_out;
-  compress_in_type compress_in;
-  compress_out_type compress_out;
   forwarding_register_in_type forwarding_rin;
   forwarding_memory_in_type forwarding_min;
   forwarding_writeback_in_type forwarding_win;
@@ -293,12 +291,6 @@ module cpu
     .decoder_out (decoder_out)
   );
 
-  compress compress_comp
-  (
-    .compress_in (compress_in),
-    .compress_out (compress_out)
-  );
-
   register register_comp
   (
     .reset (reset),
@@ -357,8 +349,6 @@ module cpu
     .clock (clock),
     .decoder_out (decoder_out),
     .decoder_in (decoder_in),
-    .compress_out (compress_out),
-    .compress_in (compress_in),
     .fp_decode_out (fp_decode_out),
     .fp_decode_in (fp_decode_in),
     .register_rin (register_rin),

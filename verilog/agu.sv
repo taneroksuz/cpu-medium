@@ -42,7 +42,7 @@ module agu
     byteenable = 0;
 
     if (imem_access == 1) begin
-      case (address[0])
+      case (address[1:0])
         0 : byteenable = 4'hF;
         default : misalign = 1;
       endcase

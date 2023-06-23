@@ -26,7 +26,7 @@ module csr
   always_comb begin
     if (csr_rin.crden == 1) begin
       case (csr_rin.craddr)
-        csr_misa : csr_out.cdata = 32'h40001124;
+        csr_misa : csr_out.cdata = 32'h40001120;
         csr_mvendorid : csr_out.cdata = 32'h00000000;
         csr_marchid : csr_out.cdata = 32'h00000000;
         csr_mimpid : csr_out.cdata = 32'h00000000;

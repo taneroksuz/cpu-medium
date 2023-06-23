@@ -9,8 +9,6 @@ module decode_stage
   input logic clock,
   input decoder_out_type decoder_out,
   output decoder_in_type decoder_in,
-  input compress_out_type compress_out,
-  output compress_in_type compress_in,
   input fp_decode_out_type fp_decode_out,
   output fp_decode_in_type fp_decode_in,
   output register_read_in_type register_rin,
@@ -101,36 +99,6 @@ module decode_stage
     v.div_op = decoder_out.div_op;
     v.mul_op = decoder_out.mul_op;
     v.bit_op = decoder_out.bit_op;
-
-    compress_in.instr = v.instr;
-
-    if (compress_out.valid == 1) begin
-      v.imm = compress_out.imm;
-      v.waddr = compress_out.waddr;
-      v.raddr1 = compress_out.raddr1;
-      v.raddr2 = compress_out.raddr2;
-      v.wren = compress_out.wren;
-      v.rden1 = compress_out.rden1;
-      v.rden2 = compress_out.rden2;
-      v.fwren = compress_out.fwren;
-      v.frden1 = compress_out.frden1;
-      v.frden2 = compress_out.frden2;
-      v.frden3 = compress_out.frden3;
-      v.lui = compress_out.lui;
-      v.jal = compress_out.jal;
-      v.jalr = compress_out.jalr;
-      v.branch = compress_out.branch;
-      v.load = compress_out.load;
-      v.store = compress_out.store;
-      v.fload = compress_out.fload;
-      v.fstore = compress_out.fstore;
-      v.fpu = compress_out.fpu;
-      v.ebreak = compress_out.ebreak;
-      v.valid = compress_out.valid;
-      v.alu_op = compress_out.alu_op;
-      v.bcu_op = compress_out.bcu_op;
-      v.lsu_op = compress_out.lsu_op;
-    end
 
     fp_decode_in.instr = v.instr;
 
