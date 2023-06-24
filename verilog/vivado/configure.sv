@@ -2,8 +2,7 @@ package configure;
   timeunit 1ns;
   timeprecision 1ps;
 
-  parameter fetchbuffer_depth = 4;
-  parameter storebuffer_depth = 4;
+  parameter hazard_depth = 4;
 
   parameter fpu_enable = 1;
 

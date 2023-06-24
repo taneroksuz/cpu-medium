@@ -281,6 +281,8 @@ module cpu
 
   hazard hazard_comp
   (
+    .reset (reset),
+    .clock (clock),
     .hazard_in (hazard_in),
     .hazard_out (hazard_out)
   );
