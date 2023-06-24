@@ -5,9 +5,11 @@ module writeback_stage
 (
   input logic reset,
   input logic clock,
-  output register_write_in_type register_win,
+  output register_write_in_type register0_win,
+  output register_write_in_type register1_win,
   output fp_register_write_in_type fp_register_win,
-  output forwarding_writeback_in_type forwarding_win,
+  output forwarding_writeback_in_type forwarding0_win,
+  output forwarding_writeback_in_type forwarding1_win,
   output fp_forwarding_writeback_in_type fp_forwarding_win,
   input writeback_in_type a,
   input writeback_in_type d,
@@ -31,17 +33,25 @@ module writeback_stage
       v.clear = 0;
     end
 
-    register_win.wren = v.instr0.op.wren & |(v.instr0.waddr);
-    register_win.waddr = v.instr0.waddr;
-    register_win.wdata = v.instr0.wdata;
+    register0_win.wren = v.instr0.op.wren & |(v.instr0.waddr);
+    register0_win.waddr = v.instr0.waddr;
+    register0_win.wdata = v.instr0.wdata;
+
+    register1_win.wren = v.instr1.op.wren & |(v.instr1.waddr);
+    register1_win.waddr = v.instr1.waddr;
+    register1_win.wdata = v.instr1.wdata;
 
     fp_register_win.wren = v.instr0.op.fwren;
     fp_register_win.waddr = v.instr0.waddr;
     fp_register_win.wdata = v.instr0.fdata;
 
-    forwarding_win.wren = v.instr0.op.wren;
-    forwarding_win.waddr = v.instr0.waddr;
-    forwarding_win.wdata = v.instr0.wdata;
+    forwarding0_win.wren = v.instr0.op.wren;
+    forwarding0_win.waddr = v.instr0.waddr;
+    forwarding0_win.wdata = v.instr0.wdata;
+
+    forwarding1_win.wren = v.instr1.op.wren;
+    forwarding1_win.waddr = v.instr1.waddr;
+    forwarding1_win.wdata = v.instr1.wdata;
 
     fp_forwarding_win.wren = v.instr0.op.fwren;
     fp_forwarding_win.waddr = v.instr0.waddr;

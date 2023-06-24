@@ -5,8 +5,10 @@ module execute_stage
 (
   input logic reset,
   input logic clock,
-  input alu_out_type alu_out,
-  output alu_in_type alu_in,
+  input alu_out_type alu0_out,
+  output alu_in_type alu0_in,
+  input alu_out_type alu1_out,
+  output alu_in_type alu1_in,
   input agu_out_type agu_out,
   output agu_in_type agu_in,
   input bcu_out_type bcu_out,
@@ -23,10 +25,13 @@ module execute_stage
   output bit_clmul_in_type bit_clmul_in,
   input fp_execute_out_type fp_execute_out,
   output fp_execute_in_type fp_execute_in,
-  input register_out_type register_out,
+  input register_out_type register0_out,
+  input register_out_type register1_out,
   input fp_register_out_type fp_register_out,
-  input forwarding_out_type forwarding_out,
-  output forwarding_register_in_type forwarding_rin,
+  input forwarding_out_type forwarding0_out,
+  input forwarding_out_type forwarding1_out,
+  output forwarding_register_in_type forwarding0_rin,
+  output forwarding_register_in_type forwarding1_rin,
   input fp_forwarding_out_type fp_forwarding_out,
   output fp_forwarding_register_in_type fp_forwarding_rin,
   input csr_out_type csr_out,
@@ -49,15 +54,25 @@ module execute_stage
     v.instr0 = d.d.instr0;
     v.instr1 = d.d.instr1;
 
-    forwarding_rin.rden1 = v.instr0.op.rden1;
-    forwarding_rin.rden2 = v.instr0.op.rden2;
-    forwarding_rin.raddr1 = v.instr0.raddr1;
-    forwarding_rin.raddr2 = v.instr0.raddr2;
-    forwarding_rin.rdata1 = register_out.rdata1;
-    forwarding_rin.rdata2 = register_out.rdata2;
+    forwarding0_rin.rden1 = v.instr0.op.rden1;
+    forwarding0_rin.rden2 = v.instr0.op.rden2;
+    forwarding0_rin.raddr1 = v.instr0.raddr1;
+    forwarding0_rin.raddr2 = v.instr0.raddr2;
+    forwarding0_rin.rdata1 = register0_out.rdata1;
+    forwarding0_rin.rdata2 = register0_out.rdata2;
 
-    v.instr0.rdata1 = forwarding_out.data1;
-    v.instr0.rdata2 = forwarding_out.data2;
+    v.instr0.rdata1 = forwarding0_out.data1;
+    v.instr0.rdata2 = forwarding0_out.data2;
+
+    forwarding1_rin.rden1 = v.instr1.op.rden1;
+    forwarding1_rin.rden2 = v.instr1.op.rden2;
+    forwarding1_rin.raddr1 = v.instr1.raddr1;
+    forwarding1_rin.raddr2 = v.instr1.raddr2;
+    forwarding1_rin.rdata1 = register1_out.rdata1;
+    forwarding1_rin.rdata2 = register1_out.rdata2;
+
+    v.instr1.rdata1 = forwarding1_out.data1;
+    v.instr1.rdata2 = forwarding1_out.data2;
 
     fp_forwarding_rin.rden1 = v.instr0.op.frden1;
     fp_forwarding_rin.rden2 = v.instr0.op.frden2;
@@ -80,6 +95,7 @@ module execute_stage
     if ((d.e.stall | d.m.stall) == 1) begin
       v = r;
       v.instr0.op = r.instr0.op_b;
+      v.instr1.op = r.instr1.op_b;
     end
 
     v.clear = csr_out.trap | csr_out.mret | d.e.instr0.op.jump | d.m.instr0.op.fence | d.w.clear;
@@ -88,13 +104,21 @@ module execute_stage
 
     v.enable = ~(d.e.stall | a.m.stall | v.clear);
 
-    alu_in.rdata1 = v.instr0.rdata1;
-    alu_in.rdata2 = v.instr0.rdata2;
-    alu_in.imm = v.instr0.imm;
-    alu_in.sel = v.instr0.op.rden2;
-    alu_in.alu_op = v.instr0.alu_op;
+    alu0_in.rdata1 = v.instr0.rdata1;
+    alu0_in.rdata2 = v.instr0.rdata2;
+    alu0_in.imm = v.instr0.imm;
+    alu0_in.sel = v.instr0.op.rden2;
+    alu0_in.alu_op = v.instr0.alu_op;
 
-    v.instr0.wdata = alu_out.result;
+    v.instr0.wdata = alu0_out.result;
+
+    alu1_in.rdata1 = v.instr1.rdata1;
+    alu1_in.rdata2 = v.instr1.rdata2;
+    alu1_in.imm = v.instr1.imm;
+    alu1_in.sel = v.instr1.op.rden2;
+    alu1_in.alu_op = v.instr1.alu_op;
+
+    v.instr1.wdata = alu1_out.result;
 
     bcu_in.rdata1 = v.instr0.rdata1;
     bcu_in.rdata2 = v.instr0.rdata2;
@@ -228,6 +252,7 @@ module execute_stage
 
     if ((v.stall | a.m.stall | v.clear) == 1) begin
       v.instr0.op = init_operation_complex;
+      v.instr1.op = init_operation_basic;
     end
 
     if (v.clear == 1) begin

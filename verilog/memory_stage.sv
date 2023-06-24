@@ -10,7 +10,8 @@ module memory_stage
   output lsu_in_type lsu_in,
   input dtim_out_type dmem_out,
   output dtim_in_type dmem_in,
-  output forwarding_memory_in_type forwarding_min,
+  output forwarding_memory_in_type forwarding0_min,
+  output forwarding_memory_in_type forwarding1_min,
   output fp_forwarding_memory_in_type fp_forwarding_min,
   input csr_out_type csr_out,
   output csr_write_in_type csr_win,
@@ -39,6 +40,7 @@ module memory_stage
     if (d.m.stall == 1) begin
       v = r;
       v.instr0.op = r.instr0.op_b;
+      v.instr1.op = r.instr1.op_b;
     end
 
     v.clear = csr_out.trap | csr_out.mret | d.w.clear;
@@ -77,6 +79,7 @@ module memory_stage
 
     if ((v.stall | v.clear) == 1) begin
       v.instr0.op = init_operation_complex;
+      v.instr1.op = init_operation_basic;
     end
 
     if (v.clear == 1) begin
@@ -101,9 +104,13 @@ module memory_stage
     fp_csr_ein.fpu = v.instr0.op.fpuf;
     fp_csr_ein.fflags = v.instr0.flags;
 
-    forwarding_min.wren = v.instr0.op.wren;
-    forwarding_min.waddr = v.instr0.waddr;
-    forwarding_min.wdata = v.instr0.wdata;
+    forwarding0_min.wren = v.instr0.op.wren;
+    forwarding0_min.waddr = v.instr0.waddr;
+    forwarding0_min.wdata = v.instr0.wdata;
+
+    forwarding1_min.wren = v.instr1.op.wren;
+    forwarding1_min.waddr = v.instr1.waddr;
+    forwarding1_min.wdata = v.instr1.wdata;
 
     fp_forwarding_min.wren = v.instr0.op.fwren;
     fp_forwarding_min.waddr = v.instr0.waddr;

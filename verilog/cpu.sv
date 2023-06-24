@@ -29,8 +29,10 @@ module cpu
 
   agu_in_type agu_in;
   agu_out_type agu_out;
-  alu_in_type alu_in;
-  alu_out_type alu_out;
+  alu_in_type alu0_in;
+  alu_out_type alu0_out;
+  alu_in_type alu1_in;
+  alu_out_type alu1_out;
   bcu_in_type bcu_in;
   bcu_out_type bcu_out;
   lsu_in_type lsu_in;
@@ -49,19 +51,28 @@ module cpu
   bp_out_type bp_out;
   hazard_in_type hazard_in;
   hazard_out_type hazard_out;
-  decoder_in_type decoder_in;
-  decoder_out_type decoder_out;
-  forwarding_register_in_type forwarding_rin;
-  forwarding_memory_in_type forwarding_min;
-  forwarding_writeback_in_type forwarding_win;
-  forwarding_out_type forwarding_out;
+  decoder_in_type decoder0_in;
+  decoder_out_type decoder0_out;
+  decoder_in_type decoder1_in;
+  decoder_out_type decoder1_out;
+  forwarding_register_in_type forwarding0_rin;
+  forwarding_register_in_type forwarding1_rin;
+  forwarding_memory_in_type forwarding0_min;
+  forwarding_memory_in_type forwarding1_min;
+  forwarding_writeback_in_type forwarding0_win;
+  forwarding_writeback_in_type forwarding1_win;
+  forwarding_out_type forwarding0_out;
+  forwarding_out_type forwarding1_out;
   csr_read_in_type csr_rin;
   csr_write_in_type csr_win;
   csr_exception_in_type csr_ein;
   csr_out_type csr_out;
-  register_read_in_type register_rin;
-  register_write_in_type register_win;
-  register_out_type register_out;
+  register_read_in_type register0_rin;
+  register_read_in_type register1_rin;
+  register_write_in_type register0_win;
+  register_write_in_type register1_win;
+  register_out_type register0_out;
+  register_out_type register1_out;
   fetch_in_type fetch_in_a;
   buffer_in_type buffer_in_a;
   decode_in_type decode_in_a;
@@ -209,10 +220,16 @@ module cpu
     .agu_out (agu_out)
   );
 
-  alu alu_comp
+  alu alu0_comp
   (
-    .alu_in (alu_in),
-    .alu_out (alu_out)
+    .alu_in (alu0_in),
+    .alu_out (alu0_out)
+  );
+
+  alu alu1_comp
+  (
+    .alu_in (alu1_in),
+    .alu_out (alu1_out)
   );
 
   bcu bcu_comp
@@ -265,10 +282,14 @@ module cpu
 
   forwarding forwarding_comp
   (
-    .forwarding_rin (forwarding_rin),
-    .forwarding_win (forwarding_win),
-    .forwarding_min (forwarding_min),
-    .forwarding_out (forwarding_out)
+    .forwarding0_rin (forwarding0_rin),
+    .forwarding1_rin (forwarding1_rin),
+    .forwarding0_win (forwarding0_win),
+    .forwarding1_win (forwarding1_win),
+    .forwarding0_min (forwarding0_min),
+    .forwarding1_min (forwarding1_min),
+    .forwarding0_out (forwarding0_out),
+    .forwarding1_out (forwarding1_out)
   );
 
   bp bp_comp
@@ -287,19 +308,28 @@ module cpu
     .hazard_out (hazard_out)
   );
 
-  decoder decoder_comp
+  decoder decoder0_comp
   (
-    .decoder_in (decoder_in),
-    .decoder_out (decoder_out)
+    .decoder_in (decoder0_in),
+    .decoder_out (decoder0_out)
+  );
+
+  decoder decoder1_comp
+  (
+    .decoder_in (decoder1_in),
+    .decoder_out (decoder1_out)
   );
 
   register register_comp
   (
     .reset (reset),
     .clock (clock),
-    .register_rin (register_rin),
-    .register_win (register_win),
-    .register_out (register_out)
+    .register0_rin (register0_rin),
+    .register1_rin (register1_rin),
+    .register0_win (register0_win),
+    .register1_win (register1_win),
+    .register0_out (register0_out),
+    .register1_out (register1_out)
   );
 
   csr csr_comp
@@ -349,11 +379,14 @@ module cpu
   (
     .reset (reset),
     .clock (clock),
-    .decoder_out (decoder_out),
-    .decoder_in (decoder_in),
+    .decoder0_out (decoder0_out),
+    .decoder0_in (decoder0_in),
+    .decoder1_out (decoder1_out),
+    .decoder1_in (decoder1_in),
     .fp_decode_out (fp_decode_out),
     .fp_decode_in (fp_decode_in),
-    .register_rin (register_rin),
+    .register0_rin (register0_rin),
+    .register1_rin (register1_rin),
     .fp_register_rin (fp_register_rin),
     .csr_out (csr_out),
     .csr_rin (csr_rin),
@@ -370,8 +403,10 @@ module cpu
   (
     .reset (reset),
     .clock (clock),
-    .alu_out (alu_out),
-    .alu_in (alu_in),
+    .alu0_out (alu0_out),
+    .alu0_in (alu0_in),
+    .alu1_out (alu1_out),
+    .alu1_in (alu1_in),
     .agu_out (agu_out),
     .agu_in (agu_in),
     .bcu_out (bcu_out),
@@ -388,10 +423,13 @@ module cpu
     .bit_clmul_in (bit_clmul_in),
     .fp_execute_out (fp_execute_out),
     .fp_execute_in (fp_execute_in),
-    .register_out (register_out),
+    .register0_out (register0_out),
+    .register1_out (register1_out),
     .fp_register_out (fp_register_out),
-    .forwarding_out (forwarding_out),
-    .forwarding_rin (forwarding_rin),
+    .forwarding0_out (forwarding0_out),
+    .forwarding1_out (forwarding1_out),
+    .forwarding0_rin (forwarding0_rin),
+    .forwarding1_rin (forwarding1_rin),
     .fp_forwarding_out (fp_forwarding_out),
     .fp_forwarding_rin (fp_forwarding_rin),
     .csr_out (csr_out),
@@ -410,7 +448,8 @@ module cpu
     .lsu_in (lsu_in),
     .dmem_out (dtim_out),
     .dmem_in (dtim_in),
-    .forwarding_min (forwarding_min),
+    .forwarding0_min (forwarding0_min),
+    .forwarding1_min (forwarding1_min),
     .fp_forwarding_min (fp_forwarding_min),
     .csr_out (csr_out),
     .csr_win (csr_win),
@@ -428,9 +467,11 @@ module cpu
   (
     .reset (reset),
     .clock (clock),
-    .register_win (register_win),
+    .register0_win (register0_win),
+    .register1_win (register1_win),
     .fp_register_win (fp_register_win),
-    .forwarding_win (forwarding_win),
+    .forwarding0_win (forwarding0_win),
+    .forwarding1_win (forwarding1_win),
     .fp_forwarding_win (fp_forwarding_win),
     .a (writeback_in_a),
     .d (writeback_in_d),

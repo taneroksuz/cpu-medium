@@ -7,11 +7,14 @@ module decode_stage
 (
   input logic reset,
   input logic clock,
-  input decoder_out_type decoder_out,
-  output decoder_in_type decoder_in,
+  input decoder_out_type decoder0_out,
+  output decoder_in_type decoder0_in,
+  input decoder_out_type decoder1_out,
+  output decoder_in_type decoder1_in,
   input fp_decode_out_type fp_decode_out,
   output fp_decode_in_type fp_decode_in,
-  output register_read_in_type register_rin,
+  output register_read_in_type register0_rin,
+  output register_read_in_type register1_rin,
   output fp_register_read_in_type fp_register_rin,
   input csr_out_type csr_out,
   output csr_read_in_type csr_rin,
@@ -67,44 +70,60 @@ module decode_stage
 
     v.instr0.npc = v.instr0.pc + ((v.instr0.instr[1:0] == 2'b11) ? 4 : 2);
 
-    decoder_in.instr = v.instr0.instr;
+    decoder0_in.instr = v.instr0.instr;
 
-    v.instr0.imm = decoder_out.imm;
-    v.instr0.op.wren = decoder_out.wren;
-    v.instr0.op.rden1 = decoder_out.rden1;
-    v.instr0.op.rden2 = decoder_out.rden2;
-    v.instr0.op.cwren = decoder_out.cwren;
-    v.instr0.op.crden = decoder_out.crden;
-    v.instr0.op.auipc = decoder_out.auipc;
-    v.instr0.op.lui = decoder_out.lui;
-    v.instr0.op.jal = decoder_out.jal;
-    v.instr0.op.jalr = decoder_out.jalr;
-    v.instr0.op.branch = decoder_out.branch;
-    v.instr0.op.load = decoder_out.load;
-    v.instr0.op.store = decoder_out.store;
-    v.instr0.op.nop = decoder_out.nop;
-    v.instr0.op.csreg = decoder_out.csreg;
-    v.instr0.op.division = decoder_out.division;
-    v.instr0.op.mult = decoder_out.mult;
-    v.instr0.op.bitm = decoder_out.bitm;
-    v.instr0.op.bitc = decoder_out.bitc;
-    v.instr0.op.fence = decoder_out.fence;
-    v.instr0.op.ecall = decoder_out.ecall;
-    v.instr0.op.ebreak = decoder_out.ebreak;
-    v.instr0.op.mret = decoder_out.mret;
-    v.instr0.op.wfi = decoder_out.wfi;
-    v.instr0.op.return_pop = decoder_out.return_pop;
-    v.instr0.op.return_push = decoder_out.return_push;
-    v.instr0.op.jump_uncond = decoder_out.jump_uncond;
-    v.instr0.op.jump_rest = decoder_out.jump_rest;
-    v.instr0.op.valid = decoder_out.valid;
-    v.instr0.alu_op = decoder_out.alu_op;
-    v.instr0.bcu_op = decoder_out.bcu_op;
-    v.instr0.lsu_op = decoder_out.lsu_op;
-    v.instr0.csr_op = decoder_out.csr_op;
-    v.instr0.div_op = decoder_out.div_op;
-    v.instr0.mul_op = decoder_out.mul_op;
-    v.instr0.bit_op = decoder_out.bit_op;
+    v.instr0.imm = decoder0_out.imm;
+    v.instr0.op.wren = decoder0_out.wren;
+    v.instr0.op.rden1 = decoder0_out.rden1;
+    v.instr0.op.rden2 = decoder0_out.rden2;
+    v.instr0.op.cwren = decoder0_out.cwren;
+    v.instr0.op.crden = decoder0_out.crden;
+    v.instr0.op.auipc = decoder0_out.auipc;
+    v.instr0.op.lui = decoder0_out.lui;
+    v.instr0.op.jal = decoder0_out.jal;
+    v.instr0.op.jalr = decoder0_out.jalr;
+    v.instr0.op.branch = decoder0_out.branch;
+    v.instr0.op.load = decoder0_out.load;
+    v.instr0.op.store = decoder0_out.store;
+    v.instr0.op.nop = decoder0_out.nop;
+    v.instr0.op.csreg = decoder0_out.csreg;
+    v.instr0.op.division = decoder0_out.division;
+    v.instr0.op.mult = decoder0_out.mult;
+    v.instr0.op.bitm = decoder0_out.bitm;
+    v.instr0.op.bitc = decoder0_out.bitc;
+    v.instr0.op.fence = decoder0_out.fence;
+    v.instr0.op.ecall = decoder0_out.ecall;
+    v.instr0.op.ebreak = decoder0_out.ebreak;
+    v.instr0.op.mret = decoder0_out.mret;
+    v.instr0.op.wfi = decoder0_out.wfi;
+    v.instr0.op.return_pop = decoder0_out.return_pop;
+    v.instr0.op.return_push = decoder0_out.return_push;
+    v.instr0.op.jump_uncond = decoder0_out.jump_uncond;
+    v.instr0.op.jump_rest = decoder0_out.jump_rest;
+    v.instr0.op.valid = decoder0_out.valid;
+    v.instr0.alu_op = decoder0_out.alu_op;
+    v.instr0.bcu_op = decoder0_out.bcu_op;
+    v.instr0.lsu_op = decoder0_out.lsu_op;
+    v.instr0.csr_op = decoder0_out.csr_op;
+    v.instr0.div_op = decoder0_out.div_op;
+    v.instr0.mul_op = decoder0_out.mul_op;
+    v.instr0.bit_op = decoder0_out.bit_op;
+
+    v.instr1.waddr = v.instr1.instr[11:7];
+    v.instr1.raddr1 = v.instr1.instr[19:15];
+    v.instr1.raddr2 = v.instr1.instr[24:20];
+
+    v.instr1.npc = v.instr1.pc + ((v.instr1.instr[1:0] == 2'b11) ? 4 : 2);
+
+    decoder1_in.instr = v.instr1.instr;
+
+    v.instr1.imm = decoder1_out.imm;
+    v.instr1.op.wren = decoder1_out.wren;
+    v.instr1.op.rden1 = decoder1_out.rden1;
+    v.instr1.op.rden2 = decoder1_out.rden2;
+    v.instr1.op.nop = decoder1_out.nop;
+    v.instr1.op.valid = decoder1_out.valid;
+    v.instr1.alu_op = decoder1_out.alu_op;
 
     fp_decode_in.instr = v.instr0.instr;
 
@@ -146,10 +165,15 @@ module decode_stage
       v.instr0.rm = fp_csr_out.frm;
     end
 
-    register_rin.rden1 = v.instr0.op.rden1;
-    register_rin.rden2 = v.instr0.op.rden2;
-    register_rin.raddr1 = v.instr0.raddr1;
-    register_rin.raddr2 = v.instr0.raddr2;
+    register0_rin.rden1 = v.instr0.op.rden1;
+    register0_rin.rden2 = v.instr0.op.rden2;
+    register0_rin.raddr1 = v.instr0.raddr1;
+    register0_rin.raddr2 = v.instr0.raddr2;
+
+    register1_rin.rden1 = v.instr1.op.rden1;
+    register1_rin.rden2 = v.instr1.op.rden2;
+    register1_rin.raddr1 = v.instr1.raddr1;
+    register1_rin.raddr2 = v.instr1.raddr2;
 
     fp_register_rin.rden1 = v.instr0.op.frden1;
     fp_register_rin.rden2 = v.instr0.op.frden2;
@@ -190,6 +214,7 @@ module decode_stage
 
     if ((v.stall | a.e.stall | a.m.stall | a.e.instr0.op.jump | a.e.instr0.op.fence | a.e.instr0.op.mret | a.e.instr0.op.exception | v.clear) == 1) begin
       v.instr0.op = init_operation_complex;
+      v.instr1.op = init_operation_basic;
     end
 
     if (v.clear == 1) begin

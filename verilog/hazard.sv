@@ -31,7 +31,7 @@ module hazard
 
   logic [6 : 0] opcode [0:1];
   logic [2 : 0] funct3 [0:1];
-  logic [4 : 0] funct5 [0:1];
+  logic [6 : 0] funct7 [0:1];
 
   logic [4 : 0] waddr [0:1];
   logic [4 : 0] raddr1 [0:1];
@@ -84,7 +84,7 @@ module hazard
 
     opcode = {instr[0][6:0],instr[1][6:0]};
     funct3 = {instr[0][14:12],instr[1][14:12]};
-    funct5 = {instr[0][31:27],instr[1][31:27]};
+    funct7 = {instr[0][31:25],instr[1][31:25]};
 
     waddr = {instr[0][11:7],instr[1][11:7]};
     raddr1 = {instr[0][19:15],instr[1][19:15]};
@@ -141,12 +141,92 @@ module hazard
         rden2[0] = 1;
       end
       opcode_immediate : begin
-        basic[0] = 1;
+        case (funct3[0])
+          funct_add : begin
+            basic[0] = 1;
+          end
+          funct_slt : begin
+            basic[0] = 1;
+          end
+          funct_sltu : begin
+            basic[0] = 1;
+          end
+          funct_and : begin
+            basic[0] = 1;
+          end
+          funct_or : begin
+            basic[0] = 1;
+          end
+          funct_xor : begin
+            basic[0] = 1;
+          end
+          funct_sll : begin
+            if (funct7[0] == 7'b0000000) begin
+              basic[0] = 1;
+            end else begin
+              complex[0] = 1;
+            end
+          end 
+          funct_srl : begin
+            if (funct7[0] == 7'b0000000) begin
+              basic[0] = 1;
+            end else if (funct7[0] == 7'b0100000) begin
+              basic[0] = 1;
+            end else begin
+              complex[0] = 1;
+            end
+          end
+          default : begin
+            complex[0] = 1;
+          end
+        endcase
         wren[0] = nonzero_waddr[0];
         rden1[0] = 1;
       end
       opcode_register : begin
-        basic[0] = 1;
+        if (funct7[0] == 7'b0000000) begin
+          case (funct3[0])
+            funct_add : begin
+              basic[0] = 1;
+            end
+            funct_sll : begin
+              basic[0] = 1;
+            end
+            funct_srl : begin
+              basic[0] = 1;
+            end
+            funct_slt : begin
+              basic[0] = 1;
+            end
+            funct_sltu : begin
+              basic[0] = 1;
+            end
+            funct_and : begin
+              basic[0] = 1;
+            end
+            funct_or : begin
+              basic[0] = 1;
+            end
+            funct_xor : begin
+              basic[0] = 1;
+            end
+            default : begin
+              complex[0] = 1;
+            end
+          endcase;
+        end else if (funct7[0] == 7'b0100000) begin
+          case (funct3[0])
+            funct_add : begin
+              basic[0] = 1;
+            end
+            funct_srl : begin
+              basic[0] = 1;
+            end
+            default : begin
+              complex[0] = 1;
+            end
+          endcase;
+        end
         wren[0] = nonzero_waddr[0];
         rden1[0] = 1;
         rden2[0] = 1;
@@ -190,7 +270,7 @@ module hazard
         frden1[0] = 1;
       end
       opcode_fp : begin
-        case (funct5[0])
+        case (funct7[0][6:2])
           funct_fadd : begin
             complex[0] = 1;
             fwren[0] = 1;
@@ -328,12 +408,92 @@ module hazard
         rden2[1] = 1;
       end
       opcode_immediate : begin
-        basic[1] = 1;
+        case (funct3[1])
+          funct_add : begin
+            basic[1] = 1;
+          end
+          funct_slt : begin
+            basic[1] = 1;
+          end
+          funct_sltu : begin
+            basic[1] = 1;
+          end
+          funct_and : begin
+            basic[1] = 1;
+          end
+          funct_or : begin
+            basic[1] = 1;
+          end
+          funct_xor : begin
+            basic[1] = 1;
+          end
+          funct_sll : begin
+            if (funct7[1] == 7'b0000000) begin
+              basic[1] = 1;
+            end else begin
+              complex[1] = 1;
+            end
+          end 
+          funct_srl : begin
+            if (funct7[1] == 7'b0000000) begin
+              basic[1] = 1;
+            end else if (funct7[1] == 7'b0100000) begin
+              basic[1] = 1;
+            end else begin
+              complex[1] = 1;
+            end
+          end
+          default : begin
+            complex[1] = 1;
+          end
+        endcase
         wren[1] = nonzero_waddr[1];
         rden1[1] = 1;
       end
       opcode_register : begin
-        basic[1] = 1;
+        if (funct7[1] == 7'b0000000) begin
+          case (funct3[1])
+            funct_add : begin
+              basic[1] = 1;
+            end
+            funct_sll : begin
+              basic[1] = 1;
+            end
+            funct_srl : begin
+              basic[1] = 1;
+            end
+            funct_slt : begin
+              basic[1] = 1;
+            end
+            funct_sltu : begin
+              basic[1] = 1;
+            end
+            funct_and : begin
+              basic[1] = 1;
+            end
+            funct_or : begin
+              basic[1] = 1;
+            end
+            funct_xor : begin
+              basic[1] = 1;
+            end
+            default : begin
+              complex[1] = 1;
+            end
+          endcase;
+        end else if (funct7[1] == 7'b0100000) begin
+          case (funct3[1])
+            funct_add : begin
+              basic[1] = 1;
+            end
+            funct_srl : begin
+              basic[1] = 1;
+            end
+            default : begin
+              complex[1] = 1;
+            end
+          endcase;
+        end
         wren[1] = nonzero_waddr[1];
         rden1[1] = 1;
         rden2[1] = 1;
@@ -377,7 +537,7 @@ module hazard
         frden1[1] = 1;
       end
       opcode_fp : begin
-        case (funct5[1])
+        case (funct7[1][6:2])
           funct_fadd : begin
             complex[1] = 1;
             fwren[1] = 1;
