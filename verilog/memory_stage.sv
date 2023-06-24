@@ -38,19 +38,20 @@ module memory_stage
 
     if (d.m.stall == 1) begin
       v = r;
+      v.instr0.op = r.instr0.op_b;
     end
 
     v.clear = csr_out.trap | csr_out.mret | d.w.clear;
 
     v.stall = 0;
 
-    dmem_in.mem_valid = a.e.instr0.load | a.e.instr0.store | a.e.instr0.fload | a.e.instr0.fstore | a.e.instr0.fence;
-    dmem_in.mem_fence = a.e.instr0.fence;
+    dmem_in.mem_valid = a.e.instr0.op.load | a.e.instr0.op.store | a.e.instr0.op.fload | a.e.instr0.op.fstore | a.e.instr0.op.fence;
+    dmem_in.mem_fence = a.e.instr0.op.fence;
     dmem_in.mem_spec = 0;
     dmem_in.mem_instr = 0;
     dmem_in.mem_addr = a.e.instr0.address;
     dmem_in.mem_wdata = store_data(a.e.instr0.sdata,a.e.instr0.lsu_op.lsu_sb,a.e.instr0.lsu_op.lsu_sh,a.e.instr0.lsu_op.lsu_sw);
-    dmem_in.mem_wstrb = ((a.e.instr0.load | a.e.instr0.fload) == 1) ? 4'h0 : a.e.instr0.byteenable;
+    dmem_in.mem_wstrb = ((a.e.instr0.op.load | a.e.instr0.op.fload) == 1) ? 4'h0 : a.e.instr0.byteenable;
 
     lsu_in.ldata = dmem_out.mem_rdata;
     lsu_in.byteenable = v.instr0.byteenable;
@@ -58,58 +59,53 @@ module memory_stage
 
     v.instr0.ldata = lsu_out.result;
 
-    if (v.instr0.load == 1) begin
+    if (v.instr0.op.load == 1) begin
       v.instr0.wdata = v.instr0.ldata;
       v.stall = ~(dmem_out.mem_ready);
-    end else if (v.instr0.store == 1) begin
+    end else if (v.instr0.op.store == 1) begin
       v.stall = ~(dmem_out.mem_ready);
-    end else if (v.instr0.fload == 1) begin
+    end else if (v.instr0.op.fload == 1) begin
       v.instr0.fdata = v.instr0.ldata;
       v.stall = ~(dmem_out.mem_ready);
-    end else if (v.instr0.fstore == 1) begin
+    end else if (v.instr0.op.fstore == 1) begin
       v.stall = ~(dmem_out.mem_ready);
-    end else if (v.instr0.fence == 1) begin
+    end else if (v.instr0.op.fence == 1) begin
       v.stall = ~(dmem_out.mem_ready);
     end
 
+    v.instr0.op_b = v.instr0.op;
+
     if ((v.stall | v.clear) == 1) begin
-      v.instr0.wren = 0;
-      v.instr0.cwren = 0;
-      v.instr0.fwren = 0;
-      v.instr0.fpu = 0;
-      v.instr0.fpuf = 0;
-      v.instr0.valid = 0;
-      v.instr0.mret = 0;
-      v.instr0.exception = 0;
+      v.instr0.op = init_operation_complex;
     end
 
     if (v.clear == 1) begin
       v.stall = 0;
     end
 
-    csr_win.cwren = v.instr0.cwren;
+    csr_win.cwren = v.instr0.op.cwren;
     csr_win.cwaddr = v.instr0.caddr;
     csr_win.cdata = v.instr0.cdata;
 
-    csr_ein.valid = v.instr0.valid;
-    csr_ein.mret = v.instr0.mret;
-    csr_ein.exception = v.instr0.exception;
+    csr_ein.valid = v.instr0.op.valid;
+    csr_ein.mret = v.instr0.op.mret;
+    csr_ein.exception = v.instr0.op.exception;
     csr_ein.epc = v.instr0.pc;
     csr_ein.ecause = v.instr0.ecause;
     csr_ein.etval = v.instr0.etval;
 
-    fp_csr_win.cwren = v.instr0.cwren;
+    fp_csr_win.cwren = v.instr0.op.cwren;
     fp_csr_win.cwaddr = v.instr0.caddr;
     fp_csr_win.cdata = v.instr0.cdata;
 
-    fp_csr_ein.fpu = v.instr0.fpuf;
+    fp_csr_ein.fpu = v.instr0.op.fpuf;
     fp_csr_ein.fflags = v.instr0.flags;
 
-    forwarding_min.wren = v.instr0.wren;
+    forwarding_min.wren = v.instr0.op.wren;
     forwarding_min.waddr = v.instr0.waddr;
     forwarding_min.wdata = v.instr0.wdata;
 
-    fp_forwarding_min.wren = v.instr0.fwren;
+    fp_forwarding_min.wren = v.instr0.op.fwren;
     fp_forwarding_min.waddr = v.instr0.waddr;
     fp_forwarding_min.wdata = v.instr0.fdata;
     

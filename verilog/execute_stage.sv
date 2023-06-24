@@ -49,8 +49,8 @@ module execute_stage
     v.instr0 = d.d.instr0;
     v.instr1 = d.d.instr1;
 
-    forwarding_rin.rden1 = v.instr0.rden1;
-    forwarding_rin.rden2 = v.instr0.rden2;
+    forwarding_rin.rden1 = v.instr0.op.rden1;
+    forwarding_rin.rden2 = v.instr0.op.rden2;
     forwarding_rin.raddr1 = v.instr0.raddr1;
     forwarding_rin.raddr2 = v.instr0.raddr2;
     forwarding_rin.rdata1 = register_out.rdata1;
@@ -59,9 +59,9 @@ module execute_stage
     v.instr0.rdata1 = forwarding_out.data1;
     v.instr0.rdata2 = forwarding_out.data2;
 
-    fp_forwarding_rin.rden1 = v.instr0.frden1;
-    fp_forwarding_rin.rden2 = v.instr0.frden2;
-    fp_forwarding_rin.rden3 = v.instr0.frden3;
+    fp_forwarding_rin.rden1 = v.instr0.op.frden1;
+    fp_forwarding_rin.rden2 = v.instr0.op.frden2;
+    fp_forwarding_rin.rden3 = v.instr0.op.frden3;
     fp_forwarding_rin.raddr1 = v.instr0.raddr1;
     fp_forwarding_rin.raddr2 = v.instr0.raddr2;
     fp_forwarding_rin.raddr3 = v.instr0.raddr3;
@@ -73,17 +73,16 @@ module execute_stage
     v.instr0.frdata2 = fp_forwarding_out.data2;
     v.instr0.frdata3 = fp_forwarding_out.data3;
 
-    if (v.instr0.fpu == 1) begin
-      if (v.instr0.rden1 == 1) begin
-        v.instr0.frdata1 = v.instr0.rdata1;
-      end
+    if ((v.instr0.op.fpu & v.instr0.op.rden1) == 1) begin
+      v.instr0.frdata1 = v.instr0.rdata1;
     end
 
     if ((d.e.stall | d.m.stall) == 1) begin
       v = r;
+      v.instr0.op = r.instr0.op_b;
     end
 
-    v.clear = csr_out.trap | csr_out.mret | d.e.instr0.jump | d.m.instr0.fence | d.w.clear;
+    v.clear = csr_out.trap | csr_out.mret | d.e.instr0.op.jump | d.m.instr0.op.fence | d.w.clear;
 
     v.stall = 0;
 
@@ -92,52 +91,52 @@ module execute_stage
     alu_in.rdata1 = v.instr0.rdata1;
     alu_in.rdata2 = v.instr0.rdata2;
     alu_in.imm = v.instr0.imm;
-    alu_in.sel = v.instr0.rden2;
+    alu_in.sel = v.instr0.op.rden2;
     alu_in.alu_op = v.instr0.alu_op;
 
     v.instr0.wdata = alu_out.result;
 
     bcu_in.rdata1 = v.instr0.rdata1;
     bcu_in.rdata2 = v.instr0.rdata2;
-    bcu_in.enable = v.instr0.branch;
+    bcu_in.enable = v.instr0.op.branch;
     bcu_in.bcu_op = v.instr0.bcu_op;
 
-    v.instr0.jump = v.instr0.jal | v.instr0.jalr | bcu_out.branch;
+    v.instr0.op.jump = v.instr0.op.jal | v.instr0.op.jalr | bcu_out.branch;
 
     agu_in.rdata1 = v.instr0.rdata1;
     agu_in.imm = v.instr0.imm;
     agu_in.pc = v.instr0.pc;
-    agu_in.auipc = v.instr0.auipc;
-    agu_in.jal = v.instr0.jal;
-    agu_in.jalr = v.instr0.jalr;
-    agu_in.branch = v.instr0.branch;
-    agu_in.load = v.instr0.load | v.instr0.fload;
-    agu_in.store = v.instr0.store | v.instr0.fstore;
+    agu_in.auipc = v.instr0.op.auipc;
+    agu_in.jal = v.instr0.op.jal;
+    agu_in.jalr = v.instr0.op.jalr;
+    agu_in.branch = v.instr0.op.branch;
+    agu_in.load = v.instr0.op.load | v.instr0.op.fload;
+    agu_in.store = v.instr0.op.store | v.instr0.op.fstore;
     agu_in.lsu_op = v.instr0.lsu_op;
 
     v.instr0.address = agu_out.address;
     v.instr0.byteenable = agu_out.byteenable;
 
-    if (v.instr0.exception == 0) begin
-      v.instr0.exception = agu_out.exception;
+    if (v.instr0.op.exception == 0) begin
+      v.instr0.op.exception = agu_out.exception;
       v.instr0.ecause = agu_out.ecause;
       v.instr0.etval = agu_out.etval;
-      if (v.instr0.exception == 1) begin
-        if ((v.instr0.load | v.instr0.fload) == 1) begin
-          v.instr0.load = 0;
-          v.instr0.fload = 0;
-          v.instr0.wren = 0;
-        end else if ((v.instr0.store | v.instr0.fstore) == 1) begin
-          v.instr0.store = 0;
-          v.instr0.fstore = 0;
-        end else if (v.instr0.jump == 1) begin
-          v.instr0.jump = 0;
-          v.instr0.wren = 0;
+      if (v.instr0.op.exception == 1) begin
+        if ((v.instr0.op.load | v.instr0.op.fload) == 1) begin
+          v.instr0.op.load = 0;
+          v.instr0.op.fload = 0;
+          v.instr0.op.wren = 0;
+        end else if ((v.instr0.op.store | v.instr0.op.fstore) == 1) begin
+          v.instr0.op.store = 0;
+          v.instr0.op.fstore = 0;
+        end else if (v.instr0.op.jump == 1) begin
+          v.instr0.op.jump = 0;
+          v.instr0.op.wren = 0;
         end
       end
     end
 
-    v.instr0.sdata = (v.instr0.fstore == 1) ? v.instr0.frdata2 : v.instr0.rdata2;
+    v.instr0.sdata = (v.instr0.op.fstore == 1) ? v.instr0.frdata2 : v.instr0.rdata2;
 
     mul_in.rdata1 = v.instr0.rdata1;
     mul_in.rdata2 = v.instr0.rdata2;
@@ -148,14 +147,14 @@ module execute_stage
     bit_alu_in.rdata1 = v.instr0.rdata1;
     bit_alu_in.rdata2 = v.instr0.rdata2;
     bit_alu_in.imm = v.instr0.imm;
-    bit_alu_in.sel = v.instr0.rden2;
+    bit_alu_in.sel = v.instr0.op.rden2;
     bit_alu_in.bit_op = v.instr0.bit_op;
 
     v.instr0.bdata = bit_alu_out.result;
 
     div_in.rdata1 = v.instr0.rdata1;
     div_in.rdata2 = v.instr0.rdata2;
-    div_in.enable = v.instr0.division & v.enable;
+    div_in.enable = v.instr0.op.division & v.enable;
     div_in.div_op = v.instr0.div_op;
 
     v.instr0.ddata = div_out.result;
@@ -163,7 +162,7 @@ module execute_stage
 
     bit_clmul_in.rdata1 = v.instr0.rdata1;
     bit_clmul_in.rdata2 = v.instr0.rdata2;
-    bit_clmul_in.enable = v.instr0.bitc & v.enable;
+    bit_clmul_in.enable = v.instr0.op.bitc & v.enable;
     bit_clmul_in.op = v.instr0.bit_op.bit_zbc;
 
     v.instr0.bcdata = bit_clmul_out.result;
@@ -175,94 +174,68 @@ module execute_stage
     fp_execute_in.fpu_op = v.instr0.fpu_op;
     fp_execute_in.fmt = v.instr0.fmt;
     fp_execute_in.rm = v.instr0.rm;
-    fp_execute_in.enable = v.instr0.fpu & v.enable;
+    fp_execute_in.enable = v.instr0.op.fpu & v.enable;
 
     v.instr0.fdata = fp_execute_out.result;
     v.instr0.flags = fp_execute_out.flags;
     v.instr0.fready = fp_execute_out.ready;
 
-    if (v.instr0.auipc == 1) begin
+    if (v.instr0.op.auipc == 1) begin
       v.instr0.wdata = v.instr0.address;
-    end else if (v.instr0.lui == 1) begin
+    end else if (v.instr0.op.lui == 1) begin
       v.instr0.wdata = v.instr0.imm;
-    end else if (v.instr0.jal == 1) begin
+    end else if (v.instr0.op.jal == 1) begin
       v.instr0.wdata = v.instr0.npc;
-    end else if (v.instr0.jalr == 1) begin
+    end else if (v.instr0.op.jalr == 1) begin
       v.instr0.wdata = v.instr0.npc;
-    end else if (v.instr0.crden == 1) begin
+    end else if (v.instr0.op.crden == 1) begin
       v.instr0.wdata = v.instr0.cdata;
-    end else if (v.instr0.division == 1) begin
+    end else if (v.instr0.op.division == 1) begin
       v.instr0.wdata = v.instr0.ddata;
-    end else if (v.instr0.mult == 1) begin
+    end else if (v.instr0.op.mult == 1) begin
       v.instr0.wdata = v.instr0.mdata;
-    end else if (v.instr0.bitm == 1) begin
+    end else if (v.instr0.op.bitm == 1) begin
         v.instr0.wdata = v.instr0.bdata;
-    end else if (v.instr0.bitc == 1) begin
+    end else if (v.instr0.op.bitc == 1) begin
         v.instr0.wdata = v.instr0.bcdata;
-    end else if (v.instr0.fpu == 1) begin
+    end else if (v.instr0.op.fpu == 1) begin
         v.instr0.wdata = v.instr0.fdata;
     end
 
     csr_alu_in.cdata = v.instr0.cdata;
     csr_alu_in.rdata1 = v.instr0.rdata1;
     csr_alu_in.imm = v.instr0.imm;
-    csr_alu_in.sel = v.instr0.rden1;
+    csr_alu_in.sel = v.instr0.op.rden1;
     csr_alu_in.csr_op = v.instr0.csr_op;
 
     v.instr0.cdata = csr_alu_out.cdata;
 
-    if (v.instr0.division == 1) begin
+    if (v.instr0.op.division == 1) begin
       if (v.instr0.dready == 0) begin
         v.stall = ~(a.m.stall);
       end
-    end else if (v.instr0.bitc == 1) begin
+    end else if (v.instr0.op.bitc == 1) begin
       if (v.instr0.bcready == 0) begin
         v.stall = ~(a.m.stall);
       end
-    end else if (v.instr0.fpuc == 1) begin
+    end else if (v.instr0.op.fpuc == 1) begin
       if (v.instr0.fready == 0) begin
         v.stall = ~(a.m.stall);
       end
     end
 
+    v.instr0.op_b = v.instr0.op;
+
     if ((v.stall | a.m.stall | v.clear) == 1) begin
-      v.instr0.wren = 0;
-      v.instr0.cwren = 0;
-      v.instr0.fwren = 0;
-      v.instr0.branch = 0;
-      v.instr0.load = 0;
-      v.instr0.store = 0;
-      v.instr0.fload = 0;
-      v.instr0.fstore = 0;
-      v.instr0.csreg = 0;
-      v.instr0.division = 0;
-      v.instr0.mult = 0;
-      v.instr0.bitm = 0;
-      v.instr0.bitc = 0;
-      v.instr0.fence = 0;
-      v.instr0.ecall = 0;
-      v.instr0.ebreak = 0;
-      v.instr0.mret = 0;
-      v.instr0.wfi = 0;
-      v.instr0.fpu = 0;
-      v.instr0.fpuc = 0;
-      v.instr0.fpuf = 0;
-      v.instr0.jump = 0;
-      v.instr0.valid = 0;
-      v.instr0.return_pop = 0;
-      v.instr0.return_push = 0;
-      v.instr0.jump_uncond = 0;
-      v.instr0.jump_rest = 0;
-      v.instr0.exception = 0;
+      v.instr0.op = init_operation_complex;
     end
 
     if (v.clear == 1) begin
       v.stall = 0;
-      v.instr0.fence = 0;
     end
 
-    if (v.instr0.nop == 1) begin
-      v.instr0.valid = 0;
+    if (v.instr0.op.nop == 1) begin
+      v.instr0.op.valid = 0;
     end
 
     rin = v;

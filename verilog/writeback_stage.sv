@@ -31,19 +31,19 @@ module writeback_stage
       v.clear = 0;
     end
 
-    register_win.wren = v.instr0.wren & |(v.instr0.waddr);
+    register_win.wren = v.instr0.op.wren & |(v.instr0.waddr);
     register_win.waddr = v.instr0.waddr;
     register_win.wdata = v.instr0.wdata;
 
-    fp_register_win.wren = v.instr0.fwren;
+    fp_register_win.wren = v.instr0.op.fwren;
     fp_register_win.waddr = v.instr0.waddr;
     fp_register_win.wdata = v.instr0.fdata;
 
-    forwarding_win.wren = v.instr0.wren;
+    forwarding_win.wren = v.instr0.op.wren;
     forwarding_win.waddr = v.instr0.waddr;
     forwarding_win.wdata = v.instr0.wdata;
 
-    fp_forwarding_win.wren = v.instr0.fwren;
+    fp_forwarding_win.wren = v.instr0.op.fwren;
     fp_forwarding_win.waddr = v.instr0.waddr;
     fp_forwarding_win.wdata = v.instr0.fdata;
 

@@ -429,21 +429,34 @@ package wires;
   } hazard_out_type;
 
   typedef struct packed{
+    logic [0  : 0] wren;
+    logic [0  : 0] rden1;
+    logic [0  : 0] rden2;
+    logic [0  : 0] nop;
+    logic [0  : 0] valid;
+  } operation_basic_type;
+
+  parameter operation_basic_type init_operation_basic = '{
+    wren : 0,
+    rden1 : 0,
+    rden2 : 0,
+    nop : 0,
+    valid : 0
+  };
+
+  typedef struct packed{
     logic [31 : 0] pc;
     logic [31 : 0] npc;
     logic [31 : 0] instr;
     logic [31 : 0] imm;
-    logic [0  : 0] wren;
-    logic [0  : 0] rden1;
-    logic [0  : 0] rden2;
     logic [4  : 0] waddr;
     logic [4  : 0] raddr1;
     logic [4  : 0] raddr2;
-    logic [0  : 0] nop;
     logic [31 : 0] rdata1;
     logic [31 : 0] rdata2;
     logic [31 : 0] wdata;
-    logic [0  : 0] valid;
+    operation_basic_type op;
+    operation_basic_type op_b;
     alu_op_type alu_op;
   } instruction_basic_type;
 
@@ -452,25 +465,18 @@ package wires;
     npc : 0,
     instr : 0,
     imm : 0,
-    wren : 0,
-    rden1 : 0,
-    rden2 : 0,
     waddr : 0,
     raddr1 : 0,
     raddr2 : 0,
     rdata1 : 0,
     rdata2 : 0,
     wdata : 0,
-    nop : 0,
-    valid : 0,
+    op : init_operation_basic,
+    op_b : init_operation_basic,
     alu_op : init_alu_op
   };
 
   typedef struct packed{
-    logic [31 : 0] pc;
-    logic [31 : 0] npc;
-    logic [31 : 0] instr;
-    logic [31 : 0] imm;
     logic [0  : 0] wren;
     logic [0  : 0] rden1;
     logic [0  : 0] rden2;
@@ -480,11 +486,6 @@ package wires;
     logic [0  : 0] frden1;
     logic [0  : 0] frden2;
     logic [0  : 0] frden3;
-    logic [4  : 0] waddr;
-    logic [4  : 0] raddr1;
-    logic [4  : 0] raddr2;
-    logic [4  : 0] raddr3;
-    logic [11 : 0] caddr;
     logic [0  : 0] auipc;
     logic [0  : 0] lui;
     logic [0  : 0] jal;
@@ -505,55 +506,19 @@ package wires;
     logic [0  : 0] ebreak;
     logic [0  : 0] mret;
     logic [0  : 0] wfi;
-    logic [1  : 0] fmt;
-    logic [2  : 0] rm;
     logic [0  : 0] fpu;
     logic [0  : 0] fpuc;
     logic [0  : 0] fpuf;
-    logic [0  : 0] valid;
     logic [0  : 0] jump;
-    logic [31 : 0] rdata1;
-    logic [31 : 0] rdata2;
-    logic [31 : 0] frdata1;
-    logic [31 : 0] frdata2;
-    logic [31 : 0] frdata3;
-    logic [31 : 0] cdata;
-    logic [31 : 0] bdata;
-    logic [31 : 0] mdata;
-    logic [31 : 0] wdata;
-    logic [31 : 0] fdata;
-    logic [31 : 0] ldata;
-    logic [31 : 0] sdata;
-    logic [31 : 0] ddata;
-    logic [31 : 0] bcdata;
-    logic [0  : 0] fready;
-    logic [0  : 0] dready;
-    logic [0  : 0] bcready;
-    logic [31 : 0] address;
-    logic [3  : 0] byteenable;
     logic [0  : 0] return_pop;
     logic [0  : 0] return_push;
     logic [0  : 0] jump_uncond;
     logic [0  : 0] jump_rest;
     logic [0  : 0] exception;
-    logic [3  : 0] ecause;
-    logic [31 : 0] etval;
-    logic [4  : 0] flags;
-    alu_op_type alu_op;
-    bcu_op_type bcu_op;
-    lsu_op_type lsu_op;
-    csr_op_type csr_op;
-    div_op_type div_op;
-    mul_op_type mul_op;
-    bit_op_type bit_op;
-    fp_operation_type fpu_op;
-  } instruction_complex_type;
+    logic [0  : 0] valid;
+  } operation_complex_type;
 
-  parameter instruction_complex_type init_instruction_complex = '{
-    pc : 0,
-    npc : 0,
-    instr : 0,
-    imm : 0,
+  parameter operation_complex_type init_operation_complex = '{
     wren : 0,
     rden1 : 0,
     rden2 : 0,
@@ -563,11 +528,6 @@ package wires;
     frden1 : 0,
     frden2 : 0,
     frden3 : 0,
-    waddr : 0,
-    raddr1 : 0,
-    raddr2 : 0,
-    raddr3 : 0,
-    caddr : 0,
     auipc : 0,
     lui : 0,
     jal : 0,
@@ -588,13 +548,76 @@ package wires;
     ebreak : 0,
     mret : 0,
     wfi : 0,
-    fmt : 0,
-    rm : 0,
     fpu : 0,
     fpuc : 0,
     fpuf : 0,
-    valid : 0,
     jump : 0,
+    return_pop : 0,
+    return_push : 0,
+    jump_uncond : 0,
+    jump_rest : 0,
+    exception : 0,
+    valid : 0
+  };
+
+  typedef struct packed{
+    logic [31 : 0] pc;
+    logic [31 : 0] npc;
+    logic [31 : 0] instr;
+    logic [31 : 0] imm;
+    logic [4  : 0] waddr;
+    logic [4  : 0] raddr1;
+    logic [4  : 0] raddr2;
+    logic [4  : 0] raddr3;
+    logic [11 : 0] caddr;
+    logic [1  : 0] fmt;
+    logic [2  : 0] rm;
+    logic [31 : 0] rdata1;
+    logic [31 : 0] rdata2;
+    logic [31 : 0] frdata1;
+    logic [31 : 0] frdata2;
+    logic [31 : 0] frdata3;
+    logic [31 : 0] cdata;
+    logic [31 : 0] bdata;
+    logic [31 : 0] mdata;
+    logic [31 : 0] wdata;
+    logic [31 : 0] fdata;
+    logic [31 : 0] ldata;
+    logic [31 : 0] sdata;
+    logic [31 : 0] ddata;
+    logic [31 : 0] bcdata;
+    logic [0  : 0] fready;
+    logic [0  : 0] dready;
+    logic [0  : 0] bcready;
+    logic [31 : 0] address;
+    logic [3  : 0] byteenable;
+    logic [3  : 0] ecause;
+    logic [31 : 0] etval;
+    logic [4  : 0] flags;
+    operation_complex_type op;
+    operation_complex_type op_b;
+    alu_op_type alu_op;
+    bcu_op_type bcu_op;
+    lsu_op_type lsu_op;
+    csr_op_type csr_op;
+    div_op_type div_op;
+    mul_op_type mul_op;
+    bit_op_type bit_op;
+    fp_operation_type fpu_op;
+  } instruction_complex_type;
+
+  parameter instruction_complex_type init_instruction_complex = '{
+    pc : 0,
+    npc : 0,
+    instr : 0,
+    imm : 0,
+    waddr : 0,
+    raddr1 : 0,
+    raddr2 : 0,
+    raddr3 : 0,
+    caddr : 0,
+    fmt : 0,
+    rm : 0,
     rdata1 : 0,
     rdata2 : 0,
     frdata1 : 0,
@@ -614,14 +637,11 @@ package wires;
     bcready : 0,
     address : 0,
     byteenable : 0,
-    return_pop : 0,
-    return_push : 0,
-    jump_uncond : 0,
-    jump_rest : 0,
-    exception : 0,
     ecause : 0,
     etval : 0,
     flags : 0,
+    op : init_operation_complex,
+    op_b : init_operation_complex,
     alu_op : init_alu_op,
     bcu_op : init_bcu_op,
     lsu_op : init_lsu_op,

@@ -481,12 +481,6 @@ module hazard
       end
     endcase
 
-    if (count > total) begin
-      stall = 1;
-    end else begin
-      stall = 0;
-    end
-
     if (((basic[0] & basic[1]) | (complex[0] & basic[1])) == 1) begin
       pass = 2;
       if (wren[0] == 1) begin
@@ -520,8 +514,18 @@ module hazard
       pass = 0;
     end
 
+    if (count < pass) begin
+      pass = count;
+    end
+
     count = count - pass;
     rid = rid + pass;
+
+    if (count > total) begin
+      stall = 1;
+    end else begin
+      stall = 0;
+    end
 
     hazard_out.pc0 = pass > 0 ? pc[0] : 0;
     hazard_out.pc1 = pass > 1 ? pc[1] : 0;
