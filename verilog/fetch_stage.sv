@@ -19,6 +19,9 @@ module fetch_stage
   timeunit 1ns;
   timeprecision 1ps;
 
+  localparam [1:0] idle = 0;
+  localparam [1:0] busy = 1;
+
   fetch_reg_type r,rin;
   fetch_reg_type v;
 
@@ -26,8 +29,8 @@ module fetch_stage
 
     v = r;
 
-    v.valid = ~d.w.clear;
-    v.stall = a.b.stall | a.d.stall | a.e.stall | a.m.stall;
+    v.valid = 0;
+    v.stall = a.b.stall;
 
     v.fence = 0;
     v.spec = 0;
@@ -35,9 +38,27 @@ module fetch_stage
     v.rdata = imem_out.mem_rdata;
     v.ready = imem_out.mem_ready;
 
-    if (v.ready == 0) begin
-      v.stall = 1;
-    end
+    case(v.state)
+      idle : begin
+        if (d.w.clear == 0) begin
+          v.state = busy;
+          v.valid = 1;
+          v.stall = 1;
+        end
+      end
+      busy : begin
+        if (imem_out.mem_ready == 1) begin
+          v.state = busy;
+          v.valid = 1;
+        end else begin
+          v.state = busy;
+          v.valid = 0;
+          v.stall = 1;
+        end
+      end
+      default : begin
+      end
+    endcase
 
     bp_in.get_pc = d.d.pc;
     bp_in.get_npc = d.d.npc;
@@ -86,13 +107,6 @@ module fetch_stage
       v.fence = 0;
       v.spec = 0;
       v.pc = v.pc + 8;
-    end
-
-    if (v.busy == 1) begin
-      v.pc = r.pc;
-      v.busy = ~imem_out.mem_ready;
-    end else if (v.spec == 1) begin
-      v.busy = ~imem_out.mem_ready;
     end
 
     imem_in.mem_valid = v.valid;

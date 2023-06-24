@@ -33,8 +33,8 @@ module decode_stage
 
     v = r;
 
-    v.pc = d.b.pc;
-    v.instr = d.b.instr;
+    v.pc = d.b.pc0;
+    v.instr = d.b.instr0;
 
     if ((d.d.stall | d.e.stall | d.m.stall) == 1) begin
       v = r;

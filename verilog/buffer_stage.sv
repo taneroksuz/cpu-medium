@@ -30,24 +30,33 @@ module buffer_stage
     v.rdata = a.f.rdata;
     v.ready = a.f.ready;
 
+    hazard_in.pc = v.pc;
     hazard_in.rdata = v.rdata;
     hazard_in.ready = v.ready;
 
-    v.instr = hazard_out.instr0;
+    v.pc0 = hazard_out.pc0;
+    v.pc1 = hazard_out.pc1;
+    v.instr0 = hazard_out.instr0;
+    v.instr1 = hazard_out.instr1;
     v.stall = hazard_out.stall;
 
     if ((a.e.stall | a.m.stall | a.e.jump | a.e.fence | a.e.mret | a.e.exception | v.clear) == 1) begin
-      v.instr = nop_instr;
+      v.instr0 = nop_instr;
+      v.instr1 = nop_instr;
     end
 
     rin = v;
 
-    y.pc = v.pc;
-    y.instr = v.instr;
+    y.pc0 = v.pc0;
+    y.pc1 = v.pc1;
+    y.instr1 = v.instr0;
+    y.instr0 = v.instr1;
     y.stall = v.stall;
 
-    q.pc = r.pc;
-    q.instr = r.instr;
+    q.pc0 = r.pc0;
+    q.pc1 = r.pc1;
+    q.instr0 = r.instr0;
+    q.instr1 = r.instr1;
     q.stall = r.stall;
 
   end
