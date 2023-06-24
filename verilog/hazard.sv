@@ -70,6 +70,12 @@ module hazard
       wid = wid + 2;
     end
 
+    if (hazard_in.clear == 1) begin
+      count = 0;
+      wid = 0;
+      rid = 0;
+    end
+
     pc[0] = count > 0 ? buffer[rid][63:32] : 0;
     pc[1] = count > 1 ? buffer[rid+1][63:32] : 0;
 
@@ -507,6 +513,10 @@ module hazard
     end else if (complex[0] == 1 && complex[1] == 1) begin
       pass = 1;
     end else begin
+      pass = 0;
+    end
+
+    if (hazard_in.stall == 1) begin
       pass = 0;
     end
 

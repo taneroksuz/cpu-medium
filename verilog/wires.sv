@@ -416,6 +416,8 @@ package wires;
     logic [31 : 0] pc;
     logic [63 : 0] rdata;
     logic [0  : 0] ready;
+    logic [0  : 0] clear;
+    logic [0  : 0] stall;
   } hazard_in_type;
 
   typedef struct packed{
@@ -581,27 +583,19 @@ package wires;
   } buffer_out_type;
 
   typedef struct packed{
-    logic [31 : 0] pc;
-    logic [63 : 0] rdata;
-    logic [0  : 0] ready;
     logic [31 : 0] pc0;
     logic [31 : 0] pc1;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
     logic [0  : 0] stall;
-    logic [0  : 0] clear;
   } buffer_reg_type;
 
   parameter buffer_reg_type init_buffer_reg = '{
-    pc : 0,
-    rdata : 0,
-    ready : 0,
     pc0 : 0,
     pc1 : 0,
     instr0 : 0,
     instr1 : 0,
-    stall : 0,
-    clear : 0
+    stall : 0
   };
 
   typedef struct packed{
