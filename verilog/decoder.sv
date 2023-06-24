@@ -55,6 +55,10 @@ module decoder
   logic [0  : 0] ebreak;
   logic [0  : 0] mret;
   logic [0  : 0] wfi;
+  logic [0  : 0] return_pop;
+  logic [0  : 0] return_push;
+  logic [0  : 0] jump_uncond;
+  logic [0  : 0] jump_rest;
   logic [0  : 0] valid;
 
   alu_op_type alu_op;
@@ -65,6 +69,11 @@ module decoder
   div_op_type div_op;
   mul_op_type mul_op;
   bit_op_type bit_op;
+
+  logic [0  : 0] link_waddr;
+  logic [0  : 0] link_raddr1;
+  logic [0  : 0] equal_waddr;
+  logic [0  : 0] zero_waddr;
 
   logic [0  : 0] nonzero_waddr;
   logic [0  : 0] nonzero_raddr1;
@@ -125,6 +134,10 @@ module decoder
     ebreak = 0;
     mret = 0;
     wfi = 0;
+    return_pop = 0;
+    return_push = 0;
+    jump_uncond = 0;
+    jump_rest = 0;
     valid = 1;
 
     alu_op = init_alu_op;
@@ -135,6 +148,11 @@ module decoder
     div_op = init_div_op;
     mul_op = init_mul_op;
     bit_op = init_bit_op;
+
+    link_waddr = (waddr == 1 || waddr == 5) ? 1 : 0;
+    link_raddr1 = (raddr1 == 1 || raddr1 == 5) ? 1 : 0;
+    equal_waddr = ~(|(waddr ^ raddr1));
+    zero_waddr = ~(|waddr);
 
     nonzero_waddr = |waddr;
     nonzero_raddr1 = |raddr1;
@@ -161,12 +179,18 @@ module decoder
         wren = nonzero_waddr;
         imm = imm_j;
         jal = 1;
+        return_push = link_waddr;
+        jump_uncond = zero_waddr;
+        jump_rest = ~(return_push | jump_uncond);
       end
       opcode_jalr : begin
         imm = imm_i;
         wren = nonzero_waddr;
         rden1 = 1;
         jalr = 1;
+        return_pop = ((~link_waddr) & link_raddr1) | (link_waddr & link_raddr1 & (~equal_waddr));
+        return_push = (link_waddr & (~link_raddr1)) | (link_waddr & link_raddr1);
+        jump_rest = ~(return_push | jump_uncond);
       end
       opcode_branch : begin
         imm = imm_b;
@@ -540,6 +564,10 @@ module decoder
     decoder_out.ebreak = ebreak;
     decoder_out.mret = mret;
     decoder_out.wfi = wfi;
+    decoder_out.return_pop = return_pop;
+    decoder_out.return_push = return_push;
+    decoder_out.jump_uncond = jump_uncond;
+    decoder_out.jump_rest = jump_rest;
     decoder_out.valid = valid;
     decoder_out.alu_op = alu_op;
     decoder_out.bcu_op = bcu_op;

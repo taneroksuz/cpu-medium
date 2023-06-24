@@ -33,8 +33,10 @@ module decode_stage
 
     v = r;
 
-    v.pc = d.b.pc0;
-    v.instr = d.b.instr0;
+    v.instr0.pc = d.b.pc0;
+    v.instr1.pc = d.b.pc1;
+    v.instr0.instr = d.b.instr0;
+    v.instr1.instr = d.b.instr1;
 
     if ((d.d.stall | d.e.stall | d.m.stall) == 1) begin
       v = r;
@@ -42,353 +44,206 @@ module decode_stage
 
     v.stall = 0;
 
-    v.clear = csr_out.trap | csr_out.mret | bp_out.pred_branch | bp_out.pred_miss | bp_out.pred_return | d.e.jump | d.m.fence | d.w.clear;
+    v.clear = csr_out.trap | csr_out.mret | bp_out.pred_branch | bp_out.pred_miss | bp_out.pred_return | d.e.instr0.jump | d.m.instr0.fence | d.w.clear;
 
-    v.waddr = v.instr[11:7];
-    v.raddr1 = v.instr[19:15];
-    v.raddr2 = v.instr[24:20];
-    v.raddr3 = v.instr[31:27];
-    v.caddr = v.instr[31:20];
+    v.instr0.waddr = v.instr0.instr[11:7];
+    v.instr0.raddr1 = v.instr0.instr[19:15];
+    v.instr0.raddr2 = v.instr0.instr[24:20];
+    v.instr0.raddr3 = v.instr0.instr[31:27];
+    v.instr0.caddr = v.instr0.instr[31:20];
 
-    v.fwren = 0;
-    v.frden1 = 0;
-    v.frden2 = 0;
-    v.frden3 = 0;
-    v.fload = 0;
-    v.fstore = 0;
-    v.fmt = 0;
-    v.rm = 0;
-    v.fpu = 0;
-    v.fpuc = 0;
-    v.fpuf = 0;
-    v.fpu_op = init_fp_operation;
+    v.instr0.fwren = 0;
+    v.instr0.frden1 = 0;
+    v.instr0.frden2 = 0;
+    v.instr0.frden3 = 0;
+    v.instr0.fload = 0;
+    v.instr0.fstore = 0;
+    v.instr0.fmt = 0;
+    v.instr0.rm = 0;
+    v.instr0.fpu = 0;
+    v.instr0.fpuc = 0;
+    v.instr0.fpuf = 0;
+    v.instr0.fpu_op = init_fp_operation;
 
-    v.npc = v.pc + ((v.instr[1:0] == 2'b11) ? 4 : 2);
+    v.instr0.npc = v.instr0.pc + ((v.instr0.instr[1:0] == 2'b11) ? 4 : 2);
 
-    decoder_in.instr = v.instr;
+    decoder_in.instr = v.instr0.instr;
 
-    v.imm = decoder_out.imm;
-    v.wren = decoder_out.wren;
-    v.rden1 = decoder_out.rden1;
-    v.rden2 = decoder_out.rden2;
-    v.cwren = decoder_out.cwren;
-    v.crden = decoder_out.crden;
-    v.auipc = decoder_out.auipc;
-    v.lui = decoder_out.lui;
-    v.jal = decoder_out.jal;
-    v.jalr = decoder_out.jalr;
-    v.branch = decoder_out.branch;
-    v.load = decoder_out.load;
-    v.store = decoder_out.store;
-    v.nop = decoder_out.nop;
-    v.csreg = decoder_out.csreg;
-    v.division = decoder_out.division;
-    v.mult = decoder_out.mult;
-    v.bitm = decoder_out.bitm;
-    v.bitc = decoder_out.bitc;
-    v.fence = decoder_out.fence;
-    v.ecall = decoder_out.ecall;
-    v.ebreak = decoder_out.ebreak;
-    v.mret = decoder_out.mret;
-    v.wfi = decoder_out.wfi;
-    v.valid = decoder_out.valid;
-    v.alu_op = decoder_out.alu_op;
-    v.bcu_op = decoder_out.bcu_op;
-    v.lsu_op = decoder_out.lsu_op;
-    v.csr_op = decoder_out.csr_op;
-    v.div_op = decoder_out.div_op;
-    v.mul_op = decoder_out.mul_op;
-    v.bit_op = decoder_out.bit_op;
+    v.instr0.imm = decoder_out.imm;
+    v.instr0.wren = decoder_out.wren;
+    v.instr0.rden1 = decoder_out.rden1;
+    v.instr0.rden2 = decoder_out.rden2;
+    v.instr0.cwren = decoder_out.cwren;
+    v.instr0.crden = decoder_out.crden;
+    v.instr0.auipc = decoder_out.auipc;
+    v.instr0.lui = decoder_out.lui;
+    v.instr0.jal = decoder_out.jal;
+    v.instr0.jalr = decoder_out.jalr;
+    v.instr0.branch = decoder_out.branch;
+    v.instr0.load = decoder_out.load;
+    v.instr0.store = decoder_out.store;
+    v.instr0.nop = decoder_out.nop;
+    v.instr0.csreg = decoder_out.csreg;
+    v.instr0.division = decoder_out.division;
+    v.instr0.mult = decoder_out.mult;
+    v.instr0.bitm = decoder_out.bitm;
+    v.instr0.bitc = decoder_out.bitc;
+    v.instr0.fence = decoder_out.fence;
+    v.instr0.ecall = decoder_out.ecall;
+    v.instr0.ebreak = decoder_out.ebreak;
+    v.instr0.mret = decoder_out.mret;
+    v.instr0.wfi = decoder_out.wfi;
+    v.instr0.return_pop = decoder_out.return_pop;
+    v.instr0.return_push = decoder_out.return_push;
+    v.instr0.jump_uncond = decoder_out.jump_uncond;
+    v.instr0.jump_rest = decoder_out.jump_rest;
+    v.instr0.valid = decoder_out.valid;
+    v.instr0.alu_op = decoder_out.alu_op;
+    v.instr0.bcu_op = decoder_out.bcu_op;
+    v.instr0.lsu_op = decoder_out.lsu_op;
+    v.instr0.csr_op = decoder_out.csr_op;
+    v.instr0.div_op = decoder_out.div_op;
+    v.instr0.mul_op = decoder_out.mul_op;
+    v.instr0.bit_op = decoder_out.bit_op;
 
-    fp_decode_in.instr = v.instr;
+    fp_decode_in.instr = v.instr0.instr;
 
     if (fp_decode_out.valid == 1) begin
-      v.imm = fp_decode_out.imm;
-      v.wren = fp_decode_out.wren;
-      v.rden1 = fp_decode_out.rden1;
-      v.fwren = fp_decode_out.fwren;
-      v.frden1 = fp_decode_out.frden1;
-      v.frden2 = fp_decode_out.frden2;
-      v.frden3 = fp_decode_out.frden3;
-      v.fload = fp_decode_out.fload;
-      v.fstore = fp_decode_out.fstore;
-      v.fmt = fp_decode_out.fmt;
-      v.rm = fp_decode_out.rm;
-      v.fpu = fp_decode_out.fpu;
-      v.fpuc = fp_decode_out.fpuc;
-      v.fpuf = fp_decode_out.fpuf;
-      v.valid = fp_decode_out.valid;
-      v.lsu_op = fp_decode_out.lsu_op;
-      v.fpu_op = fp_decode_out.fpu_op;
+      v.instr0.imm = fp_decode_out.imm;
+      v.instr0.wren = fp_decode_out.wren;
+      v.instr0.rden1 = fp_decode_out.rden1;
+      v.instr0.fwren = fp_decode_out.fwren;
+      v.instr0.frden1 = fp_decode_out.frden1;
+      v.instr0.frden2 = fp_decode_out.frden2;
+      v.instr0.frden3 = fp_decode_out.frden3;
+      v.instr0.fload = fp_decode_out.fload;
+      v.instr0.fstore = fp_decode_out.fstore;
+      v.instr0.fmt = fp_decode_out.fmt;
+      v.instr0.rm = fp_decode_out.rm;
+      v.instr0.fpu = fp_decode_out.fpu;
+      v.instr0.fpuc = fp_decode_out.fpuc;
+      v.instr0.fpuf = fp_decode_out.fpuf;
+      v.instr0.valid = fp_decode_out.valid;
+      v.instr0.lsu_op = fp_decode_out.lsu_op;
+      v.instr0.fpu_op = fp_decode_out.fpu_op;
     end
 
     if (csr_out.fs == 2'b00) begin
-      v.fwren = 0;
-      v.frden1 = 0;
-      v.frden2 = 0;
-      v.frden3 = 0;
-      v.fload = 0;
-      v.fstore = 0;
-      v.fmt = 0;
-      v.rm = 0;
-      v.fpu = 0;
-      v.fpuc = 0;
-      v.fpuf = 0;
+      v.instr0.fwren = 0;
+      v.instr0.frden1 = 0;
+      v.instr0.frden2 = 0;
+      v.instr0.frden3 = 0;
+      v.instr0.fload = 0;
+      v.instr0.fstore = 0;
+      v.instr0.fmt = 0;
+      v.instr0.rm = 0;
+      v.instr0.fpu = 0;
+      v.instr0.fpuc = 0;
+      v.instr0.fpuf = 0;
     end
 
-    if (v.rm == 3'b111) begin
-      v.rm = fp_csr_out.frm;
+    if (v.instr0.rm == 3'b111) begin
+      v.instr0.rm = fp_csr_out.frm;
     end
 
-    v.link_waddr = (v.waddr == 1 || v.waddr == 5) ? 1 : 0;
-    v.link_raddr1 = (v.raddr1 == 1 || v.raddr1 == 5) ? 1 : 0;
-    v.equal_waddr_raddr1 = (v.waddr == v.raddr1) ? 1 : 0;
-    v.zero_waddr = (v.waddr == 0) ? 1 : 0;
+    register_rin.rden1 = v.instr0.rden1;
+    register_rin.rden2 = v.instr0.rden2;
+    register_rin.raddr1 = v.instr0.raddr1;
+    register_rin.raddr2 = v.instr0.raddr2;
 
-    v.return_pop = 0;
-    v.return_push = 0;
-    v.jump_uncond = 0;
-    v.jump_rest = 0;
+    fp_register_rin.rden1 = v.instr0.frden1;
+    fp_register_rin.rden2 = v.instr0.frden2;
+    fp_register_rin.rden3 = v.instr0.frden3;
+    fp_register_rin.raddr1 = v.instr0.raddr1;
+    fp_register_rin.raddr2 = v.instr0.raddr2;
+    fp_register_rin.raddr3 = v.instr0.raddr3;
 
-    if (v.jal == 1) begin
-      if (v.link_waddr == 1) begin
-        v.return_push = 1;
-      end else if (v.zero_waddr == 1) begin
-        v.jump_uncond = 1;
-      end else begin
-        v.jump_rest = 1;
-      end
+    if (v.instr0.valid == 0) begin
+      v.instr0.exception = 1;
+      v.instr0.ecause = except_illegal_instruction;
+      v.instr0.etval = v.instr0.instr;
+    end else if (v.instr0.ebreak == 1) begin
+      v.instr0.exception = 1;
+      v.instr0.ecause = except_breakpoint;
+      v.instr0.etval = v.instr0.instr;
+    end else if (v.instr0.ecall == 1) begin
+      v.instr0.exception = 1;
+      v.instr0.ecause = except_env_call_mach;
+      v.instr0.etval = v.instr0.instr;
     end
 
-    if (v.jalr == 1) begin
-      if (v.link_waddr == 0 && v.link_raddr1 == 1) begin
-        v.return_pop = 1;
-      end else if (v.link_waddr == 1 && v.link_raddr1 == 0) begin
-        v.return_push = 1;
-      end else if (v.link_waddr == 1 && v.link_raddr1 == 1) begin
-        if (v.equal_waddr_raddr1 == 1) begin
-          v.return_push = 1;
-        end else if (v.equal_waddr_raddr1 == 0) begin
-          v.return_pop = 1;
-          v.return_push = 1;
-        end
-      end else begin
-        v.jump_rest = 1;
-      end
-    end
-
-    register_rin.rden1 = v.rden1;
-    register_rin.rden2 = v.rden2;
-    register_rin.raddr1 = v.raddr1;
-    register_rin.raddr2 = v.raddr2;
-
-    fp_register_rin.rden1 = v.frden1;
-    fp_register_rin.rden2 = v.frden2;
-    fp_register_rin.rden3 = v.frden3;
-    fp_register_rin.raddr1 = v.raddr1;
-    fp_register_rin.raddr2 = v.raddr2;
-    fp_register_rin.raddr3 = v.raddr3;
-
-    if (v.valid == 0) begin
-      v.exception = 1;
-      v.ecause = except_illegal_instruction;
-      v.etval = v.instr;
-    end else if (v.ebreak == 1) begin
-      v.exception = 1;
-      v.ecause = except_breakpoint;
-      v.etval = v.instr;
-    end else if (v.ecall == 1) begin
-      v.exception = 1;
-      v.ecause = except_env_call_mach;
-      v.etval = v.instr;
-    end
-
-    if (a.e.cwren == 1 || a.m.cwren == 1) begin
+    if (a.e.instr0.cwren == 1 || a.m.instr0.cwren == 1) begin
       v.stall = 1;
-    end else if (a.e.division == 1) begin
+    end else if (a.e.instr0.division == 1) begin
       v.stall = 1;
-    end else if (a.e.bitc == 1) begin
+    end else if (a.e.instr0.bitc == 1) begin
       v.stall = 1;
-    end else if (a.e.fpuc == 1) begin
+    end else if (a.e.instr0.fpuc == 1) begin
       v.stall = 1;
-    end else if (v.crden == 1 && (v.caddr == csr_fflags || v.caddr == csr_fcsr) && (a.e.fpuf == 1 || a.m.fpuf == 1)) begin
+    end else if (v.instr0.crden == 1 && (v.instr0.caddr == csr_fflags || v.instr0.caddr == csr_fcsr) && (a.e.instr0.fpuf == 1 || a.m.instr0.fpuf == 1)) begin
       v.stall = 1;
-    end else if (a.e.load == 1 && ((v.rden1 == 1 && a.e.waddr == v.raddr1) || (v.rden2 == 1 && a.e.waddr == v.raddr2))) begin 
+    end else if (a.e.instr0.load == 1 && ((v.instr0.rden1 == 1 && a.e.instr0.waddr == v.instr0.raddr1) || (v.instr0.rden2 == 1 && a.e.instr0.waddr == v.instr0.raddr2))) begin 
       v.stall = 1;
-    end else if (a.e.fload == 1 && ((v.frden1 == 1 && a.e.waddr == v.raddr1) || (v.frden2 == 1 && a.e.waddr == v.raddr2) || (v.frden3 == 1 && a.e.waddr == v.raddr3))) begin 
+    end else if (a.e.instr0.fload == 1 && ((v.instr0.frden1 == 1 && a.e.instr0.waddr == v.instr0.raddr1) || (v.instr0.frden2 == 1 && a.e.instr0.waddr == v.instr0.raddr2) || (v.instr0.frden3 == 1 && a.e.instr0.waddr == v.instr0.raddr3))) begin 
       v.stall = 1;
     end
 
-    if ((v.stall | a.e.stall | a.m.stall | a.e.jump | a.e.fence | a.e.mret | a.e.exception | v.clear) == 1) begin
-      v.wren = 0;
-      v.cwren = 0;
-      v.fwren = 0;
-      v.auipc = 0;
-      v.lui = 0;
-      v.jal = 0;
-      v.jalr = 0;
-      v.branch = 0;
-      v.load = 0;
-      v.store = 0;
-      v.fload = 0;
-      v.fstore = 0;
-      v.nop = 0;
-      v.csreg = 0;
-      v.division = 0;
-      v.mult = 0;
-      v.bitm = 0;
-      v.bitc = 0;
-      v.fence = 0;
-      v.ecall = 0;
-      v.ebreak = 0;
-      v.mret = 0;
-      v.wfi = 0;
-      v.fpu = 0;
-      v.fpuc = 0;
-      v.fpuf = 0;
-      v.valid = 0;
-      v.return_pop = 0;
-      v.return_push = 0;
-      v.jump_uncond = 0;
-      v.jump_rest = 0;
-      v.exception = 0;
+    if ((v.stall | a.e.stall | a.m.stall | a.e.instr0.jump | a.e.instr0.fence | a.e.instr0.mret | a.e.instr0.exception | v.clear) == 1) begin
+      v.instr0.wren = 0;
+      v.instr0.cwren = 0;
+      v.instr0.fwren = 0;
+      v.instr0.auipc = 0;
+      v.instr0.lui = 0;
+      v.instr0.jal = 0;
+      v.instr0.jalr = 0;
+      v.instr0.branch = 0;
+      v.instr0.load = 0;
+      v.instr0.store = 0;
+      v.instr0.fload = 0;
+      v.instr0.fstore = 0;
+      v.instr0.nop = 0;
+      v.instr0.csreg = 0;
+      v.instr0.division = 0;
+      v.instr0.mult = 0;
+      v.instr0.bitm = 0;
+      v.instr0.bitc = 0;
+      v.instr0.fence = 0;
+      v.instr0.ecall = 0;
+      v.instr0.ebreak = 0;
+      v.instr0.mret = 0;
+      v.instr0.wfi = 0;
+      v.instr0.fpu = 0;
+      v.instr0.fpuc = 0;
+      v.instr0.fpuf = 0;
+      v.instr0.valid = 0;
+      v.instr0.return_pop = 0;
+      v.instr0.return_push = 0;
+      v.instr0.jump_uncond = 0;
+      v.instr0.jump_rest = 0;
+      v.instr0.exception = 0;
     end
 
     if (v.clear == 1) begin
       v.stall = 0;
     end
 
-    csr_rin.crden = v.crden;
-    csr_rin.craddr = v.caddr;
+    csr_rin.crden = v.instr0.crden;
+    csr_rin.craddr = v.instr0.caddr;
 
-    fp_csr_rin.crden = v.crden;
-    fp_csr_rin.craddr = v.caddr;
+    fp_csr_rin.crden = v.instr0.crden;
+    fp_csr_rin.craddr = v.instr0.caddr;
 
-    v.cdata = (fp_csr_out.ready == 1) ? fp_csr_out.cdata : csr_out.cdata;
+    v.instr0.cdata = (fp_csr_out.ready == 1) ? fp_csr_out.cdata : csr_out.cdata;
 
     rin = v;
 
-    y.pc = v.pc;
-    y.npc = v.npc;
-    y.imm = v.imm;
-    y.wren = v.wren;
-    y.rden1 = v.rden1;
-    y.rden2 = v.rden2;
-    y.cwren = v.cwren;
-    y.crden = v.crden;
-    y.fwren = v.fwren;
-    y.frden1 = v.frden1;
-    y.frden2 = v.frden2;
-    y.frden3 = v.frden3;
-    y.waddr = v.waddr;
-    y.raddr1 = v.raddr1;
-    y.raddr2 = v.raddr2;
-    y.raddr3 = v.raddr3;
-    y.caddr = v.caddr;
-    y.auipc = v.auipc;
-    y.lui = v.lui;
-    y.jal = v.jal;
-    y.jalr = v.jalr;
-    y.branch = v.branch;
-    y.load = v.load;
-    y.store = v.store;
-    y.fload = v.fload;
-    y.fstore = v.fstore;
-    y.nop = v.nop;
-    y.csreg = v.csreg;
-    y.division = v.division;
-    y.mult = v.mult;
-    y.bitm = v.bitm;
-    y.bitc = v.bitc;
-    y.fence = v.fence;
-    y.ecall = v.ecall;
-    y.ebreak = v.ebreak;
-    y.mret = v.mret;
-    y.wfi = v.wfi;
-    y.fmt = v.fmt;
-    y.rm = v.rm;
-    y.fpu = v.fpu;
-    y.fpuc = v.fpuc;
-    y.fpuf = v.fpuf;
-    y.valid = v.valid;
-    y.cdata = v.cdata;
-    y.return_pop = v.return_pop;
-    y.return_push = v.return_push;
-    y.jump_uncond = v.jump_uncond;
-    y.jump_rest = v.jump_rest;
-    y.exception = v.exception;
-    y.ecause = v.ecause;
-    y.etval = v.etval;
+    y.instr0 = v.instr0;
+    y.instr1 = v.instr1;
     y.stall = v.stall;
-    y.alu_op = v.alu_op;
-    y.bcu_op = v.bcu_op;
-    y.lsu_op = v.lsu_op;
-    y.csr_op = v.csr_op;
-    y.div_op = v.div_op;
-    y.mul_op = v.mul_op;
-    y.bit_op = v.bit_op;
-    y.fpu_op = v.fpu_op;
 
-    q.pc = r.pc;
-    q.npc = r.npc;
-    q.imm = r.imm;
-    q.wren = r.wren;
-    q.rden1 = r.rden1;
-    q.rden2 = r.rden2;
-    q.cwren = r.cwren;
-    q.crden = r.crden;
-    q.fwren = r.fwren;
-    q.frden1 = r.frden1;
-    q.frden2 = r.frden2;
-    q.frden3 = r.frden3;
-    q.waddr = r.waddr;
-    q.raddr1 = r.raddr1;
-    q.raddr2 = r.raddr2;
-    q.raddr3 = r.raddr3;
-    q.caddr = r.caddr;
-    q.auipc = r.auipc;
-    q.lui = r.lui;
-    q.jal = r.jal;
-    q.jalr = r.jalr;
-    q.branch = r.branch;
-    q.load = r.load;
-    q.store = r.store;
-    q.fload = r.fload;
-    q.fstore = r.fstore;
-    q.nop = r.nop;
-    q.csreg = r.csreg;
-    q.division = r.division;
-    q.mult = r.mult;
-    q.bitm = r.bitm;
-    q.bitc = r.bitc;
-    q.fence = r.fence;
-    q.ecall = r.ecall;
-    q.ebreak = r.ebreak;
-    q.mret = r.mret;
-    q.wfi = r.wfi;
-    q.fmt = r.fmt;
-    q.rm = r.rm;
-    q.fpu = r.fpu;
-    q.fpuc = r.fpuc;
-    q.fpuf = r.fpuf;
-    q.valid = r.valid;
-    q.cdata = r.cdata;
-    q.return_pop = r.return_pop;
-    q.return_push = r.return_push;
-    q.jump_uncond = r.jump_uncond;
-    q.jump_rest = r.jump_rest;
-    q.exception = r.exception;
-    q.ecause = r.ecause;
-    q.etval = r.etval;
+    q.instr0 = r.instr0;
+    q.instr1 = r.instr1;
     q.stall = r.stall;
-    q.alu_op = r.alu_op;
-    q.bcu_op = r.bcu_op;
-    q.lsu_op = r.lsu_op;
-    q.csr_op = r.csr_op;
-    q.div_op = r.div_op;
-    q.mul_op = r.mul_op;
-    q.bit_op = r.bit_op;
-    q.fpu_op = r.fpu_op;
 
   end
 

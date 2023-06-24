@@ -29,7 +29,7 @@ module buffer_stage
     hazard_in.pc = d.f.pc;
     hazard_in.rdata = a.f.rdata;
     hazard_in.ready = a.f.ready;
-    hazard_in.clear = a.e.jump | a.e.fence | a.e.mret | a.e.exception | d.w.clear;
+    hazard_in.clear = a.e.instr0.jump | a.e.instr0.fence | a.e.instr0.mret | a.e.instr0.exception | d.w.clear;
     hazard_in.stall = a.d.stall | a.e.stall | a.m.stall;
 
     v.pc0 = hazard_out.pc0;

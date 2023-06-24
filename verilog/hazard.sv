@@ -109,11 +109,11 @@ module hazard
 
     case (opcode[0])
       opcode_lui : begin
-        basic[0] = 1;
+        complex[0] = 1;
         wren[0] = nonzero_waddr[0];
       end
       opcode_auipc : begin
-        basic[0] = 1;
+        complex[0] = 1;
         wren[0] = nonzero_waddr[0];
       end
       opcode_jal : begin
@@ -296,11 +296,11 @@ module hazard
 
     case (opcode[1])
       opcode_lui : begin
-        basic[1] = 1;
+        complex[1] = 1;
         wren[1] = nonzero_waddr[1];
       end
       opcode_auipc : begin
-        basic[1] = 1;
+        complex[1] = 1;
         wren[1] = nonzero_waddr[1];
       end
       opcode_jal : begin

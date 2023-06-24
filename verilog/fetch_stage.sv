@@ -60,18 +60,18 @@ module fetch_stage
       end
     endcase
 
-    bp_in.get_pc = d.d.pc;
-    bp_in.get_npc = d.d.npc;
-    bp_in.get_branch = d.d.branch;
-    bp_in.get_return = d.d.return_pop;
-    bp_in.get_uncond = d.d.jump_uncond;
-    bp_in.upd_pc = d.e.pc;
-    bp_in.upd_npc = d.e.npc;
-    bp_in.upd_addr = d.e.address;
-    bp_in.upd_branch = d.e.branch;
-    bp_in.upd_return = d.e.return_push;
-    bp_in.upd_uncond = d.e.jump_uncond;
-    bp_in.upd_jump = d.e.jump;
+    bp_in.get_pc = d.d.instr0.pc;
+    bp_in.get_npc = d.d.instr0.npc;
+    bp_in.get_branch = d.d.instr0.branch;
+    bp_in.get_return = d.d.instr0.return_pop;
+    bp_in.get_uncond = d.d.instr0.jump_uncond;
+    bp_in.upd_pc = d.e.instr0.pc;
+    bp_in.upd_npc = d.e.instr0.npc;
+    bp_in.upd_addr = d.e.instr0.address;
+    bp_in.upd_branch = d.e.instr0.branch;
+    bp_in.upd_return = d.e.instr0.return_push;
+    bp_in.upd_uncond = d.e.instr0.jump_uncond;
+    bp_in.upd_jump = d.e.instr0.jump;
     bp_in.stall = v.stall;
     bp_in.clear = d.w.clear;
 
@@ -95,14 +95,14 @@ module fetch_stage
       v.fence = 0;
       v.spec = 1;
       v.pc = bp_out.pred_maddr;
-    end else if (d.e.jump == 1) begin
+    end else if (d.e.instr0.jump == 1) begin
       v.fence = 0;
       v.spec = 1;
-      v.pc = d.e.address;
-    end else if (d.m.fence == 1) begin
+      v.pc = d.e.instr0.address;
+    end else if (d.m.instr0.fence == 1) begin
       v.fence = 1;
       v.spec = 1;
-      v.pc = d.m.npc;
+      v.pc = d.m.instr0.npc;
     end else if (v.stall == 0) begin
       v.fence = 0;
       v.spec = 0;

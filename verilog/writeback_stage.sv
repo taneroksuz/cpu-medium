@@ -23,31 +23,29 @@ module writeback_stage
   always_comb begin
 
     v = r;
-    v.wren = d.m.wren;
-    v.fwren = d.m.fwren;
-    v.waddr = d.m.waddr;
-    v.wdata = d.m.wdata;
-    v.fdata = d.m.fdata;
+
+    v.instr0 = d.m.instr0;
+    v.instr1 = d.m.instr1;
 
     if (d.w.clear == 1) begin
       v.clear = 0;
     end
 
-    register_win.wren = v.wren & |(v.waddr);
-    register_win.waddr = v.waddr;
-    register_win.wdata = v.wdata;
+    register_win.wren = v.instr0.wren & |(v.instr0.waddr);
+    register_win.waddr = v.instr0.waddr;
+    register_win.wdata = v.instr0.wdata;
 
-    fp_register_win.wren = v.fwren;
-    fp_register_win.waddr = v.waddr;
-    fp_register_win.wdata = v.fdata;
+    fp_register_win.wren = v.instr0.fwren;
+    fp_register_win.waddr = v.instr0.waddr;
+    fp_register_win.wdata = v.instr0.fdata;
 
-    forwarding_win.wren = v.wren;
-    forwarding_win.waddr = v.waddr;
-    forwarding_win.wdata = v.wdata;
+    forwarding_win.wren = v.instr0.wren;
+    forwarding_win.waddr = v.instr0.waddr;
+    forwarding_win.wdata = v.instr0.wdata;
 
-    fp_forwarding_win.wren = v.fwren;
-    fp_forwarding_win.waddr = v.waddr;
-    fp_forwarding_win.wdata = v.fdata;
+    fp_forwarding_win.wren = v.instr0.fwren;
+    fp_forwarding_win.waddr = v.instr0.waddr;
+    fp_forwarding_win.wdata = v.instr0.fdata;
 
     rin = v;
 

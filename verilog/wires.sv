@@ -429,6 +429,210 @@ package wires;
   } hazard_out_type;
 
   typedef struct packed{
+    logic [31 : 0] pc;
+    logic [31 : 0] npc;
+    logic [31 : 0] instr;
+    logic [31 : 0] imm;
+    logic [0  : 0] wren;
+    logic [0  : 0] rden1;
+    logic [0  : 0] rden2;
+    logic [4  : 0] waddr;
+    logic [4  : 0] raddr1;
+    logic [4  : 0] raddr2;
+    logic [0  : 0] nop;
+    logic [31 : 0] rdata1;
+    logic [31 : 0] rdata2;
+    logic [31 : 0] wdata;
+    logic [0  : 0] valid;
+    alu_op_type alu_op;
+  } instruction_basic_type;
+
+  parameter instruction_basic_type init_instruction_basic = '{
+    pc : 0,
+    npc : 0,
+    instr : 0,
+    imm : 0,
+    wren : 0,
+    rden1 : 0,
+    rden2 : 0,
+    waddr : 0,
+    raddr1 : 0,
+    raddr2 : 0,
+    rdata1 : 0,
+    rdata2 : 0,
+    wdata : 0,
+    nop : 0,
+    valid : 0,
+    alu_op : init_alu_op
+  };
+
+  typedef struct packed{
+    logic [31 : 0] pc;
+    logic [31 : 0] npc;
+    logic [31 : 0] instr;
+    logic [31 : 0] imm;
+    logic [0  : 0] wren;
+    logic [0  : 0] rden1;
+    logic [0  : 0] rden2;
+    logic [0  : 0] cwren;
+    logic [0  : 0] crden;
+    logic [0  : 0] fwren;
+    logic [0  : 0] frden1;
+    logic [0  : 0] frden2;
+    logic [0  : 0] frden3;
+    logic [4  : 0] waddr;
+    logic [4  : 0] raddr1;
+    logic [4  : 0] raddr2;
+    logic [4  : 0] raddr3;
+    logic [11 : 0] caddr;
+    logic [0  : 0] auipc;
+    logic [0  : 0] lui;
+    logic [0  : 0] jal;
+    logic [0  : 0] jalr;
+    logic [0  : 0] branch;
+    logic [0  : 0] load;
+    logic [0  : 0] store;
+    logic [0  : 0] fload;
+    logic [0  : 0] fstore;
+    logic [0  : 0] nop;
+    logic [0  : 0] csreg;
+    logic [0  : 0] division;
+    logic [0  : 0] mult;
+    logic [0  : 0] bitm;
+    logic [0  : 0] bitc;
+    logic [0  : 0] fence;
+    logic [0  : 0] ecall;
+    logic [0  : 0] ebreak;
+    logic [0  : 0] mret;
+    logic [0  : 0] wfi;
+    logic [1  : 0] fmt;
+    logic [2  : 0] rm;
+    logic [0  : 0] fpu;
+    logic [0  : 0] fpuc;
+    logic [0  : 0] fpuf;
+    logic [0  : 0] valid;
+    logic [0  : 0] jump;
+    logic [31 : 0] rdata1;
+    logic [31 : 0] rdata2;
+    logic [31 : 0] frdata1;
+    logic [31 : 0] frdata2;
+    logic [31 : 0] frdata3;
+    logic [31 : 0] cdata;
+    logic [31 : 0] bdata;
+    logic [31 : 0] mdata;
+    logic [31 : 0] wdata;
+    logic [31 : 0] fdata;
+    logic [31 : 0] ldata;
+    logic [31 : 0] sdata;
+    logic [31 : 0] ddata;
+    logic [31 : 0] bcdata;
+    logic [0  : 0] fready;
+    logic [0  : 0] dready;
+    logic [0  : 0] bcready;
+    logic [31 : 0] address;
+    logic [3  : 0] byteenable;
+    logic [0  : 0] return_pop;
+    logic [0  : 0] return_push;
+    logic [0  : 0] jump_uncond;
+    logic [0  : 0] jump_rest;
+    logic [0  : 0] exception;
+    logic [3  : 0] ecause;
+    logic [31 : 0] etval;
+    logic [4  : 0] flags;
+    alu_op_type alu_op;
+    bcu_op_type bcu_op;
+    lsu_op_type lsu_op;
+    csr_op_type csr_op;
+    div_op_type div_op;
+    mul_op_type mul_op;
+    bit_op_type bit_op;
+    fp_operation_type fpu_op;
+  } instruction_complex_type;
+
+  parameter instruction_complex_type init_instruction_complex = '{
+    pc : 0,
+    npc : 0,
+    instr : 0,
+    imm : 0,
+    wren : 0,
+    rden1 : 0,
+    rden2 : 0,
+    cwren : 0,
+    crden : 0,
+    fwren : 0,
+    frden1 : 0,
+    frden2 : 0,
+    frden3 : 0,
+    waddr : 0,
+    raddr1 : 0,
+    raddr2 : 0,
+    raddr3 : 0,
+    caddr : 0,
+    auipc : 0,
+    lui : 0,
+    jal : 0,
+    jalr : 0,
+    branch : 0,
+    load : 0,
+    store : 0,
+    fload : 0,
+    fstore : 0,
+    nop : 0,
+    csreg : 0,
+    division : 0,
+    mult : 0,
+    bitm : 0,
+    bitc : 0,
+    fence : 0,
+    ecall : 0,
+    ebreak : 0,
+    mret : 0,
+    wfi : 0,
+    fmt : 0,
+    rm : 0,
+    fpu : 0,
+    fpuc : 0,
+    fpuf : 0,
+    valid : 0,
+    jump : 0,
+    rdata1 : 0,
+    rdata2 : 0,
+    frdata1 : 0,
+    frdata2 : 0,
+    frdata3 : 0,
+    cdata : 0,
+    bdata : 0,
+    mdata : 0,
+    wdata : 0,
+    fdata : 0,
+    sdata : 0,
+    ldata : 0,
+    ddata : 0,
+    bcdata : 0,
+    fready : 0,
+    dready : 0,
+    bcready : 0,
+    address : 0,
+    byteenable : 0,
+    return_pop : 0,
+    return_push : 0,
+    jump_uncond : 0,
+    jump_rest : 0,
+    exception : 0,
+    ecause : 0,
+    etval : 0,
+    flags : 0,
+    alu_op : init_alu_op,
+    bcu_op : init_bcu_op,
+    lsu_op : init_lsu_op,
+    csr_op : init_csr_op,
+    div_op : init_div_op,
+    mul_op : init_mul_op,
+    bit_op : init_bit_op,
+    fpu_op : init_fp_operation
+  };
+
+  typedef struct packed{
     logic [31 : 0] instr;
   } decoder_in_type;
 
@@ -457,6 +661,10 @@ package wires;
     logic [0  : 0] ebreak;
     logic [0  : 0] mret;
     logic [0  : 0] wfi;
+    logic [0  : 0] return_pop;
+    logic [0  : 0] return_push;
+    logic [0  : 0] jump_uncond;
+    logic [0  : 0] jump_rest;
     logic [0  : 0] valid;
     alu_op_type alu_op;
     bcu_op_type bcu_op;
@@ -599,595 +807,65 @@ package wires;
   };
 
   typedef struct packed{
-    logic [31 : 0] pc;
-    logic [31 : 0] npc;
-    logic [31 : 0] imm;
-    logic [0  : 0] wren;
-    logic [0  : 0] rden1;
-    logic [0  : 0] rden2;
-    logic [0  : 0] cwren;
-    logic [0  : 0] crden;
-    logic [0  : 0] fwren;
-    logic [0  : 0] frden1;
-    logic [0  : 0] frden2;
-    logic [0  : 0] frden3;
-    logic [4  : 0] waddr;
-    logic [4  : 0] raddr1;
-    logic [4  : 0] raddr2;
-    logic [4  : 0] raddr3;
-    logic [11 : 0] caddr;
-    logic [0  : 0] auipc;
-    logic [0  : 0] lui;
-    logic [0  : 0] jal;
-    logic [0  : 0] jalr;
-    logic [0  : 0] branch;
-    logic [0  : 0] load;
-    logic [0  : 0] store;
-    logic [0  : 0] fload;
-    logic [0  : 0] fstore;
-    logic [0  : 0] nop;
-    logic [0  : 0] csreg;
-    logic [0  : 0] division;
-    logic [0  : 0] mult;
-    logic [0  : 0] bitm;
-    logic [0  : 0] bitc;
-    logic [0  : 0] fence;
-    logic [0  : 0] ecall;
-    logic [0  : 0] ebreak;
-    logic [0  : 0] mret;
-    logic [0  : 0] wfi;
-    logic [1  : 0] fmt;
-    logic [2  : 0] rm;
-    logic [0  : 0] fpu;
-    logic [0  : 0] fpuc;
-    logic [0  : 0] fpuf;
-    logic [0  : 0] valid;
-    logic [31 : 0] cdata;
-    logic [0  : 0] return_pop;
-    logic [0  : 0] return_push;
-    logic [0  : 0] jump_uncond;
-    logic [0  : 0] jump_rest;
-    logic [0  : 0] exception;
-    logic [3  : 0] ecause;
-    logic [31 : 0] etval;
+    instruction_complex_type instr0;
+    instruction_basic_type instr1;
     logic [0  : 0] stall;
-    alu_op_type alu_op;
-    bcu_op_type bcu_op;
-    lsu_op_type lsu_op;
-    csr_op_type csr_op;
-    div_op_type div_op;
-    mul_op_type mul_op;
-    bit_op_type bit_op;
-    fp_operation_type fpu_op;
   } decode_out_type;
 
   typedef struct packed{
-    logic [31 : 0] pc;
-    logic [31 : 0] npc;
-    logic [31 : 0] instr;
-    logic [31 : 0] imm;
-    logic [0  : 0] wren;
-    logic [0  : 0] rden1;
-    logic [0  : 0] rden2;
-    logic [0  : 0] cwren;
-    logic [0  : 0] crden;
-    logic [0  : 0] fwren;
-    logic [0  : 0] frden1;
-    logic [0  : 0] frden2;
-    logic [0  : 0] frden3;
-    logic [4  : 0] waddr;
-    logic [4  : 0] raddr1;
-    logic [4  : 0] raddr2;
-    logic [4  : 0] raddr3;
-    logic [11 : 0] caddr;
-    logic [0  : 0] auipc;
-    logic [0  : 0] lui;
-    logic [0  : 0] jal;
-    logic [0  : 0] jalr;
-    logic [0  : 0] branch;
-    logic [0  : 0] load;
-    logic [0  : 0] store;
-    logic [0  : 0] fload;
-    logic [0  : 0] fstore;
-    logic [0  : 0] nop;
-    logic [0  : 0] csreg;
-    logic [0  : 0] division;
-    logic [0  : 0] mult;
-    logic [0  : 0] bitm;
-    logic [0  : 0] bitc;
-    logic [0  : 0] fence;
-    logic [0  : 0] ecall;
-    logic [0  : 0] ebreak;
-    logic [0  : 0] mret;
-    logic [0  : 0] wfi;
-    logic [1  : 0] fmt;
-    logic [2  : 0] rm;
-    logic [0  : 0] fpu;
-    logic [0  : 0] fpuc;
-    logic [0  : 0] fpuf;
-    logic [0  : 0] valid;
-    logic [31 : 0] cdata;
-    logic [0  : 0] return_pop;
-    logic [0  : 0] return_push;
-    logic [0  : 0] jump_uncond;
-    logic [0  : 0] jump_rest;
-    logic [0  : 0] link_waddr;
-    logic [0  : 0] link_raddr1;
-    logic [0  : 0] equal_waddr_raddr1;
-    logic [0  : 0] zero_waddr;
-    logic [0  : 0] exception;
-    logic [3  : 0] ecause;
-    logic [31 : 0] etval;
+    instruction_complex_type instr0;
+    instruction_basic_type instr1;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
-    alu_op_type alu_op;
-    bcu_op_type bcu_op;
-    lsu_op_type lsu_op;
-    csr_op_type csr_op;
-    div_op_type div_op;
-    mul_op_type mul_op;
-    bit_op_type bit_op;
-    fp_operation_type fpu_op;
   } decode_reg_type;
 
   parameter decode_reg_type init_decode_reg = '{
-    pc : 0,
-    npc : 0,
-    instr : 0,
-    imm : 0,
-    wren : 0,
-    rden1 : 0,
-    rden2 : 0,
-    cwren : 0,
-    crden : 0,
-    fwren : 0,
-    frden1 : 0,
-    frden2 : 0,
-    frden3 : 0,
-    waddr : 0,
-    raddr1 : 0,
-    raddr2 : 0,
-    raddr3 : 0,
-    caddr : 0,
-    auipc : 0,
-    lui : 0,
-    jal : 0,
-    jalr : 0,
-    branch : 0,
-    load : 0,
-    store : 0,
-    fload : 0,
-    fstore : 0,
-    nop : 0,
-    csreg : 0,
-    division : 0,
-    mult : 0,
-    bitm : 0,
-    bitc : 0,
-    fence : 0,
-    ecall : 0,
-    ebreak : 0,
-    mret : 0,
-    wfi : 0,
-    fmt : 0,
-    rm : 0,
-    fpu : 0,
-    fpuc : 0,
-    fpuf : 0,
-    valid : 0,
-    cdata : 0,
-    return_pop : 0,
-    return_push : 0,
-    jump_uncond : 0,
-    jump_rest : 0,
-    link_waddr : 0,
-    link_raddr1 : 0,
-    equal_waddr_raddr1 : 0,
-    zero_waddr : 0,
-    exception : 0,
-    ecause : 0,
-    etval : 0,
+    instr0 : init_instruction_complex,
+    instr1 : init_instruction_basic,
     stall : 0,
-    clear : 0,
-    alu_op : init_alu_op,
-    bcu_op : init_bcu_op,
-    lsu_op : init_lsu_op,
-    csr_op : init_csr_op,
-    div_op : init_div_op,
-    mul_op : init_mul_op,
-    bit_op : init_bit_op,
-    fpu_op : init_fp_operation
+    clear : 0
   };
 
   typedef struct packed{
-    logic [31 : 0] pc;
-    logic [31 : 0] npc;
-    logic [0  : 0] wren;
-    logic [0  : 0] cwren;
-    logic [0  : 0] fwren;
-    logic [4  : 0] waddr;
-    logic [11 : 0] caddr;
-    logic [0  : 0] branch;
-    logic [0  : 0] load;
-    logic [0  : 0] store;
-    logic [0  : 0] fload;
-    logic [0  : 0] fstore;
-    logic [0  : 0] csreg;
-    logic [0  : 0] division;
-    logic [0  : 0] mult;
-    logic [0  : 0] bitm;
-    logic [0  : 0] bitc;
-    logic [0  : 0] fence;
-    logic [1  : 0] fmt;
-    logic [2  : 0] rm;
-    logic [0  : 0] fpu;
-    logic [0  : 0] fpuc;
-    logic [0  : 0] fpuf;
-    logic [0  : 0] valid;
-    logic [0  : 0] jump;
-    logic [31 : 0] wdata;
-    logic [31 : 0] fdata;
-    logic [31 : 0] cdata;
-    logic [31 : 0] sdata;
-    logic [31 : 0] address;
-    logic [3  : 0] byteenable;
-    logic [0  : 0] mret;
-    logic [0  : 0] return_pop;
-    logic [0  : 0] return_push;
-    logic [0  : 0] jump_uncond;
-    logic [0  : 0] jump_rest;
-    logic [0  : 0] exception;
-    logic [3  : 0] ecause;
-    logic [31 : 0] etval;
-    logic [4  : 0] flags;
+    instruction_complex_type instr0;
+    instruction_basic_type instr1;
     logic [0  : 0] stall;
-    logic [0  : 0] clear;
-    alu_op_type alu_op;
-    bcu_op_type bcu_op;
-    lsu_op_type lsu_op;
-    csr_op_type csr_op;
-    div_op_type div_op;
-    mul_op_type mul_op;
-    bit_op_type bit_op;
-    fp_operation_type fpu_op;
   } execute_out_type;
 
   typedef struct packed{
-    logic [31 : 0] pc;
-    logic [31 : 0] npc;
-    logic [31 : 0] imm;
-    logic [0  : 0] wren;
-    logic [0  : 0] rden1;
-    logic [0  : 0] rden2;
-    logic [0  : 0] cwren;
-    logic [0  : 0] crden;
-    logic [0  : 0] fwren;
-    logic [0  : 0] frden1;
-    logic [0  : 0] frden2;
-    logic [0  : 0] frden3;
-    logic [4  : 0] waddr;
-    logic [4  : 0] raddr1;
-    logic [4  : 0] raddr2;
-    logic [4  : 0] raddr3;
-    logic [11 : 0] caddr;
-    logic [0  : 0] auipc;
-    logic [0  : 0] lui;
-    logic [0  : 0] jal;
-    logic [0  : 0] jalr;
-    logic [0  : 0] branch;
-    logic [0  : 0] load;
-    logic [0  : 0] store;
-    logic [0  : 0] fload;
-    logic [0  : 0] fstore;
-    logic [0  : 0] nop;
-    logic [0  : 0] csreg;
-    logic [0  : 0] division;
-    logic [0  : 0] mult;
-    logic [0  : 0] bitm;
-    logic [0  : 0] bitc;
-    logic [0  : 0] fence;
-    logic [0  : 0] ecall;
-    logic [0  : 0] ebreak;
-    logic [0  : 0] mret;
-    logic [0  : 0] wfi;
-    logic [1  : 0] fmt;
-    logic [2  : 0] rm;
-    logic [0  : 0] fpu;
-    logic [0  : 0] fpuc;
-    logic [0  : 0] fpuf;
-    logic [0  : 0] valid;
-    logic [0  : 0] jump;
-    logic [31 : 0] rdata1;
-    logic [31 : 0] rdata2;
-    logic [31 : 0] frdata1;
-    logic [31 : 0] frdata2;
-    logic [31 : 0] frdata3;
-    logic [31 : 0] cdata;
-    logic [31 : 0] bdata;
-    logic [31 : 0] mdata;
-    logic [31 : 0] wdata;
-    logic [31 : 0] fdata;
-    logic [31 : 0] sdata;
-    logic [31 : 0] ddata;
-    logic [31 : 0] bcdata;
-    logic [0  : 0] dready;
-    logic [0  : 0] bcready;
-    logic [0  : 0] fready;
-    logic [31 : 0] address;
-    logic [3  : 0] byteenable;
-    logic [0  : 0] return_pop;
-    logic [0  : 0] return_push;
-    logic [0  : 0] jump_uncond;
-    logic [0  : 0] jump_rest;
-    logic [0  : 0] exception;
-    logic [3  : 0] ecause;
-    logic [31 : 0] etval;
-    logic [4  : 0] flags;
+    instruction_complex_type instr0;
+    instruction_basic_type instr1;
+    logic [0  : 0] enable;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
-    logic [0  : 0] enable;
-    alu_op_type alu_op;
-    bcu_op_type bcu_op;
-    lsu_op_type lsu_op;
-    csr_op_type csr_op;
-    mul_op_type mul_op;
-    div_op_type div_op;
-    bit_op_type bit_op;
-    fp_operation_type fpu_op;
-    ///////////////////////////
-    logic [0  : 0] wren_b;
-    logic [0  : 0] cwren_b;
-    logic [0  : 0] fwren_b;
-    logic [0  : 0] branch_b;
-    logic [0  : 0] load_b;
-    logic [0  : 0] store_b;
-    logic [0  : 0] fload_b;
-    logic [0  : 0] fstore_b;
-    logic [0  : 0] csreg_b;
-    logic [0  : 0] division_b;
-    logic [0  : 0] mult_b;
-    logic [0  : 0] bitm_b;
-    logic [0  : 0] bitc_b;
-    logic [0  : 0] fence_b;
-    logic [0  : 0] ecall_b;
-    logic [0  : 0] ebreak_b;
-    logic [0  : 0] mret_b;
-    logic [0  : 0] wfi_b;
-    logic [0  : 0] fpu_b;
-    logic [0  : 0] fpuc_b;
-    logic [0  : 0] fpuf_b;
-    logic [0  : 0] valid_b;
-    logic [0  : 0] jump_b;
-    logic [0  : 0] return_pop_b;
-    logic [0  : 0] return_push_b;
-    logic [0  : 0] jump_uncond_b;
-    logic [0  : 0] jump_rest_b;
-    logic [0  : 0] exception_b;
   } execute_reg_type;
 
   parameter execute_reg_type init_execute_reg = '{
-    pc : 0,
-    npc : 0,
-    imm : 0,
-    wren : 0,
-    rden1 : 0,
-    rden2 : 0,
-    cwren : 0,
-    crden : 0,
-    fwren : 0,
-    frden1 : 0,
-    frden2 : 0,
-    frden3 : 0,
-    waddr : 0,
-    raddr1 : 0,
-    raddr2 : 0,
-    raddr3 : 0,
-    caddr : 0,
-    auipc : 0,
-    lui : 0,
-    jal : 0,
-    jalr : 0,
-    branch : 0,
-    load : 0,
-    store : 0,
-    fload : 0,
-    fstore : 0,
-    nop : 0,
-    csreg : 0,
-    division : 0,
-    mult : 0,
-    bitm : 0,
-    bitc : 0,
-    fence : 0,
-    ecall : 0,
-    ebreak : 0,
-    mret : 0,
-    wfi : 0,
-    jump : 0,
-    fmt : 0,
-    rm : 0,
-    fpu : 0,
-    fpuc : 0,
-    fpuf : 0,
-    valid : 0,
-    rdata1 : 0,
-    rdata2 : 0,
-    frdata1 : 0,
-    frdata2 : 0,
-    frdata3 : 0,
-    cdata : 0,
-    bdata : 0,
-    mdata : 0,
-    wdata : 0,
-    fdata : 0,
-    sdata : 0,
-    ddata : 0,
-    bcdata : 0,
-    dready : 0,
-    bcready : 0,
-    fready : 0,
-    address : 0,
-    byteenable : 0,
-    return_pop : 0,
-    return_push : 0,
-    jump_uncond : 0,
-    jump_rest : 0,
-    exception : 0,
-    ecause : 0,
-    etval : 0,
-    flags : 0,
-    stall : 0,
-    clear : 0,
+    instr0 : init_instruction_complex,
+    instr1 : init_instruction_basic,
     enable : 0,
-    alu_op : init_alu_op,
-    bcu_op : init_bcu_op,
-    lsu_op : init_lsu_op,
-    csr_op : init_csr_op,
-    div_op : init_div_op,
-    mul_op : init_mul_op,
-    bit_op : init_bit_op,
-    fpu_op : init_fp_operation,
-    ///////////////////////////
-    wren_b : 0,
-    cwren_b : 0,
-    fwren_b : 0,
-    branch_b : 0,
-    load_b : 0,
-    store_b : 0,
-    fload_b : 0,
-    fstore_b : 0,
-    csreg_b : 0,
-    division_b : 0,
-    mult_b : 0,
-    bitm_b : 0,
-    bitc_b : 0,
-    fence_b : 0,
-    ecall_b : 0,
-    ebreak_b : 0,
-    mret_b : 0,
-    wfi_b : 0,
-    fpu_b : 0,
-    fpuc_b : 0,
-    fpuf_b : 0,
-    jump_b : 0,
-    valid_b : 0,
-    return_pop_b : 0,
-    return_push_b : 0,
-    jump_uncond_b : 0,
-    jump_rest_b : 0,
-    exception_b : 0
+    stall : 0,
+    clear : 0
   };
 
   typedef struct packed{
-    logic [31 : 0] pc;
-    logic [31 : 0] npc;
-    logic [0  : 0] wren;
-    logic [0  : 0] cwren;
-    logic [0  : 0] fwren;
-    logic [4  : 0] waddr;
-    logic [31 : 0] wdata;
-    logic [31 : 0] fdata;
-    logic [0  : 0] fpu;
-    logic [0  : 0] fpuf;
-    logic [0  : 0] mret;
-    logic [0  : 0] fence;
-    logic [0  : 0] exception;
+    instruction_complex_type instr0;
+    instruction_basic_type instr1;
     logic [0  : 0] stall;
-    logic [0  : 0] clear;
   } memory_out_type;
 
   typedef struct packed{
-    logic [31 : 0] pc;
-    logic [31 : 0] npc;
-    logic [0  : 0] wren;
-    logic [0  : 0] cwren;
-    logic [0  : 0] fwren;
-    logic [4  : 0] waddr;
-    logic [11 : 0] caddr;
-    logic [0  : 0] load;
-    logic [0  : 0] store;
-    logic [0  : 0] fload;
-    logic [0  : 0] fstore;
-    logic [0  : 0] fence;
-    logic [31 : 0] wdata;
-    logic [31 : 0] cdata;
-    logic [31 : 0] fdata;
-    logic [31 : 0] ldata;
-    logic [0  : 0] valid;
-    logic [3  : 0] byteenable;
-    logic [0  : 0] mret;
-    logic [0  : 0] exception;
-    logic [3  : 0] ecause;
-    logic [31 : 0] etval;
-    logic [0  : 0] fpu;
-    logic [0  : 0] fpuf;
-    logic [4  : 0] flags;
+    instruction_complex_type instr0;
+    instruction_basic_type instr1;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
-    alu_op_type alu_op;
-    bcu_op_type bcu_op;
-    lsu_op_type lsu_op;
-    csr_op_type csr_op;
-    div_op_type div_op;
-    mul_op_type mul_op;
-    bit_op_type bit_op;
-    fp_operation_type fpu_op;
-    ///////////////////////////
-    logic [0  : 0] wren_b;
-    logic [0  : 0] cwren_b;
-    logic [0  : 0] fwren_b;
-    logic [0  : 0] fpu_b;
-    logic [0  : 0] fpuf_b;
-    logic [0  : 0] valid_b;
-    logic [0  : 0] mret_b;
-    logic [0  : 0] exception_b;
   } memory_reg_type;
 
   parameter memory_reg_type init_memory_reg = '{
-    pc : 0,
-    npc : 0,
-    wren : 0,
-    cwren : 0,
-    fwren : 0,
-    waddr : 0,
-    caddr : 0,
-    load : 0,
-    store : 0,
-    fload : 0,
-    fstore : 0,
-    fence : 0,
-    wdata : 0,
-    cdata : 0,
-    fdata : 0,
-    ldata : 0,
-    valid : 0,
-    byteenable : 0,
-    mret : 0,
-    exception : 0,
-    ecause : 0,
-    etval : 0,
-    fpu : 0,
-    fpuf : 0,
-    flags : 0,
+    instr0 : init_instruction_complex,
+    instr1 : init_instruction_basic,
     stall : 0,
-    clear : 0,
-    alu_op : init_alu_op,
-    bcu_op : init_bcu_op,
-    lsu_op : init_lsu_op,
-    csr_op : init_csr_op,
-    div_op : init_div_op,
-    mul_op : init_mul_op,
-    bit_op : init_bit_op,
-    fpu_op : init_fp_operation,
-    ///////////////////////////
-    wren_b : 0,
-    cwren_b : 0,
-    fwren_b : 0,
-    fpu_b : 0,
-    fpuf_b : 0,
-    valid_b : 0,
-    mret_b : 0,
-    exception_b : 0
+    clear : 0
   };
 
   typedef struct packed{
@@ -1196,21 +874,15 @@ package wires;
   } writeback_out_type;
 
   typedef struct packed{
-    logic [0  : 0] wren;
-    logic [0  : 0] fwren;
-    logic [4  : 0] waddr;
-    logic [31 : 0] wdata;
-    logic [31 : 0] fdata;
+    instruction_complex_type instr0;
+    instruction_basic_type instr1;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } writeback_reg_type;
 
   parameter writeback_reg_type init_writeback_reg = '{
-    wren : 0,
-    fwren : 0,
-    waddr : 0,
-    wdata : 0,
-    fdata : 0,
+    instr0 : init_instruction_complex,
+    instr1 : init_instruction_basic,
     stall : 0,
     clear : 1
   };
