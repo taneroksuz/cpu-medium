@@ -30,9 +30,13 @@ module buffer_stage
     v.rdata = a.f.rdata;
     v.ready = a.f.ready;
 
-    v.instr = nop_instr;
+    hazard_in.rdata = v.rdata;
+    hazard_in.ready = v.ready;
 
-    if ((v.stall | a.e.stall | a.m.stall | a.e.jump | a.e.fence | a.e.mret | a.e.exception | v.clear) == 1) begin
+    v.instr = hazard_out.instr0;
+    v.stall = hazard_out.stall;
+
+    if ((a.e.stall | a.m.stall | a.e.jump | a.e.fence | a.e.mret | a.e.exception | v.clear) == 1) begin
       v.instr = nop_instr;
     end
 

@@ -13,8 +13,18 @@ module hazard
   timeprecision 1ps;
 
   localparam depth = $clog2(hazard_depth-1);
+  localparam total = 2**(depth-1);
 
   logic [31 : 0] buffer [0:hazard_depth-1];
+  logic [31 : 0] buffer_reg [0:hazard_depth-1];
+
+  logic [depth-1 : 0] wid;
+  logic [depth-1 : 0] wid_reg;
+  logic [depth-1 : 0] rid;
+  logic [depth-1 : 0] rid_reg;
+
+  logic [depth-1 : 0] count;
+  logic [depth-1 : 0] count_reg;
 
   logic [31 : 0] instr [0:1];
 
@@ -39,10 +49,25 @@ module hazard
   logic [0 : 0] nonzero_waddr [0:1];
   logic [0 : 0] nonzero_raddr1 [0:1];
 
+  logic [0 : 0] pass;
+  logic [0 : 0] stall;
+
   always_comb begin
 
-    instr[0] = hazard_in.rdata[31:0];
-    instr[1] = hazard_in.rdata[63:32];
+    buffer = buffer_reg;
+    count = count_reg;
+    wid = wid_reg;
+    rid = rid_reg;
+
+    if (hazard_in.ready == 1) begin
+      buffer[wid] = hazard_in.rdata[31:0];
+      buffer[wid+1] = hazard_in.rdata[63:32];
+      count = count + 2;
+      wid = wid + 2;
+    end
+
+    instr[0] = count > 0 ? buffer[rid] : nop_instr;
+    instr[1] = count > 1 ? buffer[rid+1] : nop_instr;
 
     opcode = {instr[0][6:0],instr[1][6:0]};
     funct3 = {instr[0][14:12],instr[1][14:12]};
@@ -65,9 +90,6 @@ module hazard
 
     nonzero_waddr = {|waddr[0],|waddr[1]};
     nonzero_raddr1 = {|raddr1[0],|raddr1[1]};
-
-    hazard_out.instr0 = instr[0];
-    hazard_out.instr1 = instr[1];
 
     case (opcode[0])
       opcode_lui : begin
@@ -105,7 +127,7 @@ module hazard
         rden2[0] = 1;
       end
       opcode_system : begin
-        case (funct3)
+        case (funct3[0])
           1 : begin
             wren[0] = nonzero_waddr[0];
             rden1[0] = 1;
@@ -140,7 +162,7 @@ module hazard
         frden1[0] = 1;
       end
       opcode_fp : begin
-        case (funct5)
+        case (funct5[0])
           funct_fadd : begin
             fwren[0] = 1;
             frden1[0] = 1;
@@ -264,7 +286,7 @@ module hazard
         rden2[1] = 1;
       end
       opcode_system : begin
-        case (funct3)
+        case (funct3[1])
           1 : begin
             wren[1] = nonzero_waddr[1];
             rden1[1] = 1;
@@ -299,7 +321,7 @@ module hazard
         frden1[1] = 1;
       end
       opcode_fp : begin
-        case (funct5)
+        case (funct5[1])
           funct_fadd : begin
             fwren[1] = 1;
             frden1[1] = 1;
@@ -387,6 +409,62 @@ module hazard
       end
     endcase
 
+    if (count > total) begin
+      stall = 1;
+    end else begin
+      stall = 0;
+    end
+
+    pass = 1;
+
+    if (wren[0] == 1) begin
+      if (rden1[1] == 1 && raddr1[1] == waddr[0]) begin
+        pass = 0;
+      end
+      if (rden2[1] == 1 && raddr2[1] == waddr[0]) begin
+        pass = 0;
+      end
+    end
+
+    if (fwren[0] == 1) begin
+      if (frden1[1] == 1 && raddr1[1] == waddr[0]) begin
+        pass = 0;
+      end
+      if (frden2[1] == 1 && raddr2[1] == waddr[0]) begin
+        pass = 0;
+      end
+      if (frden3[1] == 1 && raddr3[1] == waddr[0]) begin
+        pass = 0;
+      end
+    end
+
+    if (pass == 0) begin
+      instr[1] = nop_instr;
+      count = count - 1;
+      rid = rid + 1;
+    end else begin
+      count = count - 2;
+      rid = rid + 2;
+    end
+
+    hazard_out.instr0 = instr[0];
+    hazard_out.instr1 = instr[1];
+    hazard_out.stall = stall;
+
+  end
+
+  always_ff @(posedge clock) begin
+    if (reset == 0) begin
+      buffer_reg <= '{default:'0};
+      count_reg <= 0;
+      wid_reg <= 0;
+      rid_reg <= 0;
+    end else begin
+      buffer_reg <= buffer;
+      count_reg <= count;
+      wid_reg <= wid;
+      rid_reg <= rid;
+    end
   end
 
 endmodule
