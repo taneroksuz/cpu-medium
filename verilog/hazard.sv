@@ -63,17 +63,17 @@ module hazard
     wid = wid_reg;
     rid = rid_reg;
 
+    if (hazard_in.clear == 1) begin
+      count = 0;
+      wid = 0;
+      rid = 0;
+    end
+
     if (hazard_in.ready == 1) begin
       buffer[wid] = {hazard_in.pc,hazard_in.rdata[31:0]};
       buffer[wid+1] = {hazard_in.pc+4,hazard_in.rdata[63:32]};
       count = count + 2;
       wid = wid + 2;
-    end
-
-    if (hazard_in.clear == 1) begin
-      count = 0;
-      wid = 0;
-      rid = 0;
     end
 
     pc[0] = count > 0 ? buffer[rid][63:32] : 0;
