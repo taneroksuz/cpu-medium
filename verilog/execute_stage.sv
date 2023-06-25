@@ -252,7 +252,6 @@ module execute_stage
 
     if ((v.stall | a.m.stall | v.clear) == 1) begin
       v.instr0.op = init_operation_complex;
-      v.instr1.op = init_operation_basic;
     end
 
     if (v.clear == 1) begin
