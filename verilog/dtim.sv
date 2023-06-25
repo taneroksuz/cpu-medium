@@ -189,6 +189,7 @@ module dtim_ctrl
     v_f = r_f;
 
     v_f.enable = 0;
+    v_f.fence = 0;
 
     if (dtim_in.mem_valid == 1) begin
         v_f.enable = dtim_in.mem_valid;

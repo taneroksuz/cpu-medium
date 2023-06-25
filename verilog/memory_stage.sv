@@ -81,7 +81,7 @@ module memory_stage
       v.instr0.op = init_operation_complex;
     end
 
-    if (d.e.instr0.op_b.fence == 1) begin
+    if (v.instr0.op_b.fence == 1) begin
       v.instr0.op.fence = 1;
     end
 

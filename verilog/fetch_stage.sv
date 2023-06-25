@@ -22,6 +22,7 @@ module fetch_stage
   localparam [1:0] idle = 0;
   localparam [1:0] busy = 1;
   localparam [1:0] jump = 2;
+  localparam [1:0] inv = 3;
 
   fetch_reg_type r,rin;
   fetch_reg_type v;
@@ -49,6 +50,9 @@ module fetch_stage
         end
       end
       jump : begin
+        v.stall = 1;
+      end
+      inv : begin
         v.stall = 1;
       end
       default : begin
@@ -118,6 +122,9 @@ module fetch_stage
         end else if (v.spec == 1) begin
           v.state = jump;
           v.valid = 0;
+        end else if (v.fence == 1) begin
+          v.state = inv;
+          v.valid = 0;
         end else begin
           v.state = busy;
           v.valid = 0;
@@ -129,6 +136,16 @@ module fetch_stage
           v.valid = 1;
         end else begin
           v.state = jump;
+          v.valid = 0;
+        end
+        v.ready = 0;
+      end
+      inv : begin
+        if (v.ready == 1) begin
+          v.state = busy;
+          v.valid = 1;
+        end else begin
+          v.state = inv;
           v.valid = 0;
         end
         v.ready = 0;

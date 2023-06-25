@@ -183,6 +183,7 @@ module itim_ctrl
     v_f = r_f;
 
     v_f.enable = 0;
+    v_f.fence = 0;
 
     if (itim_in.mem_valid == 1) begin
       v_f.enable = itim_in.mem_valid;
@@ -322,6 +323,7 @@ module itim_ctrl
             v_b.inv = 1;
             v_b.en = 0;
             v_b.did = 0;
+            v_b.ready = 1;
           end else begin
             v_b.inv = 1;
             v_b.en = 1;
