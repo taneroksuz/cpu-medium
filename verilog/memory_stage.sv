@@ -82,6 +82,10 @@ module memory_stage
       v.instr1.op = init_operation_basic;
     end
 
+    if (d.e.instr0.op_b.fence == 1) begin
+      v.instr0.op.fence = 1;
+    end
+
     if (v.clear == 1) begin
       v.stall = 0;
     end

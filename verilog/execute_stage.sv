@@ -263,6 +263,10 @@ module execute_stage
       v.instr0.op.valid = 0;
     end
 
+    if (v.instr1.op.nop == 1) begin
+      v.instr1.op.valid = 0;
+    end
+
     if ((v.instr0.op.exception | v.instr0.op.mret | v.instr0.op.jump | v.instr0.op.fence) == 1) begin
       v.instr1.op = init_operation_basic;
     end
