@@ -679,6 +679,8 @@ module hazard
       get = 1;
     end else if (complex[0] == 1 || basic[0] == 1) begin
       get = 1;
+    end else if (complex[0] == 0 && basic[0] == 0) begin
+      get = 1;
     end else begin
       get = 0;
     end
