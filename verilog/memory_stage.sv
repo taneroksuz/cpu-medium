@@ -76,9 +76,11 @@ module memory_stage
     end
 
     v.instr0.op_b = v.instr0.op;
+    v.instr1.op_b = v.instr1.op;
 
     if ((v.stall | v.clear) == 1) begin
       v.instr0.op = init_operation_complex;
+      v.instr1.op = init_operation_basic;
     end
 
     if (v.instr0.op_b.fence == 1) begin
