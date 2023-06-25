@@ -227,6 +227,8 @@ module hazard
               complex[0] = 1;
             end
           endcase;
+        end else begin
+          complex[0] = 1;
         end
         wren[0] = nonzero_waddr[0];
         rden1[0] = 1;
@@ -497,6 +499,8 @@ module hazard
               complex[1] = 1;
             end
           endcase;
+        end else begin
+          complex[1] = 1;
         end
         wren[1] = nonzero_waddr[1];
         rden1[1] = 1;
