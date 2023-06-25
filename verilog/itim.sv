@@ -103,6 +103,8 @@ module itim_ctrl
   };
 
   typedef struct packed{
+    logic [29-(depth+width):0] itag0;
+    logic [29-(depth+width):0] itag1;
     logic [29-(depth+width):0] tag0;
     logic [29-(depth+width):0] tag1;
     logic [29-(depth+width):0] tag;
@@ -138,6 +140,8 @@ module itim_ctrl
   } back_type;
 
   parameter back_type init_back = '{
+    itag0 : 0,
+    itag1 : 0,
     tag0 : 0,
     tag1 : 0,
     tag : 0,
@@ -235,8 +239,8 @@ module itim_ctrl
         begin
           v_b.rdata = 0;
           v_b.ready = 0;
-          v_b.tag0 = ivec_out[v_b.wid0].rdata[61-(depth+width):32];
-          v_b.tag1 = ivec_out[v_b.wid1].rdata[61-(depth+width):32];
+          v_b.itag0 = ivec_out[v_b.wid0].rdata[61-(depth+width):32];
+          v_b.itag1 = ivec_out[v_b.wid1].rdata[61-(depth+width):32];
           v_b.lock0 = ivec_out[v_b.wid0].rdata[62-(depth+width)];
           v_b.lock1 = ivec_out[v_b.wid1].rdata[62-(depth+width)];
           v_b.data0 = ivec_out[v_b.wid0].rdata[31:0];
@@ -247,7 +251,7 @@ module itim_ctrl
             v_b.load = v_b.enable;
           end else if (v_b.lock0 == 0 || v_b.lock1 == 0) begin
             v_b.miss = v_b.enable;
-          end else if (|(v_b.tag0 ^ v_b.tag) == 1 || |(v_b.tag1 ^ v_b.tag) == 1) begin
+          end else if (|(v_b.itag0 ^ v_b.tag0) == 1 || |(v_b.itag1 ^ v_b.tag1) == 1) begin
             v_b.load = v_b.enable;
           end else begin
             v_b.hit = v_b.enable;
