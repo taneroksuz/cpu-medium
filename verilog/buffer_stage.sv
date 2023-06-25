@@ -29,7 +29,7 @@ module buffer_stage
     hazard_in.pc = d.f.pc;
     hazard_in.rdata = a.f.rdata;
     hazard_in.ready = a.f.ready;
-    hazard_in.clear = a.e.instr0.op.jump | a.e.instr0.op.fence | a.e.instr0.op.mret | a.e.instr0.op.exception | d.w.clear;
+    hazard_in.clear = csr_out.trap | csr_out.mret | bp_out.pred_branch | bp_out.pred_miss | bp_out.pred_return | d.e.instr0.op.jump | d.m.instr0.op.fence | d.w.clear;
     hazard_in.stall = a.d.stall | a.e.stall | a.m.stall;
 
     v.pc0 = hazard_out.pc0;
@@ -37,6 +37,13 @@ module buffer_stage
     v.instr0 = hazard_out.instr0;
     v.instr1 = hazard_out.instr1;
     v.stall = hazard_out.stall;
+
+    if ((a.d.stall | a.e.stall | a.m.stall | a.e.instr0.op.jump | a.e.instr0.op.fence | a.e.instr0.op.mret | a.e.instr0.op.exception) == 1) begin
+      v.pc0 = 0;
+      v.pc1 = 0;
+      v.instr0 = nop_instr;
+      v.instr1 = nop_instr;
+    end
 
     rin = v;
 

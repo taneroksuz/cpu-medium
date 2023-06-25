@@ -18,13 +18,18 @@ module hazard
   logic [63 : 0] buffer [0:hazard_depth-1];
   logic [63 : 0] buffer_reg [0:hazard_depth-1];
 
-  logic [depth-1 : 0] count;
-  logic [depth-1 : 0] count_reg;
+  logic [depth : 0] count;
+  logic [depth : 0] count_reg;
 
   logic [depth-1 : 0] wid;
   logic [depth-1 : 0] wid_reg;
   logic [depth-1 : 0] rid;
   logic [depth-1 : 0] rid_reg;
+
+  logic [0 : 0] stall;
+  logic [0 : 0] stall_reg;
+
+  logic [depth-1 : 0] get;
 
   logic [31 : 0] pc [0:1];
   logic [31 : 0] instr [0:1];
@@ -53,23 +58,19 @@ module hazard
   logic [0 : 0] nonzero_waddr [0:1];
   logic [0 : 0] nonzero_raddr1 [0:1];
 
-  logic [1 : 0] pass;
-  logic [0 : 0] stall;
-
   always_comb begin
 
     buffer = buffer_reg;
     count = count_reg;
     wid = wid_reg;
     rid = rid_reg;
-
+    stall = stall_reg;
+    
     if (hazard_in.clear == 1) begin
       count = 0;
       wid = 0;
       rid = 0;
-    end
-
-    if (hazard_in.ready == 1) begin
+    end else if (stall == 0 && hazard_in.ready == 1) begin
       buffer[wid] = {hazard_in.pc,hazard_in.rdata[31:0]};
       buffer[wid+1] = {hazard_in.pc+4,hazard_in.rdata[63:32]};
       count = count + 2;
@@ -230,6 +231,9 @@ module hazard
         wren[0] = nonzero_waddr[0];
         rden1[0] = 1;
         rden2[0] = 1;
+      end
+      opcode_fence : begin
+        complex[0] = 1;
       end
       opcode_system : begin
         complex[0] = 1;
@@ -498,6 +502,9 @@ module hazard
         rden1[1] = 1;
         rden2[1] = 1;
       end
+      opcode_fence : begin
+        complex[1] = 1;
+      end
       opcode_system : begin
         complex[1] = 1;
         case (funct3[1])
@@ -642,44 +649,46 @@ module hazard
     endcase
 
     if (((basic[0] & basic[1]) | (complex[0] & basic[1])) == 1) begin
-      pass = 2;
+      get = 2;
       if (wren[0] == 1) begin
         if (rden1[1] == 1 && raddr1[1] == waddr[0]) begin
-          pass = 1;
+          get = 1;
         end
         if (rden2[1] == 1 && raddr2[1] == waddr[0]) begin
-          pass = 1;
+          get = 1;
         end
       end
       if (fwren[0] == 1) begin
         if (frden1[1] == 1 && raddr1[1] == waddr[0]) begin
-          pass = 1;
+          get = 1;
         end
         if (frden2[1] == 1 && raddr2[1] == waddr[0]) begin
-          pass = 1;
+          get = 1;
         end
         if (frden3[1] == 1 && raddr3[1] == waddr[0]) begin
-          pass = 1;
+          get = 1;
         end
       end
     end else if (basic[0] == 1 && complex[1] == 1) begin
-      pass = 1;
+      get = 1;
     end else if (complex[0] == 1 && complex[1] == 1) begin
-      pass = 1;
+      get = 1;
+    end else if (complex[0] == 1 || basic[0] == 1) begin
+      get = 1;
     end else begin
-      pass = 0;
+      get = 0;
     end
 
     if (hazard_in.stall == 1) begin
-      pass = 0;
+      get = 0;
     end
 
-    if (count < pass) begin
-      pass = count;
+    if (count < {1'b0,get}) begin
+      get = count[depth-1:0];
     end
 
-    count = count - pass;
-    rid = rid + pass;
+    count = count - get;
+    rid = rid + get;
 
     if (count > total) begin
       stall = 1;
@@ -687,10 +696,10 @@ module hazard
       stall = 0;
     end
 
-    hazard_out.pc0 = pass > 0 ? pc[0] : 0;
-    hazard_out.pc1 = pass > 1 ? pc[1] : 0;
-    hazard_out.instr0 = pass > 0 ? instr[0] : nop_instr;
-    hazard_out.instr1 = pass > 1 ? instr[1] : nop_instr;
+    hazard_out.pc0 = get > 0 ? pc[0] : 0;
+    hazard_out.pc1 = get > 1 ? pc[1] : 0;
+    hazard_out.instr0 = get > 0 ? instr[0] : nop_instr;
+    hazard_out.instr1 = get > 1 ? instr[1] : nop_instr;
     hazard_out.stall = stall;
 
   end
@@ -701,11 +710,13 @@ module hazard
       count_reg <= 0;
       wid_reg <= 0;
       rid_reg <= 0;
+      stall_reg <= 0;
     end else begin
       buffer_reg <= buffer;
       count_reg <= count;
       wid_reg <= wid;
       rid_reg <= rid;
+      stall_reg <= stall;
     end
   end
 

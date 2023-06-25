@@ -31,6 +31,12 @@ module forwarding
       if (forwarding0_min.wren == 1 & forwarding0_rin.raddr1 == forwarding0_min.waddr) begin
         res0_1 = forwarding0_min.wdata;
       end
+      if (forwarding1_win.wren == 1 & forwarding0_rin.raddr1 == forwarding1_win.waddr) begin
+        res0_1 = forwarding1_win.wdata;
+      end
+      if (forwarding1_min.wren == 1 & forwarding0_rin.raddr1 == forwarding1_min.waddr) begin
+        res0_1 = forwarding1_min.wdata;
+      end
     end
     if (forwarding0_rin.rden2 == 1) begin
       res0_2 = forwarding0_rin.rdata2;
@@ -39,6 +45,12 @@ module forwarding
       end
       if (forwarding0_min.wren == 1 & forwarding0_rin.raddr2 == forwarding0_min.waddr) begin
         res0_2 = forwarding0_min.wdata;
+      end
+      if (forwarding1_win.wren == 1 & forwarding0_rin.raddr2 == forwarding1_win.waddr) begin
+        res0_2 = forwarding1_win.wdata;
+      end
+      if (forwarding1_min.wren == 1 & forwarding0_rin.raddr2 == forwarding1_min.waddr) begin
+        res0_2 = forwarding1_min.wdata;
       end
     end
     forwarding0_out.data1 = res0_1;
@@ -50,6 +62,12 @@ module forwarding
     res1_2 = 0;
     if (forwarding1_rin.rden1 == 1) begin
       res1_1 = forwarding1_rin.rdata1;
+      if (forwarding0_win.wren == 1 & forwarding1_rin.raddr1 == forwarding0_win.waddr) begin
+        res1_1 = forwarding0_win.wdata;
+      end
+      if (forwarding0_min.wren == 1 & forwarding1_rin.raddr1 == forwarding0_min.waddr) begin
+        res1_1 = forwarding0_min.wdata;
+      end
       if (forwarding1_win.wren == 1 & forwarding1_rin.raddr1 == forwarding1_win.waddr) begin
         res1_1 = forwarding1_win.wdata;
       end
@@ -59,6 +77,12 @@ module forwarding
     end
     if (forwarding1_rin.rden2 == 1) begin
       res1_2 = forwarding1_rin.rdata2;
+      if (forwarding0_win.wren == 1 & forwarding1_rin.raddr2 == forwarding0_win.waddr) begin
+        res1_2 = forwarding0_win.wdata;
+      end
+      if (forwarding0_min.wren == 1 & forwarding1_rin.raddr2 == forwarding0_min.waddr) begin
+        res1_2 = forwarding0_min.wdata;
+      end
       if (forwarding1_win.wren == 1 & forwarding1_rin.raddr2 == forwarding1_win.waddr) begin
         res1_2 = forwarding1_win.wdata;
       end
