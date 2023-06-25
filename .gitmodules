@@ -1,7 +1,7 @@
 [submodule "soft"]
 	path = soft
 	url = https://github.com/taneroksuz/test-case.git
-	branch = rv32imfcb
+	branch = rv32imfb
 [submodule "fpu"]
 	path = fpu
 	url = https://github.com/taneroksuz/fpu-sp.git
