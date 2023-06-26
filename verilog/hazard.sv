@@ -32,6 +32,7 @@ module hazard
   logic [depth-1 : 0] get;
 
   logic [31 : 0] pc [0:1];
+  logic [31 : 0] npc [0:1];
   logic [31 : 0] instr [0:1];
 
   logic [6 : 0] opcode [0:1];
@@ -58,6 +59,17 @@ module hazard
   logic [0 : 0] nonzero_waddr [0:1];
   logic [0 : 0] nonzero_raddr1 [0:1];
 
+  logic [0 : 0] link_waddr;
+  logic [0 : 0] link_raddr1;
+  logic [0 : 0] equal_waddr;
+  logic [0 : 0] zero_waddr;
+
+  logic [0 : 0] return_pop;
+  logic [0 : 0] return_push;
+  logic [0 : 0] jump_uncond;
+  logic [0 : 0] jump_rest;
+  logic [0 : 0] branch;
+
   always_comb begin
 
     buffer = buffer_reg;
@@ -82,6 +94,9 @@ module hazard
 
     instr[0] = count > 0 ? buffer[rid][31:0] : nop_instr;
     instr[1] = count > 1 ? buffer[rid+1][31:0] : nop_instr;
+
+    npc[0] = pc[0] + ((instr[0][1:0] == 2'b11) ? 4 : 2);
+    npc[1] = pc[1] + ((instr[1][1:0] == 2'b11) ? 4 : 2);
 
     opcode = {instr[0][6:0],instr[1][6:0]};
     funct3 = {instr[0][14:12],instr[1][14:12]};
@@ -108,6 +123,17 @@ module hazard
     nonzero_waddr = {|waddr[0],|waddr[1]};
     nonzero_raddr1 = {|raddr1[0],|raddr1[1]};
 
+    link_waddr = (waddr[0] == 1 || waddr[0] == 5) ? 1 : 0;
+    link_raddr1 = (raddr1[0] == 1 || raddr1[0] == 5) ? 1 : 0;
+    equal_waddr = (waddr[0] == raddr1[0]) ? 1 : 0;
+    zero_waddr = (waddr[0] == 0) ? 1 : 0;
+
+    return_pop = 0;
+    return_push = 0;
+    jump_uncond = 0;
+    jump_rest = 0;
+    branch = 0;
+
     case (opcode[0])
       opcode_lui : begin
         complex[0] = 1;
@@ -120,16 +146,23 @@ module hazard
       opcode_jal : begin
         complex[0] = 1;
         wren[0] = nonzero_waddr[0];
+        return_push = link_waddr;
+        jump_uncond = zero_waddr;
+        jump_rest = ~(return_push | jump_uncond);
       end
       opcode_jalr : begin
         complex[0] = 1;
         wren[0] = nonzero_waddr[0];
         rden1[0] = 1;
+        return_pop = ((~link_waddr) & link_raddr1) | (link_waddr & link_raddr1 & (~equal_waddr));
+        return_push = (link_waddr & (~link_raddr1)) | (link_waddr & link_raddr1);
+        jump_rest = ~(return_push | jump_uncond);
       end
       opcode_branch : begin
         complex[0] = 1;
         rden1[0] = 1;
         rden2[0] = 1;
+        branch = 1;
       end
       opcode_load : begin
         complex[0] = 1;
@@ -704,8 +737,15 @@ module hazard
 
     hazard_out.pc0 = get > 0 ? pc[0] : 0;
     hazard_out.pc1 = get > 1 ? pc[1] : 0;
+    hazard_out.npc0 = get > 0 ? npc[0] : 0;
+    hazard_out.npc1 = get > 1 ? npc[1] : 0;
     hazard_out.instr0 = get > 0 ? instr[0] : nop_instr;
     hazard_out.instr1 = get > 1 ? instr[1] : nop_instr;
+    hazard_out.return_pop = get > 0 ? return_pop : 0;
+    hazard_out.return_push = get > 0 ? return_push : 0;
+    hazard_out.jump_uncond = get > 0 ? jump_uncond : 0;
+    hazard_out.jump_rest = get > 0 ? jump_rest : 0;
+    hazard_out.branch = get > 0 ? branch : 0;
     hazard_out.stall = stall;
 
   end

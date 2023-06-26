@@ -423,8 +423,15 @@ package wires;
   typedef struct packed{
     logic [31 : 0] pc0;
     logic [31 : 0] pc1;
+    logic [31 : 0] npc0;
+    logic [31 : 0] npc1;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
+    logic [0  : 0] return_pop;
+    logic [0  : 0] return_push;
+    logic [0  : 0] jump_uncond;
+    logic [0  : 0] jump_rest;
+    logic [0  : 0] branch;
     logic [0  : 0] stall;
   } hazard_out_type;
 
@@ -805,24 +812,45 @@ package wires;
   typedef struct packed{
     logic [31 : 0] pc0;
     logic [31 : 0] pc1;
+    logic [31 : 0] npc0;
+    logic [31 : 0] npc1;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
+    logic [0  : 0] return_pop;
+    logic [0  : 0] return_push;
+    logic [0  : 0] jump_uncond;
+    logic [0  : 0] jump_rest;
+    logic [0  : 0] branch;
     logic [0  : 0] stall;
   } buffer_out_type;
 
   typedef struct packed{
     logic [31 : 0] pc0;
     logic [31 : 0] pc1;
+    logic [31 : 0] npc0;
+    logic [31 : 0] npc1;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
+    logic [0  : 0] return_pop;
+    logic [0  : 0] return_push;
+    logic [0  : 0] jump_uncond;
+    logic [0  : 0] jump_rest;
+    logic [0  : 0] branch;
     logic [0  : 0] stall;
   } buffer_reg_type;
 
   parameter buffer_reg_type init_buffer_reg = '{
     pc0 : 0,
     pc1 : 0,
+    npc0 : 0,
+    npc1 : 0,
     instr0 : 0,
     instr1 : 0,
+    return_pop : 0,
+    return_push : 0,
+    jump_uncond : 0,
+    jump_rest : 0,
+    branch : 0,
     stall : 0
   };
 

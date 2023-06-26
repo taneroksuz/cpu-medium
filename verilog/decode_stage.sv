@@ -37,9 +37,16 @@ module decode_stage
     v = r;
 
     v.instr0.pc = d.b.pc0;
+    v.instr0.npc = d.b.npc0;
     v.instr1.pc = d.b.pc1;
+    v.instr1.npc = d.b.npc1;
     v.instr0.instr = d.b.instr0;
     v.instr1.instr = d.b.instr1;
+    v.instr0.op.return_pop = d.b.return_pop;
+    v.instr0.op.return_push = d.b.return_push;
+    v.instr0.op.jump_uncond = d.b.jump_uncond;
+    v.instr0.op.jump_rest = d.b.jump_rest;
+    v.instr0.op.branch = d.b.branch;
 
     if ((d.d.stall | d.e.stall | d.m.stall) == 1) begin
       v = r;
@@ -68,8 +75,6 @@ module decode_stage
     v.instr0.op.fpuf = 0;
     v.instr0.fpu_op = init_fp_operation;
 
-    v.instr0.npc = v.instr0.pc + ((v.instr0.instr[1:0] == 2'b11) ? 4 : 2);
-
     decoder0_in.instr = v.instr0.instr;
 
     v.instr0.imm = decoder0_out.imm;
@@ -96,10 +101,6 @@ module decode_stage
     v.instr0.op.ebreak = decoder0_out.ebreak;
     v.instr0.op.mret = decoder0_out.mret;
     v.instr0.op.wfi = decoder0_out.wfi;
-    v.instr0.op.return_pop = decoder0_out.return_pop;
-    v.instr0.op.return_push = decoder0_out.return_push;
-    v.instr0.op.jump_uncond = decoder0_out.jump_uncond;
-    v.instr0.op.jump_rest = decoder0_out.jump_rest;
     v.instr0.op.valid = decoder0_out.valid;
     v.instr0.alu_op = decoder0_out.alu_op;
     v.instr0.bcu_op = decoder0_out.bcu_op;
@@ -112,8 +113,6 @@ module decode_stage
     v.instr1.waddr = v.instr1.instr[11:7];
     v.instr1.raddr1 = v.instr1.instr[19:15];
     v.instr1.raddr2 = v.instr1.instr[24:20];
-
-    v.instr1.npc = v.instr1.pc + ((v.instr1.instr[1:0] == 2'b11) ? 4 : 2);
 
     decoder1_in.instr = v.instr1.instr;
 

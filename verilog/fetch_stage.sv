@@ -59,18 +59,18 @@ module fetch_stage
       end
     endcase
 
-    bp_in.get_pc = d.d.instr0.pc;
-    bp_in.get_npc = d.d.instr0.npc;
-    bp_in.get_branch = d.d.instr0.op.branch;
-    bp_in.get_return = d.d.instr0.op.return_pop;
-    bp_in.get_uncond = d.d.instr0.op.jump_uncond;
+    bp_in.get_pc = d.b.pc0;
+    bp_in.get_npc = d.b.npc0;
+    bp_in.get_branch = 0;
+    bp_in.get_return = 0;
+    bp_in.get_uncond = 0;
     bp_in.upd_pc = d.e.instr0.pc;
     bp_in.upd_npc = d.e.instr0.npc;
     bp_in.upd_addr = d.e.instr0.address;
-    bp_in.upd_branch = d.e.instr0.op.branch;
-    bp_in.upd_return = d.e.instr0.op.return_push;
-    bp_in.upd_uncond = d.e.instr0.op.jump_uncond;
-    bp_in.upd_jump = d.e.instr0.op.jump;
+    bp_in.upd_branch = 0;
+    bp_in.upd_return = 0;
+    bp_in.upd_uncond = 0;
+    bp_in.upd_jump = 0;
     bp_in.stall = v.stall;
     bp_in.clear = d.w.clear;
 

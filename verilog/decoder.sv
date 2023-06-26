@@ -55,10 +55,6 @@ module decoder
   logic [0  : 0] ebreak;
   logic [0  : 0] mret;
   logic [0  : 0] wfi;
-  logic [0  : 0] return_pop;
-  logic [0  : 0] return_push;
-  logic [0  : 0] jump_uncond;
-  logic [0  : 0] jump_rest;
   logic [0  : 0] valid;
 
   alu_op_type alu_op;
@@ -69,11 +65,6 @@ module decoder
   div_op_type div_op;
   mul_op_type mul_op;
   bit_op_type bit_op;
-
-  logic [0  : 0] link_waddr;
-  logic [0  : 0] link_raddr1;
-  logic [0  : 0] equal_waddr;
-  logic [0  : 0] zero_waddr;
 
   logic [0  : 0] nonzero_waddr;
   logic [0  : 0] nonzero_raddr1;
@@ -134,10 +125,6 @@ module decoder
     ebreak = 0;
     mret = 0;
     wfi = 0;
-    return_pop = 0;
-    return_push = 0;
-    jump_uncond = 0;
-    jump_rest = 0;
     valid = 1;
 
     alu_op = init_alu_op;
@@ -148,11 +135,6 @@ module decoder
     div_op = init_div_op;
     mul_op = init_mul_op;
     bit_op = init_bit_op;
-
-    link_waddr = (waddr == 1 || waddr == 5) ? 1 : 0;
-    link_raddr1 = (raddr1 == 1 || raddr1 == 5) ? 1 : 0;
-    equal_waddr = (waddr == raddr1) ? 1 : 0;
-    zero_waddr = (waddr == 0) ? 1 : 0;
 
     nonzero_waddr = |waddr;
     nonzero_raddr1 = |raddr1;
@@ -525,33 +507,6 @@ module decoder
       default : valid = 0;
     endcase;
 
-    if (jal == 1) begin
-      if (link_waddr == 1) begin
-        return_push = 1;
-      end else if (zero_waddr == 1) begin
-        jump_uncond = 1;
-      end else begin
-        jump_rest = 1;
-      end
-    end
-
-    if (jalr == 1) begin
-      if (link_waddr == 0 && link_raddr1 == 1) begin
-        return_pop = 1;
-      end else if (link_waddr == 1 && link_raddr1 == 0) begin
-        return_push = 1;
-      end else if (link_waddr == 1 && link_raddr1 == 1) begin
-        if (equal_waddr == 1) begin
-          return_push = 1;
-        end else if (equal_waddr == 0) begin
-          return_pop = 1;
-          return_push = 1;
-        end
-      end else begin
-        jump_rest = 1;
-      end
-    end
-
     if (instr == nop_instr) begin
       alu_op.alu_add = 0;
       nop = 1;
@@ -585,10 +540,6 @@ module decoder
     decoder_out.ebreak = ebreak;
     decoder_out.mret = mret;
     decoder_out.wfi = wfi;
-    decoder_out.return_pop = return_pop;
-    decoder_out.return_push = return_push;
-    decoder_out.jump_uncond = jump_uncond;
-    decoder_out.jump_rest = jump_rest;
     decoder_out.valid = valid;
     decoder_out.alu_op = alu_op;
     decoder_out.bcu_op = bcu_op;
