@@ -152,7 +152,7 @@ module decoder
     link_waddr = (waddr == 1 || waddr == 5) ? 1 : 0;
     link_raddr1 = (raddr1 == 1 || raddr1 == 5) ? 1 : 0;
     equal_waddr = (waddr == raddr1) ? 1 : 0;
-    zero_waddr = (waddr == raddr1) ? 1 : 0;
+    zero_waddr = (waddr == 0) ? 1 : 0;
 
     nonzero_waddr = |waddr;
     nonzero_raddr1 = |raddr1;
