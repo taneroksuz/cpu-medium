@@ -185,9 +185,6 @@ module decoder
         wren = nonzero_waddr;
         rden1 = 1;
         jalr = 1;
-        return_pop = ((~link_waddr) & link_raddr1) | (link_waddr & link_raddr1 & (~equal_waddr));
-        return_push = (link_waddr & (~link_raddr1)) | (link_waddr & link_raddr1);
-        jump_rest = ~(return_push | jump_uncond);
       end
       opcode_branch : begin
         imm = imm_b;
