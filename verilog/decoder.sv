@@ -151,8 +151,8 @@ module decoder
 
     link_waddr = (waddr == 1 || waddr == 5) ? 1 : 0;
     link_raddr1 = (raddr1 == 1 || raddr1 == 5) ? 1 : 0;
-    equal_waddr = ~(|(waddr ^ raddr1));
-    zero_waddr = ~(|waddr);
+    equal_waddr = (waddr == raddr1) ? 1 : 0;
+    zero_waddr = (waddr == raddr1) ? 1 : 0;
 
     nonzero_waddr = |waddr;
     nonzero_raddr1 = |raddr1;
@@ -179,9 +179,6 @@ module decoder
         wren = nonzero_waddr;
         imm = imm_j;
         jal = 1;
-        return_push = link_waddr;
-        jump_uncond = zero_waddr;
-        jump_rest = ~(return_push | jump_uncond);
       end
       opcode_jalr : begin
         imm = imm_i;
@@ -530,6 +527,33 @@ module decoder
       end
       default : valid = 0;
     endcase;
+
+    if (jal == 1) begin
+      if (link_waddr == 1) begin
+        return_push = 1;
+      end else if (zero_waddr == 1) begin
+        jump_uncond = 1;
+      end else begin
+        jump_rest = 1;
+      end
+    end
+
+    if (jalr == 1) begin
+      if (link_waddr == 0 && link_raddr1 == 1) begin
+        return_pop = 1;
+      end else if (link_waddr == 1 && link_raddr1 == 0) begin
+        return_push = 1;
+      end else if (link_waddr == 1 && link_raddr1 == 1) begin
+        if (equal_waddr == 1) begin
+          return_push = 1;
+        end else if (equal_waddr == 0) begin
+          return_pop = 1;
+          return_push = 1;
+        end
+      end else begin
+        jump_rest = 1;
+      end
+    end
 
     if (instr == nop_instr) begin
       alu_op.alu_add = 0;
