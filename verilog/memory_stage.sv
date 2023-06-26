@@ -78,6 +78,18 @@ module memory_stage
     v.instr0.op_b = v.instr0.op;
     v.instr1.op_b = v.instr1.op;
 
+    forwarding0_min.wren = v.instr0.op.wren;
+    forwarding0_min.waddr = v.instr0.waddr;
+    forwarding0_min.wdata = v.instr0.wdata;
+
+    forwarding1_min.wren = v.instr1.op.wren;
+    forwarding1_min.waddr = v.instr1.waddr;
+    forwarding1_min.wdata = v.instr1.wdata;
+
+    fp_forwarding_min.wren = v.instr0.op.fwren;
+    fp_forwarding_min.waddr = v.instr0.waddr;
+    fp_forwarding_min.wdata = v.instr0.fdata;
+
     if ((v.stall | v.clear) == 1) begin
       v.instr0.op = init_operation_complex;
       v.instr1.op = init_operation_basic;
@@ -108,18 +120,6 @@ module memory_stage
 
     fp_csr_ein.fpu = v.instr0.op.fpuf;
     fp_csr_ein.fflags = v.instr0.flags;
-
-    forwarding0_min.wren = v.instr0.op.wren;
-    forwarding0_min.waddr = v.instr0.waddr;
-    forwarding0_min.wdata = v.instr0.wdata;
-
-    forwarding1_min.wren = v.instr1.op.wren;
-    forwarding1_min.waddr = v.instr1.waddr;
-    forwarding1_min.wdata = v.instr1.wdata;
-
-    fp_forwarding_min.wren = v.instr0.op.fwren;
-    fp_forwarding_min.waddr = v.instr0.waddr;
-    fp_forwarding_min.wdata = v.instr0.fdata;
     
     rin = v;
 
