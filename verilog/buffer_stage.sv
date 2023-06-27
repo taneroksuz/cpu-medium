@@ -31,6 +31,8 @@ module buffer_stage
     hazard_in.ready = a.f.ready;
     hazard_in.clear = csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | d.e.instr0.op.jump | d.m.instr0.op.fence | d.w.clear;
     hazard_in.stall = a.d.stall | a.e.stall | a.m.stall;
+  
+    v.taken = d.f.taken;
 
     v.pc0 = hazard_out.pc0;
     v.pc1 = hazard_out.pc1;
@@ -57,6 +59,7 @@ module buffer_stage
     y.npc1 = v.npc1;
     y.instr1 = v.instr0;
     y.instr0 = v.instr1;
+    y.taken = v.taken;
     y.stall = v.stall;
 
     q.pc0 = r.pc0;
@@ -65,6 +68,7 @@ module buffer_stage
     q.npc1 = r.npc1;
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
+    q.taken = r.taken;
     q.stall = r.stall;
 
   end

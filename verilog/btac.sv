@@ -147,7 +147,7 @@ module btac_ctrl
 
     if (btac_in.clear == 0) begin
       btac_out.pred_maddr = btac_in.upd_jump ? btac_in.upd_addr : btac_in.upd_npc;
-      btac_out.pred_miss = btac_in.upd_taken ^ btac_in.upd_jump;
+      btac_out.pred_miss = btac_in.taken ^ btac_in.upd_jump;
     end else begin
       btac_out.pred_maddr = 0;
       btac_out.pred_miss = 0;

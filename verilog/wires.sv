@@ -392,8 +392,8 @@ package wires;
     logic [31 : 0] upd_npc;
     logic [31 : 0] upd_addr;
     logic [0  : 0] upd_branch;
-    logic [0  : 0] upd_taken;
     logic [0  : 0] upd_jump;
+    logic [0  : 0] taken;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } btac_in_type;
@@ -795,6 +795,7 @@ package wires;
     logic [31 : 0] npc1;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
+    logic [0  : 0] taken;
     logic [0  : 0] stall;
   } buffer_out_type;
 
@@ -805,6 +806,7 @@ package wires;
     logic [31 : 0] npc1;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
+    logic [0  : 0] taken;
     logic [0  : 0] stall;
   } buffer_reg_type;
 
@@ -815,18 +817,21 @@ package wires;
     npc1 : 0,
     instr0 : 0,
     instr1 : 0,
+    taken : 0,
     stall : 0
   };
 
   typedef struct packed{
     instruction_complex_type instr0;
     instruction_basic_type instr1;
+    logic [0  : 0] taken;
     logic [0  : 0] stall;
   } decode_out_type;
 
   typedef struct packed{
     instruction_complex_type instr0;
     instruction_basic_type instr1;
+    logic [0  : 0] taken;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } decode_reg_type;
@@ -834,6 +839,7 @@ package wires;
   parameter decode_reg_type init_decode_reg = '{
     instr0 : init_instruction_complex,
     instr1 : init_instruction_basic,
+    taken : 0,
     stall : 0,
     clear : 0
   };
@@ -841,12 +847,14 @@ package wires;
   typedef struct packed{
     instruction_complex_type instr0;
     instruction_basic_type instr1;
+    logic [0  : 0] taken;
     logic [0  : 0] stall;
   } execute_out_type;
 
   typedef struct packed{
     instruction_complex_type instr0;
     instruction_basic_type instr1;
+    logic [0  : 0] taken;
     logic [0  : 0] enable;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
@@ -855,6 +863,7 @@ package wires;
   parameter execute_reg_type init_execute_reg = '{
     instr0 : init_instruction_complex,
     instr1 : init_instruction_basic,
+    taken : 0,
     enable : 0,
     stall : 0,
     clear : 0
