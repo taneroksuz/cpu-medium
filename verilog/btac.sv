@@ -106,15 +106,13 @@ module btac_ctrl
     logic [btb_depth-1 : 0] raddr;
     logic [95 : 0] wdata;
     logic [0  : 0] wen;
-    logic [0  : 0] miss;
   } btb_reg_type;
 
   parameter btb_reg_type init_reg = '{
     waddr : 0,
     raddr : 0,
     wdata : 0,
-    wen : 0,
-    miss : 0
+    wen : 0
   };
 
   btb_reg_type r, rin, v;
