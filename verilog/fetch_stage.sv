@@ -36,6 +36,7 @@ module fetch_stage
 
     v.fence = 0;
     v.spec = 0;
+    v.taken = 0;
     
     v.rdata = imem_out.mem_rdata;
     v.ready = imem_out.mem_ready;
@@ -63,38 +64,46 @@ module fetch_stage
     btac_in.upd_pc = d.e.instr0.pc;
     btac_in.upd_npc = d.e.instr0.npc;
     btac_in.upd_addr = d.e.instr0.address;
-    btac_in.upd_branch = d.e.instr0.op.branch;
-    btac_in.upd_jump = d.e.instr0.op.jump;
+    btac_in.upd_taken = 0;
+    btac_in.upd_branch = 0;
+    btac_in.upd_jump = 0;
     btac_in.stall = v.stall;
     btac_in.clear = d.w.clear;
 
     if (csr_out.trap == 1) begin
       v.fence = 0;
       v.spec = 1;
+      v.taken = 0;
       v.pc = csr_out.mtvec;
     end else if (csr_out.mret == 1) begin
       v.fence = 0;
       v.spec = 1;
+      v.taken = 0;
       v.pc = csr_out.mepc;
     end else if (btac_out.pred_branch == 1) begin
       v.fence = 0;
       v.spec = 1;
+      v.taken = 1;
       v.pc = btac_out.pred_baddr;
     end else if (btac_out.pred_miss == 1) begin
       v.fence = 0;
       v.spec = 1;
+      v.taken = 0;
       v.pc = btac_out.pred_maddr;
     end else if (d.e.instr0.op.jump == 1) begin
       v.fence = 0;
       v.spec = 1;
+      v.taken = 0;
       v.pc = d.e.instr0.address;
     end else if (d.m.instr0.op.fence == 1) begin
       v.fence = 1;
       v.spec = 1;
+      v.taken = 0;
       v.pc = d.m.instr0.npc;
     end else if (v.stall == 0) begin
       v.fence = 0;
       v.spec = 0;
+      v.taken = 0;
       v.pc = v.pc + 8;
     end
 
@@ -157,10 +166,12 @@ module fetch_stage
     y.pc = v.pc;
     y.rdata = v.rdata;
     y.ready = v.ready;
+    y.taken = v.taken;
 
     q.pc = r.pc;
     q.rdata = r.rdata;
     q.ready = r.ready;
+    q.taken = r.taken;
 
   end
 

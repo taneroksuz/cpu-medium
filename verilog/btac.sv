@@ -105,137 +105,69 @@ module btac_ctrl
     logic [btb_depth-1 : 0] wid;
     logic [btb_depth-1 : 0] rid;
     logic [31 : 0] wpc;
-    logic [31 : 0] waddr; 
+    logic [31 : 0] waddr;
     logic [0  : 0] update;
+    logic [0  : 0] miss;
   } btb_reg_type;
 
-  parameter btb_reg_type init_btb_reg = '{
+  parameter btb_reg_type init_reg = '{
     wid : 0,
     rid : 0,
     wpc : 0,
     waddr : 0,
-    update : 0
-  };
-
-  typedef struct packed{
-    logic [bht_depth-1 : 0] history;
-    logic [bht_depth-1 : 0] get_ind;
-    logic [bht_depth-1 : 0] upd_ind;
-    logic [1 : 0] get_sat;
-    logic [1 : 0] upd_sat;
-    logic [0 : 0] update;
-    logic [0 : 0] branch;
-  } bht_reg_type;
-
-  parameter bht_reg_type init_bht_reg = '{
-    history : 0,
-    get_ind : 0,
-    upd_ind : 0,
-    get_sat : 0,
-    upd_sat : 0,
     update : 0,
-    branch : 0
+    miss : 0
   };
 
-  btb_reg_type r_btb, rin_btb, v_btb;
-  bht_reg_type r_bht, rin_bht, v_bht;
+  btb_reg_type r, rin, v;
 
   always_comb begin : branch_target_buffer
 
-    v_btb = r_btb;
+    v = r;
 
     if (btac_in.clear == 0) begin
-      v_btb.rid = btac_in.get_pc[btb_depth:1];
+      v.rid = btac_in.get_pc[btb_depth:1];
     end
+
+    btb_in.raddr = v.rid;
 
     if (btac_in.clear == 0) begin
-      v_btb.wpc = btac_in.upd_pc;
-      v_btb.wid = btac_in.upd_pc[btb_depth:1];
-      v_btb.waddr = btac_in.upd_addr;
-    end
-
-    btb_in.raddr = v_btb.rid;
-
-    if (btac_in.upd_jump == 0 && btac_in.clear == 0) begin
-        btac_out.pred_baddr = btb_out.rdata[31:0];
-    end else begin
-        btac_out.pred_baddr = 0;
-    end
-
-    v_btb.update = btac_in.upd_branch & btac_in.upd_jump;
-
-    btb_in.wen = v_btb.update;
-    btb_in.waddr = v_btb.wid;
-    btb_in.wdata = {v_btb.wpc[31:(btb_depth+1)],v_btb.waddr};
-
-    rin_btb = v_btb;
-    
-  end
-
-  always_comb begin : branch_history_table
-
-    v_bht = r_bht;
-
-    if (btac_in.upd_branch == 1 && btac_in.clear == 0) begin
-      v_bht.upd_ind = v_bht.history ^ btac_in.upd_pc[bht_depth:1];
-    end
-
-    bht_in.raddr1 = v_bht.upd_ind;
-    v_bht.upd_sat = bht_out.rdata1;
-
-    if (btac_in.clear == 0) begin
-      v_bht.get_ind = v_bht.history ^ btac_in.get_pc[bht_depth:1];
-    end
-
-    bht_in.raddr2 = v_bht.get_ind;
-    v_bht.get_sat = bht_out.rdata2;
-
-    if (btac_in.upd_branch == 1) begin 
-      v_bht.history = {v_bht.history[bht_depth-2:0],1'b0};
-      if (btac_in.upd_jump == 1) begin
-        v_bht.history[0] = 1;
-        if (v_bht.upd_sat < 3) begin
-          v_bht.upd_sat = v_bht.upd_sat + 1;
-        end
-      end else if (btac_in.upd_jump == 0) begin
-        if (v_bht.upd_sat > 0) begin
-          v_bht.upd_sat = v_bht.upd_sat - 1;
-        end
-      end
+      v.wid = btac_in.upd_pc[btb_depth:1];
+      v.wpc = btac_in.upd_pc;
+      v.waddr = btac_in.upd_addr;
     end
 
     if (btac_in.clear == 0) begin
-      v_bht.branch = v_bht.get_sat[1] & ~(|(btb_out.rdata[62-btb_depth:32] ^ btac_in.get_pc[31:(btb_depth+1)]));
-      btac_out.pred_branch = v_bht.branch & |(btb_out.rdata);
+      btac_out.pred_branch = (|btb_out.rdata) & (~(|(btb_out.rdata[62-btb_depth:32] ^ btac_in.get_pc[31:(btb_depth+1)])));
+      btac_out.pred_baddr = btb_out.rdata[31:0];
     end else begin
       btac_out.pred_branch = 0;
+      btac_out.pred_baddr = 0;
     end
 
-    if (btac_in.upd_branch == 1 && btac_in.clear == 0) begin
+    if (btac_in.clear == 0) begin
       btac_out.pred_maddr = btac_in.upd_jump ? btac_in.upd_addr : btac_in.upd_npc;
-      btac_out.pred_miss = btac_in.upd_jump ^ v_bht.branch;
+      btac_out.pred_miss = btac_in.upd_taken ^ btac_in.upd_jump;
     end else begin
       btac_out.pred_maddr = 0;
       btac_out.pred_miss = 0;
     end
 
-    v_bht.update = btac_in.upd_branch;
+    v.update = btac_in.upd_branch & btac_in.upd_jump;
 
-    bht_in.wen = v_bht.update;
-    bht_in.waddr = v_bht.upd_ind;
-    bht_in.wdata = v_bht.upd_sat;
+    btb_in.wen = v.update;
+    btb_in.waddr = v.wid;
+    btb_in.wdata = {v.wpc[31:(btb_depth+1)],v.waddr};
 
-    rin_bht = v_bht;
+    rin = v;
     
   end
 
   always_ff @(posedge clock) begin
     if (reset == 0) begin
-      r_btb <= init_btb_reg;
-      r_bht <= init_bht_reg;
+      r <= init_reg;
     end else begin
-      r_btb <= rin_btb;
-      r_bht <= rin_bht;
+      r <= rin;
     end
   end
 

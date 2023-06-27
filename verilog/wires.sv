@@ -392,6 +392,7 @@ package wires;
     logic [31 : 0] upd_npc;
     logic [31 : 0] upd_addr;
     logic [0  : 0] upd_branch;
+    logic [0  : 0] upd_taken;
     logic [0  : 0] upd_jump;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
@@ -760,6 +761,7 @@ package wires;
     logic [31 : 0] pc;
     logic [63 : 0] rdata;
     logic [0  : 0] ready;
+    logic [0  : 0] taken;
   } fetch_out_type;
 
   typedef struct packed{
@@ -769,6 +771,7 @@ package wires;
     logic [0  : 0] valid;
     logic [0  : 0] fence;
     logic [0  : 0] spec;
+    logic [0  : 0] taken;
     logic [1  : 0] state;
     logic [0  : 0] stall;
   } fetch_reg_type;
@@ -780,6 +783,7 @@ package wires;
     valid : 0,
     fence : 0,
     spec : 0,
+    taken : 0,
     state : 0,
     stall : 0
   };
