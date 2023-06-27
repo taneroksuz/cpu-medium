@@ -66,8 +66,8 @@ module fetch_stage
     btac_in.upd_addr = d.e.instr0.address;
     btac_in.upd_branch = d.e.instr0.op.branch;
     btac_in.upd_jump = d.e.instr0.op.jump;
-    btac_in.taken = d.b.taken;
-    btac_in.tpc = d.b.tpc;
+    btac_in.taken = d.f.taken;
+    btac_in.tpc = d.f.tpc;
     btac_in.stall = v.stall;
     btac_in.clear = d.w.clear;
 
