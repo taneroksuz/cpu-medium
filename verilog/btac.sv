@@ -140,6 +140,7 @@ module btac_ctrl
     end else begin
       btac_out.pred_branch = 0;
       btac_out.pred_baddr = 0;
+      btac_out.pred_taddr = 0;
     end
 
     if (btac_in.clear == 0) begin
