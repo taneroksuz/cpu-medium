@@ -219,6 +219,7 @@ module btac
       assign btac_out.pred_baddr = 0;
       assign btac_out.pred_branch = 0;
       assign btac_out.pred_maddr = 0;
+      assign btac_out.pred_taddr = 0;
       assign btac_out.pred_miss = 0;
 
     end
