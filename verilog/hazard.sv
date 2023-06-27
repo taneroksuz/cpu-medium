@@ -59,17 +59,6 @@ module hazard
   logic [0 : 0] nonzero_waddr [0:1];
   logic [0 : 0] nonzero_raddr1 [0:1];
 
-  logic [0 : 0] link_waddr [0:1];
-  logic [0 : 0] link_raddr1 [0:1];
-  logic [0 : 0] equal_waddr [0:1];
-  logic [0 : 0] zero_waddr [0:1];
-
-  logic [0 : 0] return_pop [0:1];
-  logic [0 : 0] return_push [0:1];
-  logic [0 : 0] jump_uncond [0:1];
-  logic [0 : 0] jump_rest [0:1];
-  logic [0 : 0] branch [0:1];
-
   always_comb begin
 
     buffer = buffer_reg;
@@ -123,17 +112,6 @@ module hazard
     nonzero_waddr = {|waddr[0],|waddr[1]};
     nonzero_raddr1 = {|raddr1[0],|raddr1[1]};
 
-    link_waddr = {(waddr[0] == 1 || waddr[0] == 5) ? 1 : 0,(waddr[1] == 1 || waddr[1] == 5) ? 1 : 0};
-    link_raddr1 = {(raddr1[0] == 1 || raddr1[0] == 5) ? 1 : 0,(raddr1[1] == 1 || raddr1[1] == 5) ? 1 : 0};
-    equal_waddr = {(waddr[0] == raddr1[0]) ? 1 : 0,(waddr[1] == raddr1[1]) ? 1 : 0};
-    zero_waddr = {(waddr[0] == 0) ? 1 : 0,(waddr[1] == 0) ? 1 : 0};
-
-    return_pop = '{default:'0};
-    return_push = '{default:'0};
-    jump_uncond = '{default:'0};
-    jump_rest = '{default:'0};
-    branch = '{default:'0};
-
     case (opcode[0])
       opcode_lui : begin
         complex[0] = 1;
@@ -146,23 +124,16 @@ module hazard
       opcode_jal : begin
         complex[0] = 1;
         wren[0] = nonzero_waddr[0];
-        return_push[0] = link_waddr[0];
-        jump_uncond[0] = zero_waddr[0];
-        jump_rest[0] = ~(return_push[0] | jump_uncond[0]);
       end
       opcode_jalr : begin
         complex[0] = 1;
         wren[0] = nonzero_waddr[0];
         rden1[0] = 1;
-        return_pop[0] = ((~link_waddr[0]) & link_raddr1[0]) | (link_waddr[0] & link_raddr1[0] & (~equal_waddr[0]));
-        return_push[0] = (link_waddr[0] & (~link_raddr1[0])) | (link_waddr[0] & link_raddr1[0]);
-        jump_rest[0] = ~(return_pop[0] | return_push[0]);
       end
       opcode_branch : begin
         complex[0] = 1;
         rden1[0] = 1;
         rden2[0] = 1;
-        branch[0] = 1;
       end
       opcode_load : begin
         complex[0] = 1;
@@ -425,23 +396,16 @@ module hazard
       opcode_jal : begin
         complex[1] = 1;
         wren[1] = nonzero_waddr[1];
-        return_push[1] = link_waddr[1];
-        jump_uncond[1] = zero_waddr[1];
-        jump_rest[1] = ~(return_push[1] | jump_uncond[1]);
       end
       opcode_jalr : begin
         complex[1] = 1;
         wren[1] = nonzero_waddr[1];
         rden1[1] = 1;
-        return_pop[1] = ((~link_waddr[1]) & link_raddr1[1]) | (link_waddr[1] & link_raddr1[1] & (~equal_waddr[1]));
-        return_push[1] = (link_waddr[1] & (~link_raddr1[1])) | (link_waddr[1] & link_raddr1[1]);
-        jump_rest[1] = ~(return_pop[1] | return_push[1]);
       end
       opcode_branch : begin
         complex[1] = 1;
         rden1[1] = 1;
         rden2[1] = 1;
-        branch[1] = 1;
       end
       opcode_load : begin
         complex[1] = 1;
@@ -748,11 +712,6 @@ module hazard
     hazard_out.npc1 = get > 1 ? npc[1] : 0;
     hazard_out.instr0 = get > 0 ? instr[0] : nop_instr;
     hazard_out.instr1 = get > 1 ? instr[1] : nop_instr;
-    hazard_out.return_pop = get > 0 ? return_pop[0] : 0;
-    hazard_out.return_push = get > 0 ? return_push[0] : 0;
-    hazard_out.jump_uncond = get > 0 ? jump_uncond[0] : 0;
-    hazard_out.jump_rest = get > 0 ? jump_rest[0] : 0;
-    hazard_out.branch = get > 0 ? branch[0] : 0;
     hazard_out.stall = stall;
 
   end

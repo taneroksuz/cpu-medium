@@ -7,8 +7,8 @@ module fetch_stage
   input logic reset,
   input logic clock,
   input csr_out_type csr_out,
-  input bp_out_type bp_out,
-  output bp_in_type bp_in,
+  input btac_out_type btac_out,
+  output btac_in_type btac_in,
   input itim_out_type imem_out,
   output itim_in_type imem_in,
   input fetch_in_type a,
@@ -59,20 +59,14 @@ module fetch_stage
       end
     endcase
 
-    bp_in.get_pc = d.b.pc0;
-    bp_in.get_npc = d.b.npc0;
-    bp_in.get_branch = 0;
-    bp_in.get_return = 0;
-    bp_in.get_uncond = 0;
-    bp_in.upd_pc = d.e.instr0.pc;
-    bp_in.upd_npc = d.e.instr0.npc;
-    bp_in.upd_addr = d.e.instr0.address;
-    bp_in.upd_branch = 0;
-    bp_in.upd_return = 0;
-    bp_in.upd_uncond = 0;
-    bp_in.upd_jump = 0;
-    bp_in.stall = v.stall;
-    bp_in.clear = d.w.clear;
+    btac_in.get_pc = d.b.pc0;
+    btac_in.upd_pc = d.e.instr0.pc;
+    btac_in.upd_npc = d.e.instr0.npc;
+    btac_in.upd_addr = d.e.instr0.address;
+    btac_in.upd_branch = d.e.instr0.op.branch;
+    btac_in.upd_jump = d.e.instr0.op.jump;
+    btac_in.stall = v.stall;
+    btac_in.clear = d.w.clear;
 
     if (csr_out.trap == 1) begin
       v.fence = 0;
@@ -82,18 +76,14 @@ module fetch_stage
       v.fence = 0;
       v.spec = 1;
       v.pc = csr_out.mepc;
-    end else if (bp_out.pred_branch == 1) begin
+    end else if (btac_out.pred_branch == 1) begin
       v.fence = 0;
       v.spec = 1;
-      v.pc = bp_out.pred_baddr;
-    end else if (bp_out.pred_return == 1) begin
+      v.pc = btac_out.pred_baddr;
+    end else if (btac_out.pred_miss == 1) begin
       v.fence = 0;
       v.spec = 1;
-      v.pc = bp_out.pred_raddr;
-    end else if (bp_out.pred_miss == 1) begin
-      v.fence = 0;
-      v.spec = 1;
-      v.pc = bp_out.pred_maddr;
+      v.pc = btac_out.pred_maddr;
     end else if (d.e.instr0.op.jump == 1) begin
       v.fence = 0;
       v.spec = 1;

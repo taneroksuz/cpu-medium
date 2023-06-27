@@ -35,7 +35,7 @@ module execute_stage
   input fp_forwarding_out_type fp_forwarding_out,
   output fp_forwarding_register_in_type fp_forwarding_rin,
   input csr_out_type csr_out,
-  input bp_out_type bp_out,
+  input btac_out_type btac_out,
   input execute_in_type a,
   input execute_in_type d,
   output execute_out_type y,

@@ -47,8 +47,8 @@ module cpu
   bit_alu_out_type bit_alu_out;
   bit_clmul_in_type bit_clmul_in;
   bit_clmul_out_type bit_clmul_out;
-  bp_in_type bp_in;
-  bp_out_type bp_out;
+  btac_in_type btac_in;
+  btac_out_type btac_out;
   hazard_in_type hazard_in;
   hazard_out_type hazard_out;
   decoder_in_type decoder0_in;
@@ -292,12 +292,12 @@ module cpu
     .forwarding1_out (forwarding1_out)
   );
 
-  bp bp_comp
+  btac btac_comp
   (
     .reset (reset),
     .clock (clock),
-    .bp_in (bp_in),
-    .bp_out (bp_out)
+    .btac_in (btac_in),
+    .btac_out (btac_out)
   );
 
   hazard hazard_comp
@@ -351,8 +351,8 @@ module cpu
     .reset (reset),
     .clock (clock),
     .csr_out (csr_out),
-    .bp_out (bp_out),
-    .bp_in (bp_in),
+    .btac_out (btac_out),
+    .btac_in (btac_in),
     .imem_out (itim_out),
     .imem_in (itim_in),
     .a (fetch_in_a),
@@ -368,7 +368,7 @@ module cpu
     .hazard_out (hazard_out),
     .hazard_in (hazard_in),
     .csr_out (csr_out),
-    .bp_out (bp_out),
+    .btac_out (btac_out),
     .a (buffer_in_a),
     .d (buffer_in_d),
     .y (buffer_out_y),
@@ -392,7 +392,7 @@ module cpu
     .csr_rin (csr_rin),
     .fp_csr_out (fp_csr_out),
     .fp_csr_rin (fp_csr_rin),
-    .bp_out (bp_out),
+    .btac_out (btac_out),
     .a (decode_in_a),
     .d (decode_in_d),
     .y (decode_out_y),
@@ -433,7 +433,7 @@ module cpu
     .fp_forwarding_out (fp_forwarding_out),
     .fp_forwarding_rin (fp_forwarding_rin),
     .csr_out (csr_out),
-    .bp_out (bp_out),
+    .btac_out (btac_out),
     .a (execute_in_a),
     .d (execute_in_d),
     .y (execute_out_y),

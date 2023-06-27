@@ -388,29 +388,21 @@ package wires;
 
   typedef struct packed{
     logic [31 : 0] get_pc;
-    logic [31 : 0] get_npc;
-    logic [0  : 0] get_branch;
-    logic [0  : 0] get_return;
-    logic [0  : 0] get_uncond;
     logic [31 : 0] upd_pc;
     logic [31 : 0] upd_npc;
     logic [31 : 0] upd_addr;
     logic [0  : 0] upd_branch;
-    logic [0  : 0] upd_return;
-    logic [0  : 0] upd_uncond;
     logic [0  : 0] upd_jump;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
-  } bp_in_type;
+  } btac_in_type;
 
   typedef struct packed{
     logic [31 : 0] pred_baddr;
     logic [0  : 0] pred_branch;
-    logic [31 : 0] pred_raddr;
-    logic [0  : 0] pred_return;
     logic [31 : 0] pred_maddr;
     logic [0  : 0] pred_miss;
-  } bp_out_type;
+  } btac_out_type;
 
   typedef struct packed{
     logic [31 : 0] pc;
@@ -427,11 +419,6 @@ package wires;
     logic [31 : 0] npc1;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
-    logic [0  : 0] return_pop;
-    logic [0  : 0] return_push;
-    logic [0  : 0] jump_uncond;
-    logic [0  : 0] jump_rest;
-    logic [0  : 0] branch;
     logic [0  : 0] stall;
   } hazard_out_type;
 
@@ -517,10 +504,6 @@ package wires;
     logic [0  : 0] fpuc;
     logic [0  : 0] fpuf;
     logic [0  : 0] jump;
-    logic [0  : 0] return_pop;
-    logic [0  : 0] return_push;
-    logic [0  : 0] jump_uncond;
-    logic [0  : 0] jump_rest;
     logic [0  : 0] exception;
     logic [0  : 0] valid;
   } operation_complex_type;
@@ -559,10 +542,6 @@ package wires;
     fpuc : 0,
     fpuf : 0,
     jump : 0,
-    return_pop : 0,
-    return_push : 0,
-    jump_uncond : 0,
-    jump_rest : 0,
     exception : 0,
     valid : 0
   };
@@ -688,10 +667,6 @@ package wires;
     logic [0  : 0] ebreak;
     logic [0  : 0] mret;
     logic [0  : 0] wfi;
-    logic [0  : 0] return_pop;
-    logic [0  : 0] return_push;
-    logic [0  : 0] jump_uncond;
-    logic [0  : 0] jump_rest;
     logic [0  : 0] valid;
     alu_op_type alu_op;
     bcu_op_type bcu_op;
@@ -816,11 +791,6 @@ package wires;
     logic [31 : 0] npc1;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
-    logic [0  : 0] return_pop;
-    logic [0  : 0] return_push;
-    logic [0  : 0] jump_uncond;
-    logic [0  : 0] jump_rest;
-    logic [0  : 0] branch;
     logic [0  : 0] stall;
   } buffer_out_type;
 
@@ -831,11 +801,6 @@ package wires;
     logic [31 : 0] npc1;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
-    logic [0  : 0] return_pop;
-    logic [0  : 0] return_push;
-    logic [0  : 0] jump_uncond;
-    logic [0  : 0] jump_rest;
-    logic [0  : 0] branch;
     logic [0  : 0] stall;
   } buffer_reg_type;
 
@@ -846,11 +811,6 @@ package wires;
     npc1 : 0,
     instr0 : 0,
     instr1 : 0,
-    return_pop : 0,
-    return_push : 0,
-    jump_uncond : 0,
-    jump_rest : 0,
-    branch : 0,
     stall : 0
   };
 

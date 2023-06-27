@@ -24,7 +24,7 @@
 ../../verilog/wires.sv
 ../../verilog/bit_alu.sv
 ../../verilog/bit_clmul.sv
-../../verilog/bp.sv
+../../verilog/btac.sv
 ../../verilog/alu.sv
 ../../verilog/agu.sv
 ../../verilog/bcu.sv

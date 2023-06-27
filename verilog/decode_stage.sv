@@ -20,7 +20,7 @@ module decode_stage
   output csr_read_in_type csr_rin,
   input fp_csr_out_type fp_csr_out,
   output fp_csr_read_in_type fp_csr_rin,
-  input bp_out_type bp_out,
+  input btac_out_type btac_out,
   input decode_in_type a,
   input decode_in_type d,
   output decode_out_type y,
@@ -42,11 +42,6 @@ module decode_stage
     v.instr1.npc = d.b.npc1;
     v.instr0.instr = d.b.instr0;
     v.instr1.instr = d.b.instr1;
-    v.instr0.op.return_pop = d.b.return_pop;
-    v.instr0.op.return_push = d.b.return_push;
-    v.instr0.op.jump_uncond = d.b.jump_uncond;
-    v.instr0.op.jump_rest = d.b.jump_rest;
-    v.instr0.op.branch = d.b.branch;
 
     if ((d.d.stall | d.e.stall | d.m.stall) == 1) begin
       v = r;
@@ -54,7 +49,7 @@ module decode_stage
 
     v.stall = 0;
 
-    v.clear = csr_out.trap | csr_out.mret | bp_out.pred_branch | bp_out.pred_miss | bp_out.pred_return | d.e.instr0.op.jump | d.m.instr0.op.fence | d.w.clear;
+    v.clear = csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | d.e.instr0.op.jump | d.m.instr0.op.fence | d.w.clear;
 
     v.instr0.waddr = v.instr0.instr[11:7];
     v.instr0.raddr1 = v.instr0.instr[19:15];

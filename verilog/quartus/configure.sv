@@ -14,10 +14,9 @@ package configure;
   parameter dtim_width = 4;
   parameter dtim_depth = 128;
 
-  parameter bp_enable = 1;
+  parameter btac_enable = 1;
   parameter branchtarget_depth = 64;
   parameter branchhistory_depth = 64;
-  parameter returnaddress_depth = 4;
 
   parameter rom_base_addr = 32'h0;
   parameter rom_top_addr  = 32'h80;

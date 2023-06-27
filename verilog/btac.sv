@@ -1,4 +1,4 @@
-package bp_wires;
+package btac_wires;
   timeunit 1ns;
   timeprecision 1ps;
 
@@ -6,7 +6,6 @@ package bp_wires;
 
   localparam btb_depth = $clog2(branchtarget_depth-1);
   localparam bht_depth = $clog2(branchhistory_depth-1);
-  localparam ras_depth = $clog2(returnaddress_depth-1);
 
   typedef struct packed{
     logic [0 : 0] wen;
@@ -32,22 +31,11 @@ package bp_wires;
     logic [1 : 0] rdata2;
   } bht_out_type;
 
-  typedef struct packed{
-    logic [0 : 0] wen;
-    logic [ras_depth-1 : 0] waddr;
-    logic [ras_depth-1 : 0] raddr;
-    logic [31 : 0] wdata;
-  } ras_in_type;
-
-  typedef struct packed{
-    logic [31 : 0] rdata;
-  } ras_out_type;
-
 endpackage
 
 import configure::*;
 import wires::*;
-import bp_wires::*;
+import btac_wires::*;
 
 module btb
 (
@@ -96,48 +84,22 @@ module bht
 
 endmodule
 
-module ras
-(
-  input logic clock,
-  input ras_in_type ras_in,
-  output ras_out_type ras_out
-);
-  timeunit 1ns;
-  timeprecision 1ps;
-
-  localparam ras_depth = $clog2(returnaddress_depth-1);
-
-  logic [31:0] ras_array[0:returnaddress_depth-1] = '{default:'0};
-
-  assign ras_out.rdata = ras_array[ras_in.raddr];
-
-  always_ff @(posedge clock) begin
-    if (ras_in.wen == 1) begin
-      ras_array[ras_in.waddr] <= ras_in.wdata;
-    end
-  end
-
-endmodule
-
-module bp_ctrl
+module btac_ctrl
 (
   input logic reset,
   input logic clock,
-  input bp_in_type bp_in,
-  output bp_out_type bp_out,
+  input btac_in_type btac_in,
+  output btac_out_type btac_out,
   input btb_out_type btb_out,
   output btb_in_type btb_in,
   input bht_out_type bht_out,
-  output bht_in_type bht_in,
-  input ras_out_type ras_out,
-  output ras_in_type ras_in
+  output bht_in_type bht_in
 );
   timeunit 1ns;
   timeprecision 1ps;
 
   localparam btb_depth = $clog2(branchtarget_depth-1);
   localparam bht_depth = $clog2(branchhistory_depth-1);
-  localparam ras_depth = $clog2(returnaddress_depth-1);
 
   typedef struct packed{
     logic [btb_depth-1 : 0] wid;
@@ -175,49 +137,32 @@ module bp_ctrl
     branch : 0
   };
 
-  typedef struct packed{
-    logic [ras_depth-1 : 0] wid;
-    logic [ras_depth-1 : 0] rid;
-    logic [ras_depth : 0] count;
-    logic [31 : 0] waddr;
-    logic [0  : 0] update;
-  } ras_reg_type;
-
-  parameter ras_reg_type init_ras_reg = '{
-    wid : 0,
-    rid : 0,
-    count : 0,
-    waddr : 0,
-    update : 0
-  };
-
   btb_reg_type r_btb, rin_btb, v_btb;
   bht_reg_type r_bht, rin_bht, v_bht;
-  ras_reg_type r_ras, rin_ras, v_ras;
 
   always_comb begin : branch_target_buffer
 
     v_btb = r_btb;
 
-    if (bp_in.clear == 0) begin
-      v_btb.rid = bp_in.get_pc[btb_depth:1];
+    if (btac_in.clear == 0) begin
+      v_btb.rid = btac_in.get_pc[btb_depth:1];
     end
 
-    if (bp_in.clear == 0) begin
-      v_btb.wpc = bp_in.upd_pc;
-      v_btb.wid = bp_in.upd_pc[btb_depth:1];
-      v_btb.waddr = bp_in.upd_addr;
+    if (btac_in.clear == 0) begin
+      v_btb.wpc = btac_in.upd_pc;
+      v_btb.wid = btac_in.upd_pc[btb_depth:1];
+      v_btb.waddr = btac_in.upd_addr;
     end
 
     btb_in.raddr = v_btb.rid;
 
-    if (bp_in.upd_jump == 0 && bp_in.clear == 0) begin
-        bp_out.pred_baddr = btb_out.rdata[31:0];
+    if (btac_in.upd_jump == 0 && btac_in.clear == 0) begin
+        btac_out.pred_baddr = btb_out.rdata[31:0];
     end else begin
-        bp_out.pred_baddr = 0;
+        btac_out.pred_baddr = 0;
     end
 
-    v_btb.update = (bp_in.upd_branch & bp_in.upd_jump) | bp_in.upd_uncond;
+    v_btb.update = btac_in.upd_branch & btac_in.upd_jump;
 
     btb_in.wen = v_btb.update;
     btb_in.waddr = v_btb.wid;
@@ -231,53 +176,50 @@ module bp_ctrl
 
     v_bht = r_bht;
 
-    if (bp_in.upd_branch == 1 && bp_in.clear == 0) begin
-      v_bht.upd_ind = v_bht.history ^ bp_in.upd_pc[bht_depth:1];
+    if (btac_in.upd_branch == 1 && btac_in.clear == 0) begin
+      v_bht.upd_ind = v_bht.history ^ btac_in.upd_pc[bht_depth:1];
     end
 
     bht_in.raddr1 = v_bht.upd_ind;
     v_bht.upd_sat = bht_out.rdata1;
 
-    if (bp_in.get_branch == 1 && bp_in.clear == 0) begin
-      v_bht.get_ind = v_bht.history ^ bp_in.get_pc[bht_depth:1];
+    if (btac_in.clear == 0) begin
+      v_bht.get_ind = v_bht.history ^ btac_in.get_pc[bht_depth:1];
     end
 
     bht_in.raddr2 = v_bht.get_ind;
     v_bht.get_sat = bht_out.rdata2;
 
-    if (bp_in.upd_branch == 1) begin 
+    if (btac_in.upd_branch == 1) begin 
       v_bht.history = {v_bht.history[bht_depth-2:0],1'b0};
-      if (bp_in.upd_jump == 1) begin
+      if (btac_in.upd_jump == 1) begin
         v_bht.history[0] = 1;
         if (v_bht.upd_sat < 3) begin
           v_bht.upd_sat = v_bht.upd_sat + 1;
         end
-      end else if (bp_in.upd_jump == 0) begin
+      end else if (btac_in.upd_jump == 0) begin
         if (v_bht.upd_sat > 0) begin
           v_bht.upd_sat = v_bht.upd_sat - 1;
         end
       end
     end
 
-    if (bp_in.get_uncond == 1 && bp_in.clear == 0) begin
-      v_bht.branch = ~(|(btb_out.rdata[62-btb_depth:32] ^ bp_in.get_pc[31:(btb_depth+1)]));
-      bp_out.pred_branch = v_bht.branch & |(btb_out.rdata);
-    end else if (bp_in.get_branch == 1 && bp_in.clear == 0) begin
-      v_bht.branch = v_bht.get_sat[1] & ~(|(btb_out.rdata[62-btb_depth:32] ^ bp_in.get_pc[31:(btb_depth+1)]));
-      bp_out.pred_branch = v_bht.branch & |(btb_out.rdata);
+    if (btac_in.clear == 0) begin
+      v_bht.branch = v_bht.get_sat[1] & ~(|(btb_out.rdata[62-btb_depth:32] ^ btac_in.get_pc[31:(btb_depth+1)]));
+      btac_out.pred_branch = v_bht.branch & |(btb_out.rdata);
     end else begin
-      bp_out.pred_branch = 0;
+      btac_out.pred_branch = 0;
     end
 
-    if (bp_in.upd_branch == 1 && bp_in.clear == 0) begin
-      bp_out.pred_maddr = bp_in.upd_jump ? bp_in.upd_addr : bp_in.upd_npc;
-      bp_out.pred_miss = bp_in.upd_jump ^ v_bht.branch;
+    if (btac_in.upd_branch == 1 && btac_in.clear == 0) begin
+      btac_out.pred_maddr = btac_in.upd_jump ? btac_in.upd_addr : btac_in.upd_npc;
+      btac_out.pred_miss = btac_in.upd_jump ^ v_bht.branch;
     end else begin
-      bp_out.pred_maddr = 0;
-      bp_out.pred_miss = 0;
+      btac_out.pred_maddr = 0;
+      btac_out.pred_miss = 0;
     end
 
-    v_bht.update = bp_in.upd_branch;
+    v_bht.update = btac_in.upd_branch;
 
     bht_in.wen = v_bht.update;
     bht_in.waddr = v_bht.upd_ind;
@@ -287,86 +229,36 @@ module bp_ctrl
     
   end
 
-  always_comb begin : return_address_stack
-
-    v_ras = r_ras;
-
-    v_ras.waddr = bp_in.upd_npc;
-
-    if (bp_in.upd_return == 1) begin
-      if (v_ras.count < 2**ras_depth) begin
-        v_ras.count = v_ras.count + 1;
-      end
-      v_ras.rid = v_ras.wid;
-      if (v_ras.wid < 2**ras_depth-1) begin
-        v_ras.wid = v_ras.wid + 1;
-      end else begin
-        v_ras.wid = 0;
-      end
-    end
-
-    ras_in.raddr = v_ras.rid;
-
-    if (bp_in.get_return == 1 && bp_in.upd_jump == 0 && bp_in.clear == 0 &&
-          v_ras.count > 0) begin
-      bp_out.pred_raddr = ras_out.rdata;
-      bp_out.pred_return = 1;
-      v_ras.count = v_ras.count - 1;
-      v_ras.wid = v_ras.rid;
-      if (v_ras.rid > 0) begin
-        v_ras.rid = v_ras.rid - 1;
-      end else begin
-        v_ras.rid = 2**ras_depth-1;
-      end
-    end else begin
-      bp_out.pred_raddr = 0;
-      bp_out.pred_return = 0;
-    end
-
-    v_ras.update = bp_in.upd_return;
-
-    ras_in.wen = v_ras.update;
-    ras_in.waddr = r_ras.wid;
-    ras_in.wdata = v_ras.waddr;
-
-    rin_ras = v_ras;
-    
-  end
-
   always_ff @(posedge clock) begin
     if (reset == 0) begin
       r_btb <= init_btb_reg;
       r_bht <= init_bht_reg;
-      r_ras <= init_ras_reg;
     end else begin
       r_btb <= rin_btb;
       r_bht <= rin_bht;
-      r_ras <= rin_ras;
     end
   end
 
 endmodule
 
-module bp
+module btac
 (
   input logic reset,
   input logic clock,
-  input bp_in_type bp_in,
-  output bp_out_type bp_out
+  input btac_in_type btac_in,
+  output btac_out_type btac_out
 );
   timeunit 1ns;
   timeprecision 1ps;
 
   generate
 
-    if (bp_enable == 1) begin
+    if (btac_enable == 1) begin
 
       btb_in_type btb_in;
       btb_out_type btb_out;
       bht_in_type bht_in;
       bht_out_type bht_out;
-      ras_in_type ras_in;
-      ras_out_type ras_out;
 
       btb btb_comp
       (
@@ -382,35 +274,24 @@ module bp
         .bht_out (bht_out)
       );
 
-      ras ras_comp
-      (
-        .clock (clock),
-        .ras_in (ras_in),
-        .ras_out (ras_out)
-      );
-
-      bp_ctrl bp_ctrl_comp
+      btac_ctrl btac_ctrl_comp
       (
         .reset (reset),
         .clock (clock),
-        .bp_in (bp_in),
-        .bp_out (bp_out),
+        .btac_in (btac_in),
+        .btac_out (btac_out),
         .btb_in (btb_in),
         .btb_out (btb_out),
         .bht_in (bht_in),
-        .bht_out (bht_out),
-        .ras_in (ras_in),
-        .ras_out (ras_out)
+        .bht_out (bht_out)
       );
 
     end else begin
 
-      assign bp_out.pred_baddr = 0;
-      assign bp_out.pred_branch = 0;
-      assign bp_out.pred_raddr = 0;
-      assign bp_out.pred_return = 0;
-      assign bp_out.pred_maddr = 0;
-      assign bp_out.pred_miss = 0;
+      assign btac_out.pred_baddr = 0;
+      assign btac_out.pred_branch = 0;
+      assign btac_out.pred_maddr = 0;
+      assign btac_out.pred_miss = 0;
 
     end
 
