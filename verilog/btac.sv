@@ -11,11 +11,11 @@ package btac_wires;
     logic [0 : 0] wen;
     logic [btb_depth-1 : 0] waddr;
     logic [btb_depth-1 : 0] raddr;
-    logic [62-btb_depth : 0] wdata;
+    logic [94-btb_depth : 0] wdata;
   } btb_in_type;
 
   typedef struct packed{
-    logic [62-btb_depth : 0] rdata;
+    logic [94-btb_depth : 0] rdata;
   } btb_out_type;
 
   typedef struct packed{
@@ -48,7 +48,7 @@ module btb
 
   localparam btb_depth = $clog2(branchtarget_depth-1);
 
-  logic [62-btb_depth:0] btb_array[0:branchtarget_depth-1] = '{default:'0};
+  logic [94-btb_depth:0] btb_array[0:branchtarget_depth-1] = '{default:'0};
 
   assign btb_out.rdata = btb_array[btb_in.raddr];
 
@@ -105,7 +105,7 @@ module btac_ctrl
     logic [btb_depth-1 : 0] wid;
     logic [btb_depth-1 : 0] rid;
     logic [31 : 0] wpc;
-    logic [31 : 0] waddr;
+    logic [63 : 0] waddr;
     logic [0  : 0] update;
     logic [0  : 0] miss;
   } btb_reg_type;
@@ -134,20 +134,21 @@ module btac_ctrl
     if (btac_in.clear == 0) begin
       v.wid = btac_in.upd_pc[btb_depth:1];
       v.wpc = btac_in.upd_pc;
-      v.waddr = btac_in.upd_addr;
+      v.waddr = {btac_in.upd_addr,btac_in.upd_pc};
     end
 
     if (btac_in.clear == 0) begin
-      btac_out.pred_branch = (|btb_out.rdata) & (~(|(btb_out.rdata[62-btb_depth:32] ^ btac_in.get_pc[31:(btb_depth+1)])));
-      btac_out.pred_baddr = btb_out.rdata[31:0];
+      btac_out.pred_branch = (|btb_out.rdata) & (~(|(btb_out.rdata[94-btb_depth:64] ^ btac_in.get_pc[31:(btb_depth+1)])));
+      btac_out.pred_baddr = btb_out.rdata[63:32];
+      btac_out.pred_taddr = btb_out.rdata[31:0];
     end else begin
       btac_out.pred_branch = 0;
       btac_out.pred_baddr = 0;
     end
 
     if (btac_in.clear == 0) begin
-      btac_out.pred_maddr = btac_in.upd_jump ? btac_in.upd_addr : btac_in.upd_npc;
-      btac_out.pred_miss = btac_in.taken ^ btac_in.upd_jump;
+      btac_out.pred_maddr = btac_in.upd_jump == 0 ? btac_in.tpc : btac_in.upd_addr;
+      btac_out.pred_miss = btac_in.taken ^ (btac_in.upd_jump & btac_in.upd_branch);
     end else begin
       btac_out.pred_maddr = 0;
       btac_out.pred_miss = 0;

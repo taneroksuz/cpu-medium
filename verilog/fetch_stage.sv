@@ -67,6 +67,7 @@ module fetch_stage
     btac_in.upd_branch = d.e.instr0.op.branch;
     btac_in.upd_jump = d.e.instr0.op.jump;
     btac_in.taken = d.b.taken;
+    btac_in.tpc = d.b.tpc;
     btac_in.stall = v.stall;
     btac_in.clear = d.w.clear;
 
@@ -75,36 +76,43 @@ module fetch_stage
       v.spec = 1;
       v.taken = 0;
       v.pc = csr_out.mtvec;
+      v.tpc = 0;
     end else if (csr_out.mret == 1) begin
       v.fence = 0;
       v.spec = 1;
       v.taken = 0;
       v.pc = csr_out.mepc;
+      v.tpc = 0;
     end else if (btac_out.pred_branch == 1) begin
       v.fence = 0;
       v.spec = 1;
       v.taken = 1;
       v.pc = btac_out.pred_baddr;
+      v.tpc = btac_out.pred_taddr;
     end else if (btac_out.pred_miss == 1) begin
       v.fence = 0;
       v.spec = 1;
       v.taken = 0;
       v.pc = btac_out.pred_maddr;
+      v.tpc = 0;
     end else if (d.e.instr0.op.jump == 1) begin
       v.fence = 0;
       v.spec = 1;
       v.taken = 0;
       v.pc = d.e.instr0.address;
+      v.tpc = 0;
     end else if (d.m.instr0.op.fence == 1) begin
       v.fence = 1;
       v.spec = 1;
       v.taken = 0;
       v.pc = d.m.instr0.npc;
+      v.tpc = 0;
     end else if (v.stall == 0) begin
       v.fence = 0;
       v.spec = 0;
       v.taken = 0;
       v.pc = v.pc + 8;
+      v.tpc = 0;
     end
 
     case(v.state)
@@ -167,11 +175,13 @@ module fetch_stage
     y.rdata = v.rdata;
     y.ready = v.ready;
     y.taken = v.taken;
+    y.tpc = v.tpc;
 
     q.pc = r.pc;
     q.rdata = r.rdata;
     q.ready = r.ready;
     q.taken = r.taken;
+    q.tpc = r.tpc;
 
   end
 

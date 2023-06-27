@@ -44,6 +44,7 @@ module decode_stage
     v.instr1.instr = d.b.instr1;
   
     v.taken = d.b.taken;
+    v.tpc = d.b.tpc;
 
     if ((d.d.stall | d.e.stall | d.m.stall) == 1) begin
       v = r;
@@ -232,11 +233,13 @@ module decode_stage
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
     y.taken = v.taken;
+    q.tpc = r.tpc;
     y.stall = v.stall;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
     q.taken = r.taken;
+    q.tpc = r.tpc;
     q.stall = r.stall;
 
   end

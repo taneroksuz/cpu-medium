@@ -394,6 +394,7 @@ package wires;
     logic [0  : 0] upd_branch;
     logic [0  : 0] upd_jump;
     logic [0  : 0] taken;
+    logic [31 : 0] tpc;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } btac_in_type;
@@ -402,6 +403,7 @@ package wires;
     logic [31 : 0] pred_baddr;
     logic [0  : 0] pred_branch;
     logic [31 : 0] pred_maddr;
+    logic [31 : 0] pred_taddr;
     logic [0  : 0] pred_miss;
   } btac_out_type;
 
@@ -762,6 +764,7 @@ package wires;
     logic [63 : 0] rdata;
     logic [0  : 0] ready;
     logic [0  : 0] taken;
+    logic [31 : 0] tpc;
   } fetch_out_type;
 
   typedef struct packed{
@@ -772,6 +775,7 @@ package wires;
     logic [0  : 0] fence;
     logic [0  : 0] spec;
     logic [0  : 0] taken;
+    logic [31 : 0] tpc;
     logic [1  : 0] state;
     logic [0  : 0] stall;
   } fetch_reg_type;
@@ -784,6 +788,7 @@ package wires;
     fence : 0,
     spec : 0,
     taken : 0,
+    tpc : 0,
     state : 0,
     stall : 0
   };
@@ -796,6 +801,7 @@ package wires;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
     logic [0  : 0] taken;
+    logic [31 : 0] tpc;
     logic [0  : 0] stall;
   } buffer_out_type;
 
@@ -807,6 +813,7 @@ package wires;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
     logic [0  : 0] taken;
+    logic [31 : 0] tpc;
     logic [0  : 0] stall;
   } buffer_reg_type;
 
@@ -818,6 +825,7 @@ package wires;
     instr0 : 0,
     instr1 : 0,
     taken : 0,
+    tpc : 0,
     stall : 0
   };
 
@@ -825,6 +833,7 @@ package wires;
     instruction_complex_type instr0;
     instruction_basic_type instr1;
     logic [0  : 0] taken;
+    logic [31 : 0] tpc;
     logic [0  : 0] stall;
   } decode_out_type;
 
@@ -832,6 +841,7 @@ package wires;
     instruction_complex_type instr0;
     instruction_basic_type instr1;
     logic [0  : 0] taken;
+    logic [31 : 0] tpc;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } decode_reg_type;
@@ -840,6 +850,7 @@ package wires;
     instr0 : init_instruction_complex,
     instr1 : init_instruction_basic,
     taken : 0,
+    tpc : 0,
     stall : 0,
     clear : 0
   };
@@ -848,6 +859,7 @@ package wires;
     instruction_complex_type instr0;
     instruction_basic_type instr1;
     logic [0  : 0] taken;
+    logic [31 : 0] tpc;
     logic [0  : 0] stall;
   } execute_out_type;
 
@@ -855,6 +867,7 @@ package wires;
     instruction_complex_type instr0;
     instruction_basic_type instr1;
     logic [0  : 0] taken;
+    logic [31 : 0] tpc;
     logic [0  : 0] enable;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
@@ -864,6 +877,7 @@ package wires;
     instr0 : init_instruction_complex,
     instr1 : init_instruction_basic,
     taken : 0,
+    tpc : 0,
     enable : 0,
     stall : 0,
     clear : 0

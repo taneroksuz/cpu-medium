@@ -33,6 +33,7 @@ module buffer_stage
     hazard_in.stall = a.d.stall | a.e.stall | a.m.stall;
   
     v.taken = d.f.taken;
+    v.tpc = d.f.tpc;
 
     v.pc0 = hazard_out.pc0;
     v.pc1 = hazard_out.pc1;
@@ -60,6 +61,7 @@ module buffer_stage
     y.instr1 = v.instr0;
     y.instr0 = v.instr1;
     y.taken = v.taken;
+    y.tpc = v.tpc;
     y.stall = v.stall;
 
     q.pc0 = r.pc0;
@@ -69,6 +71,7 @@ module buffer_stage
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
     q.taken = r.taken;
+    q.tpc = r.tpc;
     q.stall = r.stall;
 
   end

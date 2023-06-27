@@ -55,6 +55,7 @@ module execute_stage
     v.instr1 = d.d.instr1;
   
     v.taken = d.d.taken;
+    v.tpc = d.d.tpc;
 
     forwarding0_rin.rden1 = v.instr0.op.rden1;
     forwarding0_rin.rden2 = v.instr0.op.rden2;
@@ -279,11 +280,13 @@ module execute_stage
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
     y.taken = v.taken;
+    y.tpc = v.tpc;
     y.stall = v.stall;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
     q.taken = r.taken;
+    q.tpc = r.tpc;
     q.stall = r.stall;
 
   end
