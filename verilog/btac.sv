@@ -130,6 +130,7 @@ module btac_ctrl
     btb_in.raddr = v.raddr;
 
     if (btac_in.clear == 0) begin
+      v.wen = btac_in.upd_branch & btac_in.upd_jump;
       v.waddr = btac_in.upd_pc[btb_depth:1];
       v.wdata = {btac_in.upd_pc,btac_in.upd_addr,btac_in.upd_npc};
     end
@@ -150,8 +151,6 @@ module btac_ctrl
       btac_out.pred_maddr = 0;
       btac_out.pred_miss = 0;
     end
-
-    v.wen = btac_in.upd_branch & btac_in.upd_jump;
 
     btb_in.wen = v.wen;
     btb_in.waddr = v.waddr;
