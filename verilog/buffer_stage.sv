@@ -44,6 +44,10 @@ module buffer_stage
     v.instr1 = hazard_out.instr1;
     v.stall = hazard_out.stall;
 
+    if ((csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | btac_out.pred_rest | d.w.clear) == 1) begin
+      v.stall = 0;
+    end 
+
     rin = v;
 
     y.pc0 = v.pc0;

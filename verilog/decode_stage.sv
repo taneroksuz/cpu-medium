@@ -53,6 +53,8 @@ module decode_stage
 
     v.stall = 0;
 
+    v.clear = csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | btac_out.pred_rest | d.w.clear;
+
     v.instr0.waddr = v.instr0.instr[11:7];
     v.instr0.raddr1 = v.instr0.instr[19:15];
     v.instr0.raddr2 = v.instr0.instr[24:20];
@@ -210,12 +212,12 @@ module decode_stage
       v.stall = 1;
     end
 
-    if ((v.stall | a.e.stall | a.m.stall | a.e.instr0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | btac_out.pred_rest | d.w.clear) == 1) begin
+    if ((v.stall | a.e.stall | a.m.stall | a.e.instr0.op.fence | v.clear) == 1) begin
       v.instr0.op = init_operation_complex;
       v.instr1.op = init_operation_basic;
     end
 
-    if (d.w.clear == 1) begin
+    if (v.clear == 1) begin
       v.stall = 0;
     end
 

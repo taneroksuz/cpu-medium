@@ -104,6 +104,8 @@ module execute_stage
 
     v.stall = 0;
 
+    v.clear = csr_out.trap | csr_out.mret | btac_out.pred_miss | btac_out.pred_rest | d.w.clear;
+
     v.enable = ~(d.e.stall | a.m.stall | v.clear);
 
     alu0_in.rdata1 = v.instr0.rdata1;
@@ -256,12 +258,12 @@ module execute_stage
     v.instr0.op_b = v.instr0.op;
     v.instr1.op_b = v.instr1.op;
 
-    if ((v.stall | a.m.stall | csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | btac_out.pred_rest | d.w.clear) == 1) begin
+    if ((v.stall | a.m.stall | v.clear) == 1) begin
       v.instr0.op = init_operation_complex;
       v.instr1.op = init_operation_basic;
     end
 
-    if (d.w.clear == 1) begin
+    if (v.clear == 1) begin
       v.stall = 0;
     end
 
