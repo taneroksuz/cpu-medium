@@ -104,7 +104,7 @@ module execute_stage
 
     v.stall = 0;
 
-    v.clear = d.e.instr0.op.exception | d.e.instr0.op.mret | csr_out.trap | csr_out.mret | btac_out.pred_miss | btac_out.pred_rest | d.w.clear;
+    v.clear = d.e.instr0.op.exception | d.e.instr0.op.mret | csr_out.trap | csr_out.mret | btac_out.pred_rest | d.w.clear;
 
     v.enable = ~(d.e.stall | a.m.stall | v.clear);
 
