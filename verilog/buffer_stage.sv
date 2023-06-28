@@ -25,6 +25,14 @@ module buffer_stage
   always_comb begin
 
     v = r;
+  
+    v.taken = d.f.taken;
+    v.taddr = d.f.taddr;
+    v.tpc = d.f.tpc;
+
+    if ((d.b.stall | d.d.stall | d.e.stall | d.m.stall) == 1) begin
+      v = r;
+    end
 
     v.clear = csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | btac_out.pred_rest | d.w.clear;
 
@@ -33,10 +41,6 @@ module buffer_stage
     hazard_in.ready = a.f.ready;
     hazard_in.clear =  a.e.instr0.op.fence | v.clear;
     hazard_in.stall = a.d.stall | a.e.stall | a.m.stall;
-  
-    v.taken = d.f.taken;
-    v.taddr = d.f.taddr;
-    v.tpc = d.f.tpc;
 
     v.pc0 = hazard_out.pc0;
     v.pc1 = hazard_out.pc1;
