@@ -44,6 +44,7 @@ module decode_stage
     v.instr1.instr = d.b.instr1;
   
     v.taken = d.b.taken;
+    v.taddr = d.b.taddr;
     v.tpc = d.b.tpc;
 
     if ((d.d.stall | d.e.stall | d.m.stall) == 1) begin
@@ -51,8 +52,6 @@ module decode_stage
     end
 
     v.stall = 0;
-
-    v.clear = csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | d.e.instr0.op.jump | d.m.instr0.op.fence | d.w.clear;
 
     v.instr0.waddr = v.instr0.instr[11:7];
     v.instr0.raddr1 = v.instr0.instr[19:15];
@@ -211,12 +210,12 @@ module decode_stage
       v.stall = 1;
     end
 
-    if ((v.stall | a.e.stall | a.m.stall | a.e.instr0.op.jump | a.e.instr0.op.fence | a.e.instr0.op.mret | a.e.instr0.op.exception | v.clear) == 1) begin
+    if ((v.stall | a.e.stall | a.m.stall | a.e.instr0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | btac_out.pred_rest | d.w.clear) == 1) begin
       v.instr0.op = init_operation_complex;
       v.instr1.op = init_operation_basic;
     end
 
-    if (v.clear == 1) begin
+    if (d.w.clear == 1) begin
       v.stall = 0;
     end
 
@@ -233,12 +232,14 @@ module decode_stage
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
     y.taken = v.taken;
+    y.taddr = v.taddr;
     q.tpc = r.tpc;
     y.stall = v.stall;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
     q.taken = r.taken;
+    q.taddr = r.taddr;
     q.tpc = r.tpc;
     q.stall = r.stall;
 

@@ -21,7 +21,7 @@ module fetch_stage
 
   localparam [1:0] idle = 0;
   localparam [1:0] busy = 1;
-  localparam [1:0] jump = 2;
+  localparam [1:0] ctrl = 2;
   localparam [1:0] inv = 3;
 
   fetch_reg_type r,rin;
@@ -50,7 +50,7 @@ module fetch_stage
           v.stall = 1;
         end
       end
-      jump : begin
+      ctrl : begin
         v.stall = 1;
       end
       inv : begin
@@ -64,6 +64,8 @@ module fetch_stage
     btac_in.upd_pc = d.e.instr0.pc;
     btac_in.upd_npc = d.e.instr0.npc;
     btac_in.upd_addr = d.e.instr0.address;
+    btac_in.upd_jal = d.e.instr0.op.jal;
+    btac_in.upd_jalr = d.e.instr0.op.jalr;
     btac_in.upd_branch = d.e.instr0.op.branch;
     btac_in.upd_jump = d.e.instr0.op.jump;
     btac_in.taken = d.f.taken;
@@ -76,42 +78,49 @@ module fetch_stage
       v.spec = 1;
       v.taken = 0;
       v.pc = csr_out.mtvec;
+      v.taddr = 0;
       v.tpc = 0;
     end else if (csr_out.mret == 1) begin
       v.fence = 0;
       v.spec = 1;
       v.taken = 0;
       v.pc = csr_out.mepc;
+      v.taddr = 0;
+      v.tpc = 0;
+    end else if (btac_out.pred_rest == 1) begin
+      v.fence = 0;
+      v.spec = 1;
+      v.taken = 0;
+      v.pc = btac_out.pred_raddr;
+      v.taddr = 0;
+      v.tpc = 0;
+    end else if (btac_out.pred_miss == 1) begin
+      v.fence = 0;
+      v.spec = 1;
+      v.taken = 0;
+      v.pc = btac_out.pred_maddr;
+      v.taddr = 0;
       v.tpc = 0;
     end else if (btac_out.pred_branch == 1) begin
       v.fence = 0;
       v.spec = 1;
       v.taken = 1;
       v.pc = btac_out.pred_baddr;
-      v.tpc = btac_out.pred_taddr;
-    end else if (btac_out.pred_miss == 1) begin
-      v.fence = 0;
-      v.spec = 1;
-      v.taken = 0;
-      v.pc = btac_out.pred_maddr;
-      v.tpc = 0;
-    end else if (d.e.instr0.op.jump == 1) begin
-      v.fence = 0;
-      v.spec = 1;
-      v.taken = 0;
-      v.pc = d.e.instr0.address;
-      v.tpc = 0;
+      v.taddr = btac_out.pred_baddr;
+      v.tpc = btac_out.pred_pc;
     end else if (d.m.instr0.op.fence == 1) begin
       v.fence = 1;
       v.spec = 1;
       v.taken = 0;
       v.pc = d.m.instr0.npc;
+      v.taddr = 0;
       v.tpc = 0;
     end else if (v.stall == 0) begin
       v.fence = 0;
       v.spec = 0;
       v.taken = 0;
       v.pc = v.pc + 8;
+      v.taddr = 0;
       v.tpc = 0;
     end
 
@@ -127,7 +136,7 @@ module fetch_stage
           v.state = busy;
           v.valid = 1;
         end else if (v.spec == 1) begin
-          v.state = jump;
+          v.state = ctrl;
           v.valid = 0;
         end else if (v.fence == 1) begin
           v.state = inv;
@@ -137,12 +146,12 @@ module fetch_stage
           v.valid = 0;
         end
       end
-      jump : begin
+      ctrl : begin
         if (v.ready == 1) begin
           v.state = busy;
           v.valid = 1;
         end else begin
-          v.state = jump;
+          v.state = ctrl;
           v.valid = 0;
         end
         v.ready = 0;
@@ -175,12 +184,14 @@ module fetch_stage
     y.rdata = v.rdata;
     y.ready = v.ready;
     y.taken = v.taken;
+    y.taddr = v.taddr;
     y.tpc = v.tpc;
 
     q.pc = r.pc;
     q.rdata = r.rdata;
     q.ready = r.ready;
     q.taken = r.taken;
+    q.taddr = r.taddr;
     q.tpc = r.tpc;
 
   end

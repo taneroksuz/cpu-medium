@@ -29,10 +29,11 @@ module buffer_stage
     hazard_in.pc = d.f.pc;
     hazard_in.rdata = a.f.rdata;
     hazard_in.ready = a.f.ready;
-    hazard_in.clear = csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | d.e.instr0.op.jump | d.m.instr0.op.fence | d.w.clear;
+    hazard_in.clear =  a.e.instr0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | btac_out.pred_rest | d.w.clear;
     hazard_in.stall = a.d.stall | a.e.stall | a.m.stall;
   
     v.taken = d.f.taken;
+    v.taddr = d.f.taddr;
     v.tpc = d.f.tpc;
 
     v.pc0 = hazard_out.pc0;
@@ -43,15 +44,6 @@ module buffer_stage
     v.instr1 = hazard_out.instr1;
     v.stall = hazard_out.stall;
 
-    if ((a.d.stall | a.e.stall | a.m.stall | a.e.instr0.op.jump | a.e.instr0.op.fence | a.e.instr0.op.mret | a.e.instr0.op.exception) == 1) begin
-      v.pc0 = 0;
-      v.pc1 = 0;
-      v.npc0 = 0;
-      v.npc1 = 0;
-      v.instr0 = nop_instr;
-      v.instr1 = nop_instr;
-    end
-
     rin = v;
 
     y.pc0 = v.pc0;
@@ -61,6 +53,7 @@ module buffer_stage
     y.instr1 = v.instr0;
     y.instr0 = v.instr1;
     y.taken = v.taken;
+    y.taddr = v.taddr;
     y.tpc = v.tpc;
     y.stall = v.stall;
 
@@ -71,6 +64,7 @@ module buffer_stage
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
     q.taken = r.taken;
+    q.taddr = r.taddr;
     q.tpc = r.tpc;
     q.stall = r.stall;
 

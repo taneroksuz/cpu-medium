@@ -136,19 +136,39 @@ module btac_ctrl
     if (btac_in.clear == 0) begin
       btac_out.pred_branch = (|btb_out.rdata) & (~(|(btb_out.rdata[95:64] ^ btac_in.get_pc)));
       btac_out.pred_baddr = btb_out.rdata[63:32];
-      btac_out.pred_taddr = btb_out.rdata[31:0];
+      btac_out.pred_pc = btb_out.rdata[31:0];
     end else begin
       btac_out.pred_branch = 0;
       btac_out.pred_baddr = 0;
-      btac_out.pred_taddr = 0;
+      btac_out.pred_pc = 0;
     end
 
     if (btac_in.clear == 0) begin
-      btac_out.pred_maddr = (btac_in.upd_jump & btac_in.upd_branch) == 1 ? btac_in.upd_addr : btac_in.tpc;
-      btac_out.pred_miss = btac_in.taken ^ (btac_in.upd_jump & btac_in.upd_branch);
+      if (btac_in.taken == 0) begin
+        if ((btac_in.upd_jump & btac_in.upd_branch) == 0) begin
+          btac_out.pred_maddr = 0;
+          btac_out.pred_miss = 0;
+        end else begin
+          btac_out.pred_maddr = btac_in.upd_addr;
+          btac_out.pred_miss = 1;
+        end
+      end else begin
+        if ((btac_in.upd_jump & btac_in.upd_branch) == 0) begin
+          btac_out.pred_maddr = btac_in.tpc;
+          btac_out.pred_miss = 1;
+        end else begin
+          btac_out.pred_maddr = btac_in.upd_addr;
+          btac_out.pred_miss = |(btac_in.upd_addr ^ btac_in.taddr);
+        end
+      end
     end else begin
       btac_out.pred_maddr = 0;
       btac_out.pred_miss = 0;
+    end
+
+    if (btac_in.clear == 0) begin
+      btac_out.pred_raddr = btac_in.upd_addr;
+      btac_out.pred_rest = btac_in.upd_jal | btac_in.upd_jalr;
     end
 
     btb_in.wen = v.wen;
@@ -219,8 +239,8 @@ module btac
       assign btac_out.pred_baddr = 0;
       assign btac_out.pred_branch = 0;
       assign btac_out.pred_maddr = 0;
-      assign btac_out.pred_taddr = 0;
       assign btac_out.pred_miss = 0;
+      assign btac_out.pred_pc = 0;
 
     end
 

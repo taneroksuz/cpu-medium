@@ -43,8 +43,6 @@ module memory_stage
       v.instr1.op = r.instr1.op_b;
     end
 
-    v.clear = csr_out.trap | csr_out.mret | d.w.clear;
-
     v.stall = 0;
 
     dmem_in.mem_valid = a.e.instr0.op.load | a.e.instr0.op.store | a.e.instr0.op.fload | a.e.instr0.op.fstore | a.e.instr0.op.fence;
@@ -90,7 +88,7 @@ module memory_stage
     fp_forwarding_min.waddr = v.instr0.waddr;
     fp_forwarding_min.wdata = v.instr0.fdata;
 
-    if ((v.stall | v.clear) == 1) begin
+    if ((v.stall | d.w.clear) == 1) begin
       v.instr0.op = init_operation_complex;
       v.instr1.op = init_operation_basic;
     end
@@ -99,7 +97,7 @@ module memory_stage
       v.instr0.op.fence = 1;
     end
 
-    if (v.clear == 1) begin
+    if (d.w.clear == 1) begin
       v.stall = 0;
     end
 

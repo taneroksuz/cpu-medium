@@ -55,6 +55,7 @@ module execute_stage
     v.instr1 = d.d.instr1;
   
     v.taken = d.d.taken;
+    v.taddr = d.d.taddr;
     v.tpc = d.d.tpc;
 
     forwarding0_rin.rden1 = v.instr0.op.rden1;
@@ -100,8 +101,6 @@ module execute_stage
       v.instr0.op = r.instr0.op_b;
       v.instr1.op = r.instr1.op_b;
     end
-
-    v.clear = csr_out.trap | csr_out.mret | d.e.instr0.op.jump | d.m.instr0.op.fence | d.w.clear;
 
     v.stall = 0;
 
@@ -250,25 +249,20 @@ module execute_stage
         v.stall = ~(a.m.stall);
       end
     end
+    
+    v.instr0.op.valid = ~v.instr0.op.nop;
+    v.instr1.op.valid = ~v.instr1.op.nop;
 
     v.instr0.op_b = v.instr0.op;
     v.instr1.op_b = v.instr1.op;
 
-    if ((v.stall | a.m.stall | v.clear) == 1) begin
+    if ((v.stall | a.m.stall | csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | btac_out.pred_rest | d.w.clear) == 1) begin
       v.instr0.op = init_operation_complex;
       v.instr1.op = init_operation_basic;
     end
 
-    if (v.clear == 1) begin
+    if (d.w.clear == 1) begin
       v.stall = 0;
-    end
-
-    if (v.instr0.op.nop == 1) begin
-      v.instr0.op.valid = 0;
-    end
-
-    if (v.instr1.op.nop == 1) begin
-      v.instr1.op.valid = 0;
     end
 
     if ((v.instr0.op.exception | v.instr0.op.mret | v.instr0.op.jump | v.instr0.op.fence) == 1) begin
@@ -280,12 +274,14 @@ module execute_stage
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
     y.taken = v.taken;
+    y.taddr = v.taddr;
     y.tpc = v.tpc;
     y.stall = v.stall;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
     q.taken = r.taken;
+    q.taddr = r.taddr;
     q.tpc = r.tpc;
     q.stall = r.stall;
 
