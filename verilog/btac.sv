@@ -128,7 +128,7 @@ module btac_ctrl
     btb_in.raddr = v.raddr;
 
     if (btac_in.clear == 0) begin
-      v.wen = btac_in.upd_branch & btac_in.upd_jump;
+      v.wen = btac_in.upd_branch == 1 ? btac_in.upd_jump : 0;
       v.waddr = btac_in.upd_pc[btb_depth:1];
       v.wdata = {btac_in.upd_pc,btac_in.upd_addr,btac_in.upd_npc};
     end
@@ -145,20 +145,26 @@ module btac_ctrl
 
     if (btac_in.clear == 0) begin
       if (btac_in.taken == 0) begin
-        if ((btac_in.upd_jump & btac_in.upd_branch) == 0) begin
+        if (btac_in.upd_jump == 0 && btac_in.upd_branch == 1) begin
           btac_out.pred_maddr = 0;
           btac_out.pred_miss = 0;
-        end else begin
+        end else if (btac_in.upd_jump == 1 && btac_in.upd_branch == 1) begin
           btac_out.pred_maddr = btac_in.upd_addr;
           btac_out.pred_miss = 1;
+        end else begin
+          btac_out.pred_maddr = 0;
+          btac_out.pred_miss = 0;
         end
       end else begin
-        if ((btac_in.upd_jump & btac_in.upd_branch) == 0) begin
+        if (btac_in.upd_jump == 0 && btac_in.upd_branch == 1) begin
           btac_out.pred_maddr = btac_in.tpc;
           btac_out.pred_miss = 1;
-        end else begin
+        end else if (btac_in.upd_jump == 1 && btac_in.upd_branch == 1) begin
           btac_out.pred_maddr = btac_in.upd_addr;
           btac_out.pred_miss = |(btac_in.upd_addr ^ btac_in.taddr);
+        end else begin
+          btac_out.pred_maddr = 0;
+          btac_out.pred_miss = 0;
         end
       end
     end else begin
@@ -169,6 +175,9 @@ module btac_ctrl
     if (btac_in.clear == 0) begin
       btac_out.pred_raddr = btac_in.upd_addr;
       btac_out.pred_rest = btac_in.upd_jal | btac_in.upd_jalr;
+    end else begin
+      btac_out.pred_raddr = 0;
+      btac_out.pred_rest = 0;
     end
 
     btb_in.wen = v.wen;

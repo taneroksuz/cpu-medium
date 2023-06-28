@@ -30,10 +30,6 @@ module buffer_stage
     v.taddr = d.f.taddr;
     v.tpc = d.f.tpc;
 
-    if ((d.b.stall | d.d.stall | d.e.stall | d.m.stall) == 1) begin
-      v = r;
-    end
-
     v.clear = csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | btac_out.pred_rest | d.w.clear;
 
     hazard_in.pc = d.f.pc;
@@ -49,10 +45,6 @@ module buffer_stage
     v.instr0 = hazard_out.instr0;
     v.instr1 = hazard_out.instr1;
     v.stall = hazard_out.stall;
-
-    if ((v.stall | a.d.stall | a.e.stall | a.m.stall | a.e.instr0.op.fence | v.clear) == 1) begin
-      v.taken = 0;
-    end
 
     if (v.clear == 1) begin
       v.stall = 0;

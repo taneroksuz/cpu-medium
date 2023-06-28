@@ -215,7 +215,6 @@ module decode_stage
     if ((v.stall | a.e.stall | a.m.stall | a.e.instr0.op.fence | v.clear) == 1) begin
       v.instr0.op = init_operation_complex;
       v.instr1.op = init_operation_basic;
-      v.taken = 0;
     end
 
     if (v.clear == 1) begin
