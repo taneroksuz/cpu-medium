@@ -812,6 +812,7 @@ package wires;
     logic [31 : 0] taddr;
     logic [31 : 0] tpc;
     logic [0  : 0] stall;
+    logic [0  : 0] clear;
   } buffer_out_type;
 
   typedef struct packed{
@@ -825,6 +826,7 @@ package wires;
     logic [31 : 0] taddr;
     logic [31 : 0] tpc;
     logic [0  : 0] stall;
+    logic [0  : 0] clear;
   } buffer_reg_type;
 
   parameter buffer_reg_type init_buffer_reg = '{
@@ -837,7 +839,8 @@ package wires;
     taken : 0,
     taddr : 0,
     tpc : 0,
-    stall : 0
+    stall : 0,
+    clear : 0
   };
 
   typedef struct packed{

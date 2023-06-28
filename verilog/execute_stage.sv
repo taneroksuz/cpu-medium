@@ -261,13 +261,14 @@ module execute_stage
     if ((v.stall | a.m.stall | v.clear) == 1) begin
       v.instr0.op = init_operation_complex;
       v.instr1.op = init_operation_basic;
+      v.taken = 0;
     end
 
     if (v.clear == 1) begin
       v.stall = 0;
     end
 
-    if ((v.instr0.op.exception | v.instr0.op.mret | v.instr0.op.jump | v.instr0.op.fence) == 1) begin
+    if ((v.instr0.op.fence | v.instr0.op.exception | v.instr0.op.mret | v.instr0.op.jump) == 1) begin
       v.instr1.op = init_operation_basic;
     end
 
