@@ -106,13 +106,19 @@ module btac_ctrl
     logic [btb_depth-1 : 0] raddr;
     logic [95 : 0] wdata;
     logic [0  : 0] wen;
+    logic [0  : 0] taken;
+    logic [31 : 0] taddr;
+    logic [31 : 0] tpc;
   } btb_reg_type;
 
   parameter btb_reg_type init_reg = '{
     waddr : 0,
     raddr : 0,
     wdata : 0,
-    wen : 0
+    wen : 0,
+    taken : 0,
+    taddr : 0,
+    tpc : 0
   };
 
   btb_reg_type r, rin, v;
@@ -143,8 +149,22 @@ module btac_ctrl
       btac_out.pred_pc = 0;
     end
 
+    if (btac_in.clear == 0 && btac_in.taken == 1) begin
+      v.taken = btac_in.taken;
+      v.taddr = btac_in.taddr;
+      v.tpc = btac_in.tpc;
+    end else if (btac_in.clear == 0 && btac_in.taken == 0) begin
+      v.taken = r.taken;
+      v.taddr = r.taddr;
+      v.tpc = r.tpc;
+    end else begin
+      v.taken = 0;
+      v.taddr = 0;
+      v.tpc = 0;
+    end
+
     if (btac_in.clear == 0) begin
-      if (btac_in.taken == 0) begin
+      if (v.taken == 0) begin
         if (btac_in.upd_jump == 0 && btac_in.upd_branch == 1) begin
           btac_out.pred_maddr = 0;
           btac_out.pred_miss = 0;
@@ -157,11 +177,13 @@ module btac_ctrl
         end
       end else begin
         if (btac_in.upd_jump == 0 && btac_in.upd_branch == 1) begin
-          btac_out.pred_maddr = btac_in.tpc;
+          btac_out.pred_maddr = v.tpc;
           btac_out.pred_miss = 1;
+          v.taken = 0;
         end else if (btac_in.upd_jump == 1 && btac_in.upd_branch == 1) begin
           btac_out.pred_maddr = btac_in.upd_addr;
-          btac_out.pred_miss = |(btac_in.upd_addr ^ btac_in.taddr);
+          btac_out.pred_miss = |(btac_in.upd_addr ^ v.taddr);
+          v.taken = 0;
         end else begin
           btac_out.pred_maddr = 0;
           btac_out.pred_miss = 0;
@@ -249,6 +271,8 @@ module btac
       assign btac_out.pred_branch = 0;
       assign btac_out.pred_maddr = 0;
       assign btac_out.pred_miss = 0;
+      assign btac_out.pred_raddr = 0;
+      assign btac_out.pred_rest = 0;
       assign btac_out.pred_pc = 0;
 
     end

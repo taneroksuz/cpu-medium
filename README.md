@@ -1,11 +1,11 @@
 # Wolv Z7 CPU core #
 
-Wolv Z7 CPU core supports currently only riscv32-imfb instruction set architecture and is implemented with 5-stage pipeline and Harvard bus architecture. It contains dynamic branch prediction (gshare), instruction and data tightly integrated memory.
+Wolv Z7 CPU core supports currently only riscv32-imfb instruction set architecture and is implemented with 5-stage pipeline and Harvard bus architecture. It contains branch target address cache, instruction and data tightly integrated memory.
 
 ## Dhrystone Benchmark ##
 | Cycles | Dhrystone/s/MHz | DMIPS/s/MHz | Iteration |
 | ------ | --------------- | ----------- | --------- |
-|    411 |            2431 |        1.38 |      1000 |
+|    232 |            4304 |        2.45 |      1000 |
 
 ## Coremark Benchmark ##
 | Cycles | Iteration/s/MHz | Iteration |

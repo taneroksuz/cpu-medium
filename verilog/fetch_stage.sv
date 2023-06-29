@@ -71,7 +71,7 @@ module fetch_stage
     btac_in.taken = d.b.taken;
     btac_in.taddr = d.b.taddr;
     btac_in.tpc = d.b.tpc;
-    btac_in.stall = v.stall;
+    btac_in.stall = d.b.stall | d.d.stall | d.e.stall | d.m.stall;
     btac_in.clear = d.w.clear;
 
     if (csr_out.trap == 1) begin
