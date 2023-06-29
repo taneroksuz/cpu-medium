@@ -5,7 +5,6 @@ package btac_wires;
   import configure::*;
 
   localparam btb_depth = $clog2(branchtarget_depth-1);
-  localparam bht_depth = $clog2(branchhistory_depth-1);
 
   typedef struct packed{
     logic [0 : 0] wen;
@@ -17,19 +16,6 @@ package btac_wires;
   typedef struct packed{
     logic [95 : 0] rdata;
   } btb_out_type;
-
-  typedef struct packed{
-    logic [0 : 0] wen;
-    logic [bht_depth-1 : 0] waddr;
-    logic [bht_depth-1 : 0] raddr1;
-    logic [bht_depth-1 : 0] raddr2;
-    logic [1 : 0] wdata;
-  } bht_in_type;
-
-  typedef struct packed{
-    logic [1 : 0] rdata1;
-    logic [1 : 0] rdata2;
-  } bht_out_type;
 
 endpackage
 
@@ -60,30 +46,6 @@ module btb
 
 endmodule
 
-module bht
-(
-  input logic clock,
-  input bht_in_type bht_in,
-  output bht_out_type bht_out
-);
-  timeunit 1ns;
-  timeprecision 1ps;
-
-  localparam bht_depth = $clog2(branchhistory_depth-1);
-
-  logic [1:0] bht_array[0:branchhistory_depth-1] = '{default:'0};
-
-  assign bht_out.rdata1 = bht_array[bht_in.raddr1];
-  assign bht_out.rdata2 = bht_array[bht_in.raddr2];
-
-  always_ff @(posedge clock) begin
-    if (bht_in.wen == 1) begin
-      bht_array[bht_in.waddr] <= bht_in.wdata;
-    end
-  end
-
-endmodule
-
 module btac_ctrl
 (
   input logic reset,
@@ -91,15 +53,12 @@ module btac_ctrl
   input btac_in_type btac_in,
   output btac_out_type btac_out,
   input btb_out_type btb_out,
-  output btb_in_type btb_in,
-  input bht_out_type bht_out,
-  output bht_in_type bht_in
+  output btb_in_type btb_in
 );
   timeunit 1ns;
   timeprecision 1ps;
 
   localparam btb_depth = $clog2(branchtarget_depth-1);
-  localparam bht_depth = $clog2(branchhistory_depth-1);
 
   typedef struct packed{
     logic [btb_depth-1 : 0] waddr;
@@ -236,21 +195,12 @@ module btac
 
       btb_in_type btb_in;
       btb_out_type btb_out;
-      bht_in_type bht_in;
-      bht_out_type bht_out;
 
       btb btb_comp
       (
         .clock (clock),
         .btb_in (btb_in),
         .btb_out (btb_out)
-      );
-
-      bht bht_comp
-      (
-        .clock (clock),
-        .bht_in (bht_in),
-        .bht_out (bht_out)
       );
 
       btac_ctrl btac_ctrl_comp
@@ -260,9 +210,7 @@ module btac
         .btac_in (btac_in),
         .btac_out (btac_out),
         .btb_in (btb_in),
-        .btb_out (btb_out),
-        .bht_in (bht_in),
-        .bht_out (bht_out)
+        .btb_out (btb_out)
       );
 
     end else begin
