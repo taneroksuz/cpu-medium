@@ -217,6 +217,10 @@ module decode_stage
       v.instr1.op = init_operation_basic;
     end
 
+    if (btac_out.pred_branch == 1) begin
+      v.instr1.op = init_operation_basic;
+    end
+
     if (v.clear == 1) begin
       v.stall = 0;
     end

@@ -102,13 +102,6 @@ module fetch_stage
       v.pc = btac_out.pred_maddr;
       v.taddr = 0;
       v.tpc = 0;
-    end else if (btac_out.pred_branch == 1) begin
-      v.fence = 0;
-      v.spec = 1;
-      v.taken = 1;
-      v.pc = btac_out.pred_baddr;
-      v.taddr = btac_out.pred_baddr;
-      v.tpc = btac_out.pred_pc;
     end else if (d.m.instr0.op.fence == 1) begin
       v.fence = 1;
       v.spec = 1;
@@ -116,6 +109,13 @@ module fetch_stage
       v.pc = d.m.instr0.npc;
       v.taddr = 0;
       v.tpc = 0;
+    end else if (btac_out.pred_branch == 1) begin
+      v.fence = 0;
+      v.spec = 1;
+      v.taken = 1;
+      v.pc = btac_out.pred_baddr;
+      v.taddr = btac_out.pred_baddr;
+      v.tpc = btac_out.pred_pc;
     end else if (v.stall == 0) begin
       v.fence = 0;
       v.spec = 0;
