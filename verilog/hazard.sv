@@ -666,17 +666,6 @@ module hazard
           get = 1;
         end
       end
-      if (fwren[0] == 1) begin
-        if (frden1[1] == 1 && raddr1[1] == waddr[0]) begin
-          get = 1;
-        end
-        if (frden2[1] == 1 && raddr2[1] == waddr[0]) begin
-          get = 1;
-        end
-        if (frden3[1] == 1 && raddr3[1] == waddr[0]) begin
-          get = 1;
-        end
-      end
     end else if (basic[0] == 1 && complex[1] == 1) begin
       get = 1;
     end else if (complex[0] == 1 && complex[1] == 1) begin
