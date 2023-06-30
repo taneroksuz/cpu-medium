@@ -53,6 +53,7 @@ module execute_stage
 
     v.instr0 = d.d.instr0;
     v.instr1 = d.d.instr1;
+    v.swap = d.d.swap;
 
     forwarding0_rin.rden1 = v.instr0.op.rden1;
     forwarding0_rin.rden2 = v.instr0.op.rden2;
@@ -263,18 +264,20 @@ module execute_stage
       v.stall = 0;
     end
 
-    if ((v.instr0.op.fence | v.instr0.op.exception | v.instr0.op.mret | v.instr0.op.jump) == 1) begin
-      v.instr1.op = init_operation_basic;
+    if (v.swap == 0 && (v.instr0.op.fence | v.instr0.op.exception | v.instr0.op.mret | v.instr0.op.jump) == 1) begin
+      v.instr1 = init_instruction_basic;
     end
 
     rin = v;
 
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
+    y.swap = v.swap;
     y.stall = v.stall;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
+    q.swap = r.swap;
     q.stall = r.stall;
 
   end

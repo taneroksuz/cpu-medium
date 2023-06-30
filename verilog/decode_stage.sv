@@ -42,6 +42,7 @@ module decode_stage
     v.instr1.npc = d.b.npc1;
     v.instr0.instr = d.b.instr0;
     v.instr1.instr = d.b.instr1;
+    v.swap = d.b.swap;
 
     if ((d.d.stall | d.e.stall | d.m.stall) == 1) begin
       v = r;
@@ -213,7 +214,7 @@ module decode_stage
       v.instr1.op = init_operation_basic;
     end
 
-    if (btac_out.pred_branch == 1) begin
+    if (v.swap == 0 && btac_out.pred_branch == 1) begin
       v.instr1 = init_instruction_basic;
     end
 
@@ -233,10 +234,12 @@ module decode_stage
 
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
+    y.swap = v.swap;
     y.stall = v.stall;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
+    q.swap = r.swap;
     q.stall = r.stall;
 
   end

@@ -44,6 +44,7 @@ module buffer_stage
     v.npc1 = hazard_out.npc1;
     v.instr0 = hazard_out.instr0;
     v.instr1 = hazard_out.instr1;
+    v.swap = hazard_out.swap;
     v.stall = hazard_out.stall;
 
     if ((a.e.instr0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | btac_out.pred_rest) == 1) begin
@@ -62,6 +63,7 @@ module buffer_stage
     y.npc1 = v.npc1;
     y.instr1 = v.instr0;
     y.instr0 = v.instr1;
+    y.swap = v.swap;
     y.taken = v.taken;
     y.taddr = v.taddr;
     y.tpc = v.tpc;
@@ -73,6 +75,7 @@ module buffer_stage
     q.npc1 = r.npc1;
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
+    q.swap = r.swap;
     q.taken = r.taken;
     q.taddr = r.taddr;
     q.tpc = r.tpc;

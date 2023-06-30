@@ -29,6 +29,8 @@ module hazard
   logic [0 : 0] stall;
   logic [0 : 0] stall_reg;
 
+  logic [0 : 0] swap;
+
   logic [depth-1 : 0] get;
 
   logic [31 : 0] pc [0:1];
@@ -677,7 +679,15 @@ module hazard
         end
       end
     end else if (basic[0] == 1 && complex[1] == 1) begin
-      get = 1;
+      get = 2;
+      if (wren[0] == 1) begin
+        if (rden1[1] == 1 && raddr1[1] == waddr[0]) begin
+          get = 1;
+        end
+        if (rden2[1] == 1 && raddr2[1] == waddr[0]) begin
+          get = 1;
+        end
+      end
     end else if (complex[0] == 1 && complex[1] == 1) begin
       get = 1;
     end else if (complex[0] == 1 || basic[0] == 1) begin
@@ -705,12 +715,15 @@ module hazard
       stall = 0;
     end
 
-    hazard_out.pc0 = get > 0 ? pc[0] : 0;
-    hazard_out.pc1 = get > 1 ? pc[1] : 0;
-    hazard_out.npc0 = get > 0 ? npc[0] : 0;
-    hazard_out.npc1 = get > 1 ? npc[1] : 0;
-    hazard_out.instr0 = get > 0 ? instr[0] : nop_instr;
-    hazard_out.instr1 = get > 1 ? instr[1] : nop_instr;
+    swap = get > 1 ? basic[0] & complex[1] : 0;
+
+    hazard_out.pc0 = get > 0 ? (swap == 0 ? pc[0] : pc[1]) : 0;
+    hazard_out.pc1 = get > 1 ? (swap == 0 ? pc[1] : pc[0]) : 0;
+    hazard_out.npc0 = get > 0 ? (swap == 0 ? npc[0] : npc[1]) : 0;
+    hazard_out.npc1 = get > 1 ? (swap == 0 ? npc[1] : npc[0]) : 0;
+    hazard_out.instr0 = get > 0 ? (swap == 0 ? instr[0] : instr[1]) : nop_instr;
+    hazard_out.instr1 = get > 1 ? (swap == 0 ? instr[1] : instr[0]) : nop_instr;
+    hazard_out.swap = swap;
     hazard_out.stall = stall;
 
   end
