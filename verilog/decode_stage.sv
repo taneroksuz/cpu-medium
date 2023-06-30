@@ -218,7 +218,7 @@ module decode_stage
     end
 
     if (btac_out.pred_branch == 1) begin
-      v.instr1.op = init_operation_basic;
+      v.instr1 = init_instruction_basic;
     end
 
     if (v.clear == 1) begin
