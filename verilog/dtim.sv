@@ -60,8 +60,10 @@ module dtim_ctrl
   input logic clock,
   input dtim_vec_out_type dvec_out,
   output dtim_vec_in_type dvec_in,
-  input dtim_in_type dtim_in,
-  output dtim_out_type dtim_out,
+  input dtim_in_type dtim0_in,
+  output dtim_out_type dtim0_out,
+  input dtim_in_type dtim1_in,
+  output dtim_out_type dtim1_out,
   input mem_out_type dmem_out,
   output mem_in_type dmem_in
 );
@@ -191,17 +193,17 @@ module dtim_ctrl
     v_f.enable = 0;
     v_f.fence = 0;
 
-    if (dtim_in.mem_valid == 1) begin
-        v_f.enable = dtim_in.mem_valid;
-        v_f.fence = dtim_in.mem_fence;
-        v_f.wren = |dtim_in.mem_wstrb;
-        v_f.rden = ~(|dtim_in.mem_wstrb);
-        v_f.data = dtim_in.mem_wdata;
-        v_f.strb = dtim_in.mem_wstrb;
-        v_f.addr = {dtim_in.mem_addr[31:2],2'b00};
-        v_f.tag = dtim_in.mem_addr[31:(depth+width+2)];
-        v_f.did = dtim_in.mem_addr[(depth+width+1):(width+2)];
-        v_f.wid = dtim_in.mem_addr[(width+1):2];
+    if (dtim0_in.mem_valid == 1) begin
+        v_f.enable = dtim0_in.mem_valid;
+        v_f.fence = dtim0_in.mem_fence;
+        v_f.wren = |dtim0_in.mem_wstrb;
+        v_f.rden = ~(|dtim0_in.mem_wstrb);
+        v_f.data = dtim0_in.mem_wdata;
+        v_f.strb = dtim0_in.mem_wstrb;
+        v_f.addr = {dtim0_in.mem_addr[31:2],2'b00};
+        v_f.tag = dtim0_in.mem_addr[31:(depth+width+2)];
+        v_f.did = dtim0_in.mem_addr[(depth+width+1):(width+2)];
+        v_f.wid = dtim0_in.mem_addr[(width+1):2];
     end
 
     rin_f = v_f;
@@ -402,8 +404,8 @@ module dtim_ctrl
     dmem_in.mem_wdata = v_b.wdata;
     dmem_in.mem_wstrb = v_b.wstrb;
 
-    dtim_out.mem_rdata = v_b.rdata;
-    dtim_out.mem_ready = v_b.ready;
+    dtim0_out.mem_rdata = v_b.rdata;
+    dtim0_out.mem_ready = v_b.ready;
 
     rin_b = v_b;
 
@@ -422,57 +424,45 @@ module dtim_ctrl
 endmodule
 
 module dtim
-#(
-  parameter dtim_enable = 1
-)
 (
   input logic reset,
   input logic clock,
-  input dtim_in_type dtim_in,
-  output dtim_out_type dtim_out,
+  input dtim_in_type dtim0_in,
+  output dtim_out_type dtim0_out,
+  input dtim_in_type dtim1_in,
+  output dtim_out_type dtim1_out,
   input mem_out_type dmem_out,
   output mem_in_type dmem_in
 );
   timeunit 1ns;
   timeprecision 1ps;
 
-  generate
+  genvar i;
 
-    genvar i;
+  dtim_vec_in_type dvec_in;
+  dtim_vec_out_type dvec_out;
 
-    if (dtim_enable == 1) begin
+  for (i=0; i<dtim_width; i=i+1) begin
+    dtim_ram dtim_ram_comp
+    (
+      .clock (clock),
+      .dtim_ram_in (dvec_in[i]),
+      .dtim_ram_out (dvec_out[i])
+    );
+  end
 
-      dtim_vec_in_type dvec_in;
-      dtim_vec_out_type dvec_out;
-
-      for (i=0; i<dtim_width; i=i+1) begin
-        dtim_ram dtim_ram_comp
-        (
-          .clock (clock),
-          .dtim_ram_in (dvec_in[i]),
-          .dtim_ram_out (dvec_out[i])
-        );
-      end
-
-      dtim_ctrl dtim_ctrl_comp
-      (
-        .reset (reset),
-        .clock (clock),
-        .dvec_out (dvec_out),
-        .dvec_in (dvec_in),
-        .dtim_in (dtim_in),
-        .dtim_out (dtim_out),
-        .dmem_out (dmem_out),
-        .dmem_in (dmem_in)
-      );
-
-    end else begin
-
-      assign dmem_in = dtim_in;
-      assign dtim_out = dmem_out;
-
-    end
-
-  endgenerate
+  dtim_ctrl dtim_ctrl_comp
+  (
+    .reset (reset),
+    .clock (clock),
+    .dvec_out (dvec_out),
+    .dvec_in (dvec_in),
+    .dtim0_in (dtim0_in),
+    .dtim0_out (dtim0_out),
+    .dtim1_in (dtim1_in),
+    .dtim1_out (dtim1_out),
+    .dmem_out (dmem_out),
+    .dmem_in (dmem_in)
+  );
 
 endmodule

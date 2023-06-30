@@ -27,16 +27,20 @@ module cpu
   timeunit 1ns;
   timeprecision 1ps;
 
-  agu_in_type agu_in;
-  agu_out_type agu_out;
   alu_in_type alu0_in;
   alu_out_type alu0_out;
   alu_in_type alu1_in;
   alu_out_type alu1_out;
+  agu_in_type agu0_in;
+  agu_out_type agu0_out;
+  agu_in_type agu1_in;
+  agu_out_type agu1_out;
   bcu_in_type bcu_in;
   bcu_out_type bcu_out;
-  lsu_in_type lsu_in;
-  lsu_out_type lsu_out;
+  lsu_in_type lsu0_in;
+  lsu_out_type lsu0_out;
+  lsu_in_type lsu1_in;
+  lsu_out_type lsu1_out;
   csr_alu_in_type csr_alu_in;
   csr_alu_out_type csr_alu_out;
   div_in_type div_in;
@@ -116,8 +120,10 @@ module cpu
   fp_forwarding_out_type fp_forwarding_out;
   itim_in_type itim_in;
   itim_out_type itim_out;
-  dtim_in_type dtim_in;
-  dtim_out_type dtim_out;
+  dtim_in_type dtim0_in;
+  dtim_out_type dtim0_out;
+  dtim_in_type dtim1_in;
+  dtim_out_type dtim1_out;
   mem_in_type imem_in;
   mem_out_type imem_out;
   mem_in_type dmem_in;
@@ -214,12 +220,6 @@ module cpu
   assign writeback_in_d.m = memory_out_q;
   assign writeback_in_d.w = writeback_out_q;
 
-  agu agu_comp
-  (
-    .agu_in (agu_in),
-    .agu_out (agu_out)
-  );
-
   alu alu0_comp
   (
     .alu_in (alu0_in),
@@ -232,16 +232,34 @@ module cpu
     .alu_out (alu1_out)
   );
 
+  agu agu0_comp
+  (
+    .agu_in (agu0_in),
+    .agu_out (agu0_out)
+  );
+
+  agu agu1_comp
+  (
+    .agu_in (agu1_in),
+    .agu_out (agu1_out)
+  );
+
   bcu bcu_comp
   (
     .bcu_in (bcu_in),
     .bcu_out (bcu_out)
   );
 
-  lsu lsu_comp
+  lsu lsu0_comp
   (
-    .lsu_in (lsu_in),
-    .lsu_out (lsu_out)
+    .lsu_in (lsu0_in),
+    .lsu_out (lsu0_out)
+  );
+
+  lsu lsu1_comp
+  (
+    .lsu_in (lsu1_in),
+    .lsu_out (lsu1_out)
   );
 
   csr_alu csr_alu_comp
@@ -407,8 +425,10 @@ module cpu
     .alu0_in (alu0_in),
     .alu1_out (alu1_out),
     .alu1_in (alu1_in),
-    .agu_out (agu_out),
-    .agu_in (agu_in),
+    .agu0_out (agu0_out),
+    .agu0_in (agu0_in),
+    .agu1_out (agu1_out),
+    .agu1_in (agu1_in),
     .bcu_out (bcu_out),
     .bcu_in (bcu_in),
     .csr_alu_out (csr_alu_out),
@@ -444,10 +464,14 @@ module cpu
   (
     .reset (reset),
     .clock (clock),
-    .lsu_out (lsu_out),
-    .lsu_in (lsu_in),
-    .dmem_out (dtim_out),
-    .dmem_in (dtim_in),
+    .lsu0_out (lsu0_out),
+    .lsu0_in (lsu0_in),
+    .lsu1_out (lsu1_out),
+    .lsu1_in (lsu1_in),
+    .dmem0_out (dtim0_out),
+    .dmem0_in (dtim0_in),
+    .dmem1_out (dtim1_out),
+    .dmem1_in (dtim1_in),
     .forwarding0_min (forwarding0_min),
     .forwarding1_min (forwarding1_min),
     .fp_forwarding_min (fp_forwarding_min),
@@ -479,9 +503,7 @@ module cpu
     .q (writeback_out_q)
   );
 
-  itim#(
-    .itim_enable (itim_enable)
-  ) itim_comp
+  itim itim_comp
   (
     .reset (reset),
     .clock (clock),
@@ -491,14 +513,14 @@ module cpu
     .imem_in (imem_in)
   );
 
-  dtim#(
-    .dtim_enable (dtim_enable)
-  ) dtim_comp
+  dtim dtim_comp
   (
     .reset (reset),
     .clock (clock),
-    .dtim_in (dtim_in),
-    .dtim_out (dtim_out),
+    .dtim0_in (dtim0_in),
+    .dtim0_out (dtim0_out),
+    .dtim1_in (dtim1_in),
+    .dtim1_out (dtim1_out),
     .dmem_out (dmem_out),
     .dmem_in (dmem_in)
   );

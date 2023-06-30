@@ -9,8 +9,10 @@ module execute_stage
   output alu_in_type alu0_in,
   input alu_out_type alu1_out,
   output alu_in_type alu1_in,
-  input agu_out_type agu_out,
-  output agu_in_type agu_in,
+  input agu_out_type agu0_out,
+  output agu_in_type agu0_in,
+  input agu_out_type agu1_out,
+  output agu_in_type agu1_in,
   input bcu_out_type bcu_out,
   output bcu_in_type bcu_in,
   input csr_alu_out_type csr_alu_out,
@@ -128,24 +130,38 @@ module execute_stage
 
     v.instr0.op.jump = v.instr0.op.jal | v.instr0.op.jalr | bcu_out.branch;
 
-    agu_in.rdata1 = v.instr0.rdata1;
-    agu_in.imm = v.instr0.imm;
-    agu_in.pc = v.instr0.pc;
-    agu_in.auipc = v.instr0.op.auipc;
-    agu_in.jal = v.instr0.op.jal;
-    agu_in.jalr = v.instr0.op.jalr;
-    agu_in.branch = v.instr0.op.branch;
-    agu_in.load = v.instr0.op.load | v.instr0.op.fload;
-    agu_in.store = v.instr0.op.store | v.instr0.op.fstore;
-    agu_in.lsu_op = v.instr0.lsu_op;
+    agu0_in.rdata1 = v.instr0.rdata1;
+    agu0_in.imm = v.instr0.imm;
+    agu0_in.pc = v.instr0.pc;
+    agu0_in.auipc = v.instr0.op.auipc;
+    agu0_in.jal = v.instr0.op.jal;
+    agu0_in.jalr = v.instr0.op.jalr;
+    agu0_in.branch = v.instr0.op.branch;
+    agu0_in.load = v.instr0.op.load | v.instr0.op.fload;
+    agu0_in.store = v.instr0.op.store | v.instr0.op.fstore;
+    agu0_in.lsu_op = v.instr0.lsu_op;
 
-    v.instr0.address = agu_out.address;
-    v.instr0.byteenable = agu_out.byteenable;
+    v.instr0.address = agu0_out.address;
+    v.instr0.byteenable = agu0_out.byteenable;
+
+    agu1_in.rdata1 = v.instr1.rdata1;
+    agu1_in.imm = v.instr1.imm;
+    agu1_in.pc = v.instr1.pc;
+    agu1_in.auipc = 0;
+    agu1_in.jal = 0;
+    agu1_in.jalr = 0;
+    agu1_in.branch = 0;
+    agu1_in.load = v.instr1.op.load;
+    agu1_in.store = v.instr1.op.store;
+    agu1_in.lsu_op = v.instr1.lsu_op;
+
+    v.instr1.address = agu1_out.address;
+    v.instr1.byteenable = agu1_out.byteenable;
 
     if (v.instr0.op.exception == 0) begin
-      v.instr0.op.exception = agu_out.exception;
-      v.instr0.ecause = agu_out.ecause;
-      v.instr0.etval = agu_out.etval;
+      v.instr0.op.exception = agu0_out.exception;
+      v.instr0.ecause = agu0_out.ecause;
+      v.instr0.etval = agu0_out.etval;
       if (v.instr0.op.exception == 1) begin
         if ((v.instr0.op.load | v.instr0.op.fload) == 1) begin
           v.instr0.op.load = 0;
@@ -157,6 +173,14 @@ module execute_stage
         end else if (v.instr0.op.jump == 1) begin
           v.instr0.op.jump = 0;
           v.instr0.op.wren = 0;
+        end
+      end
+      if (v.instr1.op.exception == 1) begin
+        if ((v.instr1.op.load) == 1) begin
+          v.instr1.op.load = 0;
+          v.instr1.op.wren = 0;
+        end else if ((v.instr1.op.store) == 1) begin
+          v.instr1.op.store = 0;
         end
       end
     end
@@ -255,6 +279,10 @@ module execute_stage
     v.instr0.op_b = v.instr0.op;
     v.instr1.op_b = v.instr1.op;
 
+    if (v.swap == 0 && (v.instr0.op.fence | v.instr0.op.exception | v.instr0.op.mret | v.instr0.op.jump) == 1) begin
+      v.instr1 = init_instruction_basic;
+    end
+
     if ((v.stall | a.m.stall | v.clear) == 1) begin
       v.instr0.op = init_operation_complex;
       v.instr1.op = init_operation_basic;
@@ -262,10 +290,6 @@ module execute_stage
 
     if (v.clear == 1) begin
       v.stall = 0;
-    end
-
-    if (v.swap == 0 && (v.instr0.op.fence | v.instr0.op.exception | v.instr0.op.mret | v.instr0.op.jump) == 1) begin
-      v.instr1 = init_instruction_basic;
     end
 
     rin = v;

@@ -434,7 +434,10 @@ package wires;
     logic [0  : 0] wren;
     logic [0  : 0] rden1;
     logic [0  : 0] rden2;
+    logic [0  : 0] load;
+    logic [0  : 0] store;
     logic [0  : 0] nop;
+    logic [0  : 0] exception;
     logic [0  : 0] valid;
   } operation_basic_type;
 
@@ -442,7 +445,10 @@ package wires;
     wren : 0,
     rden1 : 0,
     rden2 : 0,
+    load : 0,
+    store : 0,
     nop : 0,
+    exception : 0,
     valid : 0
   };
 
@@ -457,9 +463,16 @@ package wires;
     logic [31 : 0] rdata1;
     logic [31 : 0] rdata2;
     logic [31 : 0] wdata;
+    logic [31 : 0] ldata;
+    logic [31 : 0] sdata;
+    logic [31 : 0] address;
+    logic [3  : 0] byteenable;
+    logic [3  : 0] ecause;
+    logic [31 : 0] etval;
     operation_basic_type op;
     operation_basic_type op_b;
     alu_op_type alu_op;
+    lsu_op_type lsu_op;
   } instruction_basic_type;
 
   parameter instruction_basic_type init_instruction_basic = '{
@@ -473,9 +486,16 @@ package wires;
     rdata1 : 0,
     rdata2 : 0,
     wdata : 0,
+    ldata : 0,
+    sdata : 0,
+    address : 0,
+    byteenable : 0,
+    ecause : 0,
+    etval : 0,
     op : init_operation_basic,
     op_b : init_operation_basic,
-    alu_op : init_alu_op
+    alu_op : init_alu_op,
+    lsu_op : init_lsu_op
   };
 
   typedef struct packed{
@@ -897,12 +917,14 @@ package wires;
   typedef struct packed{
     instruction_complex_type instr0;
     instruction_basic_type instr1;
+    logic [0  : 0] swap;
     logic [0  : 0] stall;
   } memory_out_type;
 
   typedef struct packed{
     instruction_complex_type instr0;
     instruction_basic_type instr1;
+    logic [0  : 0] swap;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } memory_reg_type;
@@ -910,6 +932,7 @@ package wires;
   parameter memory_reg_type init_memory_reg = '{
     instr0 : init_instruction_complex,
     instr1 : init_instruction_basic,
+    swap : 0,
     stall : 0,
     clear : 0
   };

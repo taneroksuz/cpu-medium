@@ -116,9 +116,12 @@ module decode_stage
     v.instr1.op.wren = decoder1_out.wren;
     v.instr1.op.rden1 = decoder1_out.rden1;
     v.instr1.op.rden2 = decoder1_out.rden2;
+    v.instr1.op.load = decoder1_out.load;
+    v.instr1.op.store = decoder1_out.store;
     v.instr1.op.nop = decoder1_out.nop;
     v.instr1.op.valid = decoder1_out.valid;
     v.instr1.alu_op = decoder1_out.alu_op;
+    v.instr1.lsu_op = decoder1_out.lsu_op;
 
     fp_decode_in.instr = v.instr0.instr;
 
@@ -191,6 +194,12 @@ module decode_stage
       v.instr0.etval = v.instr0.instr;
     end
 
+    if (v.instr1.op.valid == 0) begin
+      v.instr1.op.exception = 1;
+      v.instr1.ecause = except_illegal_instruction;
+      v.instr1.etval = v.instr0.instr;
+    end
+
     if (a.e.instr0.op.cwren == 1 || a.m.instr0.op.cwren == 1) begin
       v.stall = 1;
     end else if (a.e.instr0.op.division == 1) begin
@@ -203,19 +212,23 @@ module decode_stage
       v.stall = 1;
     end else if (a.e.instr0.op.load == 1 && ((v.instr0.op.rden1 == 1 && a.e.instr0.waddr == v.instr0.raddr1) || (v.instr0.op.rden2 == 1 && a.e.instr0.waddr == v.instr0.raddr2))) begin 
       v.stall = 1;
+    end else if (a.e.instr1.op.load == 1 && ((v.instr0.op.rden1 == 1 && a.e.instr1.waddr == v.instr0.raddr1) || (v.instr0.op.rden2 == 1 && a.e.instr1.waddr == v.instr0.raddr2))) begin 
+      v.stall = 1;
     end else if (a.e.instr0.op.load == 1 && ((v.instr1.op.rden1 == 1 && a.e.instr0.waddr == v.instr1.raddr1) || (v.instr1.op.rden2 == 1 && a.e.instr0.waddr == v.instr1.raddr2))) begin 
+      v.stall = 1;
+    end else if (a.e.instr1.op.load == 1 && ((v.instr1.op.rden1 == 1 && a.e.instr1.waddr == v.instr1.raddr1) || (v.instr1.op.rden2 == 1 && a.e.instr1.waddr == v.instr1.raddr2))) begin 
       v.stall = 1;
     end else if (a.e.instr0.op.fload == 1 && ((v.instr0.op.frden1 == 1 && a.e.instr0.waddr == v.instr0.raddr1) || (v.instr0.op.frden2 == 1 && a.e.instr0.waddr == v.instr0.raddr2) || (v.instr0.op.frden3 == 1 && a.e.instr0.waddr == v.instr0.raddr3))) begin 
       v.stall = 1;
     end
 
+    if (v.swap == 0 && btac_out.pred_branch == 1) begin
+      v.instr1 = init_instruction_basic;
+    end
+
     if ((v.stall | a.e.stall | a.m.stall | a.e.instr0.op.fence | v.clear) == 1) begin
       v.instr0.op = init_operation_complex;
       v.instr1.op = init_operation_basic;
-    end
-
-    if (v.swap == 0 && btac_out.pred_branch == 1) begin
-      v.instr1 = init_instruction_basic;
     end
 
     if (v.clear == 1) begin

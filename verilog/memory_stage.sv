@@ -6,10 +6,14 @@ module memory_stage
 (
   input logic reset,
   input logic clock,
-  input lsu_out_type lsu_out,
-  output lsu_in_type lsu_in,
-  input dtim_out_type dmem_out,
-  output dtim_in_type dmem_in,
+  input lsu_out_type lsu0_out,
+  output lsu_in_type lsu0_in,
+  input lsu_out_type lsu1_out,
+  output lsu_in_type lsu1_in,
+  input dtim_out_type dmem0_out,
+  output dtim_in_type dmem0_in,
+  input dtim_out_type dmem1_out,
+  output dtim_in_type dmem1_in,
   output forwarding_memory_in_type forwarding0_min,
   output forwarding_memory_in_type forwarding1_min,
   output fp_forwarding_memory_in_type fp_forwarding_min,
@@ -36,6 +40,7 @@ module memory_stage
 
     v.instr0 = d.e.instr0;
     v.instr1 = d.e.instr1;
+    v.swap = d.e.swap;
 
     if (d.m.stall == 1) begin
       v = r;
@@ -47,32 +52,53 @@ module memory_stage
 
     v.clear = csr_out.trap | csr_out.mret | d.w.clear;
 
-    dmem_in.mem_valid = a.e.instr0.op.load | a.e.instr0.op.store | a.e.instr0.op.fload | a.e.instr0.op.fstore | a.e.instr0.op.fence;
-    dmem_in.mem_fence = a.e.instr0.op.fence;
-    dmem_in.mem_spec = 0;
-    dmem_in.mem_instr = 0;
-    dmem_in.mem_addr = a.e.instr0.address;
-    dmem_in.mem_wdata = store_data(a.e.instr0.sdata,a.e.instr0.lsu_op.lsu_sb,a.e.instr0.lsu_op.lsu_sh,a.e.instr0.lsu_op.lsu_sw);
-    dmem_in.mem_wstrb = ((a.e.instr0.op.load | a.e.instr0.op.fload) == 1) ? 4'h0 : a.e.instr0.byteenable;
+    dmem0_in.mem_valid = a.e.instr0.op.load | a.e.instr0.op.store | a.e.instr0.op.fload | a.e.instr0.op.fstore | a.e.instr0.op.fence;
+    dmem0_in.mem_fence = a.e.instr0.op.fence;
+    dmem0_in.mem_spec = 0;
+    dmem0_in.mem_instr = 0;
+    dmem0_in.mem_addr = a.e.instr0.address;
+    dmem0_in.mem_wdata = store_data(a.e.instr0.sdata,a.e.instr0.lsu_op.lsu_sb,a.e.instr0.lsu_op.lsu_sh,a.e.instr0.lsu_op.lsu_sw);
+    dmem0_in.mem_wstrb = (a.e.instr0.op.load | a.e.instr0.op.fload) == 1 ? 4'h0 : a.e.instr0.byteenable;
 
-    lsu_in.ldata = dmem_out.mem_rdata;
-    lsu_in.byteenable = v.instr0.byteenable;
-    lsu_in.lsu_op = v.instr0.lsu_op;
+    dmem1_in.mem_valid = a.e.instr1.op.load | a.e.instr1.op.store;
+    dmem1_in.mem_fence = 0;
+    dmem1_in.mem_spec = 0;
+    dmem1_in.mem_instr = 0;
+    dmem1_in.mem_addr = a.e.instr1.address;
+    dmem1_in.mem_wdata = store_data(a.e.instr1.sdata,a.e.instr1.lsu_op.lsu_sb,a.e.instr1.lsu_op.lsu_sh,a.e.instr1.lsu_op.lsu_sw);
+    dmem1_in.mem_wstrb = a.e.instr1.op.load == 1 ? 4'h0 : a.e.instr1.byteenable;
 
-    v.instr0.ldata = lsu_out.result;
+    lsu0_in.ldata = dmem0_out.mem_rdata;
+    lsu0_in.byteenable = v.instr0.byteenable;
+    lsu0_in.lsu_op = v.instr0.lsu_op;
+
+    v.instr0.ldata = lsu0_out.result;
+
+    lsu1_in.ldata = dmem1_out.mem_rdata;
+    lsu1_in.byteenable = v.instr1.byteenable;
+    lsu1_in.lsu_op = v.instr1.lsu_op;
+
+    v.instr1.ldata = lsu1_out.result;
 
     if (v.instr0.op.load == 1) begin
       v.instr0.wdata = v.instr0.ldata;
-      v.stall = ~(dmem_out.mem_ready);
+      v.stall = ~(dmem0_out.mem_ready);
     end else if (v.instr0.op.store == 1) begin
-      v.stall = ~(dmem_out.mem_ready);
+      v.stall = ~(dmem0_out.mem_ready);
     end else if (v.instr0.op.fload == 1) begin
       v.instr0.fdata = v.instr0.ldata;
-      v.stall = ~(dmem_out.mem_ready);
+      v.stall = ~(dmem0_out.mem_ready);
     end else if (v.instr0.op.fstore == 1) begin
-      v.stall = ~(dmem_out.mem_ready);
+      v.stall = ~(dmem0_out.mem_ready);
     end else if (v.instr0.op.fence == 1) begin
-      v.stall = ~(dmem_out.mem_ready);
+      v.stall = ~(dmem0_out.mem_ready);
+    end
+
+    if (v.instr1.op.load == 1) begin
+      v.instr1.wdata = v.instr1.ldata;
+      v.stall = ~(dmem0_out.mem_ready);
+    end else if (v.instr1.op.store == 1) begin
+      v.stall = ~(dmem0_out.mem_ready);
     end
 
     v.instr0.op_b = v.instr0.op;
@@ -89,6 +115,10 @@ module memory_stage
     fp_forwarding_min.wren = v.instr0.op.fwren;
     fp_forwarding_min.waddr = v.instr0.waddr;
     fp_forwarding_min.wdata = v.instr0.fdata;
+
+    if (v.swap == 0 && v.instr0.op.fence == 1) begin
+      v.instr1 = init_instruction_basic;
+    end
 
     if ((v.stall | v.clear) == 1) begin
       v.instr0.op = init_operation_complex;
@@ -107,12 +137,12 @@ module memory_stage
     csr_win.cwaddr = v.instr0.caddr;
     csr_win.cdata = v.instr0.cdata;
 
-    csr_ein.valid = v.instr0.op.valid;
+    csr_ein.valid = v.instr0.op.valid | v.instr1.op.valid;
     csr_ein.mret = v.instr0.op.mret;
     csr_ein.exception = v.instr0.op.exception;
-    csr_ein.epc = v.instr0.pc;
-    csr_ein.ecause = v.instr0.ecause;
-    csr_ein.etval = v.instr0.etval;
+    csr_ein.epc = v.instr0.op.exception ? v.instr0.pc : v.instr1.pc;
+    csr_ein.ecause = v.instr0.op.exception ? v.instr0.ecause : v.instr1.ecause;
+    csr_ein.etval = v.instr0.op.exception ? v.instr0.etval : v.instr1.etval;
 
     fp_csr_win.cwren = v.instr0.op.cwren;
     fp_csr_win.cwaddr = v.instr0.caddr;
@@ -125,10 +155,12 @@ module memory_stage
 
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
+    y.swap = v.swap;
     y.stall = v.stall;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
+    q.swap = r.swap;
     q.stall = r.stall;
 
   end

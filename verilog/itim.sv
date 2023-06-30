@@ -383,9 +383,6 @@ module itim_ctrl
 endmodule
 
 module itim
-#(
-  parameter itim_enable = 1
-)
 (
   input logic reset,
   input logic clock,
@@ -397,43 +394,30 @@ module itim
   timeunit 1ns;
   timeprecision 1ps;
 
-  generate
+  genvar i;
 
-    genvar i;
+  itim_vec_in_type ivec_in;
+  itim_vec_out_type ivec_out;
 
-    if (itim_enable == 1) begin
+  for (i=0; i<itim_width; i=i+1) begin
+    itim_ram itim_ram_comp
+    (
+      .clock (clock),
+      .itim_ram_in (ivec_in[i]),
+      .itim_ram_out (ivec_out[i])
+    );
+  end
 
-      itim_vec_in_type ivec_in;
-      itim_vec_out_type ivec_out;
-
-      for (i=0; i<itim_width; i=i+1) begin
-        itim_ram itim_ram_comp
-        (
-          .clock (clock),
-          .itim_ram_in (ivec_in[i]),
-          .itim_ram_out (ivec_out[i])
-        );
-      end
-
-      itim_ctrl itim_ctrl_comp
-      (
-        .reset (reset),
-        .clock (clock),
-        .ivec_out (ivec_out),
-        .ivec_in (ivec_in),
-        .itim_in (itim_in),
-        .itim_out (itim_out),
-        .imem_out (imem_out),
-        .imem_in (imem_in)
-      );
-
-    end else begin
-
-      assign imem_in = itim_in;
-      assign itim_out = imem_out;
-
-    end
-
-  endgenerate
+  itim_ctrl itim_ctrl_comp
+  (
+    .reset (reset),
+    .clock (clock),
+    .ivec_out (ivec_out),
+    .ivec_in (ivec_in),
+    .itim_in (itim_in),
+    .itim_out (itim_out),
+    .imem_out (imem_out),
+    .imem_in (imem_in)
+  );
 
 endmodule
