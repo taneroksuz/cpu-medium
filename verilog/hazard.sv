@@ -656,7 +656,17 @@ module hazard
       end
     endcase
 
-    if (((basic[0] & basic[1]) | (complex[0] & basic[1])) == 1) begin
+    if (basic[0] == 1 && basic[1] == 1) begin
+      get = 2;
+      if (wren[0] == 1) begin
+        if (rden1[1] == 1 && raddr1[1] == waddr[0]) begin
+          get = 1;
+        end
+        if (rden2[1] == 1 && raddr2[1] == waddr[0]) begin
+          get = 1;
+        end
+      end
+    end else if (complex[0] == 1 && basic[1] == 1) begin
       get = 2;
       if (wren[0] == 1) begin
         if (rden1[1] == 1 && raddr1[1] == waddr[0]) begin
