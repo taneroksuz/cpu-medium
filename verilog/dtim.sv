@@ -78,6 +78,25 @@ module dtim_ctrl
   localparam [2:0] ldst = 2;
   localparam [2:0] fence = 3;
 
+  task enable_data;
+    output logic [31:0] data_o;
+    input logic [31:0] data_i;
+    input logic [31:0] data_s;
+    input logic [3:0] strb;
+    input logic [0:0] set;
+    begin
+      data_o = data_i;
+      if (strb[0] == set)
+        data_o[7:0] = data_s[7:0];
+      if (strb[1] == set)
+        data_o[15:8] = data_s[15:8];
+      if (strb[2] == set)
+        data_o[23:16] = data_s[23:16];
+      if (strb[3] == set)
+        data_o[31:24] = data_s[31:24];
+    end
+  endtask
+
   typedef struct packed{
     logic [29-(depth+width):0] tag0;
     logic [29-(depth+width):0] tag1;
@@ -159,9 +178,12 @@ module dtim_ctrl
     logic [3:0] sstrb;
     logic [0:0] store;
     logic [0:0] clear;
-    logic [0:0] ldst;
-    logic [0:0] miss;
-    logic [0:0] hit;
+    logic [0:0] ldst0;
+    logic [0:0] ldst1;
+    logic [0:0] miss0;
+    logic [0:0] miss1;
+    logic [0:0] hit0;
+    logic [0:0] hit1;
     logic [0:0] lock0;
     logic [0:0] lock1;
     logic [0:0] lock;
@@ -219,9 +241,12 @@ module dtim_ctrl
     sstrb : 0,
     store : 0,
     clear : 0,
-    ldst : 0,
-    miss : 0,
-    hit : 0,
+    ldst0 : 0,
+    ldst1 : 0,
+    miss0 : 0,
+    miss1 : 0,
+    hit0 : 0,
+    hit1 : 0,
     lock0 : 0,
     lock1 : 0,
     lock : 0,
@@ -262,7 +287,6 @@ module dtim_ctrl
     v_f.enable1 = 0;
     v_f.wren0 = 0;
     v_f.rden0 = 0;
-
 
     if (dtim0_in.mem_valid == 1) begin
       v_f.enable0 = dtim0_in.mem_valid;
@@ -306,9 +330,12 @@ module dtim_ctrl
     v_b.rden1 = 0;
 
     v_b.clear = 0;
-    v_b.ldst = 0;
-    v_b.miss = 0;
-    v_b.hit = 0;
+    v_b.ldst0 = 0;
+    v_b.ldst1 = 0;
+    v_b.miss0 = 0;
+    v_b.miss1 = 0;
+    v_b.hit0 = 0;
+    v_b.hit1 = 0;
 
     v_b.lock0 = 0;
     v_b.lock1 = 0;
@@ -365,13 +392,22 @@ module dtim_ctrl
           if (v_b.fence == 1) begin
             v_b.clear = v_b.enable0;
           end else if (v_b.addr0 < dtim_base_addr || v_b.addr0 >= dtim_top_addr) begin
-            v_b.ldst = v_b.enable0;
+            v_b.ldst0 = v_b.enable0;
           end else if (v_b.dlock0 == 0) begin
-            v_b.miss = v_b.enable0;
+            v_b.miss0 = v_b.enable0;
           end else if (|(v_b.dtag0 ^ v_b.tag0) == 1) begin
-            v_b.ldst = v_b.enable0;
+            v_b.ldst0 = v_b.enable0;
           end else begin
-            v_b.hit = v_b.enable0;
+            v_b.hit0 = v_b.enable0;
+          end
+          if (v_b.addr1 < dtim_base_addr || v_b.addr1 >= dtim_top_addr) begin
+            v_b.ldst1 = v_b.enable1;
+          end else if (v_b.dlock1 == 0) begin
+            v_b.miss1 = v_b.enable1;
+          end else if (|(v_b.dtag1 ^ v_b.tag1) == 1) begin
+            v_b.ldst1 = v_b.enable1;
+          end else begin
+            v_b.hit1 = v_b.enable1;
           end
           if (v_b.clear == 1) begin
             v_b.state = fence;
@@ -380,31 +416,27 @@ module dtim_ctrl
             v_b.inv = 1;
             v_b.pass = 1;
             v_b.valid = 0;
-          end else if (v_b.miss == 1) begin
+          end
+          if (v_b.miss0 == 1) begin
             v_b.state = miss;
             v_b.valid = 1;
             v_b.addr = v_b.addr0;
             v_b.store = v_b.wren0;
             v_b.sstrb = v_b.wren0 ? v_b.strb0 : 0;
             v_b.sdata = v_b.wren0 ? v_b.data0 : 0;
-          end else if (v_b.ldst == 1) begin
+          end
+          if (v_b.ldst0 == 1) begin
             v_b.state = ldst;
             v_b.valid = 1;
             v_b.addr = v_b.addr0;
             v_b.wstrb = v_b.wren0 ? v_b.strb0 : 0;
             v_b.wdata = v_b.wren0 ? v_b.data0 : 0;
-          end else if (v_b.hit == 1) begin
+          end
+          if (v_b.hit0 == 1) begin
             v_b.wen0 = v_b.wren0;
             v_b.lock0 = v_b.wren0;
             v_b.dirty0 = v_b.wren0;
-            if (v_b.strb0[0] == 0)
-              v_b.data0[7:0] = v_b.ddata0[7:0];
-            if (v_b.strb0[1] == 0)
-              v_b.data0[15:8] = v_b.ddata0[15:8];
-            if (v_b.strb0[2] == 0)
-              v_b.data0[23:16] = v_b.ddata0[23:16];
-            if (v_b.strb0[3] == 0)
-              v_b.data0[31:24] = v_b.ddata0[31:24];
+            enable_data(v_b.data0,v_b.data0,v_b.ddata0,v_b.strb0,0);
             v_b.valid = 0;
             v_b.rdata = v_b.rden0 ? v_b.ddata0 : 0;
             v_b.ready = 1;
@@ -417,14 +449,7 @@ module dtim_ctrl
             v_b.lock0 = 1;
             v_b.dirty0 = v_b.store;
             v_b.data0 = dmem_out.mem_rdata;
-            if (v_b.sstrb[0] == 1)
-              v_b.data0[7:0] = v_b.sdata[7:0];
-            if (v_b.sstrb[1] == 1)
-              v_b.data0[15:8] = v_b.sdata[15:8];
-            if (v_b.sstrb[2] == 1)
-              v_b.data0[23:16] = v_b.sdata[23:16];
-            if (v_b.sstrb[3] == 1)
-              v_b.data0[31:24] = v_b.sdata[31:24];
+            enable_data(v_b.data0,v_b.data0,v_b.sdata,v_b.sstrb,1);
             v_b.valid = 0;
             v_b.store = 0;
             v_b.sstrb = 0;
