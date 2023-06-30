@@ -118,11 +118,17 @@ module decode_stage
     v.instr1.op.wren = decoder1_out.wren;
     v.instr1.op.rden1 = decoder1_out.rden1;
     v.instr1.op.rden2 = decoder1_out.rden2;
+    v.instr1.op.auipc = decoder1_out.auipc;
+    v.instr1.op.lui = decoder1_out.lui;
+    v.instr1.op.jal = decoder1_out.jal;
+    v.instr1.op.jalr = decoder1_out.jalr;
+    v.instr1.op.branch = decoder1_out.branch;
     v.instr1.op.load = decoder1_out.load;
     v.instr1.op.store = decoder1_out.store;
     v.instr1.op.nop = decoder1_out.nop;
     v.instr1.op.valid = decoder1_out.valid;
     v.instr1.alu_op = decoder1_out.alu_op;
+    v.instr1.bcu_op = decoder1_out.bcu_op;
     v.instr1.lsu_op = decoder1_out.lsu_op;
 
     fp_decode_in.instr = v.instr0.instr;

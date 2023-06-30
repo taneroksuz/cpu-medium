@@ -434,9 +434,15 @@ package wires;
     logic [0  : 0] wren;
     logic [0  : 0] rden1;
     logic [0  : 0] rden2;
+    logic [0  : 0] auipc;
+    logic [0  : 0] lui;
+    logic [0  : 0] jal;
+    logic [0  : 0] jalr;
+    logic [0  : 0] branch;
     logic [0  : 0] load;
     logic [0  : 0] store;
     logic [0  : 0] nop;
+    logic [0  : 0] jump;
     logic [0  : 0] exception;
     logic [0  : 0] valid;
   } operation_basic_type;
@@ -445,9 +451,15 @@ package wires;
     wren : 0,
     rden1 : 0,
     rden2 : 0,
+    auipc : 0,
+    lui : 0,
+    jal : 0,
+    jalr : 0,
+    branch : 0,
     load : 0,
     store : 0,
     nop : 0,
+    jump : 0,
     exception : 0,
     valid : 0
   };
@@ -473,6 +485,7 @@ package wires;
     operation_basic_type op;
     operation_basic_type op_b;
     alu_op_type alu_op;
+    bcu_op_type bcu_op;
     lsu_op_type lsu_op;
   } instruction_basic_type;
 
@@ -497,6 +510,7 @@ package wires;
     op : init_operation_basic,
     op_b : init_operation_basic,
     alu_op : init_alu_op,
+    bcu_op : init_bcu_op,
     lsu_op : init_lsu_op
   };
 

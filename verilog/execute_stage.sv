@@ -147,10 +147,10 @@ module execute_stage
     agu1_in.rdata1 = v.instr1.rdata1;
     agu1_in.imm = v.instr1.imm;
     agu1_in.pc = v.instr1.pc;
-    agu1_in.auipc = 0;
-    agu1_in.jal = 0;
-    agu1_in.jalr = 0;
-    agu1_in.branch = 0;
+    agu1_in.auipc = v.instr1.op.auipc;
+    agu1_in.jal = v.instr1.op.jal;
+    agu1_in.jalr = v.instr1.op.jalr;
+    agu1_in.branch = v.instr1.op.branch;
     agu1_in.load = v.instr1.op.load;
     agu1_in.store = v.instr1.op.store;
     agu1_in.lsu_op = v.instr1.lsu_op;
@@ -181,6 +181,9 @@ module execute_stage
           v.instr1.op.wren = 0;
         end else if ((v.instr1.op.store) == 1) begin
           v.instr1.op.store = 0;
+        end else if (v.instr1.op.jump == 1) begin
+          v.instr1.op.jump = 0;
+          v.instr1.op.wren = 0;
         end
       end
     end
@@ -249,6 +252,16 @@ module execute_stage
         v.instr0.wdata = v.instr0.bcdata;
     end else if (v.instr0.op.fpu == 1) begin
         v.instr0.wdata = v.instr0.fdata;
+    end
+
+    if (v.instr1.op.auipc == 1) begin
+      v.instr1.wdata = v.instr1.address;
+    end else if (v.instr1.op.lui == 1) begin
+      v.instr1.wdata = v.instr1.imm;
+    end else if (v.instr1.op.jal == 1) begin
+      v.instr1.wdata = v.instr1.npc;
+    end else if (v.instr1.op.jalr == 1) begin
+      v.instr1.wdata = v.instr1.npc;
     end
 
     csr_alu_in.cdata = v.instr0.cdata;
