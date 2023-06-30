@@ -456,6 +456,7 @@ package wires;
     logic [31 : 0] pc;
     logic [31 : 0] npc;
     logic [31 : 0] instr;
+    logic [95 : 0] instr_str;
     logic [31 : 0] imm;
     logic [4  : 0] waddr;
     logic [4  : 0] raddr1;
@@ -478,7 +479,8 @@ package wires;
   parameter instruction_basic_type init_instruction_basic = '{
     pc : 0,
     npc : 0,
-    instr : 0,
+    instr : nop_instr,
+    instr_str : "nop",
     imm : 0,
     waddr : 0,
     raddr1 : 0,
@@ -578,6 +580,7 @@ package wires;
     logic [31 : 0] pc;
     logic [31 : 0] npc;
     logic [31 : 0] instr;
+    logic [95 : 0] instr_str;
     logic [31 : 0] imm;
     logic [4  : 0] waddr;
     logic [4  : 0] raddr1;
@@ -623,7 +626,8 @@ package wires;
   parameter instruction_complex_type init_instruction_complex = '{
     pc : 0,
     npc : 0,
-    instr : 0,
+    instr : nop_instr,
+    instr_str : "nop",
     imm : 0,
     waddr : 0,
     raddr1 : 0,
@@ -671,6 +675,7 @@ package wires;
   } decoder_in_type;
 
   typedef struct packed{
+    logic [95 : 0] instr_str;
     logic [31 : 0] imm;
     logic [0  : 0] wren;
     logic [0  : 0] rden1;
@@ -710,6 +715,7 @@ package wires;
   } fp_decode_in_type;
 
   typedef struct packed{
+    logic [95 : 0] instr_str;
     logic [31 : 0] imm;
     logic [0  : 0] wren;
     logic [0  : 0] rden1;

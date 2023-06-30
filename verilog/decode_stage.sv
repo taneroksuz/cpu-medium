@@ -73,6 +73,7 @@ module decode_stage
 
     decoder0_in.instr = v.instr0.instr;
 
+    v.instr0.instr_str = decoder0_out.instr_str;
     v.instr0.imm = decoder0_out.imm;
     v.instr0.op.wren = decoder0_out.wren;
     v.instr0.op.rden1 = decoder0_out.rden1;
@@ -112,6 +113,7 @@ module decode_stage
 
     decoder1_in.instr = v.instr1.instr;
 
+    v.instr1.instr_str = decoder1_out.instr_str;
     v.instr1.imm = decoder1_out.imm;
     v.instr1.op.wren = decoder1_out.wren;
     v.instr1.op.rden1 = decoder1_out.rden1;
@@ -126,6 +128,7 @@ module decode_stage
     fp_decode_in.instr = v.instr0.instr;
 
     if (fp_decode_out.valid == 1) begin
+      v.instr0.instr_str = fp_decode_out.instr_str;
       v.instr0.imm = fp_decode_out.imm;
       v.instr0.fmt = fp_decode_out.fmt;
       v.instr0.rm = fp_decode_out.rm;

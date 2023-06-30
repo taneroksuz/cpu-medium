@@ -11,6 +11,8 @@ module decoder
 
   logic [31 : 0] instr;
 
+  logic [95 : 0] instr_str;
+
   logic [31 : 0] imm_c;
   logic [31 : 0] imm_i;
   logic [31 : 0] imm_s;
@@ -80,6 +82,8 @@ module decoder
 
     instr = decoder_in.instr;
 
+    instr_str = "nop";
+
     imm_c = {27'h0,instr[19:15]};
     imm_i = {{20{instr[31]}},instr[31:20]};
     imm_s = {{20{instr[31]}},instr[31:25],instr[11:7]};
@@ -148,27 +152,32 @@ module decoder
 
     case (opcode)
       opcode_lui : begin
+        instr_str = "lui";
         imm = imm_u;
         wren = nonzero_waddr;
         lui = 1;
       end
       opcode_auipc : begin
+        instr_str = "auipc";
         imm = imm_u;
         wren = nonzero_waddr;
         auipc = 1;
       end
       opcode_jal : begin
+        instr_str = "jal";
         wren = nonzero_waddr;
         imm = imm_j;
         jal = 1;
       end
       opcode_jalr : begin
+        instr_str = "jalr";
         imm = imm_i;
         wren = nonzero_waddr;
         rden1 = 1;
         jalr = 1;
       end
       opcode_branch : begin
+        instr_str = "branch";
         imm = imm_b;
         rden1 = 1;
         rden2 = 1;
@@ -184,6 +193,7 @@ module decoder
         endcase
       end
       opcode_load : begin
+        instr_str = "load";
         imm = imm_i;
         wren = nonzero_waddr;
         rden1 = 1;
@@ -198,6 +208,7 @@ module decoder
         endcase;
       end
       opcode_store : begin
+        instr_str = "store";
         imm = imm_s;
         rden1 = 1;
         rden2 = 1;
@@ -214,38 +225,65 @@ module decoder
         rden1 = 1;
         imm = imm_i;
         case (funct3)
-          funct_add : alu_op.alu_add = 1;
-          funct_slt : alu_op.alu_slt = 1;
-          funct_sltu : alu_op.alu_sltu = 1;
-          funct_and : alu_op.alu_and = 1;
-          funct_or : alu_op.alu_or = 1;
-          funct_xor : alu_op.alu_xor = 1;
+          funct_add : begin
+            instr_str = "addi";
+            alu_op.alu_add = 1;
+          end
+          funct_slt : begin
+            instr_str = "slti";
+            alu_op.alu_slt = 1;
+          end
+          funct_sltu : begin
+            instr_str = "sltiu";
+            alu_op.alu_sltu = 1;
+          end
+          funct_and : begin
+            instr_str = "andi";
+            alu_op.alu_and = 1;
+          end
+          funct_or : begin
+            instr_str = "ori";
+            alu_op.alu_or = 1;
+          end
+          funct_xor : begin
+            instr_str = "xori";
+            alu_op.alu_xor = 1;
+          end
           funct_sll : begin
             if (funct7 == 7'b0000000) begin
+              instr_str = "slli";
               alu_op.alu_sll = 1;
             end else if (funct7 == 7'b0100100) begin
+              instr_str = "bclr";
               bitm = 1;
               bit_op.bit_zbs.bit_bclr = 1;
             end else if (funct7 == 7'b0010100) begin
+              instr_str = "bset";
               bitm = 1;
               bit_op.bit_zbs.bit_bset = 1;
             end else if (funct7 == 7'b0110100) begin
+              instr_str = "binv";
               bitm = 1;
               bit_op.bit_zbs.bit_binv = 1;
             end else if (funct7 == 7'b0110000) begin
               if (funct5 == 5'b00000) begin
+                instr_str = "clz";
                 bitm = 1;
                 bit_op.bit_zbb.bit_clz = 1;
               end else if (funct5 == 5'b00001) begin
+                instr_str = "ctz";
                 bitm = 1;
                 bit_op.bit_zbb.bit_ctz = 1;
               end else if (funct5 == 5'b00010) begin
+                instr_str = "cpop";
                 bitm = 1;
                 bit_op.bit_zbb.bit_cpop = 1;
               end else if (funct5 == 5'b00100) begin
+                instr_str = "sextb";
                 bitm = 1;
                 bit_op.bit_zbb.bit_sextb = 1;
               end else if (funct5 == 5'b00101) begin
+                instr_str = "sexth";
                 bitm = 1;
                 bit_op.bit_zbb.bit_sexth = 1;
               end else begin
@@ -257,19 +295,25 @@ module decoder
           end
           funct_srl : begin
             if (funct7 == 7'b0000000) begin
+              instr_str = "srli";
               alu_op.alu_srl = 1;
             end else if (funct7 == 7'b0100000) begin
+              instr_str = "srai";
               alu_op.alu_sra = 1;
             end else if (funct7 == 7'b0100100) begin
+              instr_str = "bext";
               bitm = 1;
               bit_op.bit_zbs.bit_bext = 1;
             end else if (funct7 == 7'b0110000) begin
+              instr_str = "ror";
               bitm = 1;
               bit_op.bit_zbb.bit_ror = 1;
             end else if (funct7 == 7'b0010100 && funct5 == 5'b00111) begin
+              instr_str = "orcb";
               bitm = 1;
               bit_op.bit_zbb.bit_orcb = 1;
             end else if (funct7 == 7'b0110100 && funct5 == 5'b11000) begin
+              instr_str = "rev8";
               bitm = 1;
               bit_op.bit_zbb.bit_rev8 = 1;
             end else begin
@@ -285,29 +329,62 @@ module decoder
         rden2 = 1;
         if (funct7 == 7'b0000000) begin
           case (funct3)
-            funct_add : alu_op.alu_add = 1;
-            funct_sll : alu_op.alu_sll = 1;
-            funct_srl : alu_op.alu_srl = 1;
-            funct_slt : alu_op.alu_slt = 1;
-            funct_sltu : alu_op.alu_sltu = 1;
-            funct_and : alu_op.alu_and = 1;
-            funct_or : alu_op.alu_or = 1;
-            funct_xor : alu_op.alu_xor = 1;
+            funct_add : begin
+              instr_str = "add";
+              alu_op.alu_add = 1;
+            end
+            funct_sll : begin
+              instr_str = "sll";
+              alu_op.alu_sll = 1;
+            end
+            funct_srl : begin
+              instr_str = "srl";
+              alu_op.alu_srl = 1;
+            end
+            funct_slt : begin
+              instr_str = "slt";
+              alu_op.alu_slt = 1;
+            end
+            funct_sltu : begin
+              instr_str = "sltu";
+              alu_op.alu_sltu = 1;
+            end
+            funct_and : begin
+              instr_str = "and";
+              alu_op.alu_and = 1;
+            end
+            funct_or : begin
+              instr_str = "or";
+              alu_op.alu_or = 1;
+            end
+            funct_xor : begin
+              instr_str = "xor";
+              alu_op.alu_xor = 1;
+            end
             default : valid = 0;
           endcase;
         end else if (funct7 == 7'b0100000) begin
           case (funct3)
-            funct_add : alu_op.alu_sub = 1;
-            funct_srl : alu_op.alu_sra = 1;
+            funct_add : begin
+              instr_str = "sub";
+              alu_op.alu_sub = 1;
+            end
+            funct_srl : begin
+              instr_str = "sra";
+              alu_op.alu_sra = 1;
+            end
             funct_and : begin
+              instr_str = "andn";
               bitm = 1;
               bit_op.bit_zbb.bit_andn = 1;
             end
             funct_or : begin
+              instr_str = "orn";
               bitm = 1;
               bit_op.bit_zbb.bit_orn = 1;
             end
             funct_xor : begin
+              instr_str = "xnor";
               bitm = 1;
               bit_op.bit_zbb.bit_xnor = 1;
             end
@@ -316,14 +393,17 @@ module decoder
         end else if (funct7 == 7'b0010000) begin
           case (funct3)
             funct_sh1add : begin
+              instr_str = "sh1add";
               bitm = 1;
               bit_op.bit_zba.bit_sh1add = 1;
             end
             funct_sh2add : begin
+              instr_str = "sh2add";
               bitm = 1;
               bit_op.bit_zba.bit_sh2add = 1;
             end
             funct_sh3add : begin
+              instr_str = "sh3add";
               bitm = 1;
               bit_op.bit_zba.bit_sh3add = 1;
             end
@@ -332,30 +412,37 @@ module decoder
         end else if (funct7 == 7'b0000101) begin
           case (funct3)
             funct_clmul : begin
+              instr_str = "clmul";
               bitc = 1;
               bit_op.bit_zbc.bit_clmul_ = 1;
             end
             funct_clmulr : begin
+              instr_str = "clmulr";
               bitc = 1;
               bit_op.bit_zbc.bit_clmulr = 1;
             end
             funct_clmulh : begin
+              instr_str = "clmulh";
               bitc = 1;
               bit_op.bit_zbc.bit_clmulh = 1;
             end
             funct_min : begin
+              instr_str = "min";
               bitm = 1;
               bit_op.bit_zbb.bit_min = 1;
             end
             funct_minu : begin
+              instr_str = "minu";
               bitm = 1;
               bit_op.bit_zbb.bit_minu = 1;
             end
             funct_max : begin
+              instr_str = "max";
               bitm = 1;
               bit_op.bit_zbb.bit_max = 1;
             end
             funct_maxu : begin
+              instr_str = "maxu";
               bitm = 1;
               bit_op.bit_zbb.bit_maxu = 1;
             end
@@ -364,10 +451,12 @@ module decoder
         end else if (funct7 == 7'b0100100) begin
           case (funct3)
             funct_bclr : begin
+              instr_str = "bclr";
               bitm = 1;
               bit_op.bit_zbs.bit_bclr = 1;
             end
             funct_bext : begin
+              instr_str = "bext";
               bitm = 1;
               bit_op.bit_zbs.bit_bext = 1;
             end
@@ -376,6 +465,7 @@ module decoder
         end else if (funct7 == 7'b0010100) begin
           case (funct3)
             funct_bset : begin
+              instr_str = "bset";
               bitm = 1;
               bit_op.bit_zbs.bit_bset = 1;
             end
@@ -384,6 +474,7 @@ module decoder
         end else if (funct7 == 7'b0110100) begin
           case (funct3)
             funct_binv : begin
+              instr_str = "binv";
               bitm = 1;
               bit_op.bit_zbs.bit_binv = 1;
             end
@@ -392,10 +483,12 @@ module decoder
         end else if (funct7 == 7'b0110000) begin
           case (funct3)
             funct_rol : begin
+              instr_str = "rol";
               bitm = 1;
               bit_op.bit_zbb.bit_rol = 1;
             end
             funct_ror : begin
+              instr_str = "ror";
               bitm = 1;
               bit_op.bit_zbb.bit_ror = 1;
             end
@@ -404,6 +497,7 @@ module decoder
         end else if (funct7 == 7'b0000100 && funct5 == 5'b00000) begin
           case (funct3)
             funct_zexth : begin
+              instr_str = "zexth";
               bitm = 1;
               bit_op.bit_zbb.bit_zexth = 1;
             end
@@ -412,34 +506,42 @@ module decoder
         end else if (funct7 == 7'b0000001) begin
           case (funct3)
             funct_mul : begin
+              instr_str = "mul";
               mult = 1;
               mul_op.muls = 1;
             end
             funct_mulh :  begin
+              instr_str = "mulh";
               mult = 1;
               mul_op.mulh = 1;
             end
             funct_mulhsu :  begin
+              instr_str = "mulhsu";
               mult = 1;
               mul_op.mulhsu = 1;
             end
             funct_mulhu :  begin
+              instr_str = "mulhu";
               mult = 1;
               mul_op.mulhu = 1;
             end
             funct_div :  begin
+              instr_str = "div";
               division = 1;
               div_op.divs = 1;
             end
             funct_divu :  begin
+              instr_str = "divu";
               division = 1;
               div_op.divu = 1;
             end
             funct_rem :  begin
+              instr_str = "rem";
               division = 1;
               div_op.rem = 1;
             end
             funct_remu :  begin
+              instr_str = "remu";
               division = 1;
               div_op.remu = 1;
             end
@@ -447,6 +549,7 @@ module decoder
         end
       end
       opcode_fence : begin
+        instr_str = "fence";
         if (funct3 == 0) begin
           fence = 1;
         end else if (funct3 == 1) begin
@@ -457,13 +560,26 @@ module decoder
         imm = imm_c;
         if (funct3 == 0) begin
           case (caddr)
-            csr_ecall : ecall = 1;
-            csr_ebreak : ebreak = 1;
-            csr_mret : mret = 1;
-            csr_wfi : wfi = 1;
+            csr_ecall : begin
+              instr_str = "ecall";
+              ecall = 1;
+            end
+            csr_ebreak : begin
+              instr_str = "ebreak";
+              ebreak = 1;
+            end
+            csr_mret : begin
+              instr_str = "mret";
+              mret = 1;
+            end
+            csr_wfi : begin
+              instr_str = "wfi";
+              wfi = 1;
+            end
             default : valid = 0;
           endcase
         end else if (funct3 == 1) begin
+          instr_str = "csrrw";
           wren = nonzero_waddr;
           rden1 = 1;
           cwren = 1;
@@ -471,6 +587,7 @@ module decoder
           csr_op.csrrw = 1;
           csreg = 1;
         end else if (funct3 == 2) begin
+          instr_str = "csrrs";
           wren = nonzero_waddr;
           rden1 = 1;
           cwren = nonzero_raddr1;
@@ -478,6 +595,7 @@ module decoder
           csr_op.csrrs = 1;
           csreg = 1;
         end else if (funct3 == 3) begin
+          instr_str = "csrrc";
           wren = nonzero_waddr;
           rden1 = 1;
           cwren = nonzero_raddr1;
@@ -485,18 +603,21 @@ module decoder
           csr_op.csrrc = 1;
           csreg = 1;
         end else if (funct3 == 5) begin
+          instr_str = "csrrwi";
           wren = nonzero_waddr;
           cwren = 1;
           crden = nonzero_waddr;
           csr_op.csrrwi = 1;
           csreg = 1;
         end else if (funct3 == 6) begin
+          instr_str = "csrrsi";
           wren = nonzero_waddr;
           cwren = nonzero_imm_c;
           crden = 1;
           csr_op.csrrsi = 1;
           csreg = 1;
         end else if (funct3 == 7) begin
+          instr_str = "csrrci";
           wren = nonzero_waddr;
           cwren = nonzero_imm_c;
           crden = 1;
@@ -508,6 +629,7 @@ module decoder
     endcase;
 
     if (instr == nop_instr) begin
+      instr_str = "nop";
       alu_op.alu_add = 0;
       nop = 1;
     end
@@ -516,6 +638,7 @@ module decoder
       imm = {27'h0,shamt};
     end
 
+    decoder_out.instr_str = instr_str;
     decoder_out.imm = imm;
     decoder_out.wren = wren;
     decoder_out.rden1 = rden1;

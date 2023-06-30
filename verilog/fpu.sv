@@ -13,6 +13,8 @@ module fpu_decode
 
   logic [31 : 0] instr;
 
+  logic [95 : 0] instr_str;
+
   logic [31 : 0] imm_i;
   logic [31 : 0] imm_s;
 
@@ -50,6 +52,8 @@ module fpu_decode
 
     instr = fp_decode_in.instr;
 
+    instr_str = "";
+
     imm_i = {{20{instr[31]}},instr[31:20]};
     imm_s = {{20{instr[31]}},instr[31:25],instr[11:7]};
 
@@ -86,6 +90,7 @@ module fpu_decode
 
     case (opcode)
       opcode_fload : begin
+        instr_str = "fload";
         imm = imm_i;
         rden1 = 1;
         fwren = 1;
@@ -98,6 +103,7 @@ module fpu_decode
         end
       end
       opcode_fstore : begin
+        instr_str = "fstore";
         imm = imm_s;
         rden1 = 1;
         frden2 = 1;
@@ -112,6 +118,7 @@ module fpu_decode
       opcode_fp : begin
         case (funct7[6:2])
           funct_fadd : begin 
+            instr_str = "fadd";
             fwren = 1;
             frden1 = 1;
             frden2 = 1;
@@ -121,6 +128,7 @@ module fpu_decode
             fpu_op.fadd = 1;
           end
           funct_fsub : begin
+            instr_str = "fsub";
             fwren = 1;
             frden1 = 1;
             frden2 = 1;
@@ -130,6 +138,7 @@ module fpu_decode
             fpu_op.fsub = 1;
           end
           funct_fmul : begin
+            instr_str = "fmul";
             fwren = 1;
             frden1 = 1;
             frden2 = 1;
@@ -139,6 +148,7 @@ module fpu_decode
             fpu_op.fmul = 1;
           end
           funct_fdiv : begin
+            instr_str = "fdiv";
             fwren = 1;
             frden1 = 1;
             frden2 = 1;
@@ -148,6 +158,7 @@ module fpu_decode
             fpu_op.fdiv = 1;
           end
           funct_fsqrt : begin
+            instr_str = "fsqrt";
             fwren = 1;
             frden1 = 1;
             fpu = 1;
@@ -156,6 +167,7 @@ module fpu_decode
             fpu_op.fsqrt = 1;
           end
           funct_fsgnj : begin
+            instr_str = "fsgnj";
             fwren = 1;
             frden1 = 1;
             frden2 = 1;
@@ -163,6 +175,7 @@ module fpu_decode
             fpu_op.fsgnj = 1;
           end
           funct_fminmax : begin
+            instr_str = "fmin";
             fwren = 1;
             frden1 = 1;
             frden2 = 1;
@@ -171,6 +184,7 @@ module fpu_decode
             fpu_op.fmax = 1;
           end
           funct_fcomp : begin
+            instr_str = "fcomp";
             wren = 1;
             frden1 = 1;
             frden2 = 1;
@@ -179,6 +193,7 @@ module fpu_decode
             fpu_op.fcmp = 1;
           end
           funct_fmv_f2i : begin
+            instr_str = "fmv";
             wren = 1;
             frden1 = 1;
             fpu = 1;
@@ -189,12 +204,14 @@ module fpu_decode
             end
           end
           funct_fmv_i2f : begin
+            instr_str = "fmv";
             rden1 = 1;
             fwren = 1;
             fpu = 1;
             fpu_op.fmv_i2f = 1;
           end
           funct_fconv_f2i : begin
+            instr_str = "fconv";
             wren = 1;
             frden1 = 1;
             fpu = 1;
@@ -202,6 +219,7 @@ module fpu_decode
             fpu_op.fcvt_f2i = 1;
           end
           funct_fconv_i2f : begin
+            instr_str = "fconv";
             rden1 = 1;
             fwren = 1;
             fpu = 1;
@@ -212,6 +230,7 @@ module fpu_decode
         endcase
       end
       opcode_fmadd : begin
+        instr_str = "fmadd";
         fwren = 1;
         frden1 = 1;
         frden2 = 1;
@@ -222,6 +241,7 @@ module fpu_decode
         fpu_op.fmadd = 1;
       end
       opcode_fmsub : begin
+        instr_str = "fmsub";
         fwren = 1;
         frden1 = 1;
         frden2 = 1;
@@ -232,6 +252,7 @@ module fpu_decode
         fpu_op.fmsub = 1;
       end
       opcode_fnmsub : begin
+        instr_str = "fnmsub";
         fwren = 1;
         frden1 = 1;
         frden2 = 1;
@@ -242,6 +263,7 @@ module fpu_decode
         fpu_op.fnmsub = 1;
       end
       opcode_fnmadd : begin
+        instr_str = "fnmadd";
         fwren = 1;
         frden1 = 1;
         frden2 = 1;
@@ -254,6 +276,7 @@ module fpu_decode
       default : valid = 0;
     endcase
 
+    fp_decode_out.instr_str = instr_str;
     fp_decode_out.imm = imm;
     fp_decode_out.wren = wren;
     fp_decode_out.fwren = fwren;
