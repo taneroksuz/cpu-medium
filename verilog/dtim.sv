@@ -70,22 +70,6 @@ module dtim_ctrl
   timeunit 1ns;
   timeprecision 1ps;
 
-  task enable_data;
-    output [31:0] result;
-    input [31:0] data;
-    input [3:0] strb;
-    begin
-      if (~strb[0])
-        result[7:0] = data[7:0];
-      if (~strb[1])
-        result[15:8] = data[15:8];
-      if (~strb[2])
-        result[23:16] = data[23:16];
-      if (~strb[3])
-        result[31:24] = data[31:24];
-    end
-  endtask
-
   localparam depth = $clog2(dtim_depth-1);
   localparam width = $clog2(dtim_width-1);
 
@@ -271,9 +255,14 @@ module dtim_ctrl
     v_f = r_f;
 
     v_f.enable0 = 0;
-    v_f.enable1 = 0;
-
     v_f.fence = 0;
+    v_f.wren0 = 0;
+    v_f.rden0 = 0;
+
+    v_f.enable1 = 0;
+    v_f.wren0 = 0;
+    v_f.rden0 = 0;
+
 
     if (dtim0_in.mem_valid == 1) begin
       v_f.enable0 = dtim0_in.mem_valid;
@@ -408,7 +397,14 @@ module dtim_ctrl
             v_b.wen0 = v_b.wren0;
             v_b.lock0 = v_b.wren0;
             v_b.dirty0 = v_b.wren0;
-            enable_data(v_b.data0,v_b.ddata0,v_b.strb0);
+            if (v_b.strb0[0] == 0)
+              v_b.data0[7:0] = v_b.ddata0[7:0];
+            if (v_b.strb0[1] == 0)
+              v_b.data0[15:8] = v_b.ddata0[15:8];
+            if (v_b.strb0[2] == 0)
+              v_b.data0[23:16] = v_b.ddata0[23:16];
+            if (v_b.strb0[3] == 0)
+              v_b.data0[31:24] = v_b.ddata0[31:24];
             v_b.valid = 0;
             v_b.rdata = v_b.rden0 ? v_b.ddata0 : 0;
             v_b.ready = 1;
@@ -421,7 +417,14 @@ module dtim_ctrl
             v_b.lock0 = 1;
             v_b.dirty0 = v_b.store;
             v_b.data0 = dmem_out.mem_rdata;
-            enable_data(v_b.data0,v_b.sdata,v_b.sstrb);
+            if (v_b.sstrb[0] == 1)
+              v_b.data0[7:0] = v_b.sdata[7:0];
+            if (v_b.sstrb[1] == 1)
+              v_b.data0[15:8] = v_b.sdata[15:8];
+            if (v_b.sstrb[2] == 1)
+              v_b.data0[23:16] = v_b.sdata[23:16];
+            if (v_b.sstrb[3] == 1)
+              v_b.data0[31:24] = v_b.sdata[31:24];
             v_b.valid = 0;
             v_b.store = 0;
             v_b.sstrb = 0;
@@ -474,32 +477,45 @@ module dtim_ctrl
         begin
         end
     endcase
+    
+    for (int i=0; i<dtim_width; i=i+1) begin
+      dvec_in[i].raddr = 0;
+    end
 
-    dvec_in[rin_f.wid0].raddr = rin_f.did0;
-    dvec_in[rin_f.wid1].raddr = rin_f.did1;
+    if (rin_f.rden0 == 1 || rin_f.wren0 == 1) begin
+      dvec_in[rin_f.wid0].raddr = rin_f.did0;
+    end
+    if (rin_f.rden1 == 1 || rin_f.wren1 == 1) begin
+      dvec_in[rin_f.wid1].raddr = rin_f.did1;
+    end
 
     if (v_b.pass == 1) begin
       for (int i=0; i<dtim_width; i=i+1) begin
         dvec_in[i].raddr = v_b.did;
       end
     end
+    
+    for (int i=0; i<dtim_width; i=i+1) begin
+      dvec_in[i].wen = 0;
+      dvec_in[i].waddr = 0;
+      dvec_in[i].wdata = 0;
+    end
 
-    dvec_in[v_b.wid0].wen = v_b.wen0;
-    dvec_in[v_b.wid0].waddr = v_b.did0;
-    dvec_in[v_b.wid0].wdata = {v_b.lock0,v_b.dirty0,v_b.tag0,v_b.data0};
-
-    dvec_in[v_b.wid1].wen = v_b.wen1;
-    dvec_in[v_b.wid1].waddr = v_b.did1;
-    dvec_in[v_b.wid1].wdata = {v_b.lock1,v_b.dirty1,v_b.tag1,v_b.data1};
+    if (v_b.wen0 == 1) begin
+      dvec_in[v_b.wid0].wen = v_b.wen0;
+      dvec_in[v_b.wid0].waddr = v_b.did0;
+      dvec_in[v_b.wid0].wdata = {v_b.lock0,v_b.dirty0,v_b.tag0,v_b.data0};
+    end
+    if (v_b.wen1 == 1) begin
+      dvec_in[v_b.wid1].wen = v_b.wen1;
+      dvec_in[v_b.wid1].waddr = v_b.did1;
+      dvec_in[v_b.wid1].wdata = {v_b.lock1,v_b.dirty1,v_b.tag1,v_b.data1};
+    end
 
     if (v_b.inv == 1) begin
       for (int i=0; i<dtim_width; i=i+1) begin
         if (i[width-1:0] == v_b.wid) begin
           dvec_in[i].wen = v_b.en;
-          dvec_in[i].waddr = v_b.did;
-          dvec_in[i].wdata = 0;
-        end else begin
-          dvec_in[i].wen = 0;
           dvec_in[i].waddr = v_b.did;
           dvec_in[i].wdata = 0;
         end
