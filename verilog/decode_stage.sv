@@ -38,8 +38,8 @@ module decode_stage
 
     v.instr0.pc = a.f.ready ? d.f.pc : 32'hFFFFFFFF;
     v.instr1.pc = a.f.ready ? (d.f.pc + 4) : 32'hFFFFFFFF;
-    v.instr0.instr = a.f.ready ? a.f.rdata[31:0] : nop_instr;
-    v.instr1.instr = a.f.ready ? a.f.rdata[63:32] : nop_instr;
+    v.instr0.instr = a.f.ready ? a.f.rdata[31:0] : 0;
+    v.instr1.instr = a.f.ready ? a.f.rdata[63:32] : 0;
 
     v.instr0.npc = v.instr0.pc + 4;
     v.instr1.npc = v.instr1.pc + 4;
@@ -206,32 +206,33 @@ module decode_stage
       v.instr1.fpu_op = fp_decode1_out.fpu_op;
     end
 
-    if (v.instr0.op.valid == 0) begin
-      v.instr0.op.exception = 1;
-      v.instr0.ecause = except_illegal_instruction;
-      v.instr0.etval = v.instr0.instr;
-    end else if (v.instr0.op.ebreak == 1) begin
-      v.instr0.op.exception = 1;
-      v.instr0.ecause = except_breakpoint;
-      v.instr0.etval = v.instr0.instr;
-    end else if (v.instr0.op.ecall == 1) begin
-      v.instr0.op.exception = 1;
-      v.instr0.ecause = except_env_call_mach;
-      v.instr0.etval = v.instr0.instr;
-    end
-
-    if (v.instr1.op.valid == 0) begin
-      v.instr1.op.exception = 1;
-      v.instr1.ecause = except_illegal_instruction;
-      v.instr1.etval = v.instr1.instr;
-    end else if (v.instr1.op.ebreak == 1) begin
-      v.instr1.op.exception = 1;
-      v.instr1.ecause = except_breakpoint;
-      v.instr1.etval = v.instr1.instr;
-    end else if (v.instr1.op.ecall == 1) begin
-      v.instr1.op.exception = 1;
-      v.instr1.ecause = except_env_call_mach;
-      v.instr1.etval = v.instr1.instr;
+    if (a.f.ready == 1) begin
+      if (v.instr0.op.valid == 0) begin
+        v.instr0.op.exception = 1;
+        v.instr0.ecause = except_illegal_instruction;
+        v.instr0.etval = v.instr0.instr;
+      end else if (v.instr0.op.ebreak == 1) begin
+        v.instr0.op.exception = 1;
+        v.instr0.ecause = except_breakpoint;
+        v.instr0.etval = v.instr0.instr;
+      end else if (v.instr0.op.ecall == 1) begin
+        v.instr0.op.exception = 1;
+        v.instr0.ecause = except_env_call_mach;
+        v.instr0.etval = v.instr0.instr;
+      end
+      if (v.instr1.op.valid == 0) begin
+        v.instr1.op.exception = 1;
+        v.instr1.ecause = except_illegal_instruction;
+        v.instr1.etval = v.instr1.instr;
+      end else if (v.instr1.op.ebreak == 1) begin
+        v.instr1.op.exception = 1;
+        v.instr1.ecause = except_breakpoint;
+        v.instr1.etval = v.instr1.instr;
+      end else if (v.instr1.op.ecall == 1) begin
+        v.instr1.op.exception = 1;
+        v.instr1.ecause = except_env_call_mach;
+        v.instr1.etval = v.instr1.instr;
+      end
     end
 
     if ((v.stall | a.i.stall | a.e.stall | a.m.stall) == 1) begin

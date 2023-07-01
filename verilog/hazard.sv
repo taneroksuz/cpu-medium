@@ -52,6 +52,8 @@ module hazard
 
     v = r;
 
+    v.pass = 0;
+    v.swap = 0;
     v.stall = 0;
 
     if (hazard_in.clear == 0) begin
