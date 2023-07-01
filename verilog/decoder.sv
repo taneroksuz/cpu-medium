@@ -83,7 +83,7 @@ module decoder
 
     instr = decoder_in.instr;
 
-    instr_str = "nop";
+    instr_str = "";
 
     imm_c = {27'h0,instr[19:15]};
     imm_i = {{20{instr[31]}},instr[31:20]};
