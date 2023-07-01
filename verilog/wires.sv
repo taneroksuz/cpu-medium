@@ -413,8 +413,6 @@ package wires;
     logic [0  : 0] pred_branch;
     logic [31 : 0] pred_maddr;
     logic [0  : 0] pred_miss;
-    logic [31 : 0] pred_raddr;
-    logic [0  : 0] pred_rest;
     logic [31 : 0] pred_pc;
   } btac_out_type;
 

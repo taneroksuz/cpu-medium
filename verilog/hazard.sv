@@ -124,16 +124,16 @@ module hazard
         wren[0] = nonzero_waddr[0];
       end
       opcode_jal : begin
-        basic[0] = 1;
+        complex[0] = 1;
         wren[0] = nonzero_waddr[0];
       end
       opcode_jalr : begin
-        basic[0] = 1;
+        complex[0] = 1;
         wren[0] = nonzero_waddr[0];
         rden1[0] = 1;
       end
       opcode_branch : begin
-        basic[0] = 1;
+        complex[0] = 1;
         rden1[0] = 1;
         rden2[0] = 1;
       end
@@ -396,16 +396,16 @@ module hazard
         wren[1] = nonzero_waddr[1];
       end
       opcode_jal : begin
-        basic[1] = 1;
+        complex[1] = 1;
         wren[1] = nonzero_waddr[1];
       end
       opcode_jalr : begin
-        basic[1] = 1;
+        complex[1] = 1;
         wren[1] = nonzero_waddr[1];
         rden1[1] = 1;
       end
       opcode_branch : begin
-        basic[1] = 1;
+        complex[1] = 1;
         rden1[1] = 1;
         rden2[1] = 1;
       end
@@ -717,10 +717,10 @@ module hazard
 
     swap = get > 1 ? basic[0] & complex[1] : 0;
 
-    hazard_out.pc0 = get > 0 ? (swap == 0 ? pc[0] : pc[1]) : 0;
-    hazard_out.pc1 = get > 1 ? (swap == 0 ? pc[1] : pc[0]) : 0;
-    hazard_out.npc0 = get > 0 ? (swap == 0 ? npc[0] : npc[1]) : 0;
-    hazard_out.npc1 = get > 1 ? (swap == 0 ? npc[1] : npc[0]) : 0;
+    hazard_out.pc0 = get > 0 ? (swap == 0 ? pc[0] : pc[1]) : -1;
+    hazard_out.pc1 = get > 1 ? (swap == 0 ? pc[1] : pc[0]) : -1;
+    hazard_out.npc0 = get > 0 ? (swap == 0 ? npc[0] : npc[1]) : -1;
+    hazard_out.npc1 = get > 1 ? (swap == 0 ? npc[1] : npc[0]) : -1;
     hazard_out.instr0 = get > 0 ? (swap == 0 ? instr[0] : instr[1]) : nop_instr;
     hazard_out.instr1 = get > 1 ? (swap == 0 ? instr[1] : instr[0]) : nop_instr;
     hazard_out.swap = swap;

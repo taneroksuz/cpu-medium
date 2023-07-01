@@ -94,13 +94,6 @@ module fetch_stage
       v.pc = csr_out.mepc;
       v.taddr = 0;
       v.tpc = 0;
-    end else if (btac_out.pred_rest == 1) begin
-      v.fence = 0;
-      v.spec = 1;
-      v.taken = 0;
-      v.pc = btac_out.pred_raddr;
-      v.taddr = 0;
-      v.tpc = 0;
     end else if (btac_out.pred_miss == 1) begin
       v.fence = 0;
       v.spec = 1;
