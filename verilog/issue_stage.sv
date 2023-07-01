@@ -50,7 +50,7 @@ module issue_stage
     v.instr0 = hazard_out.instr0;
     v.instr1 = hazard_out.instr1;
     v.swap = hazard_out.swap;
-    v.stall = hazard_out.stall;
+    v.halt = hazard_out.stall;
 
     if (csr_out.fs == 2'b00) begin
       v.instr0.fmt = 0;
@@ -112,12 +112,6 @@ module issue_stage
 
     if (a.e.instr0.op.cwren == 1 || a.m.instr0.op.cwren == 1) begin
       v.stall = 1;
-    end else if (a.e.instr0.op.division == 1) begin
-      v.stall = 1;
-    end else if (a.e.instr0.op.bitc == 1) begin
-      v.stall = 1;
-    end else if (a.e.instr0.op.fpuc == 1) begin
-      v.stall = 1;
     end else if (v.instr0.op.crden == 1 && (v.instr0.caddr == csr_fflags || v.instr0.caddr == csr_fcsr) && (a.e.instr0.op.fpuf == 1 || a.m.instr0.op.fpuf == 1)) begin
       v.stall = 1;
     end else if (a.e.instr0.op.load == 1 && ((v.instr0.op.rden1 == 1 && a.e.instr0.waddr == v.instr0.raddr1) || (v.instr0.op.rden2 == 1 && a.e.instr0.waddr == v.instr0.raddr2))) begin 
@@ -146,6 +140,7 @@ module issue_stage
     end
 
     if (v.clear == 1) begin
+      v.halt = 0;
       v.stall = 0;
     end
 
@@ -154,12 +149,12 @@ module issue_stage
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
     y.swap = v.swap;
-    y.stall = v.stall;
+    y.stall = v.stall | v.halt;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
     q.swap = r.swap;
-    q.stall = r.stall;
+    q.stall = r.stall | r.halt;
 
   end
 

@@ -235,7 +235,7 @@ module decode_stage
       end
     end
 
-    if ((v.stall | a.i.stall | a.e.stall | a.m.stall) == 1) begin
+    if ((v.stall | a.i.stall) == 1) begin
       v.instr0.op = init_operation;
       v.instr1.op = init_operation;
     end

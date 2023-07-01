@@ -771,6 +771,7 @@ package wires;
     instruction_type instr0;
     instruction_type instr1;
     logic [0  : 0] swap;
+    logic [0  : 0] halt;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } issue_reg_type;
@@ -779,6 +780,7 @@ package wires;
     instr0 : init_instruction,
     instr1 : init_instruction,
     swap : 0,
+    halt : 0,
     stall : 0,
     clear : 0
   };
