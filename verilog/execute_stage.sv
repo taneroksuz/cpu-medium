@@ -303,11 +303,18 @@ module execute_stage
 
     if (v.swap == 0 && (v.instr0.op.fence | v.instr0.op.exception | v.instr0.op.mret | v.instr0.op.jump) == 1) begin
       v.instr1 = init_instruction_basic;
+    end else if (v.swap == 1 && (v.instr1.op.exception | v.instr1.op.jump) == 1) begin
+      v.instr0 = init_instruction_complex;
     end
 
-    if ((v.stall | a.m.stall | v.clear) == 1) begin
+    if ((v.stall | a.m.stall) == 1) begin
       v.instr0.op = init_operation_complex;
       v.instr1.op = init_operation_basic;
+    end
+
+    if (v.clear == 1) begin
+      v.instr0 = init_instruction_complex;
+      v.instr1 = init_instruction_basic;
     end
 
     if (v.clear == 1) begin

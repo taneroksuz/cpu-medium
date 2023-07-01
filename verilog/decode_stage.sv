@@ -231,13 +231,14 @@ module decode_stage
       v.stall = 1;
     end
 
-    if (v.swap == 0 && btac_out.pred_branch == 1) begin
-      v.instr1 = init_instruction_basic;
-    end
-
-    if ((v.stall | a.e.stall | a.m.stall | a.e.instr0.op.fence | v.clear) == 1) begin
+    if ((v.stall | a.e.stall | a.m.stall) == 1) begin
       v.instr0.op = init_operation_complex;
       v.instr1.op = init_operation_basic;
+    end
+
+    if (v.clear == 1) begin
+      v.instr0 = init_instruction_complex;
+      v.instr1 = init_instruction_basic;
     end
 
     if (v.clear == 1) begin

@@ -131,15 +131,9 @@ module btac_ctrl
         if (btac_in.upd_jump0 == 1) begin
           btac_out.pred_maddr = btac_in.upd_addr0;
           btac_out.pred_miss = 1;
-        end else if (btac_in.upd_jump0 == 0 && btac_in.upd_branch0 == 1) begin
-          btac_out.pred_maddr = 0;
-          btac_out.pred_miss = 0;
         end else if (btac_in.upd_jump1 == 1) begin
           btac_out.pred_maddr = btac_in.upd_addr1;
           btac_out.pred_miss = 1;
-        end else if (btac_in.upd_jump1 == 0 && btac_in.upd_branch1 == 1) begin
-          btac_out.pred_maddr = 0;
-          btac_out.pred_miss = 0;
         end else begin
           btac_out.pred_maddr = 0;
           btac_out.pred_miss = 0;

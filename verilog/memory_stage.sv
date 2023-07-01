@@ -120,9 +120,14 @@ module memory_stage
       v.instr1 = init_instruction_basic;
     end
 
-    if ((v.stall | v.clear) == 1) begin
+    if (v.stall == 1) begin
       v.instr0.op = init_operation_complex;
       v.instr1.op = init_operation_basic;
+    end
+
+    if (v.clear == 1) begin
+      v.instr0 = init_instruction_complex;
+      v.instr1 = init_instruction_basic;
     end
 
     if (v.instr0.op_b.fence == 1) begin
