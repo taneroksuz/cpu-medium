@@ -35,8 +35,10 @@ module cpu
   agu_out_type agu0_out;
   agu_in_type agu1_in;
   agu_out_type agu1_out;
-  bcu_in_type bcu_in;
-  bcu_out_type bcu_out;
+  bcu_in_type bcu0_in;
+  bcu_out_type bcu0_out;
+  bcu_in_type bcu1_in;
+  bcu_out_type bcu1_out;
   lsu_in_type lsu0_in;
   lsu_out_type lsu0_out;
   lsu_in_type lsu1_in;
@@ -244,10 +246,16 @@ module cpu
     .agu_out (agu1_out)
   );
 
-  bcu bcu_comp
+  bcu bcu0_comp
   (
-    .bcu_in (bcu_in),
-    .bcu_out (bcu_out)
+    .bcu_in (bcu0_in),
+    .bcu_out (bcu0_out)
+  );
+
+  bcu bcu1_comp
+  (
+    .bcu_in (bcu1_in),
+    .bcu_out (bcu1_out)
   );
 
   lsu lsu0_comp
@@ -429,8 +437,10 @@ module cpu
     .agu0_in (agu0_in),
     .agu1_out (agu1_out),
     .agu1_in (agu1_in),
-    .bcu_out (bcu_out),
-    .bcu_in (bcu_in),
+    .bcu0_out (bcu0_out),
+    .bcu0_in (bcu0_in),
+    .bcu1_out (bcu1_out),
+    .bcu1_in (bcu1_in),
     .csr_alu_out (csr_alu_out),
     .csr_alu_in (csr_alu_in),
     .div_out (div_out),

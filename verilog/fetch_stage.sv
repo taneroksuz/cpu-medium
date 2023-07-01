@@ -61,13 +61,20 @@ module fetch_stage
     endcase
 
     btac_in.get_pc = d.b.pc0;
-    btac_in.upd_pc = d.e.instr0.pc;
-    btac_in.upd_npc = d.e.instr0.npc;
-    btac_in.upd_addr = d.e.instr0.address;
-    btac_in.upd_jal = d.e.instr0.op.jal;
-    btac_in.upd_jalr = d.e.instr0.op.jalr;
-    btac_in.upd_branch = d.e.instr0.op.branch;
-    btac_in.upd_jump = d.e.instr0.op.jump;
+    btac_in.upd_pc0 = d.e.instr0.pc;
+    btac_in.upd_pc1 = d.e.instr1.pc;
+    btac_in.upd_npc0 = d.e.instr0.npc;
+    btac_in.upd_npc1 = d.e.instr1.npc;
+    btac_in.upd_addr0 = d.e.instr0.address;
+    btac_in.upd_addr1 = d.e.instr1.address;
+    btac_in.upd_jal0 = d.e.instr0.op.jal;
+    btac_in.upd_jal1 = d.e.instr1.op.jal;
+    btac_in.upd_jalr0 = d.e.instr0.op.jalr;
+    btac_in.upd_jalr1 = d.e.instr1.op.jalr;
+    btac_in.upd_branch0 = d.e.instr0.op.branch;
+    btac_in.upd_branch1 = d.e.instr1.op.branch;
+    btac_in.upd_jump0 = d.e.instr0.op.jump;
+    btac_in.upd_jump1 = d.e.instr1.op.jump;
     btac_in.taken = d.b.taken;
     btac_in.taddr = d.b.taddr;
     btac_in.tpc = d.b.tpc;

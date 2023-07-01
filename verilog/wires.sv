@@ -388,13 +388,20 @@ package wires;
 
   typedef struct packed{
     logic [31 : 0] get_pc;
-    logic [31 : 0] upd_pc;
-    logic [31 : 0] upd_npc;
-    logic [31 : 0] upd_addr;
-    logic [0  : 0] upd_jal;
-    logic [0  : 0] upd_jalr;
-    logic [0  : 0] upd_branch;
-    logic [0  : 0] upd_jump;
+    logic [31 : 0] upd_pc0;
+    logic [31 : 0] upd_pc1;
+    logic [31 : 0] upd_npc0;
+    logic [31 : 0] upd_npc1;
+    logic [31 : 0] upd_addr0;
+    logic [31 : 0] upd_addr1;
+    logic [0  : 0] upd_jal0;
+    logic [0  : 0] upd_jal1;
+    logic [0  : 0] upd_jalr0;
+    logic [0  : 0] upd_jalr1;
+    logic [0  : 0] upd_branch0;
+    logic [0  : 0] upd_branch1;
+    logic [0  : 0] upd_jump0;
+    logic [0  : 0] upd_jump1;
     logic [0  : 0] taken;
     logic [31 : 0] taddr;
     logic [31 : 0] tpc;

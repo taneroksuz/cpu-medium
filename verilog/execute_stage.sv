@@ -13,8 +13,10 @@ module execute_stage
   output agu_in_type agu0_in,
   input agu_out_type agu1_out,
   output agu_in_type agu1_in,
-  input bcu_out_type bcu_out,
-  output bcu_in_type bcu_in,
+  input bcu_out_type bcu0_out,
+  output bcu_in_type bcu0_in,
+  input bcu_out_type bcu1_out,
+  output bcu_in_type bcu1_in,
   input csr_alu_out_type csr_alu_out,
   output csr_alu_in_type csr_alu_in,
   input div_out_type div_out,
@@ -123,12 +125,19 @@ module execute_stage
 
     v.instr1.wdata = alu1_out.result;
 
-    bcu_in.rdata1 = v.instr0.rdata1;
-    bcu_in.rdata2 = v.instr0.rdata2;
-    bcu_in.enable = v.instr0.op.branch;
-    bcu_in.bcu_op = v.instr0.bcu_op;
+    bcu0_in.rdata1 = v.instr0.rdata1;
+    bcu0_in.rdata2 = v.instr0.rdata2;
+    bcu0_in.enable = v.instr0.op.branch;
+    bcu0_in.bcu_op = v.instr0.bcu_op;
 
-    v.instr0.op.jump = v.instr0.op.jal | v.instr0.op.jalr | bcu_out.branch;
+    v.instr0.op.jump = v.instr0.op.jal | v.instr0.op.jalr | bcu0_out.branch;
+
+    bcu1_in.rdata1 = v.instr1.rdata1;
+    bcu1_in.rdata2 = v.instr1.rdata2;
+    bcu1_in.enable = v.instr1.op.branch;
+    bcu1_in.bcu_op = v.instr1.bcu_op;
+
+    v.instr1.op.jump = v.instr1.op.jal | v.instr1.op.jalr | bcu1_out.branch;
 
     agu0_in.rdata1 = v.instr0.rdata1;
     agu0_in.imm = v.instr0.imm;
