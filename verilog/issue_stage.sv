@@ -133,6 +133,16 @@ module issue_stage
       v.stall = 1;
     end
 
+    if ((v.stall | a.e.stall | a.m.stall) == 1) begin
+      v.instr0.op = init_operation;
+      v.instr1.op = init_operation;
+    end
+
+    if (v.clear == 1) begin
+      v.instr0 = init_instruction;
+      v.instr1 = init_instruction;
+    end
+
     if (v.clear == 1) begin
       v.stall = 0;
     end
