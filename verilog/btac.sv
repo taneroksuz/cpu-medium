@@ -87,14 +87,14 @@ module btac_ctrl
     v = r;
 
     if (btac_in.clear == 0) begin
-      v.raddr = btac_in.get_pc[btb_depth:1];
+      v.raddr = btac_in.get_pc[btb_depth+1:2];
     end
 
     btb_in.raddr = v.raddr;
 
     if (btac_in.clear == 0) begin
       v.wen = btac_in.upd_jump0 | btac_in.upd_jump1;
-      v.waddr = btac_in.upd_jump0 ? btac_in.upd_pc0[btb_depth:1] : btac_in.upd_pc1[btb_depth:1];
+      v.waddr = btac_in.upd_jump0 ? btac_in.upd_pc0[btb_depth+1:2] : btac_in.upd_pc1[btb_depth+1:2];
       v.wdata = btac_in.upd_jump0 ? {btac_in.upd_pc0,btac_in.upd_addr0,btac_in.upd_npc0} : {btac_in.upd_pc1,btac_in.upd_addr1,btac_in.upd_npc1};
     end else begin
       v.wen = 0;

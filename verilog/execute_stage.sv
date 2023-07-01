@@ -184,6 +184,12 @@ module execute_stage
           v.instr0.op.wren = 0;
         end
       end
+    end
+
+    if (v.instr1.op.exception == 0) begin
+      v.instr1.op.exception = agu1_out.exception;
+      v.instr1.ecause = agu1_out.ecause;
+      v.instr1.etval = agu1_out.etval;
       if (v.instr1.op.exception == 1) begin
         if ((v.instr1.op.load) == 1) begin
           v.instr1.op.load = 0;

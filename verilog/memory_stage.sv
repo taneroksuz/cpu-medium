@@ -144,7 +144,7 @@ module memory_stage
 
     csr_ein.valid = v.instr0.op.valid | v.instr1.op.valid;
     csr_ein.mret = v.instr0.op.mret;
-    csr_ein.exception = v.instr0.op.exception;
+    csr_ein.exception = v.instr0.op.exception | v.instr1.op.exception;
     csr_ein.epc = v.instr0.op.exception ? v.instr0.pc : v.instr1.pc;
     csr_ein.ecause = v.instr0.op.exception ? v.instr0.ecause : v.instr1.ecause;
     csr_ein.etval = v.instr0.op.exception ? v.instr0.etval : v.instr1.etval;
