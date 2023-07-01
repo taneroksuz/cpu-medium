@@ -763,6 +763,35 @@ package wires;
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
+    logic [0  : 0] taken;
+    logic [31 : 0] taddr;
+    logic [31 : 0] tpc;
+    logic [0  : 0] stall;
+  } decode_out_type;
+
+  typedef struct packed{
+    instruction_type instr0;
+    instruction_type instr1;
+    logic [0  : 0] taken;
+    logic [31 : 0] taddr;
+    logic [31 : 0] tpc;
+    logic [0  : 0] stall;
+    logic [0  : 0] clear;
+  } decode_reg_type;
+
+  parameter decode_reg_type init_decode_reg = '{
+    instr0 : init_instruction,
+    instr1 : init_instruction,
+    taken : 0,
+    taddr : 0,
+    tpc : 0,
+    stall : 0,
+    clear : 0
+  };
+
+  typedef struct packed{
+    instruction_type instr0;
+    instruction_type instr1;
     logic [0  : 0] swap;
     logic [0  : 0] stall;
   } issue_out_type;
@@ -781,38 +810,6 @@ package wires;
     instr1 : init_instruction,
     swap : 0,
     halt : 0,
-    stall : 0,
-    clear : 0
-  };
-
-  typedef struct packed{
-    instruction_type instr0;
-    instruction_type instr1;
-    logic [0  : 0] swap;
-    logic [0  : 0] taken;
-    logic [31 : 0] taddr;
-    logic [31 : 0] tpc;
-    logic [0  : 0] stall;
-  } decode_out_type;
-
-  typedef struct packed{
-    instruction_type instr0;
-    instruction_type instr1;
-    logic [0  : 0] swap;
-    logic [0  : 0] taken;
-    logic [31 : 0] taddr;
-    logic [31 : 0] tpc;
-    logic [0  : 0] stall;
-    logic [0  : 0] clear;
-  } decode_reg_type;
-
-  parameter decode_reg_type init_decode_reg = '{
-    instr0 : init_instruction,
-    instr1 : init_instruction,
-    swap : 0,
-    taken : 0,
-    taddr : 0,
-    tpc : 0,
     stall : 0,
     clear : 0
   };

@@ -236,8 +236,8 @@ module decode_stage
     end
 
     if ((v.stall | a.i.stall) == 1) begin
-      v.instr0.op = init_operation;
-      v.instr1.op = init_operation;
+      v.instr0 = init_instruction;
+      v.instr1 = init_instruction;
     end
 
     if (v.clear == 1) begin
@@ -255,7 +255,6 @@ module decode_stage
 
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
-    y.swap = v.swap;
     y.taken = v.taken;
     y.taddr = v.taddr;
     y.tpc = v.tpc;
@@ -263,7 +262,6 @@ module decode_stage
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
-    q.swap = r.swap;
     q.taken = r.taken;
     q.taddr = r.taddr;
     q.tpc = r.tpc;
