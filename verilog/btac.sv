@@ -110,13 +110,30 @@ module btac_ctrl
     btb_in.raddr = v.raddr;
 
     if (btac_in.clear == 0) begin
-      v.jal = btac_in.upd_jal0 | btac_in.upd_jal1;
-      v.jalr = btac_in.upd_jalr0 | btac_in.upd_jalr1;
-      v.branch = btac_in.upd_branch0 | btac_in.upd_branch1;
-      v.jump = btac_in.upd_jump0 | btac_in.upd_jump1;
+      if (((btac_in.upd_jal0 | btac_in.upd_jalr0 | btac_in.upd_branch0) & btac_in.upd_jump0) == 1) begin
+        v.jal = btac_in.upd_jal0;
+        v.jalr = btac_in.upd_jalr0;
+        v.branch = btac_in.upd_branch0;
+        v.jump = btac_in.upd_jump0;
+      end else if (((btac_in.upd_jal1 | btac_in.upd_jalr1 | btac_in.upd_branch1) & btac_in.upd_jump1) == 1) begin
+        v.jal = btac_in.upd_jal1;
+        v.jalr = btac_in.upd_jalr1;
+        v.branch = btac_in.upd_branch1;
+        v.jump = btac_in.upd_jump1;
+      end else begin
+        v.jal = 0;
+        v.jalr = 0;
+        v.branch = 0;
+        v.jump = 0;
+      end
       v.pc = btac_in.upd_jump0 ? btac_in.upd_pc0 : btac_in.upd_pc1;
       v.npc = btac_in.upd_jump0 ? btac_in.upd_npc0 : btac_in.upd_npc1;
       v.addr = btac_in.upd_jump0 ? btac_in.upd_addr0 : btac_in.upd_addr1;
+    end else begin
+      v.jal = 0;
+      v.jalr = 0;
+      v.branch = 0;
+      v.jump = 0;
     end
 
     if (btac_in.clear == 0) begin

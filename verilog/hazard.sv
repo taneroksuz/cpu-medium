@@ -133,7 +133,7 @@ module hazard
         rden1[0] = 1;
       end
       opcode_branch : begin
-        complex[0] = 1;
+        basic[0] = 1;
         rden1[0] = 1;
         rden2[0] = 1;
       end
@@ -405,7 +405,7 @@ module hazard
         rden1[1] = 1;
       end
       opcode_branch : begin
-        complex[1] = 1;
+        basic[1] = 1;
         rden1[1] = 1;
         rden2[1] = 1;
       end
