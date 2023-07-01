@@ -55,12 +55,12 @@ module hazard
     v.stall = 0;
 
     if (hazard_in.clear == 0) begin
-      if (hazard_in.instr0.op.valid == 1 && hazard_in.instr0.op.nop == 0) begin
+      if (hazard_in.instr0.op.valid == 1) begin
         buffer[v.wid] = hazard_in.instr0;
         v.count = v.count + 1;
         v.wid = v.wid + 1;
       end
-      if (hazard_in.instr1.op.valid == 1 && hazard_in.instr1.op.nop == 0) begin
+      if (hazard_in.instr1.op.valid == 1) begin
         buffer[v.wid] = hazard_in.instr1;
         v.count = v.count + 1;
         v.wid = v.wid + 1;
