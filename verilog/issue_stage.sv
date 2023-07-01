@@ -47,6 +47,8 @@ module issue_stage
 
     if ((d.i.stall | d.e.stall | d.m.stall) == 1) begin
       v = r;
+      v.instr0.op = r.instr0.op_b;
+      v.instr1.op = r.instr1.op_b;
     end
 
     v.stall = 0;
@@ -132,6 +134,9 @@ module issue_stage
     end else if (a.e.instr0.op.fload == 1 && ((v.instr0.op.frden1 == 1 && a.e.instr0.waddr == v.instr0.raddr1) || (v.instr0.op.frden2 == 1 && a.e.instr0.waddr == v.instr0.raddr2) || (v.instr0.op.frden3 == 1 && a.e.instr0.waddr == v.instr0.raddr3))) begin 
       v.stall = 1;
     end
+
+    v.instr0.op_b = v.instr0.op;
+    v.instr1.op_b = v.instr1.op;
 
     if ((v.stall | a.e.stall | a.m.stall) == 1) begin
       v.instr0.op = init_operation;

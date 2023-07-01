@@ -246,11 +246,6 @@ module decode_stage
     end
 
     if (v.clear == 1) begin
-      v.instr0 = init_instruction;
-      v.instr1 = init_instruction;
-    end
-
-    if (v.clear == 1) begin
       v.taken = 0;
       v.taddr = 0;
       v.tpc = 0;
