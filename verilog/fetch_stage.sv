@@ -32,7 +32,7 @@ module fetch_stage
     v = r;
 
     v.valid = 0;
-    v.stall = 0;
+    v.stall = a.i.stall;
 
     v.fence = 0;
     v.spec = 0;
@@ -60,7 +60,7 @@ module fetch_stage
       end
     endcase
 
-    btac_in.get_pc = d.d.instr0.pc;
+    btac_in.get_pc = a.i.instr0.pc;
     btac_in.upd_pc0 = d.e.instr0.pc;
     btac_in.upd_pc1 = d.e.instr1.pc;
     btac_in.upd_npc0 = d.e.instr0.npc;

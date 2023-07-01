@@ -542,10 +542,10 @@ package wires;
   } instruction_type;
 
   parameter instruction_type init_instruction = '{
-    pc : 0,
-    npc : 0,
-    instr : nop_instr,
-    instr_str : "nop",
+    pc : 32'hFFFFFFFF,
+    npc : 32'hFFFFFFFF,
+    instr : 0,
+    instr_str : "",
     imm : 0,
     waddr : 0,
     raddr1 : 0,

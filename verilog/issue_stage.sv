@@ -45,8 +45,7 @@ module issue_stage
 
     hazard_in.instr0 = v.instr0;
     hazard_in.instr1 = v.instr1;
-    hazard_in.clear = v.clear;
-    hazard_in.clear = a.e.stall | a.m.stall;
+    hazard_in.clear = a.e.stall | a.m.stall | v.clear;
 
     v.instr0 = hazard_out.instr0;
     v.instr1 = hazard_out.instr1;
