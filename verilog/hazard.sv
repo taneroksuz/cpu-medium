@@ -56,7 +56,11 @@ module hazard
     v.swap = 0;
     v.stall = 0;
 
-    if (hazard_in.clear == 0) begin
+    if (hazard_in.clear == 1) begin
+      v.count = 0;
+      v.wid = 0;
+      v.rid = 0;
+    end else if (r.stall == 0) begin
       if (hazard_in.instr0.op.valid == 1) begin
         buffer[v.wid] = hazard_in.instr0;
         v.count = v.count + 1;
@@ -67,10 +71,6 @@ module hazard
         v.count = v.count + 1;
         v.wid = v.wid + 1;
       end
-    end else begin
-      v.count = 0;
-      v.wid = 0;
-      v.rid = 0;
     end
 
     v.instr0 = v.count > 0 ? buffer[v.rid] : init_instruction;

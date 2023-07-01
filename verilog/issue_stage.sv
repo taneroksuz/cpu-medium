@@ -32,19 +32,6 @@ module issue_stage
 
     v = r;
 
-    v.instr0 = d.d.instr0;
-    v.instr1 = d.d.instr1;
-
-    hazard_in.instr0 = v.instr0;
-    hazard_in.instr1 = v.instr1;
-    hazard_in.clear = csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
-    hazard_in.stall = d.i.stall | d.e.stall | d.m.stall;
-
-    v.instr0 = hazard_out.instr0;
-    v.instr1 = hazard_out.instr1;
-    v.swap = hazard_out.swap;
-    v.stall = hazard_out.stall;
-
     if ((d.i.stall | d.e.stall | d.m.stall) == 1) begin
       v = r;
       v.instr0.op = r.instr0.op_b;
@@ -54,6 +41,16 @@ module issue_stage
     v.stall = 0;
 
     v.clear = csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
+
+    hazard_in.instr0 = d.d.instr0;
+    hazard_in.instr1 = d.d.instr1;
+    hazard_in.clear = v.clear;
+    hazard_in.stall = a.e.stall | a.m.stall;
+
+    v.instr0 = hazard_out.instr0;
+    v.instr1 = hazard_out.instr1;
+    v.swap = hazard_out.swap;
+    v.stall = hazard_out.stall;
 
     if (csr_out.fs == 2'b00) begin
       v.instr0.fmt = 0;
