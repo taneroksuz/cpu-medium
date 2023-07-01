@@ -38,8 +38,8 @@
 ../../verilog/hazard.sv
 ../../verilog/forwarding.sv
 ../../verilog/fetch_stage.sv
-../../verilog/buffer_stage.sv
 ../../verilog/decode_stage.sv
+../../verilog/issue_stage.sv
 ../../verilog/execute_stage.sv
 ../../verilog/memory_stage.sv
 ../../verilog/writeback_stage.sv

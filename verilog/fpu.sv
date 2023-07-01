@@ -669,10 +669,16 @@ module fpu
 
     if (fpu_enable == 1) begin
 
-      fpu_decode fpu_decode_comp
+      fpu_decode fpu_decode0_comp
       (
-        .fp_decode_in (fpu_in.fp_decode_in),
-        .fp_decode_out (fpu_out.fp_decode_out)
+        .fp_decode_in (fpu_in.fp_decode0_in),
+        .fp_decode_out (fpu_out.fp_decode0_out)
+      );
+
+      fpu_decode fpu_decode1_comp
+      (
+        .fp_decode_in (fpu_in.fp_decode1_in),
+        .fp_decode_out (fpu_out.fp_decode1_out)
       );
 
       fpu_execute fpu_execute_comp

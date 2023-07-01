@@ -117,17 +117,17 @@ module memory_stage
     fp_forwarding_min.wdata = v.instr0.fdata;
 
     if (v.swap == 0 && v.instr0.op.fence == 1) begin
-      v.instr1 = init_instruction_basic;
+      v.instr1 = init_instruction;
     end
 
     if (v.stall == 1) begin
-      v.instr0.op = init_operation_complex;
-      v.instr1.op = init_operation_basic;
+      v.instr0.op = init_operation;
+      v.instr1.op = init_operation;
     end
 
     if (v.clear == 1) begin
-      v.instr0 = init_instruction_complex;
-      v.instr1 = init_instruction_basic;
+      v.instr0 = init_instruction;
+      v.instr1 = init_instruction;
     end
 
     if (v.instr0.op_b.fence == 1) begin

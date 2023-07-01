@@ -80,32 +80,33 @@ module cpu
   register_out_type register0_out;
   register_out_type register1_out;
   fetch_in_type fetch_in_a;
-  buffer_in_type buffer_in_a;
+  issue_in_type issue_in_a;
   decode_in_type decode_in_a;
   execute_in_type execute_in_a;
   memory_in_type memory_in_a;
   writeback_in_type writeback_in_a;
   fetch_out_type fetch_out_y;
-  buffer_out_type buffer_out_y;
+  issue_out_type issue_out_y;
   decode_out_type decode_out_y;
   execute_out_type execute_out_y;
   memory_out_type memory_out_y;
   writeback_out_type writeback_out_y;
   fetch_in_type fetch_in_d;
-  buffer_in_type buffer_in_d;
+  issue_in_type issue_in_d;
   decode_in_type decode_in_d;
   execute_in_type execute_in_d;
   memory_in_type memory_in_d;
   writeback_in_type writeback_in_d;
   fetch_out_type fetch_out_q;
-  buffer_out_type buffer_out_q;
+  issue_out_type issue_out_q;
   decode_out_type decode_out_q;
   execute_out_type execute_out_q;
   memory_out_type memory_out_q;
   writeback_out_type writeback_out_q;
   fpu_in_type fpu_in;
   fpu_out_type fpu_out;
-  fp_decode_in_type fp_decode_in;
+  fp_decode_in_type fp_decode0_in;
+  fp_decode_in_type fp_decode1_in;
   fp_execute_in_type fp_execute_in;
   fp_register_read_in_type fp_register_rin;
   fp_register_write_in_type fp_register_win;
@@ -115,7 +116,8 @@ module cpu
   fp_forwarding_register_in_type fp_forwarding_rin;
   fp_forwarding_memory_in_type fp_forwarding_min;
   fp_forwarding_writeback_in_type fp_forwarding_win;
-  fp_decode_out_type fp_decode_out;
+  fp_decode_out_type fp_decode0_out;
+  fp_decode_out_type fp_decode1_out;
   fp_execute_out_type fp_execute_out;
   fp_register_out_type fp_register_out;
   fp_csr_out_type fp_csr_out;
@@ -131,7 +133,8 @@ module cpu
   mem_in_type dmem_in;
   mem_out_type dmem_out;
 
-  assign fpu_in.fp_decode_in = fp_decode_in;
+  assign fpu_in.fp_decode0_in = fp_decode0_in;
+  assign fpu_in.fp_decode1_in = fp_decode1_in;
   assign fpu_in.fp_execute_in = fp_execute_in;
   assign fpu_in.fp_register_rin = fp_register_rin;
   assign fpu_in.fp_register_win = fp_register_win;
@@ -142,81 +145,82 @@ module cpu
   assign fpu_in.fp_forwarding_min = fp_forwarding_min;
   assign fpu_in.fp_forwarding_win = fp_forwarding_win;
 
-  assign fp_decode_out = fpu_out.fp_decode_out;
+  assign fp_decode0_out = fpu_out.fp_decode0_out;
+  assign fp_decode1_out = fpu_out.fp_decode1_out;
   assign fp_execute_out = fpu_out.fp_execute_out;
   assign fp_register_out = fpu_out.fp_register_out;
   assign fp_csr_out = fpu_out.fp_csr_out;
   assign fp_forwarding_out = fpu_out.fp_forwarding_out;
 
   assign fetch_in_a.f = fetch_out_y;
-  assign fetch_in_a.b = buffer_out_y;
+  assign fetch_in_a.i = issue_out_y;
   assign fetch_in_a.d = decode_out_y;
   assign fetch_in_a.e = execute_out_y;
   assign fetch_in_a.m = memory_out_y;
   assign fetch_in_a.w = writeback_out_y;
-  assign buffer_in_a.f = fetch_out_y;
-  assign buffer_in_a.b = buffer_out_y;
-  assign buffer_in_a.d = decode_out_y;
-  assign buffer_in_a.e = execute_out_y;
-  assign buffer_in_a.m = memory_out_y;
-  assign buffer_in_a.w = writeback_out_y;
   assign decode_in_a.f = fetch_out_y;
-  assign decode_in_a.b = buffer_out_y;
+  assign decode_in_a.i = issue_out_y;
   assign decode_in_a.d = decode_out_y;
   assign decode_in_a.e = execute_out_y;
   assign decode_in_a.m = memory_out_y;
   assign decode_in_a.w = writeback_out_y;
+  assign issue_in_a.f = fetch_out_y;
+  assign issue_in_a.i = issue_out_y;
+  assign issue_in_a.d = decode_out_y;
+  assign issue_in_a.e = execute_out_y;
+  assign issue_in_a.m = memory_out_y;
+  assign issue_in_a.w = writeback_out_y;
   assign execute_in_a.f = fetch_out_y;
-  assign execute_in_a.b = buffer_out_y;
+  assign execute_in_a.i = issue_out_y;
   assign execute_in_a.d = decode_out_y;
   assign execute_in_a.e = execute_out_y;
   assign execute_in_a.m = memory_out_y;
   assign execute_in_a.w = writeback_out_y;
   assign memory_in_a.f = fetch_out_y;
-  assign memory_in_a.b = buffer_out_y;
+  assign memory_in_a.i = issue_out_y;
   assign memory_in_a.d = decode_out_y;
   assign memory_in_a.e = execute_out_y;
   assign memory_in_a.m = memory_out_y;
   assign memory_in_a.w = writeback_out_y;
   assign writeback_in_a.f = fetch_out_y;
-  assign writeback_in_a.b = buffer_out_y;
+  assign writeback_in_a.i = issue_out_y;
   assign writeback_in_a.d = decode_out_y;
   assign writeback_in_a.e = execute_out_y;
   assign writeback_in_a.m = memory_out_y;
   assign writeback_in_a.w = writeback_out_y;
 
   assign fetch_in_d.f = fetch_out_q;
-  assign fetch_in_d.b = buffer_out_q;
+  assign fetch_in_d.i = issue_out_q;
   assign fetch_in_d.d = decode_out_q;
   assign fetch_in_d.e = execute_out_q;
   assign fetch_in_d.m = memory_out_q;
   assign fetch_in_d.w = writeback_out_q;
-  assign buffer_in_d.f = fetch_out_q;
-  assign buffer_in_d.b = buffer_out_q;
-  assign buffer_in_d.d = decode_out_q;
-  assign buffer_in_d.e = execute_out_q;
-  assign buffer_in_d.m = memory_out_q;
-  assign buffer_in_d.w = writeback_out_q;
   assign decode_in_d.f = fetch_out_q;
-  assign decode_in_d.b = buffer_out_q;
+  assign decode_in_d.i = issue_out_q;
   assign decode_in_d.d = decode_out_q;
   assign decode_in_d.e = execute_out_q;
   assign decode_in_d.m = memory_out_q;
   assign decode_in_d.w = writeback_out_q;
+  assign issue_in_d.f = fetch_out_q;
+  assign issue_in_d.i = issue_out_q;
+  assign issue_in_d.d = decode_out_q;
+  assign issue_in_d.e = execute_out_q;
+  assign issue_in_d.m = memory_out_q;
+  assign issue_in_d.w = writeback_out_q;
   assign execute_in_d.f = fetch_out_q;
-  assign execute_in_d.b = buffer_out_q;
+  assign execute_in_d.i = issue_out_q;
   assign execute_in_d.d = decode_out_q;
   assign execute_in_d.e = execute_out_q;
   assign execute_in_d.m = memory_out_q;
   assign execute_in_d.w = writeback_out_q;
   assign memory_in_d.f = fetch_out_q;
-  assign memory_in_d.b = buffer_out_q;
+  assign memory_in_d.i = issue_out_q;
   assign memory_in_d.d = decode_out_q;
   assign memory_in_d.e = execute_out_q;
   assign memory_in_d.m = memory_out_q;
   assign memory_in_d.w = writeback_out_q;
   assign writeback_in_d.f = fetch_out_q;
-  assign writeback_in_d.b = buffer_out_q;
+  assign writeback_in_d.i = issue_out_q;
   assign writeback_in_d.d = decode_out_q;
   assign writeback_in_d.e = execute_out_q;
   assign writeback_in_d.m = memory_out_q;
@@ -387,20 +391,6 @@ module cpu
     .q (fetch_out_q)
   );
 
-  buffer_stage buffer_stage_comp
-  (
-    .reset (reset),
-    .clock (clock),
-    .hazard_out (hazard_out),
-    .hazard_in (hazard_in),
-    .csr_out (csr_out),
-    .btac_out (btac_out),
-    .a (buffer_in_a),
-    .d (buffer_in_d),
-    .y (buffer_out_y),
-    .q (buffer_out_q)
-  );
-
   decode_stage decode_stage_comp
   (
     .reset (reset),
@@ -409,8 +399,24 @@ module cpu
     .decoder0_in (decoder0_in),
     .decoder1_out (decoder1_out),
     .decoder1_in (decoder1_in),
-    .fp_decode_out (fp_decode_out),
-    .fp_decode_in (fp_decode_in),
+    .fp_decode0_out (fp_decode0_out),
+    .fp_decode0_in (fp_decode0_in),
+    .fp_decode1_out (fp_decode1_out),
+    .fp_decode1_in (fp_decode1_in),
+    .csr_out (csr_out),
+    .btac_out (btac_out),
+    .a (decode_in_a),
+    .d (decode_in_d),
+    .y (decode_out_y),
+    .q (decode_out_q)
+  );
+
+  issue_stage issue_stage_comp
+  (
+    .reset (reset),
+    .clock (clock),
+    .hazard_out (hazard_out),
+    .hazard_in (hazard_in),
     .register0_rin (register0_rin),
     .register1_rin (register1_rin),
     .fp_register_rin (fp_register_rin),
@@ -419,10 +425,10 @@ module cpu
     .fp_csr_out (fp_csr_out),
     .fp_csr_rin (fp_csr_rin),
     .btac_out (btac_out),
-    .a (decode_in_a),
-    .d (decode_in_d),
-    .y (decode_out_y),
-    .q (decode_out_q)
+    .a (issue_in_a),
+    .d (issue_in_d),
+    .y (issue_out_y),
+    .q (issue_out_q)
   );
 
   execute_stage execute_stage_comp

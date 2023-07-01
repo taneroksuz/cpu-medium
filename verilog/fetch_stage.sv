@@ -32,7 +32,7 @@ module fetch_stage
     v = r;
 
     v.valid = 0;
-    v.stall = a.b.stall;
+    v.stall = 0;
 
     v.fence = 0;
     v.spec = 0;
@@ -60,7 +60,7 @@ module fetch_stage
       end
     endcase
 
-    btac_in.get_pc = d.b.pc0;
+    btac_in.get_pc = d.d.instr0.pc;
     btac_in.upd_pc0 = d.e.instr0.pc;
     btac_in.upd_pc1 = d.e.instr1.pc;
     btac_in.upd_npc0 = d.e.instr0.npc;
@@ -75,9 +75,9 @@ module fetch_stage
     btac_in.upd_branch1 = d.e.instr1.op.branch;
     btac_in.upd_jump0 = d.e.instr0.op.jump;
     btac_in.upd_jump1 = d.e.instr1.op.jump;
-    btac_in.taken = d.b.taken;
-    btac_in.taddr = d.b.taddr;
-    btac_in.tpc = d.b.tpc;
+    btac_in.taken = d.d.taken;
+    btac_in.taddr = d.d.taddr;
+    btac_in.tpc = d.d.tpc;
     btac_in.clear = d.w.clear;
 
     if (csr_out.trap == 1) begin

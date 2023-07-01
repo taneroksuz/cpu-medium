@@ -68,9 +68,9 @@ module btac_ctrl
     logic [0  : 0] taken;
     logic [31 : 0] taddr;
     logic [31 : 0] tpc;
-  } btb_reg_type;
+  } reg_type;
 
-  parameter btb_reg_type init_reg = '{
+  parameter reg_type init_reg = '{
     waddr : 0,
     raddr : 0,
     wdata : 0,
@@ -80,7 +80,7 @@ module btac_ctrl
     tpc : 0
   };
 
-  btb_reg_type r, rin, v;
+  reg_type r, rin, v;
 
   always_comb begin : branch_target_buffer
 
