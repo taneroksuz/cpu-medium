@@ -208,6 +208,7 @@ module decode_stage
 
     if (a.f.ready == 1) begin
       if (v.instr0.op.valid == 0) begin
+        v.instr0.op.valid = 1;
         v.instr0.op.exception = 1;
         v.instr0.ecause = except_illegal_instruction;
         v.instr0.etval = v.instr0.instr;
@@ -221,6 +222,7 @@ module decode_stage
         v.instr0.etval = v.instr0.instr;
       end
       if (v.instr1.op.valid == 0) begin
+        v.instr1.op.valid = 1;
         v.instr1.op.exception = 1;
         v.instr1.ecause = except_illegal_instruction;
         v.instr1.etval = v.instr1.instr;
@@ -235,7 +237,7 @@ module decode_stage
       end
     end
 
-    if ((v.stall | a.i.halt | a.e.instr0.op.fence) == 1) begin
+    if ((v.stall | a.i.halt | a.m.instr0.op.fence) == 1) begin
       v.instr0 = init_instruction;
       v.instr1 = init_instruction;
     end

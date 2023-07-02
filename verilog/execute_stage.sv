@@ -300,9 +300,6 @@ module execute_stage
         v.stall = ~(a.m.stall);
       end
     end
-    
-    v.instr0.op.valid = ~v.instr0.op.nop;
-    v.instr1.op.valid = ~v.instr1.op.nop;
 
     v.instr0.op_b = v.instr0.op;
     v.instr1.op_b = v.instr1.op;
