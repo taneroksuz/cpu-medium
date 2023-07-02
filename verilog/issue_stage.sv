@@ -40,7 +40,6 @@ module issue_stage
     v.instr0 = hazard_out.instr0;
     v.instr1 = hazard_out.instr1;
     v.swap = hazard_out.swap;
-    v.halt = hazard_out.stall;
 
     if ((d.i.stall | d.e.stall | d.m.stall) == 1) begin
       v = r;
@@ -48,6 +47,7 @@ module issue_stage
       v.instr1.op = r.instr1.op_b;
     end
 
+    v.halt = hazard_out.stall;
     v.stall = 0;
 
     v.clear = csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
