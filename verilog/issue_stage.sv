@@ -64,17 +64,6 @@ module issue_stage
       v.instr0.op.fpu = 0;
       v.instr0.op.fpuc = 0;
       v.instr0.op.fpuf = 0;
-      v.instr1.fmt = 0;
-      v.instr1.rm = 0;
-      v.instr1.op.fwren = 0;
-      v.instr1.op.frden1 = 0;
-      v.instr1.op.frden2 = 0;
-      v.instr1.op.frden3 = 0;
-      v.instr1.op.fload = 0;
-      v.instr1.op.fstore = 0;
-      v.instr1.op.fpu = 0;
-      v.instr1.op.fpuc = 0;
-      v.instr1.op.fpuf = 0;
     end
 
     if (v.instr0.rm == 3'b111) begin
