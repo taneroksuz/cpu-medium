@@ -136,7 +136,7 @@ module issue_stage
       v.instr1.op = init_operation;
     end
 
-    if (v.clear == 1) begin
+    if ((a.e.instr0.op.jump | a.e.instr1.op.jump | v.clear) == 1) begin
       v.instr0 = init_instruction;
       v.instr1 = init_instruction;
     end
