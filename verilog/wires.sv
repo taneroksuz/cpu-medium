@@ -793,6 +793,7 @@ package wires;
     instruction_type instr0;
     instruction_type instr1;
     logic [0  : 0] swap;
+    logic [0  : 0] halt;
     logic [0  : 0] stall;
   } issue_out_type;
 

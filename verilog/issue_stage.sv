@@ -35,7 +35,7 @@ module issue_stage
     hazard_in.instr0 = d.d.instr0;
     hazard_in.instr1 = d.d.instr1;
     hazard_in.clear = csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
-    hazard_in.stall = a.e.stall | a.m.stall;
+    hazard_in.stall = d.i.stall | d.e.stall | d.m.stall;
 
     v.instr0 = hazard_out.instr0;
     v.instr1 = hazard_out.instr1;
@@ -81,10 +81,6 @@ module issue_stage
       v.instr0.rm = fp_csr_out.frm;
     end
 
-    if (v.instr1.rm == 3'b111) begin
-      v.instr1.rm = fp_csr_out.frm;
-    end
-
     register0_rin.rden1 = v.instr0.op.rden1;
     register0_rin.rden2 = v.instr0.op.rden2;
     register0_rin.raddr1 = v.instr0.raddr1;
@@ -111,6 +107,12 @@ module issue_stage
     fp_csr_rin.craddr = v.instr0.caddr;
 
     if (a.e.instr0.op.cwren == 1 || a.m.instr0.op.cwren == 1) begin
+      v.stall = 1;
+    end else if (a.e.instr0.op.division == 1) begin
+      v.stall = 1;
+    end else if (a.e.instr0.op.bitc == 1) begin
+      v.stall = 1;
+    end else if (a.e.instr0.op.fpuc == 1) begin
       v.stall = 1;
     end else if (v.instr0.op.crden == 1 && (v.instr0.caddr == csr_fflags || v.instr0.caddr == csr_fcsr) && (a.e.instr0.op.fpuf == 1 || a.m.instr0.op.fpuf == 1)) begin
       v.stall = 1;
@@ -149,12 +151,14 @@ module issue_stage
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
     y.swap = v.swap;
-    y.stall = v.stall | v.halt;
+    y.halt = v.halt;
+    y.stall = v.stall;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
     q.swap = r.swap;
-    q.stall = r.stall | r.halt;
+    q.halt = r.halt;
+    q.stall = r.stall;
 
   end
 

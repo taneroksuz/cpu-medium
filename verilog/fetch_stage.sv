@@ -32,7 +32,7 @@ module fetch_stage
     v = r;
 
     v.valid = 0;
-    v.stall = a.i.stall;
+    v.stall = a.i.halt;
 
     v.fence = 0;
     v.spec = 0;
