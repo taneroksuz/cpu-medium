@@ -50,7 +50,7 @@ module issue_stage
     v.halt = hazard_out.stall;
     v.stall = 0;
 
-    v.clear = a.e.instr0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
+    v.clear = csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
 
     if (csr_out.fs == 2'b00) begin
       v.instr0.fmt = 0;
@@ -136,7 +136,7 @@ module issue_stage
       v.instr1.op = init_operation;
     end
 
-    if ((a.e.instr0.op.jump | a.e.instr1.op.jump | v.clear) == 1) begin
+    if ((a.e.instr0.op.fence | a.e.instr0.op.jump | a.e.instr1.op.jump | v.clear) == 1) begin
       v.instr0 = init_instruction;
       v.instr1 = init_instruction;
     end
