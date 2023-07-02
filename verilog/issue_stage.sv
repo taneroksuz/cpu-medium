@@ -34,7 +34,7 @@ module issue_stage
 
     hazard_in.instr0 = d.d.instr0;
     hazard_in.instr1 = d.d.instr1;
-    hazard_in.clear = a.e.instr0.op.fence | a.e.instr0.op.jump | a.e.instr1.op.jump | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
+    hazard_in.clear = a.d.taken | a.e.instr0.op.fence | a.e.instr0.op.jump | a.e.instr1.op.jump | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
     hazard_in.stall = d.i.stall | d.e.stall | d.m.stall;
 
     v.instr0 = hazard_out.instr0;
@@ -134,6 +134,10 @@ module issue_stage
     if ((v.stall | a.e.stall | a.m.stall) == 1) begin
       v.instr0.op = init_operation;
       v.instr1.op = init_operation;
+    end
+
+    if ((a.f.taken & v.instr0.op.branch) == 1) begin
+      v.instr1 = init_instruction;
     end
 
     if (v.clear == 1) begin
