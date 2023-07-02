@@ -39,7 +39,6 @@ module issue_stage
 
     v.instr0 = hazard_out.instr0;
     v.instr1 = hazard_out.instr1;
-    v.swap = hazard_out.swap;
 
     if ((d.i.stall | d.e.stall | d.m.stall) == 1) begin
       v = r;
@@ -143,13 +142,11 @@ module issue_stage
 
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
-    y.swap = v.swap;
     y.halt = v.halt;
     y.stall = v.stall;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
-    q.swap = r.swap;
     q.halt = r.halt;
     q.stall = r.stall;
 

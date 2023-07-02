@@ -40,7 +40,6 @@ module memory_stage
 
     v.instr0 = d.e.instr0;
     v.instr1 = d.e.instr1;
-    v.swap = d.e.swap;
 
     if (d.m.stall == 1) begin
       v = r;
@@ -116,7 +115,7 @@ module memory_stage
     fp_forwarding_min.waddr = v.instr0.waddr;
     fp_forwarding_min.wdata = v.instr0.fdata;
 
-    if (v.swap == 0 && v.instr0.op.fence == 1) begin
+    if (v.instr0.op.fence == 1) begin
       v.instr1 = init_instruction;
     end
 
@@ -160,12 +159,10 @@ module memory_stage
 
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
-    y.swap = v.swap;
     y.stall = v.stall;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
-    q.swap = r.swap;
     q.stall = r.stall;
 
   end

@@ -23,8 +23,10 @@ module execute_stage
   output div_in_type div_in,
   input mul_out_type mul_out,
   output mul_in_type mul_in,
-  input bit_alu_out_type bit_alu_out,
-  output bit_alu_in_type bit_alu_in,
+  input bit_alu_out_type bit_alu0_out,
+  output bit_alu_in_type bit_alu0_in,
+  input bit_alu_out_type bit_alu1_out,
+  output bit_alu_in_type bit_alu1_in,
   input bit_clmul_out_type bit_clmul_out,
   output bit_clmul_in_type bit_clmul_in,
   input fp_execute_out_type fp_execute_out,
@@ -57,7 +59,6 @@ module execute_stage
 
     v.instr0 = d.i.instr0;
     v.instr1 = d.i.instr1;
-    v.swap = d.i.swap;
 
     forwarding0_rin.rden1 = v.instr0.op.rden1;
     forwarding0_rin.rden2 = v.instr0.op.rden2;
@@ -211,13 +212,21 @@ module execute_stage
 
     v.instr0.mdata = mul_out.result;
 
-    bit_alu_in.rdata1 = v.instr0.rdata1;
-    bit_alu_in.rdata2 = v.instr0.rdata2;
-    bit_alu_in.imm = v.instr0.imm;
-    bit_alu_in.sel = v.instr0.op.rden2;
-    bit_alu_in.bit_op = v.instr0.bit_op;
+    bit_alu0_in.rdata1 = v.instr0.rdata1;
+    bit_alu0_in.rdata2 = v.instr0.rdata2;
+    bit_alu0_in.imm = v.instr0.imm;
+    bit_alu0_in.sel = v.instr0.op.rden2;
+    bit_alu0_in.bit_op = v.instr0.bit_op;
 
-    v.instr0.bdata = bit_alu_out.result;
+    v.instr0.bdata = bit_alu0_out.result;
+
+    bit_alu1_in.rdata1 = v.instr1.rdata1;
+    bit_alu1_in.rdata2 = v.instr1.rdata2;
+    bit_alu1_in.imm = v.instr1.imm;
+    bit_alu1_in.sel = v.instr1.op.rden2;
+    bit_alu1_in.bit_op = v.instr1.bit_op;
+
+    v.instr1.bdata = bit_alu1_out.result;
 
     div_in.rdata1 = v.instr0.rdata1;
     div_in.rdata2 = v.instr0.rdata2;
@@ -262,11 +271,11 @@ module execute_stage
     end else if (v.instr0.op.mult == 1) begin
       v.instr0.wdata = v.instr0.mdata;
     end else if (v.instr0.op.bitm == 1) begin
-        v.instr0.wdata = v.instr0.bdata;
+      v.instr0.wdata = v.instr0.bdata;
     end else if (v.instr0.op.bitc == 1) begin
-        v.instr0.wdata = v.instr0.bcdata;
+      v.instr0.wdata = v.instr0.bcdata;
     end else if (v.instr0.op.fpu == 1) begin
-        v.instr0.wdata = v.instr0.fdata;
+      v.instr0.wdata = v.instr0.fdata;
     end
 
     if (v.instr1.op.auipc == 1) begin
@@ -277,6 +286,8 @@ module execute_stage
       v.instr1.wdata = v.instr1.npc;
     end else if (v.instr1.op.jalr == 1) begin
       v.instr1.wdata = v.instr1.npc;
+    end else if (v.instr1.op.bitm == 1) begin
+      v.instr1.wdata = v.instr1.bdata;
     end
 
     csr_alu_in.cdata = v.instr0.cdata;
@@ -304,10 +315,8 @@ module execute_stage
     v.instr0.op_b = v.instr0.op;
     v.instr1.op_b = v.instr1.op;
 
-    if (v.swap == 0 && (v.instr0.op.fence | v.instr0.op.exception | v.instr0.op.mret | v.instr0.op.jump) == 1) begin
+    if ((v.instr0.op.fence | v.instr0.op.exception | v.instr0.op.mret | v.instr0.op.jump) == 1) begin
       v.instr1 = init_instruction;
-    end else if (v.swap == 1 && (v.instr1.op.exception | v.instr1.op.jump) == 1) begin
-      v.instr0 = init_instruction;
     end
 
     if ((v.stall | a.m.stall) == 1) begin
@@ -328,12 +337,10 @@ module execute_stage
 
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
-    y.swap = v.swap;
     y.stall = v.stall;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
-    q.swap = r.swap;
     q.stall = r.stall;
 
   end

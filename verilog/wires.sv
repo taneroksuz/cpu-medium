@@ -598,7 +598,6 @@ package wires;
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
-    logic [0  : 0] swap;
     logic [0  : 0] stall;
   } hazard_out_type;
 
@@ -792,7 +791,6 @@ package wires;
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
-    logic [0  : 0] swap;
     logic [0  : 0] halt;
     logic [0  : 0] stall;
   } issue_out_type;
@@ -800,7 +798,6 @@ package wires;
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
-    logic [0  : 0] swap;
     logic [0  : 0] halt;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
@@ -809,7 +806,6 @@ package wires;
   parameter issue_reg_type init_issue_reg = '{
     instr0 : init_instruction,
     instr1 : init_instruction,
-    swap : 0,
     halt : 0,
     stall : 0,
     clear : 0
@@ -818,14 +814,12 @@ package wires;
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
-    logic [0  : 0] swap;
     logic [0  : 0] stall;
   } execute_out_type;
 
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
-    logic [0  : 0] swap;
     logic [0  : 0] enable;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
@@ -834,7 +828,6 @@ package wires;
   parameter execute_reg_type init_execute_reg = '{
     instr0 : init_instruction,
     instr1 : init_instruction,
-    swap : 0,
     enable : 0,
     stall : 0,
     clear : 0
@@ -843,14 +836,12 @@ package wires;
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
-    logic [0  : 0] swap;
     logic [0  : 0] stall;
   } memory_out_type;
 
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
-    logic [0  : 0] swap;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } memory_reg_type;
@@ -858,7 +849,6 @@ package wires;
   parameter memory_reg_type init_memory_reg = '{
     instr0 : init_instruction,
     instr1 : init_instruction,
-    swap : 0,
     stall : 0,
     clear : 0
   };

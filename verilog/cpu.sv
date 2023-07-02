@@ -49,8 +49,10 @@ module cpu
   div_out_type div_out;
   mul_in_type mul_in;
   mul_out_type mul_out;
-  bit_alu_in_type bit_alu_in;
-  bit_alu_out_type bit_alu_out;
+  bit_alu_in_type bit_alu0_in;
+  bit_alu_out_type bit_alu0_out;
+  bit_alu_in_type bit_alu1_in;
+  bit_alu_out_type bit_alu1_out;
   bit_clmul_in_type bit_clmul_in;
   bit_clmul_out_type bit_clmul_out;
   btac_in_type btac_in;
@@ -296,10 +298,16 @@ module cpu
     .mul_out (mul_out)
   );
 
-  bit_alu bit_alu_comp
+  bit_alu bit_alu0_comp
   (
-    .bit_alu_in (bit_alu_in),
-    .bit_alu_out (bit_alu_out)
+    .bit_alu_in (bit_alu0_in),
+    .bit_alu_out (bit_alu0_out)
+  );
+
+  bit_alu bit_alu1_comp
+  (
+    .bit_alu_in (bit_alu1_in),
+    .bit_alu_out (bit_alu1_out)
   );
 
   bit_clmul bit_clmul_comp
@@ -453,8 +461,10 @@ module cpu
     .div_in (div_in),
     .mul_out (mul_out),
     .mul_in (mul_in),
-    .bit_alu_out (bit_alu_out),
-    .bit_alu_in (bit_alu_in),
+    .bit_alu0_out (bit_alu0_out),
+    .bit_alu0_in (bit_alu0_in),
+    .bit_alu1_out (bit_alu1_out),
+    .bit_alu1_in (bit_alu1_in),
     .bit_clmul_out (bit_clmul_out),
     .bit_clmul_in (bit_clmul_in),
     .fp_execute_out (fp_execute_out),
