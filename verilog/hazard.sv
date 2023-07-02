@@ -73,8 +73,8 @@ module hazard
     v.instr0 = v.count > 0 ? buffer[v.rid] : init_instruction;
     v.instr1 = v.count > 1 ? buffer[v.rid+1] : init_instruction;
 
-    v.basic[0] = v.instr0.op.alu | v.instr1.op.bitm | v.instr0.op.jal | v.instr0.op.jalr | v.instr0.op.jalr | v.instr0.op.branch | v.instr0.op.auipc | v.instr0.op.lui;
-    v.basic[1] = v.instr1.op.alu | v.instr0.op.bitm | v.instr1.op.jal | v.instr1.op.jalr | v.instr1.op.jalr | v.instr1.op.branch | v.instr1.op.auipc | v.instr1.op.lui;
+    v.basic[0] = v.instr0.op.alu | v.instr0.op.bitm | v.instr0.op.jal | v.instr0.op.jalr | v.instr0.op.jalr | v.instr0.op.branch | v.instr0.op.auipc | v.instr0.op.lui;
+    v.basic[1] = v.instr1.op.alu | v.instr1.op.bitm | v.instr1.op.jal | v.instr1.op.jalr | v.instr1.op.jalr | v.instr1.op.branch | v.instr1.op.auipc | v.instr1.op.lui;
 
     v.complex[0] = v.instr0.op.load | v.instr0.op.store | v.instr0.op.division | v.instr0.op.mult | v.instr0.op.bitc;
     v.complex[0] = v.complex[0] | v.instr0.op.fload | v.instr0.op.fstore | v.instr0.op.fpu | v.instr0.op.csreg | v.instr0.op.fence;

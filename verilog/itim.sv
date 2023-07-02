@@ -340,6 +340,10 @@ module itim_ctrl
           v_b.ready = 0;
         end
     endcase
+    
+    for (int i=0; i<itim_width; i=i+1) begin
+      ivec_in[i].raddr = 0;
+    end
 
     ivec_in[rin_f.wid0].raddr = rin_f.did0;
     ivec_in[rin_f.wid1].raddr = rin_f.did1;
