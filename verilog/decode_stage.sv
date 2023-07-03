@@ -209,9 +209,11 @@ module decode_stage
     if (a.f.ready == 1) begin
       if (v.instr0.op.valid == 0) begin
         v.instr0.op.exception = 1;
+        v.instr0.op.valid = 1;
       end
       if (v.instr1.op.valid == 0) begin
         v.instr1.op.exception = 1;
+        v.instr1.op.valid = 1;
       end
     end
 
