@@ -206,12 +206,13 @@ module decode_stage
       v.instr1.fpu_op = fp_decode1_out.fpu_op;
     end
 
-    if (v.instr0.op.valid == 0) begin
-      v.instr0.op.exception = 1;
-    end
-
-    if (v.instr1.op.valid == 0) begin
-      v.instr1.op.exception = 1;
+    if (a.f.ready == 1) begin
+      if (v.instr0.op.valid == 0) begin
+        v.instr0.op.exception = 1;
+      end
+      if (v.instr1.op.valid == 0) begin
+        v.instr1.op.exception = 1;
+      end
     end
 
     if ((v.stall | a.i.halt) == 1) begin
