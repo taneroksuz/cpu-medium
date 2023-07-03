@@ -38,131 +38,131 @@ module memory_stage
 
     v = r;
 
-    v.instr0 = d.e.instr0;
-    v.instr1 = d.e.instr1;
+    v.calc0 = d.e.calc0;
+    v.calc1 = d.e.calc1;
 
     if (d.m.stall == 1) begin
       v = r;
-      v.instr0.op = r.instr0.op_b;
-      v.instr1.op = r.instr1.op_b;
+      v.calc0.op = r.calc0.op_b;
+      v.calc1.op = r.calc1.op_b;
     end
 
     v.stall = 0;
 
     v.clear = csr_out.trap | csr_out.mret | d.w.clear;
 
-    dmem0_in.mem_valid = a.e.instr0.op.load | a.e.instr0.op.store | a.e.instr0.op.fload | a.e.instr0.op.fstore | a.e.instr0.op.fence;
-    dmem0_in.mem_fence = a.e.instr0.op.fence;
+    dmem0_in.mem_valid = a.e.calc0.op.load | a.e.calc0.op.store | a.e.calc0.op.fload | a.e.calc0.op.fstore | a.e.calc0.op.fence;
+    dmem0_in.mem_fence = a.e.calc0.op.fence;
     dmem0_in.mem_spec = 0;
     dmem0_in.mem_instr = 0;
-    dmem0_in.mem_addr = a.e.instr0.address;
-    dmem0_in.mem_wdata = store_data(a.e.instr0.sdata,a.e.instr0.lsu_op.lsu_sb,a.e.instr0.lsu_op.lsu_sh,a.e.instr0.lsu_op.lsu_sw);
-    dmem0_in.mem_wstrb = (a.e.instr0.op.load | a.e.instr0.op.fload) == 1 ? 4'h0 : a.e.instr0.byteenable;
+    dmem0_in.mem_addr = a.e.calc0.address;
+    dmem0_in.mem_wdata = store_data(a.e.calc0.sdata,a.e.calc0.lsu_op.lsu_sb,a.e.calc0.lsu_op.lsu_sh,a.e.calc0.lsu_op.lsu_sw);
+    dmem0_in.mem_wstrb = (a.e.calc0.op.load | a.e.calc0.op.fload) == 1 ? 4'h0 : a.e.calc0.byteenable;
 
-    dmem1_in.mem_valid = a.e.instr1.op.load | a.e.instr1.op.store;
+    dmem1_in.mem_valid = a.e.calc1.op.load | a.e.calc1.op.store;
     dmem1_in.mem_fence = 0;
     dmem1_in.mem_spec = 0;
     dmem1_in.mem_instr = 0;
-    dmem1_in.mem_addr = a.e.instr1.address;
-    dmem1_in.mem_wdata = store_data(a.e.instr1.sdata,a.e.instr1.lsu_op.lsu_sb,a.e.instr1.lsu_op.lsu_sh,a.e.instr1.lsu_op.lsu_sw);
-    dmem1_in.mem_wstrb = a.e.instr1.op.load == 1 ? 4'h0 : a.e.instr1.byteenable;
+    dmem1_in.mem_addr = a.e.calc1.address;
+    dmem1_in.mem_wdata = store_data(a.e.calc1.sdata,a.e.calc1.lsu_op.lsu_sb,a.e.calc1.lsu_op.lsu_sh,a.e.calc1.lsu_op.lsu_sw);
+    dmem1_in.mem_wstrb = a.e.calc1.op.load == 1 ? 4'h0 : a.e.calc1.byteenable;
 
     lsu0_in.ldata = dmem0_out.mem_rdata;
-    lsu0_in.byteenable = v.instr0.byteenable;
-    lsu0_in.lsu_op = v.instr0.lsu_op;
+    lsu0_in.byteenable = v.calc0.byteenable;
+    lsu0_in.lsu_op = v.calc0.lsu_op;
 
-    v.instr0.ldata = lsu0_out.result;
+    v.calc0.ldata = lsu0_out.result;
 
     lsu1_in.ldata = dmem1_out.mem_rdata;
-    lsu1_in.byteenable = v.instr1.byteenable;
-    lsu1_in.lsu_op = v.instr1.lsu_op;
+    lsu1_in.byteenable = v.calc1.byteenable;
+    lsu1_in.lsu_op = v.calc1.lsu_op;
 
-    v.instr1.ldata = lsu1_out.result;
+    v.calc1.ldata = lsu1_out.result;
 
-    if (v.instr0.op.load == 1) begin
-      v.instr0.wdata = v.instr0.ldata;
+    if (v.calc0.op.load == 1) begin
+      v.calc0.wdata = v.calc0.ldata;
       v.stall = ~(dmem0_out.mem_ready);
-    end else if (v.instr0.op.store == 1) begin
+    end else if (v.calc0.op.store == 1) begin
       v.stall = ~(dmem0_out.mem_ready);
-    end else if (v.instr0.op.fload == 1) begin
-      v.instr0.fdata = v.instr0.ldata;
+    end else if (v.calc0.op.fload == 1) begin
+      v.calc0.fdata = v.calc0.ldata;
       v.stall = ~(dmem0_out.mem_ready);
-    end else if (v.instr0.op.fstore == 1) begin
+    end else if (v.calc0.op.fstore == 1) begin
       v.stall = ~(dmem0_out.mem_ready);
-    end else if (v.instr0.op.fence == 1) begin
-      v.stall = ~(dmem0_out.mem_ready);
-    end
-
-    if (v.instr1.op.load == 1) begin
-      v.instr1.wdata = v.instr1.ldata;
-      v.stall = ~(dmem0_out.mem_ready);
-    end else if (v.instr1.op.store == 1) begin
+    end else if (v.calc0.op.fence == 1) begin
       v.stall = ~(dmem0_out.mem_ready);
     end
 
-    v.instr0.op_b = v.instr0.op;
-    v.instr1.op_b = v.instr1.op;
+    if (v.calc1.op.load == 1) begin
+      v.calc1.wdata = v.calc1.ldata;
+      v.stall = ~(dmem0_out.mem_ready);
+    end else if (v.calc1.op.store == 1) begin
+      v.stall = ~(dmem0_out.mem_ready);
+    end
 
-    forwarding0_min.wren = v.instr0.op.wren;
-    forwarding0_min.waddr = v.instr0.waddr;
-    forwarding0_min.wdata = v.instr0.wdata;
+    v.calc0.op_b = v.calc0.op;
+    v.calc1.op_b = v.calc1.op;
 
-    forwarding1_min.wren = v.instr1.op.wren;
-    forwarding1_min.waddr = v.instr1.waddr;
-    forwarding1_min.wdata = v.instr1.wdata;
+    forwarding0_min.wren = v.calc0.op.wren;
+    forwarding0_min.waddr = v.calc0.waddr;
+    forwarding0_min.wdata = v.calc0.wdata;
 
-    fp_forwarding_min.wren = v.instr0.op.fwren;
-    fp_forwarding_min.waddr = v.instr0.waddr;
-    fp_forwarding_min.wdata = v.instr0.fdata;
+    forwarding1_min.wren = v.calc1.op.wren;
+    forwarding1_min.waddr = v.calc1.waddr;
+    forwarding1_min.wdata = v.calc1.wdata;
 
-    if (v.instr0.op.fence == 1) begin
-      v.instr1 = init_instruction;
+    fp_forwarding_min.wren = v.calc0.op.fwren;
+    fp_forwarding_min.waddr = v.calc0.waddr;
+    fp_forwarding_min.wdata = v.calc0.fdata;
+
+    if (v.calc0.op.fence == 1) begin
+      v.calc1 = init_calculation;
     end
 
     if (v.stall == 1) begin
-      v.instr0.op = init_operation;
-      v.instr1.op = init_operation;
+      v.calc0.op = init_operation;
+      v.calc1.op = init_operation;
     end
 
     if (v.clear == 1) begin
-      v.instr0 = init_instruction;
-      v.instr1 = init_instruction;
+      v.calc0 = init_calculation;
+      v.calc1 = init_calculation;
     end
 
-    if (v.instr0.op_b.fence == 1) begin
-      v.instr0.op.fence = 1;
+    if (v.calc0.op_b.fence == 1) begin
+      v.calc0.op.fence = 1;
     end
 
     if (v.clear == 1) begin
       v.stall = 0;
     end
 
-    csr_win.cwren = v.instr0.op.cwren;
-    csr_win.cwaddr = v.instr0.caddr;
-    csr_win.cdata = v.instr0.cdata;
+    csr_win.cwren = v.calc0.op.cwren;
+    csr_win.cwaddr = v.calc0.caddr;
+    csr_win.cdata = v.calc0.cdata;
 
-    csr_ein.valid = v.instr0.op.valid | v.instr1.op.valid;
-    csr_ein.mret = v.instr0.op.mret;
-    csr_ein.exception = v.instr0.op.exception | v.instr1.op.exception;
-    csr_ein.epc = v.instr0.op.exception ? v.instr0.pc : v.instr1.pc;
-    csr_ein.ecause = v.instr0.op.exception ? v.instr0.ecause : v.instr1.ecause;
-    csr_ein.etval = v.instr0.op.exception ? v.instr0.etval : v.instr1.etval;
+    csr_ein.valid = v.calc0.op.valid | v.calc1.op.valid;
+    csr_ein.mret = v.calc0.op.mret;
+    csr_ein.exception = v.calc0.op.exception | v.calc1.op.exception;
+    csr_ein.epc = v.calc0.op.exception ? v.calc0.pc : v.calc1.pc;
+    csr_ein.ecause = v.calc0.op.exception ? v.calc0.ecause : v.calc1.ecause;
+    csr_ein.etval = v.calc0.op.exception ? v.calc0.etval : v.calc1.etval;
 
-    fp_csr_win.cwren = v.instr0.op.cwren;
-    fp_csr_win.cwaddr = v.instr0.caddr;
-    fp_csr_win.cdata = v.instr0.cdata;
+    fp_csr_win.cwren = v.calc0.op.cwren;
+    fp_csr_win.cwaddr = v.calc0.caddr;
+    fp_csr_win.cdata = v.calc0.cdata;
 
-    fp_csr_ein.fpu = v.instr0.op.fpuf;
-    fp_csr_ein.fflags = v.instr0.flags;
+    fp_csr_ein.fpu = v.calc0.op.fpuf;
+    fp_csr_ein.fflags = v.calc0.flags;
     
     rin = v;
 
-    y.instr0 = v.instr0;
-    y.instr1 = v.instr1;
+    y.calc0 = v.calc0;
+    y.calc1 = v.calc1;
     y.stall = v.stall;
 
-    q.instr0 = r.instr0;
-    q.instr1 = r.instr1;
+    q.calc0 = r.calc0;
+    q.calc1 = r.calc1;
     q.stall = r.stall;
 
   end

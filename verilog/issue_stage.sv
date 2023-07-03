@@ -34,7 +34,7 @@ module issue_stage
 
     hazard_in.instr0 = d.d.instr0;
     hazard_in.instr1 = d.d.instr1;
-    hazard_in.clear = a.d.taken | a.m.instr0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
+    hazard_in.clear = a.d.taken | a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
     hazard_in.stall = d.i.stall | d.e.stall | d.m.stall;
 
     v.instr0 = hazard_out.instr0;
@@ -49,7 +49,7 @@ module issue_stage
     v.halt = hazard_out.stall;
     v.stall = 0;
 
-    v.clear = a.m.instr0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
+    v.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
 
     if (csr_out.fs == 2'b00) begin
       v.instr0.fmt = 0;
@@ -86,33 +86,31 @@ module issue_stage
     fp_register_rin.raddr2 = v.instr0.raddr2;
     fp_register_rin.raddr3 = v.instr0.raddr3;
 
-    v.instr0.cdata = (fp_csr_out.ready == 1) ? fp_csr_out.cdata : csr_out.cdata;
-
     csr_rin.crden = v.instr0.op.crden;
     csr_rin.craddr = v.instr0.caddr;
 
     fp_csr_rin.crden = v.instr0.op.crden;
     fp_csr_rin.craddr = v.instr0.caddr;
 
-    if (a.e.instr0.op.cwren == 1 || a.m.instr0.op.cwren == 1) begin
+    if (a.e.calc0.op.cwren == 1 || a.m.calc0.op.cwren == 1) begin
       v.stall = 1;
-    end else if (a.e.instr0.op.division == 1) begin
+    end else if (a.e.calc0.op.division == 1) begin
       v.stall = 1;
-    end else if (a.e.instr0.op.bitc == 1) begin
+    end else if (a.e.calc0.op.bitc == 1) begin
       v.stall = 1;
-    end else if (a.e.instr0.op.fpuc == 1) begin
+    end else if (a.e.calc0.op.fpuc == 1) begin
       v.stall = 1;
-    end else if (v.instr0.op.crden == 1 && (v.instr0.caddr == csr_fflags || v.instr0.caddr == csr_fcsr) && (a.e.instr0.op.fpuf == 1 || a.m.instr0.op.fpuf == 1)) begin
+    end else if (v.instr0.op.crden == 1 && (v.instr0.caddr == csr_fflags || v.instr0.caddr == csr_fcsr) && (a.e.calc0.op.fpuf == 1 || a.m.calc0.op.fpuf == 1)) begin
       v.stall = 1;
-    end else if (a.e.instr0.op.load == 1 && ((v.instr0.op.rden1 == 1 && a.e.instr0.waddr == v.instr0.raddr1) || (v.instr0.op.rden2 == 1 && a.e.instr0.waddr == v.instr0.raddr2))) begin 
+    end else if (a.e.calc0.op.load == 1 && ((v.instr0.op.rden1 == 1 && a.e.calc0.waddr == v.instr0.raddr1) || (v.instr0.op.rden2 == 1 && a.e.calc0.waddr == v.instr0.raddr2))) begin 
       v.stall = 1;
-    end else if (a.e.instr1.op.load == 1 && ((v.instr0.op.rden1 == 1 && a.e.instr1.waddr == v.instr0.raddr1) || (v.instr0.op.rden2 == 1 && a.e.instr1.waddr == v.instr0.raddr2))) begin 
+    end else if (a.e.calc1.op.load == 1 && ((v.instr0.op.rden1 == 1 && a.e.calc1.waddr == v.instr0.raddr1) || (v.instr0.op.rden2 == 1 && a.e.calc1.waddr == v.instr0.raddr2))) begin 
       v.stall = 1;
-    end else if (a.e.instr0.op.load == 1 && ((v.instr1.op.rden1 == 1 && a.e.instr0.waddr == v.instr1.raddr1) || (v.instr1.op.rden2 == 1 && a.e.instr0.waddr == v.instr1.raddr2))) begin 
+    end else if (a.e.calc0.op.load == 1 && ((v.instr1.op.rden1 == 1 && a.e.calc0.waddr == v.instr1.raddr1) || (v.instr1.op.rden2 == 1 && a.e.calc0.waddr == v.instr1.raddr2))) begin 
       v.stall = 1;
-    end else if (a.e.instr1.op.load == 1 && ((v.instr1.op.rden1 == 1 && a.e.instr1.waddr == v.instr1.raddr1) || (v.instr1.op.rden2 == 1 && a.e.instr1.waddr == v.instr1.raddr2))) begin 
+    end else if (a.e.calc1.op.load == 1 && ((v.instr1.op.rden1 == 1 && a.e.calc1.waddr == v.instr1.raddr1) || (v.instr1.op.rden2 == 1 && a.e.calc1.waddr == v.instr1.raddr2))) begin 
       v.stall = 1;
-    end else if (a.e.instr0.op.fload == 1 && ((v.instr0.op.frden1 == 1 && a.e.instr0.waddr == v.instr0.raddr1) || (v.instr0.op.frden2 == 1 && a.e.instr0.waddr == v.instr0.raddr2) || (v.instr0.op.frden3 == 1 && a.e.instr0.waddr == v.instr0.raddr3))) begin 
+    end else if (a.e.calc0.op.fload == 1 && ((v.instr0.op.frden1 == 1 && a.e.calc0.waddr == v.instr0.raddr1) || (v.instr0.op.frden2 == 1 && a.e.calc0.waddr == v.instr0.raddr2) || (v.instr0.op.frden3 == 1 && a.e.calc0.waddr == v.instr0.raddr3))) begin 
       v.stall = 1;
     end
 
@@ -137,6 +135,8 @@ module issue_stage
       v.halt = 0;
       v.stall = 0;
     end
+
+    v.calc0.cdata = (fp_csr_out.ready == 1) ? fp_csr_out.cdata : csr_out.cdata;
 
     rin = v;
 

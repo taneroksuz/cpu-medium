@@ -498,7 +498,56 @@ package wires;
     logic [31 : 0] pc;
     logic [31 : 0] npc;
     logic [31 : 0] instr;
-    logic [95 : 0] instr_str;
+    logic [47 : 0] instr_str;
+    logic [31 : 0] imm;
+    logic [4  : 0] waddr;
+    logic [4  : 0] raddr1;
+    logic [4  : 0] raddr2;
+    logic [4  : 0] raddr3;
+    logic [11 : 0] caddr;
+    logic [1  : 0] fmt;
+    logic [2  : 0] rm;
+    operation_type op;
+    operation_type op_b;
+    alu_op_type alu_op;
+    bcu_op_type bcu_op;
+    lsu_op_type lsu_op;
+    csr_op_type csr_op;
+    div_op_type div_op;
+    mul_op_type mul_op;
+    bit_op_type bit_op;
+    fp_operation_type fpu_op;
+  } instruction_type;
+
+  parameter instruction_type init_instruction = '{
+    pc : 32'hFFFFFFFF,
+    npc : 32'hFFFFFFFF,
+    instr : 0,
+    instr_str : "",
+    imm : 0,
+    waddr : 0,
+    raddr1 : 0,
+    raddr2 : 0,
+    raddr3 : 0,
+    caddr : 0,
+    fmt : 0,
+    rm : 0,
+    op : init_operation,
+    op_b : init_operation,
+    alu_op : init_alu_op,
+    bcu_op : init_bcu_op,
+    lsu_op : init_lsu_op,
+    csr_op : init_csr_op,
+    div_op : init_div_op,
+    mul_op : init_mul_op,
+    bit_op : init_bit_op,
+    fpu_op : init_fp_operation
+  };
+
+  typedef struct packed{
+    logic [31 : 0] pc;
+    logic [31 : 0] npc;
+    logic [31 : 0] instr;
     logic [31 : 0] imm;
     logic [4  : 0] waddr;
     logic [4  : 0] raddr1;
@@ -539,13 +588,12 @@ package wires;
     mul_op_type mul_op;
     bit_op_type bit_op;
     fp_operation_type fpu_op;
-  } instruction_type;
+  } calculation_type;
 
-  parameter instruction_type init_instruction = '{
+  parameter calculation_type init_calculation = '{
     pc : 32'hFFFFFFFF,
     npc : 32'hFFFFFFFF,
     instr : 0,
-    instr_str : "",
     imm : 0,
     waddr : 0,
     raddr1 : 0,
@@ -606,7 +654,7 @@ package wires;
   } decoder_in_type;
 
   typedef struct packed{
-    logic [95 : 0] instr_str;
+    logic [47 : 0] instr_str;
     logic [31 : 0] imm;
     logic [0  : 0] wren;
     logic [0  : 0] rden1;
@@ -647,7 +695,7 @@ package wires;
   } fp_decode_in_type;
 
   typedef struct packed{
-    logic [95 : 0] instr_str;
+    logic [47 : 0] instr_str;
     logic [31 : 0] imm;
     logic [0  : 0] wren;
     logic [0  : 0] rden1;
@@ -791,6 +839,8 @@ package wires;
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
+    calculation_type calc0;
+    calculation_type calc1;
     logic [0  : 0] halt;
     logic [0  : 0] stall;
   } issue_out_type;
@@ -798,6 +848,8 @@ package wires;
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
+    calculation_type calc0;
+    calculation_type calc1;
     logic [0  : 0] halt;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
@@ -806,49 +858,51 @@ package wires;
   parameter issue_reg_type init_issue_reg = '{
     instr0 : init_instruction,
     instr1 : init_instruction,
+    calc0 : init_calculation,
+    calc1 : init_calculation,
     halt : 0,
     stall : 0,
     clear : 0
   };
 
   typedef struct packed{
-    instruction_type instr0;
-    instruction_type instr1;
+    calculation_type calc0;
+    calculation_type calc1;
     logic [0  : 0] stall;
   } execute_out_type;
 
   typedef struct packed{
-    instruction_type instr0;
-    instruction_type instr1;
+    calculation_type calc0;
+    calculation_type calc1;
     logic [0  : 0] enable;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } execute_reg_type;
 
   parameter execute_reg_type init_execute_reg = '{
-    instr0 : init_instruction,
-    instr1 : init_instruction,
+    calc0 : init_calculation,
+    calc1 : init_calculation,
     enable : 0,
     stall : 0,
     clear : 0
   };
 
   typedef struct packed{
-    instruction_type instr0;
-    instruction_type instr1;
+    calculation_type calc0;
+    calculation_type calc1;
     logic [0  : 0] stall;
   } memory_out_type;
 
   typedef struct packed{
-    instruction_type instr0;
-    instruction_type instr1;
+    calculation_type calc0;
+    calculation_type calc1;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } memory_reg_type;
 
   parameter memory_reg_type init_memory_reg = '{
-    instr0 : init_instruction,
-    instr1 : init_instruction,
+    calc0 : init_calculation,
+    calc1 : init_calculation,
     stall : 0,
     clear : 0
   };
@@ -859,15 +913,15 @@ package wires;
   } writeback_out_type;
 
   typedef struct packed{
-    instruction_type instr0;
-    instruction_type instr1;
+    calculation_type calc0;
+    calculation_type calc1;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } writeback_reg_type;
 
   parameter writeback_reg_type init_writeback_reg = '{
-    instr0 : init_instruction,
-    instr1 : init_instruction,
+    calc0 : init_calculation,
+    calc1 : init_calculation,
     stall : 0,
     clear : 1
   };

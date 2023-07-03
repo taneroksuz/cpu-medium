@@ -46,7 +46,7 @@ module decode_stage
 
     v.stall = 0;
 
-    v.clear = csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | d.w.clear;
+    v.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | d.w.clear;
 
     v.instr0.waddr = v.instr0.instr[11:7];
     v.instr0.raddr1 = v.instr0.instr[19:15];
@@ -206,38 +206,15 @@ module decode_stage
       v.instr1.fpu_op = fp_decode1_out.fpu_op;
     end
 
-    if (a.f.ready == 1) begin
-      if (v.instr0.op.valid == 0) begin
-        v.instr0.op.valid = 1;
-        v.instr0.op.exception = 1;
-        v.instr0.ecause = except_illegal_instruction;
-        v.instr0.etval = v.instr0.instr;
-      end else if (v.instr0.op.ebreak == 1) begin
-        v.instr0.op.exception = 1;
-        v.instr0.ecause = except_breakpoint;
-        v.instr0.etval = v.instr0.instr;
-      end else if (v.instr0.op.ecall == 1) begin
-        v.instr0.op.exception = 1;
-        v.instr0.ecause = except_env_call_mach;
-        v.instr0.etval = v.instr0.instr;
-      end
-      if (v.instr1.op.valid == 0) begin
-        v.instr1.op.valid = 1;
-        v.instr1.op.exception = 1;
-        v.instr1.ecause = except_illegal_instruction;
-        v.instr1.etval = v.instr1.instr;
-      end else if (v.instr1.op.ebreak == 1) begin
-        v.instr1.op.exception = 1;
-        v.instr1.ecause = except_breakpoint;
-        v.instr1.etval = v.instr1.instr;
-      end else if (v.instr1.op.ecall == 1) begin
-        v.instr1.op.exception = 1;
-        v.instr1.ecause = except_env_call_mach;
-        v.instr1.etval = v.instr1.instr;
-      end
+    if (v.instr0.op.valid == 0) begin
+      v.instr0.op.exception = 1;
     end
 
-    if ((v.stall | a.i.halt | a.m.instr0.op.fence) == 1) begin
+    if (v.instr1.op.valid == 0) begin
+      v.instr1.op.exception = 1;
+    end
+
+    if ((v.stall | a.i.halt) == 1) begin
       v.instr0 = init_instruction;
       v.instr1 = init_instruction;
     end

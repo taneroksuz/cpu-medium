@@ -11,7 +11,7 @@ module decoder
 
   logic [31 : 0] instr;
 
-  logic [95 : 0] instr_str;
+  logic [47 : 0] instr_str;
 
   logic [31 : 0] imm_c;
   logic [31 : 0] imm_i;
