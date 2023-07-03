@@ -229,12 +229,14 @@ module execute_stage
     end
 
     v.calc0.sdata = (v.calc0.op.fstore == 1) ? v.calc0.frdata2 : v.calc0.rdata2;
+    v.calc1.sdata = (v.calc1.op.fstore == 1) ? v.calc1.frdata2 : v.calc1.rdata2;
 
-    mul_in.rdata1 = v.calc0.rdata1;
-    mul_in.rdata2 = v.calc0.rdata2;
-    mul_in.mul_op = v.calc0.mul_op;
+    mul_in.rdata1 = v.calc0.op.mult ? v.calc0.rdata1 : v.calc1.rdata1;
+    mul_in.rdata2 = v.calc0.op.mult ? v.calc0.rdata2 : v.calc1.rdata2;
+    mul_in.mul_op = v.calc0.op.mult ? v.calc0.mul_op : v.calc1.mul_op;
 
     v.calc0.mdata = mul_out.result;
+    v.calc1.mdata = mul_out.result;
 
     bit_alu0_in.rdata1 = v.calc0.rdata1;
     bit_alu0_in.rdata2 = v.calc0.rdata2;
@@ -252,33 +254,40 @@ module execute_stage
 
     v.calc1.bdata = bit_alu1_out.result;
 
-    div_in.rdata1 = v.calc0.rdata1;
-    div_in.rdata2 = v.calc0.rdata2;
-    div_in.enable = v.calc0.op.division & v.enable;
-    div_in.div_op = v.calc0.div_op;
+    div_in.rdata1 = v.calc0.op.division ? v.calc0.rdata1 : v.calc1.rdata1;
+    div_in.rdata2 = v.calc0.op.division ? v.calc0.rdata2 : v.calc1.rdata2;
+    div_in.div_op = v.calc0.op.division ? v.calc0.div_op : v.calc1.div_op;
+    div_in.enable = (v.calc0.op.division | v.calc1.op.division) & v.enable;
 
     v.calc0.ddata = div_out.result;
+    v.calc1.ddata = div_out.result;
     v.calc0.dready = div_out.ready;
+    v.calc1.dready = div_out.ready;
 
-    bit_clmul_in.rdata1 = v.calc0.rdata1;
-    bit_clmul_in.rdata2 = v.calc0.rdata2;
-    bit_clmul_in.enable = v.calc0.op.bitc & v.enable;
-    bit_clmul_in.op = v.calc0.bit_op.bit_zbc;
+    bit_clmul_in.rdata1 = v.calc0.op.bitc ? v.calc0.rdata1 : v.calc1.rdata1;
+    bit_clmul_in.rdata2 = v.calc0.op.bitc ? v.calc0.rdata2 : v.calc1.rdata2;
+    bit_clmul_in.op = v.calc0.op.bitc ? v.calc0.bit_op.bit_zbc : v.calc1.bit_op.bit_zbc;
+    bit_clmul_in.enable = (v.calc0.op.bitc | v.calc1.op.bitc) & v.enable;
 
     v.calc0.bcdata = bit_clmul_out.result;
+    v.calc1.bcdata = bit_clmul_out.result;
     v.calc0.bcready = bit_clmul_out.ready;
+    v.calc1.bcready = bit_clmul_out.ready;
 
-    fp_execute_in.data1 = v.calc0.frdata1;
-    fp_execute_in.data2 = v.calc0.frdata2;
-    fp_execute_in.data3 = v.calc0.frdata3;
-    fp_execute_in.fpu_op = v.calc0.fpu_op;
-    fp_execute_in.fmt = v.calc0.fmt;
-    fp_execute_in.rm = v.calc0.rm;
-    fp_execute_in.enable = v.calc0.op.fpu & v.enable;
+    fp_execute_in.data1 = v.calc0.op.fpu ? v.calc0.frdata1 : v.calc1.frdata1;
+    fp_execute_in.data2 = v.calc0.op.fpu ? v.calc0.frdata2 : v.calc1.frdata2;
+    fp_execute_in.data3 = v.calc0.op.fpu ? v.calc0.frdata3 : v.calc1.frdata3;
+    fp_execute_in.fpu_op = v.calc0.op.fpu ? v.calc0.fpu_op : v.calc1.fpu_op;
+    fp_execute_in.fmt = v.calc0.op.fpu ? v.calc0.fmt : v.calc1.fmt;
+    fp_execute_in.rm = v.calc0.op.fpu ? v.calc0.rm : v.calc1.rm;
+    fp_execute_in.enable = (v.calc0.op.fpu | v.calc1.op.fpu) & v.enable;
 
     v.calc0.fdata = fp_execute_out.result;
+    v.calc1.fdata = fp_execute_out.result;
     v.calc0.flags = fp_execute_out.flags;
+    v.calc1.flags = fp_execute_out.flags;
     v.calc0.fready = fp_execute_out.ready;
+    v.calc1.fready = fp_execute_out.ready;
 
     if (v.calc0.op.auipc == 1) begin
       v.calc0.wdata = v.calc0.address;
@@ -310,8 +319,18 @@ module execute_stage
       v.calc1.wdata = v.calc1.npc;
     end else if (v.calc1.op.jalr == 1) begin
       v.calc1.wdata = v.calc1.npc;
+    end else if (v.calc1.op.crden == 1) begin
+      v.calc1.wdata = v.calc1.cdata;
+    end else if (v.calc1.op.division == 1) begin
+      v.calc1.wdata = v.calc1.ddata;
+    end else if (v.calc1.op.mult == 1) begin
+      v.calc1.wdata = v.calc1.mdata;
     end else if (v.calc1.op.bitm == 1) begin
       v.calc1.wdata = v.calc1.bdata;
+    end else if (v.calc1.op.bitc == 1) begin
+      v.calc1.wdata = v.calc1.bcdata;
+    end else if (v.calc1.op.fpu == 1) begin
+      v.calc1.wdata = v.calc1.fdata;
     end
 
     csr_alu_in.cdata = v.calc0.cdata;
@@ -332,6 +351,20 @@ module execute_stage
       end
     end else if (v.calc0.op.fpuc == 1) begin
       if (v.calc0.fready == 0) begin
+        v.stall = ~(a.m.stall);
+      end
+    end
+
+    if (v.calc1.op.division == 1) begin
+      if (v.calc1.dready == 0) begin
+        v.stall = ~(a.m.stall);
+      end
+    end else if (v.calc1.op.bitc == 1) begin
+      if (v.calc1.bcready == 0) begin
+        v.stall = ~(a.m.stall);
+      end
+    end else if (v.calc1.op.fpuc == 1) begin
+      if (v.calc1.fready == 0) begin
         v.stall = ~(a.m.stall);
       end
     end

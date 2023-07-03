@@ -29,6 +29,7 @@ module hazard
     logic [1 : 0] complex;
     logic [1 : 0] basic;
     logic [1 : 0] pass;
+    logic [0 : 0] dual;
     logic [0 : 0] stall;
   } reg_type;
 
@@ -43,6 +44,7 @@ module hazard
     complex : 0,
     basic : 0,
     pass : 0,
+    dual : 0,
     stall : 0
   };
 
@@ -128,11 +130,17 @@ module hazard
     v.basic[1] = v.calc1.op.alu | v.calc1.op.bitm | v.calc1.op.jal | v.calc1.op.jalr | v.calc1.op.jalr | v.calc1.op.branch | v.calc1.op.auipc | v.calc1.op.lui;
 
     v.complex[0] = v.calc0.op.load | v.calc0.op.store | v.calc0.op.division | v.calc0.op.mult | v.calc0.op.bitc;
-    v.complex[0] = v.complex[0] | v.calc0.op.fload | v.calc0.op.fstore | v.calc0.op.fpu | v.calc0.op.csreg | v.calc0.op.fence;
-    v.complex[0] = v.complex[0] | v.calc0.op.ecall | v.calc0.op.ebreak | v.calc0.op.mret | v.calc0.op.wfi;
+    v.complex[0] = v.complex[0] | v.calc0.op.fload | v.calc0.op.fstore | v.calc0.op.fpu | v.calc0.op.csreg;
+    v.complex[0] = v.complex[0] | v.calc0.op.fence | v.calc0.op.mret | v.calc0.op.wfi;
     v.complex[1] = v.calc1.op.load | v.calc1.op.store | v.calc1.op.division | v.calc1.op.mult | v.calc1.op.bitc;
-    v.complex[1] = v.complex[1] | v.calc1.op.fload | v.calc1.op.fstore | v.calc1.op.fpu | v.calc1.op.csreg | v.calc1.op.fence;
-    v.complex[1] = v.complex[1] | v.calc1.op.ecall | v.calc1.op.ebreak | v.calc1.op.mret | v.calc1.op.wfi;
+    v.complex[1] = v.complex[1] | v.calc1.op.fload | v.calc1.op.fstore | v.calc1.op.fpu | v.calc1.op.csreg;
+    v.complex[1] = v.complex[1] | v.calc1.op.fence | v.calc1.op.mret | v.calc1.op.wfi;
+
+    v.dual = (v.calc0.op.load & v.calc1.op.load) | (v.calc0.op.store & v.calc1.op.store) | (v.calc0.op.division & v.calc1.op.division);
+    v.dual = v.dual | (v.calc0.op.mult & v.calc1.op.mult) | (v.calc0.op.bitc & v.calc1.op.bitc) | (v.calc0.op.fload & v.calc1.op.fload);
+    v.dual = v.dual | (v.calc0.op.fstore & v.calc1.op.fstore) | (v.calc0.op.fpu & v.calc1.op.fpu) | (v.calc0.op.csreg & v.calc1.op.csreg);
+    v.dual = v.dual | (v.calc0.op.fence & v.calc1.op.fence) | (v.calc0.op.mret & v.calc1.op.mret) | (v.calc0.op.wfi & v.calc1.op.wfi);
+
 
     if ((v.basic[0] == 1 && v.basic[1] == 1) || (v.complex[0] == 1 && v.basic[1] == 1)) begin
       v.pass = 2;
