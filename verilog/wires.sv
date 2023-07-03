@@ -644,8 +644,8 @@ package wires;
   } hazard_in_type;
 
   typedef struct packed{
-    instruction_type instr0;
-    instruction_type instr1;
+    calculation_type calc0;
+    calculation_type calc1;
     logic [0  : 0] stall;
   } hazard_out_type;
 
@@ -837,8 +837,6 @@ package wires;
   };
 
   typedef struct packed{
-    instruction_type instr0;
-    instruction_type instr1;
     calculation_type calc0;
     calculation_type calc1;
     logic [0  : 0] halt;
@@ -846,8 +844,6 @@ package wires;
   } issue_out_type;
 
   typedef struct packed{
-    instruction_type instr0;
-    instruction_type instr1;
     calculation_type calc0;
     calculation_type calc1;
     logic [0  : 0] halt;
@@ -856,8 +852,6 @@ package wires;
   } issue_reg_type;
 
   parameter issue_reg_type init_issue_reg = '{
-    instr0 : init_instruction,
-    instr1 : init_instruction,
     calc0 : init_calculation,
     calc1 : init_calculation,
     halt : 0,

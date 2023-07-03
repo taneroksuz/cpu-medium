@@ -60,7 +60,7 @@ module fetch_stage
       end
     endcase
 
-    btac_in.get_pc = a.i.instr0.pc;
+    btac_in.get_pc = a.i.calc0.pc;
     btac_in.upd_pc0 = d.e.calc0.pc;
     btac_in.upd_pc1 = d.e.calc1.pc;
     btac_in.upd_npc0 = d.e.calc0.npc;

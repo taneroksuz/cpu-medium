@@ -21,6 +21,8 @@ module hazard
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
+    calculation_type calc0;
+    calculation_type calc1;
     logic [depth-1 : 0] wid;
     logic [depth-1 : 0] rid;
     logic [depth : 0] count;
@@ -33,6 +35,8 @@ module hazard
   parameter reg_type init_reg = '{
     instr0 : init_instruction,
     instr1 : init_instruction,
+    calc0 : init_calculation,
+    calc1 : init_calculation,
     wid : 0,
     rid : 0,
     count : 0,
@@ -73,23 +77,70 @@ module hazard
     v.instr0 = v.count > 0 ? buffer[v.rid] : init_instruction;
     v.instr1 = v.count > 1 ? buffer[v.rid+1] : init_instruction;
 
-    v.basic[0] = v.instr0.op.alu | v.instr0.op.bitm | v.instr0.op.jal | v.instr0.op.jalr | v.instr0.op.jalr | v.instr0.op.branch | v.instr0.op.auipc | v.instr0.op.lui;
-    v.basic[1] = v.instr1.op.alu | v.instr1.op.bitm | v.instr1.op.jal | v.instr1.op.jalr | v.instr1.op.jalr | v.instr1.op.branch | v.instr1.op.auipc | v.instr1.op.lui;
+    v.calc0 = init_calculation;
+    v.calc1 = init_calculation;
 
-    v.complex[0] = v.instr0.op.load | v.instr0.op.store | v.instr0.op.division | v.instr0.op.mult | v.instr0.op.bitc;
-    v.complex[0] = v.complex[0] | v.instr0.op.fload | v.instr0.op.fstore | v.instr0.op.fpu | v.instr0.op.csreg | v.instr0.op.fence;
-    v.complex[0] = v.complex[0] | v.instr0.op.ecall | v.instr0.op.ebreak | v.instr0.op.mret | v.instr0.op.wfi;
-    v.complex[1] = v.instr1.op.load | v.instr1.op.store | v.instr1.op.division | v.instr1.op.mult | v.instr1.op.bitc;
-    v.complex[1] = v.complex[1] | v.instr1.op.fload | v.instr1.op.fstore | v.instr1.op.fpu | v.instr1.op.csreg | v.instr1.op.fence;
-    v.complex[1] = v.complex[1] | v.instr1.op.ecall | v.instr1.op.ebreak | v.instr1.op.mret | v.instr1.op.wfi;
+    v.calc0.pc = v.instr0.pc;
+    v.calc0.npc = v.instr0.npc;
+    v.calc0.instr = v.instr0.instr;
+    v.calc0.imm = v.instr0.imm;
+    v.calc0.waddr = v.instr0.waddr;
+    v.calc0.raddr1 = v.instr0.raddr1;
+    v.calc0.raddr2 = v.instr0.raddr2;
+    v.calc0.raddr3 = v.instr0.raddr3;
+    v.calc0.caddr = v.instr0.caddr;
+    v.calc0.fmt = v.instr0.fmt;
+    v.calc0.rm = v.instr0.rm;
+    v.calc0.op = v.instr0.op;
+    v.calc0.op_b = v.instr0.op_b;
+    v.calc0.alu_op = v.instr0.alu_op;
+    v.calc0.bcu_op = v.instr0.bcu_op;
+    v.calc0.lsu_op = v.instr0.lsu_op;
+    v.calc0.csr_op = v.instr0.csr_op;
+    v.calc0.div_op = v.instr0.div_op;
+    v.calc0.mul_op = v.instr0.mul_op;
+    v.calc0.bit_op = v.instr0.bit_op;
+    v.calc0.fpu_op = v.instr0.fpu_op;
+
+    v.calc1.pc = v.instr1.pc;
+    v.calc1.npc = v.instr1.npc;
+    v.calc1.instr = v.instr1.instr;
+    v.calc1.imm = v.instr1.imm;
+    v.calc1.waddr = v.instr1.waddr;
+    v.calc1.raddr1 = v.instr1.raddr1;
+    v.calc1.raddr2 = v.instr1.raddr2;
+    v.calc1.raddr3 = v.instr1.raddr3;
+    v.calc1.caddr = v.instr1.caddr;
+    v.calc1.fmt = v.instr1.fmt;
+    v.calc1.rm = v.instr1.rm;
+    v.calc1.op = v.instr1.op;
+    v.calc1.op_b = v.instr1.op_b;
+    v.calc1.alu_op = v.instr1.alu_op;
+    v.calc1.bcu_op = v.instr1.bcu_op;
+    v.calc1.lsu_op = v.instr1.lsu_op;
+    v.calc1.csr_op = v.instr1.csr_op;
+    v.calc1.div_op = v.instr1.div_op;
+    v.calc1.mul_op = v.instr1.mul_op;
+    v.calc1.bit_op = v.instr1.bit_op;
+    v.calc1.fpu_op = v.instr1.fpu_op;
+
+    v.basic[0] = v.calc0.op.alu | v.calc0.op.bitm | v.calc0.op.jal | v.calc0.op.jalr | v.calc0.op.jalr | v.calc0.op.branch | v.calc0.op.auipc | v.calc0.op.lui;
+    v.basic[1] = v.calc1.op.alu | v.calc1.op.bitm | v.calc1.op.jal | v.calc1.op.jalr | v.calc1.op.jalr | v.calc1.op.branch | v.calc1.op.auipc | v.calc1.op.lui;
+
+    v.complex[0] = v.calc0.op.load | v.calc0.op.store | v.calc0.op.division | v.calc0.op.mult | v.calc0.op.bitc;
+    v.complex[0] = v.complex[0] | v.calc0.op.fload | v.calc0.op.fstore | v.calc0.op.fpu | v.calc0.op.csreg | v.calc0.op.fence;
+    v.complex[0] = v.complex[0] | v.calc0.op.ecall | v.calc0.op.ebreak | v.calc0.op.mret | v.calc0.op.wfi;
+    v.complex[1] = v.calc1.op.load | v.calc1.op.store | v.calc1.op.division | v.calc1.op.mult | v.calc1.op.bitc;
+    v.complex[1] = v.complex[1] | v.calc1.op.fload | v.calc1.op.fstore | v.calc1.op.fpu | v.calc1.op.csreg | v.calc1.op.fence;
+    v.complex[1] = v.complex[1] | v.calc1.op.ecall | v.calc1.op.ebreak | v.calc1.op.mret | v.calc1.op.wfi;
 
     if ((v.basic[0] == 1 && v.basic[1] == 1) || (v.complex[0] == 1 && v.basic[1] == 1)) begin
       v.pass = 2;
-      if (v.instr0.op.wren == 1) begin
-        if (v.instr1.op.rden1 == 1 && v.instr1.raddr1 == v.instr0.waddr) begin
+      if (v.calc0.op.wren == 1) begin
+        if (v.calc1.op.rden1 == 1 && v.calc1.raddr1 == v.calc0.waddr) begin
           v.pass = 1;
         end
-        if (v.instr1.op.rden2 == 1 && v.instr1.raddr2 == v.instr0.waddr) begin
+        if (v.calc1.op.rden2 == 1 && v.calc1.raddr2 == v.calc0.waddr) begin
           v.pass = 1;
         end
       end
@@ -114,8 +165,8 @@ module hazard
       v.stall = 0;
     end
 
-    hazard_out.instr0 = v.pass > 0 ? v.instr0 : init_instruction;
-    hazard_out.instr1 = v.pass > 1 ? v.instr1 : init_instruction;
+    hazard_out.calc0 = v.pass > 0 ? v.calc0 : init_calculation;
+    hazard_out.calc1 = v.pass > 1 ? v.calc1 : init_calculation;
     hazard_out.stall = v.stall;
 
     rin = v;
