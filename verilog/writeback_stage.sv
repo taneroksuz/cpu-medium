@@ -33,18 +33,6 @@ module writeback_stage
       v.clear = 0;
     end
 
-    register0_win.wren = v.calc0.op.wren & |(v.calc0.waddr);
-    register0_win.waddr = v.calc0.waddr;
-    register0_win.wdata = v.calc0.wdata;
-
-    register1_win.wren = v.calc1.op.wren & |(v.calc1.waddr);
-    register1_win.waddr = v.calc1.waddr;
-    register1_win.wdata = v.calc1.wdata;
-
-    fp_register_win.wren = v.calc0.op.fwren;
-    fp_register_win.waddr = v.calc0.waddr;
-    fp_register_win.wdata = v.calc0.fdata;
-
     forwarding0_win.wren = v.calc0.op.wren;
     forwarding0_win.waddr = v.calc0.waddr;
     forwarding0_win.wdata = v.calc0.wdata;
@@ -53,9 +41,21 @@ module writeback_stage
     forwarding1_win.waddr = v.calc1.waddr;
     forwarding1_win.wdata = v.calc1.wdata;
 
-    fp_forwarding_win.wren = v.calc0.op.fwren;
-    fp_forwarding_win.waddr = v.calc0.waddr;
-    fp_forwarding_win.wdata = v.calc0.fdata;
+    fp_forwarding_win.wren = v.calc0.op.fwren | v.calc1.op.fwren;
+    fp_forwarding_win.waddr = v.calc0.op.fwren ? v.calc0.waddr : v.calc1.waddr;
+    fp_forwarding_win.wdata = v.calc0.op.fwren ? v.calc0.fdata : v.calc1.fdata;
+
+    register0_win.wren = v.calc0.op.wren & |(v.calc0.waddr);
+    register0_win.waddr = v.calc0.waddr;
+    register0_win.wdata = v.calc0.wdata;
+
+    register1_win.wren = v.calc1.op.wren & |(v.calc1.waddr);
+    register1_win.waddr = v.calc1.waddr;
+    register1_win.wdata = v.calc1.wdata;
+
+    fp_register_win.wren = v.calc0.op.fwren | v.calc1.op.fwren;
+    fp_register_win.waddr = v.calc0.op.fwren ? v.calc0.waddr : v.calc1.waddr;
+    fp_register_win.wdata = v.calc0.op.fwren ? v.calc0.fdata : v.calc1.fdata;
 
     rin = v;
 

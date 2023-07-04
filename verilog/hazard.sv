@@ -26,10 +26,9 @@ module hazard
     logic [depth-1 : 0] wid;
     logic [depth-1 : 0] rid;
     logic [depth : 0] count;
-    logic [1 : 0] complex;
-    logic [1 : 0] basic;
     logic [1 : 0] pass;
     logic [0 : 0] dual;
+    logic [0 : 0] single;
     logic [0 : 0] stall;
   } reg_type;
 
@@ -41,10 +40,9 @@ module hazard
     wid : 0,
     rid : 0,
     count : 0,
-    complex : 0,
-    basic : 0,
     pass : 0,
     dual : 0,
+    single : 0,
     stall : 0
   };
 
@@ -125,30 +123,34 @@ module hazard
     v.calc1.mul_op = v.instr1.mul_op;
     v.calc1.bit_op = v.instr1.bit_op;
     v.calc1.fpu_op = v.instr1.fpu_op;
+    
+    v.single = v.calc1.op.fload | v.calc1.op.fstore | v.calc1.op.fpu | v.calc1.op.csreg | v.calc1.op.fence | v.calc1.op.mret | v.calc1.op.wfi;
 
-    v.basic[0] = v.calc0.op.alu | v.calc0.op.bitm | v.calc0.op.jal | v.calc0.op.jalr | v.calc0.op.jalr | v.calc0.op.branch | v.calc0.op.auipc | v.calc0.op.lui;
-    v.basic[1] = v.calc1.op.alu | v.calc1.op.bitm | v.calc1.op.jal | v.calc1.op.jalr | v.calc1.op.jalr | v.calc1.op.branch | v.calc1.op.auipc | v.calc1.op.lui;
+    v.dual = ((v.calc0.op.load | v.calc0.op.store) & (v.calc1.op.load | v.calc1.op.store));
+    v.dual = v.dual | (v.calc0.op.division & v.calc1.op.division)
+    v.dual = v.dual | (v.calc0.op.mult & v.calc1.op.mult);
+    v.dual = v.dual | (v.calc0.op.bitc & v.calc1.op.bitc);
 
-    v.complex[0] = v.calc0.op.load | v.calc0.op.store | v.calc0.op.division | v.calc0.op.mult | v.calc0.op.bitc;
-    v.complex[0] = v.complex[0] | v.calc0.op.fload | v.calc0.op.fstore | v.calc0.op.fpu | v.calc0.op.csreg;
-    v.complex[0] = v.complex[0] | v.calc0.op.fence | v.calc0.op.mret | v.calc0.op.wfi;
-    v.complex[1] = v.calc1.op.load | v.calc1.op.store | v.calc1.op.division | v.calc1.op.mult | v.calc1.op.bitc;
-    v.complex[1] = v.complex[1] | v.calc1.op.fload | v.calc1.op.fstore | v.calc1.op.fpu | v.calc1.op.csreg;
-    v.complex[1] = v.complex[1] | v.calc1.op.fence | v.calc1.op.mret | v.calc1.op.wfi;
-
-    v.dual = (v.calc0.op.load & v.calc1.op.load) | (v.calc0.op.store & v.calc1.op.store) | (v.calc0.op.division & v.calc1.op.division);
-    v.dual = v.dual | (v.calc0.op.mult & v.calc1.op.mult) | (v.calc0.op.bitc & v.calc1.op.bitc) | (v.calc0.op.fload & v.calc1.op.fload);
-    v.dual = v.dual | (v.calc0.op.fstore & v.calc1.op.fstore) | (v.calc0.op.fpu & v.calc1.op.fpu) | (v.calc0.op.csreg & v.calc1.op.csreg);
-    v.dual = v.dual | (v.calc0.op.fence & v.calc1.op.fence) | (v.calc0.op.mret & v.calc1.op.mret) | (v.calc0.op.wfi & v.calc1.op.wfi);
-
-
-    if ((v.basic[0] == 1 && v.basic[1] == 1) || (v.complex[0] == 1 && v.basic[1] == 1)) begin
+    if (v.single == 1) begin
+      v.pass = 1;
+    end else if (v.dual == 0) begin
       v.pass = 2;
       if (v.calc0.op.wren == 1) begin
         if (v.calc1.op.rden1 == 1 && v.calc1.raddr1 == v.calc0.waddr) begin
           v.pass = 1;
         end
         if (v.calc1.op.rden2 == 1 && v.calc1.raddr2 == v.calc0.waddr) begin
+          v.pass = 1;
+        end
+      end
+      if (v.calc0.op.fwren == 1) begin
+        if (v.calc1.op.frden1 == 1 && v.calc1.raddr1 == v.calc0.waddr) begin
+          v.pass = 1;
+        end
+        if (v.calc1.op.frden2 == 1 && v.calc1.raddr2 == v.calc0.waddr) begin
+          v.pass = 1;
+        end
+        if (v.calc1.op.frden3 == 1 && v.calc1.raddr3 == v.calc0.waddr) begin
           v.pass = 1;
         end
       end

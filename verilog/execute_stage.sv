@@ -80,12 +80,12 @@ module execute_stage
     v.calc1.rdata1 = forwarding1_out.data1;
     v.calc1.rdata2 = forwarding1_out.data2;
 
-    fp_forwarding_rin.rden1 = v.calc0.op.frden1;
-    fp_forwarding_rin.rden2 = v.calc0.op.frden2;
-    fp_forwarding_rin.rden3 = v.calc0.op.frden3;
-    fp_forwarding_rin.raddr1 = v.calc0.raddr1;
-    fp_forwarding_rin.raddr2 = v.calc0.raddr2;
-    fp_forwarding_rin.raddr3 = v.calc0.raddr3;
+    fp_forwarding_rin.rden1 = v.calc0.op.frden1 | v.calc1.op.frden1;
+    fp_forwarding_rin.rden2 = v.calc0.op.frden2 | v.calc1.op.frden2;
+    fp_forwarding_rin.rden3 = v.calc0.op.frden3 | v.calc1.op.frden3;
+    fp_forwarding_rin.raddr1 = v.calc0.op.frden1 ? v.calc0.raddr1 : v.calc1.raddr1;
+    fp_forwarding_rin.raddr2 = v.calc0.op.frden2 ? v.calc0.raddr2 : v.calc1.raddr2;
+    fp_forwarding_rin.raddr3 = v.calc0.op.frden3 ? v.calc0.raddr3 : v.calc1.raddr3;
     fp_forwarding_rin.rdata1 = fp_register_out.rdata1;
     fp_forwarding_rin.rdata2 = fp_register_out.rdata2;
     fp_forwarding_rin.rdata3 = fp_register_out.rdata3;
@@ -96,6 +96,10 @@ module execute_stage
 
     if ((v.calc0.op.fpu & v.calc0.op.rden1) == 1) begin
       v.calc0.frdata1 = v.calc0.rdata1;
+    end
+
+    if ((v.calc1.op.fpu & v.calc1.op.rden1) == 1) begin
+      v.calc1.frdata1 = v.calc1.rdata1;
     end
 
     if ((d.e.stall | d.m.stall) == 1) begin
@@ -216,11 +220,13 @@ module execute_stage
       v.calc1.ecause = agu1_out.ecause;
       v.calc1.etval = agu1_out.etval;
       if (v.calc1.op.exception == 1) begin
-        if ((v.calc1.op.load) == 1) begin
+        if ((v.calc1.op.load | v.calc1.op.fload) == 1) begin
           v.calc1.op.load = 0;
+          v.calc1.op.fload = 0;
           v.calc1.op.wren = 0;
-        end else if ((v.calc1.op.store) == 1) begin
+        end else if ((v.calc1.op.store | v.calc1.op.fstore) == 1) begin
           v.calc1.op.store = 0;
+          v.calc1.op.fstore = 0;
         end else if (v.calc1.op.jump == 1) begin
           v.calc1.op.jump = 0;
           v.calc1.op.wren = 0;
