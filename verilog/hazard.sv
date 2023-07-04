@@ -124,12 +124,13 @@ module hazard
     v.calc1.bit_op = v.instr1.bit_op;
     v.calc1.fpu_op = v.instr1.fpu_op;
     
-    v.single = v.calc1.op.fload | v.calc1.op.fstore | v.calc1.op.fpu | v.calc1.op.csreg | v.calc1.op.fence | v.calc1.op.mret | v.calc1.op.wfi;
+    v.single = v.calc1.op.fload | v.calc1.op.fstore | v.calc1.op.fpu | v.calc1.op.fence | v.calc1.op.mret | v.calc1.op.wfi;
 
     v.dual = ((v.calc0.op.load | v.calc0.op.store) & (v.calc1.op.load | v.calc1.op.store));
-    v.dual = v.dual | (v.calc0.op.division & v.calc1.op.division)
+    v.dual = v.dual | (v.calc0.op.division & v.calc1.op.division);
     v.dual = v.dual | (v.calc0.op.mult & v.calc1.op.mult);
     v.dual = v.dual | (v.calc0.op.bitc & v.calc1.op.bitc);
+    v.dual = v.dual | (v.calc0.op.csreg & v.calc1.op.csreg);
 
     if (v.single == 1) begin
       v.pass = 1;

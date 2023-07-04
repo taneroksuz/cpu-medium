@@ -339,13 +339,14 @@ module execute_stage
       v.calc1.wdata = v.calc1.fdata;
     end
 
-    csr_alu_in.cdata = v.calc0.cdata;
-    csr_alu_in.rdata1 = v.calc0.rdata1;
-    csr_alu_in.imm = v.calc0.imm;
-    csr_alu_in.sel = v.calc0.op.rden1;
-    csr_alu_in.csr_op = v.calc0.csr_op;
+    csr_alu_in.cdata = v.calc0.op.csreg ? v.calc0.cdata : v.calc1.cdata;
+    csr_alu_in.rdata1 = v.calc0.op.csreg ? v.calc0.rdata1 : v.calc1.rdata1;
+    csr_alu_in.imm = v.calc0.op.csreg ? v.calc0.imm : v.calc1.imm;
+    csr_alu_in.sel = v.calc0.op.csreg ? v.calc0.op.rden1 : v.calc1.op.rden1;
+    csr_alu_in.csr_op = v.calc0.op.csreg ? v.calc0.csr_op : v.calc1.csr_op;
 
     v.calc0.cdata = csr_alu_out.cdata;
+    v.calc1.cdata = csr_alu_out.cdata;
 
     if (v.calc0.op.division == 1) begin
       if (v.calc0.dready == 0) begin
