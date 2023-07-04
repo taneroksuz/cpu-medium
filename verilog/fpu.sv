@@ -95,7 +95,7 @@ module fpu_decode
         rden1 = 1;
         fwren = 1;
         fload = 1;
-        // fpu = 1;
+        fpu = 1;
         if (funct3 == funct_lw) begin
           lsu_op.lsu_lw = 1;
         end else begin
@@ -108,7 +108,7 @@ module fpu_decode
         rden1 = 1;
         frden2 = 1;
         fstore = 1;
-        // fpu = 1;
+        fpu = 1;
         if (funct3 == funct_sw) begin
           lsu_op.lsu_sw = 1;
         end else begin
