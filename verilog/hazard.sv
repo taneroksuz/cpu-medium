@@ -135,6 +135,7 @@ module hazard
     v.dual = v.dual | (v.calc0.op.mult & v.calc1.op.mult);
     v.dual = v.dual | (v.calc0.op.bitc & v.calc1.op.bitc);
     v.dual = v.dual | (v.calc0.op.csreg & v.calc1.op.csreg);
+    v.dual = v.dual | (v.calc0.op.fpuf & v.calc1.op.csreg & (v.calc1.caddr == csr_fflags || v.calc1.caddr == csr_fcsr));
 
     if (v.single == 1) begin
       v.pass = 1;

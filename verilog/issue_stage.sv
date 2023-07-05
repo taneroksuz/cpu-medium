@@ -113,9 +113,11 @@ module issue_stage
     v.calc0.cdata = (fp_csr_out.ready == 1) ? fp_csr_out.cdata : csr_out.cdata;
     v.calc1.cdata = (fp_csr_out.ready == 1) ? fp_csr_out.cdata : csr_out.cdata;
 
-    if (a.e.calc0.op.cwren == 1 || a.m.calc0.op.cwren == 1) begin
+    if (a.e.calc0.op.cwren == 1 || a.m.calc0.op.cwren == 1 || a.e.calc1.op.cwren == 1 || a.m.calc1.op.cwren == 1) begin
       v.stall = 1;
-    end else if (v.calc0.op.crden == 1 && (v.calc0.caddr == csr_fflags || v.calc0.caddr == csr_fcsr) && (a.e.calc0.op.fpuf == 1 || a.m.calc0.op.fpuf == 1)) begin
+    end else if (v.calc0.op.crden == 1 && (v.calc0.caddr == csr_fflags || v.calc0.caddr == csr_fcsr) && (a.e.calc0.op.fpuf == 1 || a.m.calc0.op.fpuf == 1 || a.e.calc1.op.fpuf == 1 || a.m.calc1.op.fpuf == 1)) begin
+      v.stall = 1;
+    end else if (v.calc1.op.crden == 1 && (v.calc1.caddr == csr_fflags || v.calc1.caddr == csr_fcsr) && (a.e.calc0.op.fpuf == 1 || a.m.calc0.op.fpuf == 1 || a.e.calc1.op.fpuf == 1 || a.m.calc1.op.fpuf == 1)) begin
       v.stall = 1;
     end else if (a.e.calc0.op.load == 1 && ((v.calc0.op.rden1 == 1 && a.e.calc0.waddr == v.calc0.raddr1) || (v.calc0.op.rden2 == 1 && a.e.calc0.waddr == v.calc0.raddr2))) begin 
       v.stall = 1;

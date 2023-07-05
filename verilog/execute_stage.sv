@@ -94,6 +94,10 @@ module execute_stage
     v.calc0.frdata2 = fp_forwarding_out.data2;
     v.calc0.frdata3 = fp_forwarding_out.data3;
 
+    v.calc1.frdata1 = fp_forwarding_out.data1;
+    v.calc1.frdata2 = fp_forwarding_out.data2;
+    v.calc1.frdata3 = fp_forwarding_out.data3;
+
     if ((v.calc0.op.fpu & v.calc0.op.rden1) == 1) begin
       v.calc0.frdata1 = v.calc0.rdata1;
     end

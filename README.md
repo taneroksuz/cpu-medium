@@ -5,11 +5,11 @@ Wolv Z7 CPU core supports currently only riscv32-imfb instruction set architectu
 ## Dhrystone Benchmark ##
 | Cycles | Dhrystone/s/MHz | DMIPS/s/MHz | Iteration |
 | ------ | --------------- | ----------- | --------- |
-|    255 |            3917 |        2.23 |      1000 |
+|    249 |            4011 |        2.28 |      1000 |
 
 ## Coremark Benchmark ##
 | Cycles | Iteration/s/MHz | Iteration |
 | ------ | --------------- | --------- |
-| 296666 |            3.37 |        10 |
+| 289783 |            3.45 |        10 |
 
 Documentation will be expanded in the future.
