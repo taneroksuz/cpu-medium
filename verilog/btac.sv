@@ -221,8 +221,8 @@ module btac
 
       assign btac_out.pred_baddr = 0;
       assign btac_out.pred_branch = 0;
-      assign btac_out.pred_maddr = 0;
-      assign btac_out.pred_miss = 0;
+      assign btac_out.pred_maddr = btac_in.upd_jump0 ? btac_in.upd_addr0 : btac_in.upd_addr1;
+      assign btac_out.pred_miss = btac_in.upd_jump0 | btac_in.upd_jump1;
       assign btac_out.pred_pc = 0;
 
     end
