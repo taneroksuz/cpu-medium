@@ -387,7 +387,8 @@ package wires;
   } csr_alu_out_type;
 
   typedef struct packed{
-    logic [31 : 0] get_pc;
+    logic [31 : 0] get_pc0;
+    logic [31 : 0] get_pc1;
     logic [31 : 0] upd_pc0;
     logic [31 : 0] upd_pc1;
     logic [31 : 0] upd_npc0;
@@ -405,6 +406,7 @@ package wires;
     logic [0  : 0] taken;
     logic [31 : 0] taddr;
     logic [31 : 0] tpc;
+    logic [0  : 0] stall;
     logic [0  : 0] clear;
   } btac_in_type;
 
