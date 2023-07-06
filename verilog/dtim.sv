@@ -348,8 +348,6 @@ module dtim_ctrl
     v_b.wdata = 0;
     v_b.wstrb = 0;
 
-    v_b.rdata0 = 0;
-    v_b.rdata1 = 0;
     v_b.ready0 = 0;
     v_b.ready1 = 0;
 
@@ -498,20 +496,25 @@ module dtim_ctrl
       fence :
         begin
           if (dmem_out.mem_ready == 1 || v_b.valid == 0) begin
-            v_b.en = 1;
-            v_b.inv = 1;
-            v_b.pass = 1;
             if (&(v_b.wid) == 1 && &(v_b.did) == 1) begin
               v_b.rdata0 = 0;
               v_b.ready0 = 1;
               v_b.state = hit;
               v_b.en = 0;
+              v_b.inv = 1;
+              v_b.pass = 1;
               v_b.did = 0;
               v_b.wid = 0;
             end else if (&(v_b.wid) == 1 && &(v_b.did) == 0) begin
+              v_b.en = 1;
+              v_b.inv = 1;
+              v_b.pass = 1;
               v_b.did = v_b.did + 1;
               v_b.wid = 0;
             end else begin
+              v_b.en = 1;
+              v_b.inv = 1;
+              v_b.pass = 1;
               v_b.wid = v_b.wid + 1;
             end
           end

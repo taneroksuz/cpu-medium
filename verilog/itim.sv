@@ -193,12 +193,12 @@ module itim_ctrl
       v_f.enable = itim_in.mem_valid;
       v_f.fence = itim_in.mem_fence;
       v_f.addr0 = itim_in.mem_addr;
-      v_f.tag0 = v_f.addr0[31:(depth+width+2)];
-      v_f.did0 = v_f.addr0[(depth+width+1):(width+2)];
-      v_f.wid0 = v_f.addr0[(width+1):2];
       v_f.addr1 = itim_in.mem_addr+4;
+      v_f.tag0 = v_f.addr0[31:(depth+width+2)];
       v_f.tag1 = v_f.addr1[31:(depth+width+2)];
+      v_f.did0 = v_f.addr0[(depth+width+1):(width+2)];
       v_f.did1 = v_f.addr1[(depth+width+1):(width+2)];
+      v_f.wid0 = v_f.addr0[(width+1):2];
       v_f.wid1 = v_f.addr1[(width+1):2];
     end
 
@@ -210,41 +210,39 @@ module itim_ctrl
 
     v_b = r_b;
 
-    v_b.enable = 0;
-    v_b.fence = 0;
-    v_b.lock = 0;
     v_b.wen = 0;
     v_b.en = 0;
     v_b.inv = 0;
-    v_b.clear = 0;
-    v_b.hit = 0;
-    v_b.miss = 0;
-    v_b.load = 0;
 
-    if (r_b.state == hit) begin
-      v_b.enable = r_f.enable;
-      v_b.fence = r_f.fence;
-      v_b.addr0 = r_f.addr0;
-      v_b.addr1 = r_f.addr1;
-      v_b.tag0 = r_f.tag0;
-      v_b.tag1 = r_f.tag1;
-      v_b.did0 = r_f.did0;
-      v_b.did1 = r_f.did1;
-      v_b.wid0 = r_f.wid0;
-      v_b.wid1 = r_f.wid1;
-    end
+    v_b.lock = 0;
+    v_b.tag = 0;
+    v_b.data = 0;
+
+    v_b.ready = 0;
 
     case(r_b.state)
       hit :
         begin
-          v_b.rdata = 0;
-          v_b.ready = 0;
+          v_b.enable = r_f.enable;
+          v_b.fence = r_f.fence;
+          v_b.addr0 = r_f.addr0;
+          v_b.addr1 = r_f.addr1;
+          v_b.tag0 = r_f.tag0;
+          v_b.tag1 = r_f.tag1;
+          v_b.did0 = r_f.did0;
+          v_b.did1 = r_f.did1;
+          v_b.wid0 = r_f.wid0;
+          v_b.wid1 = r_f.wid1;
           v_b.itag0 = ivec_out[v_b.wid0].rdata[61-(depth+width):32];
           v_b.itag1 = ivec_out[v_b.wid1].rdata[61-(depth+width):32];
           v_b.lock0 = ivec_out[v_b.wid0].rdata[62-(depth+width)];
           v_b.lock1 = ivec_out[v_b.wid1].rdata[62-(depth+width)];
           v_b.data0 = ivec_out[v_b.wid0].rdata[31:0];
           v_b.data1 = ivec_out[v_b.wid1].rdata[31:0];
+          v_b.clear = 0;
+          v_b.load = 0;
+          v_b.miss = 0;
+          v_b.hit = 0;
           if (v_b.fence == 1) begin
             v_b.clear = v_b.enable;
           end else if ((v_b.addr0 < itim_base_addr || v_b.addr0 >= itim_top_addr) || (v_b.addr1 < itim_base_addr || v_b.addr1 >= itim_top_addr)) begin
@@ -293,15 +291,17 @@ module itim_ctrl
               v_b.rdata[63:32] = imem_out.mem_rdata;
               v_b.ready = 1;
             end else begin
+              v_b.valid = 1;
               v_b.incr = 1;
               v_b.wen = 1;
               v_b.did = v_b.did0;
               v_b.wid = v_b.wid0;
               v_b.lock = 1;
               v_b.tag = v_b.tag0;
-              v_b.addr = v_b.addr + 4;
+              v_b.addr = v_b.addr1;
               v_b.data = imem_out.mem_rdata;
               v_b.rdata[31:0] = imem_out.mem_rdata;
+              v_b.ready = 0;
             end
           end
         end
@@ -314,9 +314,11 @@ module itim_ctrl
               v_b.rdata[63:32] = imem_out.mem_rdata;
               v_b.ready = 1;
             end else begin
+              v_b.valid = 1;
               v_b.incr = 1;
-              v_b.addr = v_b.addr + 4;
+              v_b.addr = v_b.addr1;
               v_b.rdata[31:0] = imem_out.mem_rdata;
+              v_b.ready = 0;
             end
           end
         end
@@ -324,20 +326,19 @@ module itim_ctrl
         begin
           if (&(v_b.did) == 1) begin
             v_b.state = hit;
-            v_b.inv = 1;
             v_b.en = 0;
+            v_b.inv = 1;
             v_b.did = 0;
+            v_b.rdata = 0;
             v_b.ready = 1;
           end else begin
-            v_b.inv = 1;
             v_b.en = 1;
+            v_b.inv = 1;
             v_b.did = v_b.did + 1;
           end
         end
       default :
         begin
-          v_b.rdata = 0;
-          v_b.ready = 0;
         end
     endcase
     
@@ -347,6 +348,12 @@ module itim_ctrl
 
     ivec_in[rin_f.wid0].raddr = rin_f.did0;
     ivec_in[rin_f.wid1].raddr = rin_f.did1;
+    
+    for (int i=0; i<itim_width; i=i+1) begin
+      ivec_in[i].wen = 0;
+      ivec_in[i].waddr = 0;
+      ivec_in[i].wdata = 0;
+    end
 
     ivec_in[v_b.wid].wen = v_b.wen;
     ivec_in[v_b.wid].waddr = v_b.did;
