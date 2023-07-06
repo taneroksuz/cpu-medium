@@ -406,6 +406,7 @@ package wires;
     logic [0  : 0] taken;
     logic [31 : 0] taddr;
     logic [31 : 0] tpc;
+    logic [31 : 0] tnpc;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } btac_in_type;
@@ -416,6 +417,7 @@ package wires;
     logic [31 : 0] pred_maddr;
     logic [0  : 0] pred_miss;
     logic [31 : 0] pred_pc;
+    logic [31 : 0] pred_npc;
   } btac_out_type;
 
   typedef struct packed{
@@ -779,6 +781,7 @@ package wires;
     logic [0  : 0] taken;
     logic [31 : 0] taddr;
     logic [31 : 0] tpc;
+    logic [31 : 0] tnpc;
   } fetch_out_type;
 
   typedef struct packed{
@@ -791,6 +794,7 @@ package wires;
     logic [0  : 0] taken;
     logic [31 : 0] taddr;
     logic [31 : 0] tpc;
+    logic [31 : 0] tnpc;
     logic [1  : 0] state;
     logic [0  : 0] stall;
   } fetch_reg_type;
@@ -805,6 +809,7 @@ package wires;
     taken : 0,
     taddr : 0,
     tpc : 0,
+    tnpc : 0,
     state : 0,
     stall : 0
   };
@@ -812,18 +817,12 @@ package wires;
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
-    logic [0  : 0] taken;
-    logic [31 : 0] taddr;
-    logic [31 : 0] tpc;
     logic [0  : 0] stall;
   } decode_out_type;
 
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
-    logic [0  : 0] taken;
-    logic [31 : 0] taddr;
-    logic [31 : 0] tpc;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } decode_reg_type;
@@ -831,9 +830,6 @@ package wires;
   parameter decode_reg_type init_decode_reg = '{
     instr0 : init_instruction,
     instr1 : init_instruction,
-    taken : 0,
-    taddr : 0,
-    tpc : 0,
     stall : 0,
     clear : 0
   };

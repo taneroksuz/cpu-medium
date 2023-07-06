@@ -32,10 +32,6 @@ module decode_stage
 
     v = r;
 
-    v.taken = d.f.taken;
-    v.taddr = d.f.taddr;
-    v.tpc = d.f.tpc;
-
     v.instr0.pc = a.f.ready ? d.f.pc : 32'hFFFFFFFF;
     v.instr1.pc = a.f.ready ? (d.f.pc + 4) : 32'hFFFFFFFF;
     v.instr0.instr = a.f.ready ? a.f.rdata[31:0] : 0;
@@ -227,26 +223,14 @@ module decode_stage
       v.instr1 = init_instruction;
     end
 
-    if (v.clear == 1) begin
-      v.taken = 0;
-      v.taddr = 0;
-      v.tpc = 0;
-    end
-
     rin = v;
 
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
-    y.taken = v.taken;
-    y.taddr = v.taddr;
-    y.tpc = v.tpc;
     y.stall = v.stall;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
-    q.taken = r.taken;
-    q.taddr = r.taddr;
-    q.tpc = r.tpc;
     q.stall = r.stall;
 
   end

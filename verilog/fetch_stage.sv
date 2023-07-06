@@ -67,6 +67,7 @@ module fetch_stage
       v.pc = csr_out.mtvec;
       v.taddr = 0;
       v.tpc = 0;
+      v.tnpc = 0;
     end else if (csr_out.mret == 1) begin
       v.fence = 0;
       v.spec = 1;
@@ -74,6 +75,7 @@ module fetch_stage
       v.pc = csr_out.mepc;
       v.taddr = 0;
       v.tpc = 0;
+      v.tnpc = 0;
     end else if (btac_out.pred_miss == 1) begin
       v.fence = 0;
       v.spec = 1;
@@ -81,6 +83,7 @@ module fetch_stage
       v.pc = btac_out.pred_maddr;
       v.taddr = 0;
       v.tpc = 0;
+      v.tnpc = 0;
     end else if (d.m.calc0.op.fence == 1) begin
       v.fence = 1;
       v.spec = 1;
@@ -88,6 +91,7 @@ module fetch_stage
       v.pc = d.m.calc0.npc;
       v.taddr = 0;
       v.tpc = 0;
+      v.tnpc = 0;
     end else if (btac_out.pred_branch == 1) begin
       v.fence = 0;
       v.spec = 1;
@@ -95,6 +99,7 @@ module fetch_stage
       v.pc = btac_out.pred_baddr;
       v.taddr = btac_out.pred_baddr;
       v.tpc = btac_out.pred_pc;
+      v.tnpc = btac_out.pred_npc;
     end else if (v.stall == 0) begin
       v.fence = 0;
       v.spec = 0;
@@ -102,6 +107,7 @@ module fetch_stage
       v.pc = v.pc + 8;
       v.taddr = 0;
       v.tpc = 0;
+      v.tnpc = 0;
     end
 
     case(v.state)
@@ -177,6 +183,7 @@ module fetch_stage
     btac_in.taken = v.taken;
     btac_in.taddr = v.taddr;
     btac_in.tpc = v.tpc;
+    btac_in.tnpc = v.tnpc;
     btac_in.stall = v.stall;
     btac_in.clear = d.w.clear;
 
