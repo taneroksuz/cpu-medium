@@ -403,10 +403,22 @@ package wires;
     logic [0  : 0] upd_branch1;
     logic [0  : 0] upd_jump0;
     logic [0  : 0] upd_jump1;
-    logic [0  : 0] taken;
-    logic [31 : 0] taddr;
-    logic [31 : 0] tpc;
-    logic [31 : 0] tnpc;
+    logic [0  : 0] fetch_taken;
+    logic [31 : 0] fetch_taddr;
+    logic [31 : 0] fetch_tpc;
+    logic [31 : 0] fetch_tnpc;
+    logic [0  : 0] decode_taken;
+    logic [31 : 0] decode_taddr;
+    logic [31 : 0] decode_tpc;
+    logic [31 : 0] decode_tnpc;
+    logic [0  : 0] issue_taken;
+    logic [31 : 0] issue_taddr;
+    logic [31 : 0] issue_tpc;
+    logic [31 : 0] issue_tnpc;
+    logic [0  : 0] execute_taken;
+    logic [31 : 0] execute_taddr;
+    logic [31 : 0] execute_tpc;
+    logic [31 : 0] execute_tnpc;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } btac_in_type;
@@ -817,12 +829,20 @@ package wires;
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
+    logic [0  : 0] taken;
+    logic [31 : 0] taddr;
+    logic [31 : 0] tpc;
+    logic [31 : 0] tnpc;
     logic [0  : 0] stall;
   } decode_out_type;
 
   typedef struct packed{
     instruction_type instr0;
     instruction_type instr1;
+    logic [0  : 0] taken;
+    logic [31 : 0] taddr;
+    logic [31 : 0] tpc;
+    logic [31 : 0] tnpc;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } decode_reg_type;
@@ -830,6 +850,10 @@ package wires;
   parameter decode_reg_type init_decode_reg = '{
     instr0 : init_instruction,
     instr1 : init_instruction,
+    taken : 0,
+    taddr : 0,
+    tpc : 0,
+    tnpc : 0,
     stall : 0,
     clear : 0
   };
@@ -837,6 +861,10 @@ package wires;
   typedef struct packed{
     calculation_type calc0;
     calculation_type calc1;
+    logic [0  : 0] taken;
+    logic [31 : 0] taddr;
+    logic [31 : 0] tpc;
+    logic [31 : 0] tnpc;
     logic [0  : 0] halt;
     logic [0  : 0] stall;
   } issue_out_type;
@@ -844,6 +872,10 @@ package wires;
   typedef struct packed{
     calculation_type calc0;
     calculation_type calc1;
+    logic [0  : 0] taken;
+    logic [31 : 0] taddr;
+    logic [31 : 0] tpc;
+    logic [31 : 0] tnpc;
     logic [0  : 0] halt;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
@@ -852,6 +884,10 @@ package wires;
   parameter issue_reg_type init_issue_reg = '{
     calc0 : init_calculation,
     calc1 : init_calculation,
+    taken : 0,
+    taddr : 0,
+    tpc : 0,
+    tnpc : 0,
     halt : 0,
     stall : 0,
     clear : 0
@@ -860,12 +896,20 @@ package wires;
   typedef struct packed{
     calculation_type calc0;
     calculation_type calc1;
+    logic [0  : 0] taken;
+    logic [31 : 0] taddr;
+    logic [31 : 0] tpc;
+    logic [31 : 0] tnpc;
     logic [0  : 0] stall;
   } execute_out_type;
 
   typedef struct packed{
     calculation_type calc0;
     calculation_type calc1;
+    logic [0  : 0] taken;
+    logic [31 : 0] taddr;
+    logic [31 : 0] tpc;
+    logic [31 : 0] tnpc;
     logic [0  : 0] enable;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
@@ -874,6 +918,10 @@ package wires;
   parameter execute_reg_type init_execute_reg = '{
     calc0 : init_calculation,
     calc1 : init_calculation,
+    taken : 0,
+    taddr : 0,
+    tpc : 0,
+    tnpc : 0,
     enable : 0,
     stall : 0,
     clear : 0

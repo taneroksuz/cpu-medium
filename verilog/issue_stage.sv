@@ -32,9 +32,14 @@ module issue_stage
 
     v = r;
 
+    v.taken = d.d.taken;
+    v.taddr = d.d.taddr;
+    v.tpc = d.d.tpc;
+    v.tnpc = d.d.tnpc;
+
     hazard_in.instr0 = d.d.instr0;
     hazard_in.instr1 = d.d.instr1;
-    hazard_in.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | d.w.clear;
+    hazard_in.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
     hazard_in.stall = d.i.stall | d.e.stall | d.m.stall;
 
     v.calc0 = hazard_out.calc0;
@@ -159,11 +164,19 @@ module issue_stage
 
     y.calc0 = v.calc0;
     y.calc1 = v.calc1;
+    y.taken = v.taken;
+    y.taddr = v.taddr;
+    y.tpc = v.tpc;
+    y.tnpc = v.tnpc;
     y.halt = v.halt;
     y.stall = v.stall;
 
     q.calc0 = r.calc0;
     q.calc1 = r.calc1;
+    q.taken = r.taken;
+    q.taddr = r.taddr;
+    q.tpc = r.tpc;
+    q.tnpc = r.tnpc;
     q.halt = r.halt;
     q.stall = r.stall;
 

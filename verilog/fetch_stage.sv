@@ -164,8 +164,8 @@ module fetch_stage
     imem_in.mem_wdata = 0;
     imem_in.mem_wstrb = 0;
 
-    btac_in.get_pc0 = a.i.calc0.pc;
-    btac_in.get_pc1 = a.i.calc1.pc;
+    btac_in.get_pc0 = d.f.pc;
+    btac_in.get_pc1 = d.f.pc+4;
     btac_in.upd_pc0 = d.e.calc0.pc;
     btac_in.upd_pc1 = d.e.calc1.pc;
     btac_in.upd_npc0 = d.e.calc0.npc;
@@ -180,10 +180,22 @@ module fetch_stage
     btac_in.upd_branch1 = d.e.calc1.op.branch;
     btac_in.upd_jump0 = d.e.calc0.op.jump;
     btac_in.upd_jump1 = d.e.calc1.op.jump;
-    btac_in.taken = v.taken;
-    btac_in.taddr = v.taddr;
-    btac_in.tpc = v.tpc;
-    btac_in.tnpc = v.tnpc;
+    btac_in.fetch_taken = d.f.taken;
+    btac_in.fetch_taddr = d.f.taddr;
+    btac_in.fetch_tpc = d.f.tpc;
+    btac_in.fetch_tnpc = d.f.tnpc;
+    btac_in.decode_taken = d.d.taken;
+    btac_in.decode_taddr = d.d.taddr;
+    btac_in.decode_tpc = d.d.tpc;
+    btac_in.decode_tnpc = d.d.tnpc;
+    btac_in.issue_taken = d.i.taken;
+    btac_in.issue_taddr = d.i.taddr;
+    btac_in.issue_tpc = d.i.tpc;
+    btac_in.issue_tnpc = d.i.tnpc;
+    btac_in.execute_taken = d.e.taken;
+    btac_in.execute_taddr = d.e.taddr;
+    btac_in.execute_tpc = d.e.tpc;
+    btac_in.execute_tnpc = d.e.tnpc;
     btac_in.stall = v.stall;
     btac_in.clear = d.w.clear;
 
