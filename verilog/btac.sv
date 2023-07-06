@@ -158,7 +158,7 @@ module btac_ctrl
     end
 
     if (btac_in.clear == 0) begin
-      if (v.taken == 1 && (btac_in.upd_pc0 == v.tpc || btac_in.upd_pc1 == v.tpc)) begin
+      if (v.taken == 1 && btac_in.upd_pc0 == v.tpc) begin
         if (btac_in.upd_jump0 == 1) begin
           btac_out.pred_maddr = btac_in.upd_addr0;
           btac_out.pred_miss = |(btac_in.upd_addr0 ^ v.taddr);
@@ -167,7 +167,12 @@ module btac_ctrl
           btac_out.pred_maddr = v.tnpc;
           btac_out.pred_miss = 1;
           v.taken = 0;
-        end else if (btac_in.upd_jump1 == 1) begin
+        end else begin
+          btac_out.pred_maddr = 0;
+          btac_out.pred_miss = 0;
+        end
+      end else if (v.taken == 1 && btac_in.upd_pc1 == v.tpc) begin
+        if (btac_in.upd_jump1 == 1) begin
           btac_out.pred_maddr = btac_in.upd_addr1;
           btac_out.pred_miss = |(btac_in.upd_addr1 ^ v.taddr);
           v.taken = 0;

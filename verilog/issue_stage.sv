@@ -49,7 +49,7 @@ module issue_stage
     v.halt = hazard_out.stall;
     v.stall = 0;
 
-    v.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | d.w.clear;
+    v.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
 
     if (csr_out.fs == 2'b00) begin
       v.calc0.fmt = 0;
