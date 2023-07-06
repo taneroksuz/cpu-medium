@@ -38,14 +38,19 @@ module btb
 
   logic [95:0] btb_array[0:branchtarget_depth-1] = '{default:'0};
 
-  assign btb_out.rdata0 = btb_array[btb_in.raddr0];
-  assign btb_out.rdata1 = btb_array[btb_in.raddr1];
+  logic [btb_depth-1 : 0] raddr0 = 0;
+  logic [btb_depth-1 : 0] raddr1 = 0;
 
   always_ff @(posedge clock) begin
+    raddr0 <= btb_in.raddr0;
+    raddr1 <= btb_in.raddr1;
     if (btb_in.wen == 1) begin
       btb_array[btb_in.waddr] <= btb_in.wdata;
     end
   end
+
+  assign btb_out.rdata0 = btb_array[raddr0];
+  assign btb_out.rdata1 = btb_array[raddr1];
 
 endmodule
 
@@ -71,6 +76,8 @@ module btac_ctrl
     logic [0  : 0] wen;
     logic [0  : 0] branch0;
     logic [0  : 0] branch1;
+    logic [31 : 0] pc0;
+    logic [31 : 0] pc1;
     logic [0  : 0] taken;
     logic [31 : 0] taddr;
     logic [31 : 0] tpc;
@@ -84,6 +91,8 @@ module btac_ctrl
     wen : 0,
     branch0 : 0,
     branch1 : 0,
+    pc0 : 0,
+    pc1 : 0,
     taken : 0,
     taddr : 0,
     tpc : 0
@@ -96,6 +105,8 @@ module btac_ctrl
     v = r;
 
     if (btac_in.clear == 0) begin
+      v.pc0 = btac_in.get_pc0;
+      v.pc1 = btac_in.get_pc1;
       v.raddr0 = btac_in.get_pc0[btb_depth+1:2];
       v.raddr1 = btac_in.get_pc1[btb_depth+1:2];
     end
@@ -114,8 +125,8 @@ module btac_ctrl
     end
 
     if (btac_in.clear == 0) begin
-      v.branch0 = (|btb_out.rdata0) & (~(|(btb_out.rdata0[95:64] ^ btac_in.get_pc0)));
-      v.branch1 = (|btb_out.rdata1) & (~(|(btb_out.rdata1[95:64] ^ btac_in.get_pc1)));
+      v.branch0 = (|btb_out.rdata0) & (~(|(btb_out.rdata0[95:64] ^ r.pc0)));
+      v.branch1 = (|btb_out.rdata1) & (~(|(btb_out.rdata1[95:64] ^ r.pc1)));
       btac_out.pred_branch = v.branch0 | v.branch1;
       btac_out.pred_baddr = v.branch0 ? btb_out.rdata0[63:32] : btb_out.rdata1[63:32];
       btac_out.pred_pc = v.branch0 ? btb_out.rdata0[31:0] : btb_out.rdata1[31:0];

@@ -60,28 +60,6 @@ module fetch_stage
       end
     endcase
 
-    btac_in.get_pc0 = d.f.pc;
-    btac_in.get_pc1 = d.f.pc + 4;
-    btac_in.upd_pc0 = d.e.calc0.pc;
-    btac_in.upd_pc1 = d.e.calc1.pc;
-    btac_in.upd_npc0 = d.e.calc0.npc;
-    btac_in.upd_npc1 = d.e.calc1.npc;
-    btac_in.upd_addr0 = d.e.calc0.address;
-    btac_in.upd_addr1 = d.e.calc1.address;
-    btac_in.upd_jal0 = d.e.calc0.op.jal;
-    btac_in.upd_jal1 = d.e.calc1.op.jal;
-    btac_in.upd_jalr0 = d.e.calc0.op.jalr;
-    btac_in.upd_jalr1 = d.e.calc1.op.jalr;
-    btac_in.upd_branch0 = d.e.calc0.op.branch;
-    btac_in.upd_branch1 = d.e.calc1.op.branch;
-    btac_in.upd_jump0 = d.e.calc0.op.jump;
-    btac_in.upd_jump1 = d.e.calc1.op.jump;
-    btac_in.taken = d.f.taken;
-    btac_in.taddr = d.f.taddr;
-    btac_in.tpc = d.f.tpc;
-    btac_in.stall = v.stall;
-    btac_in.clear = d.w.clear;
-
     if (csr_out.trap == 1) begin
       v.fence = 0;
       v.spec = 1;
@@ -179,6 +157,28 @@ module fetch_stage
     imem_in.mem_addr = v.pc;
     imem_in.mem_wdata = 0;
     imem_in.mem_wstrb = 0;
+
+    btac_in.get_pc0 = v.pc;
+    btac_in.get_pc1 = v.pc + 4;
+    btac_in.upd_pc0 = d.e.calc0.pc;
+    btac_in.upd_pc1 = d.e.calc1.pc;
+    btac_in.upd_npc0 = d.e.calc0.npc;
+    btac_in.upd_npc1 = d.e.calc1.npc;
+    btac_in.upd_addr0 = d.e.calc0.address;
+    btac_in.upd_addr1 = d.e.calc1.address;
+    btac_in.upd_jal0 = d.e.calc0.op.jal;
+    btac_in.upd_jal1 = d.e.calc1.op.jal;
+    btac_in.upd_jalr0 = d.e.calc0.op.jalr;
+    btac_in.upd_jalr1 = d.e.calc1.op.jalr;
+    btac_in.upd_branch0 = d.e.calc0.op.branch;
+    btac_in.upd_branch1 = d.e.calc1.op.branch;
+    btac_in.upd_jump0 = d.e.calc0.op.jump;
+    btac_in.upd_jump1 = d.e.calc1.op.jump;
+    btac_in.taken = v.taken;
+    btac_in.taddr = v.taddr;
+    btac_in.tpc = v.tpc;
+    btac_in.stall = v.stall;
+    btac_in.clear = d.w.clear;
 
     rin = v;
 
