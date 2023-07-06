@@ -42,7 +42,7 @@ module decode_stage
 
     v.stall = 0;
 
-    v.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
+    v.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | d.w.clear;
 
     v.instr0.waddr = v.instr0.instr[11:7];
     v.instr0.raddr1 = v.instr0.instr[19:15];

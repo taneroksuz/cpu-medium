@@ -164,8 +164,8 @@ module fetch_stage
     imem_in.mem_wdata = 0;
     imem_in.mem_wstrb = 0;
 
-    btac_in.get_pc0 = v.pc;
-    btac_in.get_pc1 = v.pc + 4;
+    btac_in.get_pc0 = a.i.calc0.pc;
+    btac_in.get_pc1 = a.i.calc1.pc;
     btac_in.upd_pc0 = d.e.calc0.pc;
     btac_in.upd_pc1 = d.e.calc1.pc;
     btac_in.upd_npc0 = d.e.calc0.npc;
@@ -195,6 +195,7 @@ module fetch_stage
     y.taken = v.taken;
     y.taddr = v.taddr;
     y.tpc = v.tpc;
+    y.tnpc = v.tnpc;
 
     q.pc = r.pc;
     q.rdata = r.rdata;
@@ -202,6 +203,7 @@ module fetch_stage
     q.taken = r.taken;
     q.taddr = r.taddr;
     q.tpc = r.tpc;
+    q.tnpc = r.tnpc;
 
   end
 

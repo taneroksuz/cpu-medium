@@ -34,7 +34,7 @@ module issue_stage
 
     hazard_in.instr0 = d.d.instr0;
     hazard_in.instr1 = d.d.instr1;
-    hazard_in.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
+    hazard_in.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | d.w.clear;
     hazard_in.stall = d.i.stall | d.e.stall | d.m.stall;
 
     v.calc0 = hazard_out.calc0;
@@ -49,7 +49,7 @@ module issue_stage
     v.halt = hazard_out.stall;
     v.stall = 0;
 
-    v.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
+    v.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_branch | btac_out.pred_miss | d.w.clear;
 
     if (csr_out.fs == 2'b00) begin
       v.calc0.fmt = 0;
