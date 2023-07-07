@@ -150,6 +150,10 @@ module issue_stage
       v.calc1.op = init_operation;
     end
 
+    if (v.taken == 1 && v.tnpc == v.calc0.pc) begin
+      v.calc0 = init_calculation;
+    end
+
     if (v.clear == 1) begin
       v.calc0 = init_calculation;
       v.calc1 = init_calculation;
