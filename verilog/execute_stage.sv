@@ -380,7 +380,7 @@ module execute_stage
     v.calc0.op_b = v.calc0.op;
     v.calc1.op_b = v.calc1.op;
 
-    if ((v.calc0.op.fence | v.calc0.op.exception | v.calc0.op.mret | v.calc0.op.jump) == 1) begin
+    if ((v.calc0.op.fence | v.calc0.op.exception | v.calc0.op.mret | v.calc0.op.jump) == 1 && (v.calc0.npc == v.calc1.pc)) begin
       v.calc1 = init_calculation;
     end
 
