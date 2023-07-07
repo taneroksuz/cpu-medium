@@ -126,7 +126,7 @@ module btac_ctrl
       v.wdata = 0;
     end
 
-    if (btac_in.clear == 0) begin
+    if (btac_in.stall == 0 && btac_in.clear == 0) begin
       v.branch0 = (|btb_out.rdata0) & (~(|(btb_out.rdata0[63:32] ^ r.pc0)));
       v.branch1 = (|btb_out.rdata1) & (~(|(btb_out.rdata1[63:32] ^ r.pc1)));
       btac_out.pred_branch = v.branch0 | v.branch1;
@@ -160,6 +160,11 @@ module btac_ctrl
       v.taddr = btac_in.fetch_taddr;
       v.tpc = btac_in.fetch_tpc;
       v.tnpc = btac_in.fetch_tnpc;
+    end else if (btac_in.clear == 0) begin
+      v.taken = r.taken;
+      v.taddr = r.taddr;
+      v.tpc = r.tpc;
+      v.tnpc = r.tnpc;
     end else begin
       v.taken = 0;
       v.taddr = 0;
