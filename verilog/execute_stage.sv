@@ -384,6 +384,10 @@ module execute_stage
       v.calc1 = init_calculation;
     end
 
+    if (btac_out.pred_hazard == 1) begin
+      v.calc1 = init_calculation;
+    end
+
     if ((v.stall | a.m.stall) == 1) begin
       v.calc0.op = init_operation;
       v.calc1.op = init_operation;

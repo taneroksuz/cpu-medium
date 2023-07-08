@@ -434,6 +434,7 @@ package wires;
     logic [31 : 0] pred_npc;
     logic [31 : 0] pred_maddr;
     logic [0  : 0] pred_miss;
+    logic [0  : 0] pred_hazard;
   } btac_out_type;
 
   typedef struct packed{
