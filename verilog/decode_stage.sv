@@ -42,6 +42,10 @@ module decode_stage
 
     v.pred = d.f.pred;
 
+    if ((d.d.stall | d.i.stall | d.e.stall | d.m.stall) == 1) begin
+      v.pred = r.pred_b;
+    end
+
     v.stall = 0;
 
     v.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
@@ -214,6 +218,8 @@ module decode_stage
         v.instr1.op.valid = 1;
       end
     end
+
+    v.pred_b = v.pred;
 
     if ((v.stall | a.i.halt) == 1) begin
       v.instr0 = init_instruction;

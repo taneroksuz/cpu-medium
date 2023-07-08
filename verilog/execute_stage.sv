@@ -110,6 +110,7 @@ module execute_stage
       v = r;
       v.calc0.op = r.calc0.op_b;
       v.calc1.op = r.calc1.op_b;
+      v.pred = r.pred_b;
     end
 
     v.stall = 0;
@@ -376,6 +377,8 @@ module execute_stage
 
     v.calc0.op_b = v.calc0.op;
     v.calc1.op_b = v.calc1.op;
+
+    v.pred_b = v.pred;
 
     if ((v.calc0.op.fence | v.calc0.op.exception | v.calc0.op.mret | v.calc0.op.jump) == 1 && (v.calc0.npc == v.calc1.pc)) begin
       v.calc1 = init_calculation;

@@ -852,6 +852,7 @@ package wires;
     instruction_type instr0;
     instruction_type instr1;
     prediction_type pred;
+    prediction_type pred_b;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } decode_reg_type;
@@ -860,6 +861,7 @@ package wires;
     instr0 : init_instruction,
     instr1 : init_instruction,
     pred : init_prediction,
+    pred_b : init_prediction,
     stall : 0,
     clear : 0
   };
@@ -876,6 +878,7 @@ package wires;
     calculation_type calc0;
     calculation_type calc1;
     prediction_type pred;
+    prediction_type pred_b;
     logic [0  : 0] halt;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
@@ -885,6 +888,7 @@ package wires;
     calc0 : init_calculation,
     calc1 : init_calculation,
     pred : init_prediction,
+    pred_b : init_prediction,
     halt : 0,
     stall : 0,
     clear : 0
@@ -901,6 +905,7 @@ package wires;
     calculation_type calc0;
     calculation_type calc1;
     prediction_type pred;
+    prediction_type pred_b;
     logic [0  : 0] enable;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
@@ -910,6 +915,7 @@ package wires;
     calc0 : init_calculation,
     calc1 : init_calculation,
     pred : init_prediction,
+    pred_b : init_prediction,
     enable : 0,
     stall : 0,
     clear : 0
@@ -926,6 +932,7 @@ package wires;
     calculation_type calc0;
     calculation_type calc1;
     prediction_type pred;
+    prediction_type pred_b;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } memory_reg_type;
@@ -934,6 +941,7 @@ package wires;
     calc0 : init_calculation,
     calc1 : init_calculation,
     pred : init_prediction,
+    pred_b : init_prediction,
     stall : 0,
     clear : 0
   };

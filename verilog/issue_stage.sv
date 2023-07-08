@@ -46,6 +46,7 @@ module issue_stage
       v = r;
       v.calc0.op = r.calc0.op_b;
       v.calc1.op = r.calc1.op_b;
+      v.pred = r.pred_b;
     end
 
     v.halt = hazard_out.stall;
@@ -141,6 +142,8 @@ module issue_stage
 
     v.calc0.op_b = v.calc0.op;
     v.calc1.op_b = v.calc1.op;
+
+    v.pred_b = v.pred;
 
     if ((v.stall | a.e.stall | a.m.stall) == 1) begin
       v.calc0.op = init_operation;
