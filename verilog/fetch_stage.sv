@@ -180,22 +180,26 @@ module fetch_stage
     btac_in.upd_branch1 = d.e.calc1.op.branch;
     btac_in.upd_jump0 = d.e.calc0.op.jump;
     btac_in.upd_jump1 = d.e.calc1.op.jump;
-    btac_in.fetch_taken = d.f.taken;
-    btac_in.fetch_taddr = d.f.taddr;
-    btac_in.fetch_tpc = d.f.tpc;
-    btac_in.fetch_tnpc = d.f.tnpc;
-    btac_in.decode_taken = d.d.taken;
-    btac_in.decode_taddr = d.d.taddr;
-    btac_in.decode_tpc = d.d.tpc;
-    btac_in.decode_tnpc = d.d.tnpc;
-    btac_in.issue_taken = d.i.taken;
-    btac_in.issue_taddr = d.i.taddr;
-    btac_in.issue_tpc = d.i.tpc;
-    btac_in.issue_tnpc = d.i.tnpc;
-    btac_in.execute_taken = d.e.taken;
-    btac_in.execute_taddr = d.e.taddr;
-    btac_in.execute_tpc = d.e.tpc;
-    btac_in.execute_tnpc = d.e.tnpc;
+    btac_in.fetch_taken = d.f.pred.taken;
+    btac_in.fetch_taddr = d.f.pred.taddr;
+    btac_in.fetch_tpc = d.f.pred.tpc;
+    btac_in.fetch_tnpc = d.f.pred.tnpc;
+    btac_in.decode_taken = d.d.pred.taken;
+    btac_in.decode_taddr = d.d.pred.taddr;
+    btac_in.decode_tpc = d.d.pred.tpc;
+    btac_in.decode_tnpc = d.d.pred.tnpc;
+    btac_in.issue_taken = d.i.pred.taken;
+    btac_in.issue_taddr = d.i.pred.taddr;
+    btac_in.issue_tpc = d.i.pred.tpc;
+    btac_in.issue_tnpc = d.i.pred.tnpc;
+    btac_in.execute_taken = d.e.pred.taken;
+    btac_in.execute_taddr = d.e.pred.taddr;
+    btac_in.execute_tpc = d.e.pred.tpc;
+    btac_in.execute_tnpc = d.e.pred.tnpc;
+    btac_in.memory_taken = d.m.pred.taken;
+    btac_in.memory_taddr = d.m.pred.taddr;
+    btac_in.memory_tpc = d.m.pred.tpc;
+    btac_in.memory_tnpc = d.m.pred.tnpc;
     btac_in.stall = v.stall;
     btac_in.clear = d.w.clear;
 
@@ -204,18 +208,18 @@ module fetch_stage
     y.pc = v.pc;
     y.rdata = v.rdata;
     y.ready = v.ready;
-    y.taken = v.taken;
-    y.taddr = v.taddr;
-    y.tpc = v.tpc;
-    y.tnpc = v.tnpc;
+    y.pred.taken = v.taken;
+    y.pred.taddr = v.taddr;
+    y.pred.tpc = v.tpc;
+    y.pred.tnpc = v.tnpc;
 
     q.pc = r.pc;
     q.rdata = r.rdata;
     q.ready = r.ready;
-    q.taken = r.taken;
-    q.taddr = r.taddr;
-    q.tpc = r.tpc;
-    q.tnpc = r.tnpc;
+    q.pred.taken = r.taken;
+    q.pred.taddr = r.taddr;
+    q.pred.tpc = r.tpc;
+    q.pred.tnpc = r.tnpc;
 
   end
 

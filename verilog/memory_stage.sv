@@ -41,6 +41,8 @@ module memory_stage
     v.calc0 = d.e.calc0;
     v.calc1 = d.e.calc1;
 
+    v.pred = d.e.pred;
+
     if (d.m.stall == 1) begin
       v = r;
       v.calc0.op = r.calc0.op_b;
@@ -176,10 +178,12 @@ module memory_stage
 
     y.calc0 = v.calc0;
     y.calc1 = v.calc1;
+    y.pred = v.pred;
     y.stall = v.stall;
 
     q.calc0 = r.calc0;
     q.calc1 = r.calc1;
+    q.pred = r.pred;
     q.stall = r.stall;
 
   end

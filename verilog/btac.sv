@@ -140,7 +140,12 @@ module btac_ctrl
       btac_out.pred_npc = 0;
     end
 
-    if (btac_in.clear == 0 && btac_in.execute_taken == 1) begin
+    if (btac_in.clear == 0 && btac_in.memory_taken == 1) begin
+      v.taken = btac_in.memory_taken;
+      v.taddr = btac_in.memory_taddr;
+      v.tpc = btac_in.memory_tpc;
+      v.tnpc = btac_in.memory_tnpc;
+    end else if (btac_in.clear == 0 && btac_in.execute_taken == 1) begin
       v.taken = btac_in.execute_taken;
       v.taddr = btac_in.execute_taddr;
       v.tpc = btac_in.execute_tpc;

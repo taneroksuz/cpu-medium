@@ -58,10 +58,7 @@ module execute_stage
     v.calc0 = d.i.calc0;
     v.calc1 = d.i.calc1;
 
-    v.taken = d.i.taken;
-    v.taddr = d.i.taddr;
-    v.tpc = d.i.tpc;
-    v.tnpc = d.i.tnpc;
+    v.pred = d.i.pred;
 
     forwarding0_rin.rden1 = v.calc0.op.rden1;
     forwarding0_rin.rden2 = v.calc0.op.rden2;
@@ -402,18 +399,12 @@ module execute_stage
 
     y.calc0 = v.calc0;
     y.calc1 = v.calc1;
-    y.taken = v.taken;
-    y.taddr = v.taddr;
-    y.tpc = v.tpc;
-    y.tnpc = v.tnpc;
+    y.pred = v.pred;
     y.stall = v.stall;
 
     q.calc0 = r.calc0;
     q.calc1 = r.calc1;
-    q.taken = r.taken;
-    q.taddr = r.taddr;
-    q.tpc = r.tpc;
-    q.tnpc = r.tnpc;
+    q.pred = r.pred;
     q.stall = r.stall;
 
   end
