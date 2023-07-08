@@ -15,7 +15,7 @@ package configure;
   parameter dtim_width = 4;
   parameter dtim_depth = 8192;
 
-  parameter btac_enable = 1;
+  parameter btac_enable = 0;
   parameter branchtarget_depth = 64;
 
   parameter bram_base_addr = 32'h000000;
