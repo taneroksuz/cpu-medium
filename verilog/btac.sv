@@ -171,11 +171,6 @@ module btac_ctrl
       v.taddr = btac_in.fetch_taddr;
       v.tpc = btac_in.fetch_tpc;
       v.tnpc = btac_in.fetch_tnpc;
-    end else if (btac_in.clear == 0) begin
-      v.taken = r.taken;
-      v.taddr = r.taddr;
-      v.tpc = r.tpc;
-      v.tnpc = r.tnpc;
     end else begin
       v.taken = 0;
       v.taddr = 0;
@@ -238,10 +233,6 @@ module btac_ctrl
     btb_in.wdata = v.wdata;
 
     rin = v;
-
-    if ((r.miss0 | r.miss1) == 1) begin
-      v.taken = 0;
-    end
 
     btac_out.pred_maddr = r.maddr;
     btac_out.pred_miss = r.miss0 | r.miss1;
