@@ -148,13 +148,14 @@ module issue_stage
 
     v.pred_b = v.pred;
 
+    if (v.pred.taken == 1 && v.pred.tnpc == v.calc0.pc) begin
+      v.calc0 = init_calculation;
+    end
+
     if ((v.stall | a.e.stall | a.m.stall) == 1) begin
       v.calc0.op = init_operation;
       v.calc1.op = init_operation;
-    end
-
-    if (v.pred.taken == 1 && v.pred.tnpc == v.calc0.pc) begin
-      v.calc0 = init_calculation;
+      v.pred = init_prediction;
     end
 
     if (v.clear == 1) begin

@@ -42,7 +42,7 @@ module decode_stage
 
     v.pred = d.f.pred;
 
-    if ((d.d.stall | d.i.halt | d.i.stall | d.e.stall | d.m.stall) == 1) begin
+    if ((d.d.stall | d.i.halt) == 1) begin
       v.pred = r.pred_b;
     end
 
@@ -224,6 +224,7 @@ module decode_stage
     if ((v.stall | a.i.halt) == 1) begin
       v.instr0 = init_instruction;
       v.instr1 = init_instruction;
+      v.pred = init_prediction;
     end
 
     if (v.clear == 1) begin
