@@ -46,6 +46,9 @@ module issue_stage
       v = r;
       v.calc0.op = r.calc0.op_b;
       v.calc1.op = r.calc1.op_b;
+    end
+
+    if ((d.i.halt | d.i.stall | d.e.stall | d.m.stall) == 1) begin
       v.pred = r.pred_b;
     end
 

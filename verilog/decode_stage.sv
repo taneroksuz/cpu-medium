@@ -42,7 +42,7 @@ module decode_stage
 
     v.pred = d.f.pred;
 
-    if ((d.d.stall | d.i.stall | d.e.stall | d.m.stall) == 1) begin
+    if ((d.d.stall | d.i.halt | d.i.stall | d.e.stall | d.m.stall) == 1) begin
       v.pred = r.pred_b;
     end
 
