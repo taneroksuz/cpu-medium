@@ -151,6 +151,9 @@ module issue_stage
     if (v.pred.taken == 1 && v.pred.tnpc == v.calc0.pc) begin
       v.calc0 = init_calculation;
     end
+    if (v.pred.taken == 1 && v.pred.tnpc == v.calc1.pc) begin
+      v.calc1 = init_calculation;
+    end
 
     if ((v.stall | a.e.stall | a.m.stall) == 1) begin
       v.calc0.op = init_operation;
