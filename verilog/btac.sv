@@ -295,6 +295,11 @@ module btac_ctrl
       v.taddr = btac_fifo_out.rdata[95:64];
       v.tpc = btac_fifo_out.rdata[63:32];
       v.tnpc = btac_fifo_out.rdata[31:0];
+    end else begin
+      v.taken = 0;
+      v.taddr = 0;
+      v.tpc = 0;
+      v.tnpc = 0;
     end
 
     if (btac_in.stall == 0 && btac_in.clear == 0) begin
