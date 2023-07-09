@@ -75,7 +75,7 @@ module fetch_stage
       v.fence = 1;
       v.spec = 1;
       v.pc = d.m.calc0.npc;
-    end else if (btac_out.pred_branch == 1) begin
+    end else if (btac_out.pred_branch0 == 1 || btac_out.pred_branch1 == 1) begin
       v.fence = 0;
       v.spec = 1;
       v.pc = btac_out.pred_baddr;
@@ -141,10 +141,6 @@ module fetch_stage
 
     btac_in.get_pc0 = v.pc;
     btac_in.get_pc1 = v.pc+4;
-    btac_in.get_jal0 = a.d.instr0.op.jal;
-    btac_in.get_jal1 = a.d.instr1.op.jal;
-    btac_in.get_branch0 = a.d.instr0.op.branch;
-    btac_in.get_branch1 = a.d.instr1.op.branch;
     btac_in.upd_pc0 = a.e.calc0.pc;
     btac_in.upd_pc1 = a.e.calc1.pc;
     btac_in.upd_npc0 = a.e.calc0.npc;
@@ -159,6 +155,8 @@ module fetch_stage
     btac_in.upd_branch1 = a.e.calc1.op.branch;
     btac_in.upd_jump0 = a.e.calc0.op.jump;
     btac_in.upd_jump1 = a.e.calc1.op.jump;
+    btac_in.upd_pred0 = a.e.calc0.pred;
+    btac_in.upd_pred1 = a.e.calc1.pred;
     btac_in.stall = v.stall;
     btac_in.clear = d.w.clear;
 

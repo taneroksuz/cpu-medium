@@ -387,12 +387,22 @@ package wires;
   } csr_alu_out_type;
 
   typedef struct packed{
+    logic [0  : 0] taken;
+    logic [31 : 0] taddr;
+    logic [31 : 0] tpc;
+    logic [31 : 0] tnpc;
+  } prediction_type;
+
+  parameter prediction_type init_prediction = '{
+    taken : 0,
+    taddr : 0,
+    tpc : 0,
+    tnpc : 0
+  };
+
+  typedef struct packed{
     logic [31 : 0] get_pc0;
     logic [31 : 0] get_pc1;
-    logic [0  : 0] get_jal0;
-    logic [0  : 0] get_jal1;
-    logic [0  : 0] get_branch0;
-    logic [0  : 0] get_branch1;
     logic [31 : 0] upd_pc0;
     logic [31 : 0] upd_pc1;
     logic [31 : 0] upd_npc0;
@@ -407,13 +417,16 @@ package wires;
     logic [0  : 0] upd_branch1;
     logic [0  : 0] upd_jump0;
     logic [0  : 0] upd_jump1;
+    prediction_type upd_pred0;
+    prediction_type upd_pred1;
     logic [0  : 0] stall;
     logic [0  : 0] clear;
   } btac_in_type;
 
   typedef struct packed{
     logic [31 : 0] pred_baddr;
-    logic [0  : 0] pred_branch;
+    logic [0  : 0] pred_branch0;
+    logic [0  : 0] pred_branch1;
     logic [31 : 0] pred_pc;
     logic [31 : 0] pred_npc;
     logic [31 : 0] pred_maddr;
@@ -522,6 +535,7 @@ package wires;
     mul_op_type mul_op;
     bit_op_type bit_op;
     fp_operation_type fpu_op;
+    prediction_type pred;
   } instruction_type;
 
   parameter instruction_type init_instruction = '{
@@ -546,21 +560,8 @@ package wires;
     div_op : init_div_op,
     mul_op : init_mul_op,
     bit_op : init_bit_op,
-    fpu_op : init_fp_operation
-  };
-
-  typedef struct packed{
-    logic [0  : 0] taken;
-    logic [31 : 0] taddr;
-    logic [31 : 0] tpc;
-    logic [31 : 0] tnpc;
-  } prediction_type;
-
-  parameter prediction_type init_prediction = '{
-    taken : 0,
-    taddr : 0,
-    tpc : 0,
-    tnpc : 0
+    fpu_op : init_fp_operation,
+    pred : init_prediction
   };
 
   typedef struct packed{
@@ -607,6 +608,7 @@ package wires;
     mul_op_type mul_op;
     bit_op_type bit_op;
     fp_operation_type fpu_op;
+    prediction_type pred;
   } calculation_type;
 
   parameter calculation_type init_calculation = '{
@@ -652,7 +654,8 @@ package wires;
     div_op : init_div_op,
     mul_op : init_mul_op,
     bit_op : init_bit_op,
-    fpu_op : init_fp_operation
+    fpu_op : init_fp_operation,
+    pred : init_prediction
   };
 
   typedef struct packed{

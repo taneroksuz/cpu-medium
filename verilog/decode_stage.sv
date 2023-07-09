@@ -40,6 +40,15 @@ module decode_stage
     v.instr0.npc = v.instr0.pc + 4;
     v.instr1.npc = v.instr1.pc + 4;
 
+    v.instr0.pred.taken = btac_out.pred_branch0;
+    v.instr1.pred.taken = btac_out.pred_branch1;
+    v.instr0.pred.taddr = btac_out.pred_baddr;
+    v.instr1.pred.taddr = btac_out.pred_baddr;
+    v.instr0.pred.tpc = btac_out.pred_pc;
+    v.instr1.pred.tpc = btac_out.pred_pc;
+    v.instr0.pred.tnpc = btac_out.pred_npc;
+    v.instr1.pred.tnpc = btac_out.pred_npc;
+
     v.stall = 0;
 
     v.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;

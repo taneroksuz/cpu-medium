@@ -101,6 +101,7 @@ module hazard
     v.calc0.mul_op = v.instr0.mul_op;
     v.calc0.bit_op = v.instr0.bit_op;
     v.calc0.fpu_op = v.instr0.fpu_op;
+    v.calc0.pred = v.instr0.pred;
 
     v.calc1.pc = v.instr1.pc;
     v.calc1.npc = v.instr1.npc;
@@ -123,6 +124,7 @@ module hazard
     v.calc1.mul_op = v.instr1.mul_op;
     v.calc1.bit_op = v.instr1.bit_op;
     v.calc1.fpu_op = v.instr1.fpu_op;
+    v.calc1.pred = v.instr1.pred;
 
     v.single = v.calc1.op.fence | v.calc1.op.mret | v.calc1.op.wfi;
 
