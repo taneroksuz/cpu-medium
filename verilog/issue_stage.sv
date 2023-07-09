@@ -148,10 +148,10 @@ module issue_stage
 
     v.pred_b = v.pred;
 
-    if (v.pred.taken == 1 && v.pred.tnpc == v.calc0.pc) begin
+    if (v.pred.taken == 1 && (v.pred.tnpc == v.calc0.pc || (v.pred.tnpc+4) == v.calc0.pc)) begin
       v.calc0 = init_calculation;
     end
-    if (v.pred.taken == 1 && v.pred.tnpc == v.calc1.pc) begin
+    if (v.pred.taken == 1 && (v.pred.tnpc == v.calc1.pc || (v.pred.tnpc+4) == v.calc1.pc)) begin
       v.calc1 = init_calculation;
     end
 
