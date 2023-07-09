@@ -117,6 +117,9 @@ module execute_stage
     if (d.e.calc1.op.jump == 1 && (d.e.calc1.npc == v.calc0.pc)) begin
       v.calc0 = init_calculation;
     end
+    if (d.e.calc0.op.jump == 1 && (d.e.calc0.npc == v.calc0.pc)) begin
+      v.calc0 = init_calculation;
+    end
 
     v.enable = ~(d.e.stall | a.m.stall | v.clear);
 
