@@ -114,6 +114,10 @@ module execute_stage
 
     v.clear = d.e.calc0.op.exception | d.e.calc0.op.mret | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
 
+    if (d.e.calc1.op.jump == 1 && (d.e.calc1.npc == v.calc0.pc)) begin
+      v.calc0 = init_calculation;
+    end
+
     v.enable = ~(d.e.stall | a.m.stall | v.clear);
 
     alu0_in.rdata1 = v.calc0.rdata1;
@@ -375,11 +379,15 @@ module execute_stage
     v.calc0.op_b = v.calc0.op;
     v.calc1.op_b = v.calc1.op;
 
-    if ((v.calc0.op.fence | v.calc0.op.exception | v.calc0.op.mret | v.calc0.op.jump) == 1 && (v.calc0.npc == v.calc1.pc)) begin
+    if ((v.calc0.op.fence | v.calc0.op.exception | v.calc0.op.mret) == 1) begin
       v.calc1 = init_calculation;
     end
 
-    if (btac_out.pred_hazard == 1) begin
+    if (v.calc0.op.jump == 1 && v.calc0.npc == v.calc1.pc) begin
+      v.calc1 = init_calculation;
+    end
+
+    if (btac_out.pred_hazard0 == 1) begin
       v.calc1 = init_calculation;
     end
 

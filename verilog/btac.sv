@@ -198,7 +198,8 @@ module btac_ctrl
 
     btac_out.pred_maddr = r.maddr;
     btac_out.pred_miss = r.miss0 | r.miss1;
-    btac_out.pred_hazard = v.miss0;
+    btac_out.pred_hazard0 = v.miss0;
+    btac_out.pred_hazard1 = v.miss0;
 
   end
 
@@ -278,7 +279,8 @@ module btac
         btac_out.pred_npc = 0;
         btac_out.pred_maddr = r.maddr;
         btac_out.pred_miss = r.miss0 | r.miss1;
-        btac_out.pred_hazard = v.miss0;
+        btac_out.pred_hazard0 = v.miss0;
+        btac_out.pred_hazard1 = v.miss1;
 
       end
 
