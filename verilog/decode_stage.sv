@@ -224,7 +224,6 @@ module decode_stage
     if ((v.stall | a.i.halt) == 1) begin
       v.instr0 = init_instruction;
       v.instr1 = init_instruction;
-      v.pred = init_prediction;
     end
 
     if (v.clear == 1) begin

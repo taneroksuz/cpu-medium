@@ -391,7 +391,6 @@ module execute_stage
     if ((v.stall | a.m.stall) == 1) begin
       v.calc0.op = init_operation;
       v.calc1.op = init_operation;
-      v.pred = init_prediction;
     end
 
     if (v.clear == 1) begin
