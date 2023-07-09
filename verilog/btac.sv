@@ -278,9 +278,6 @@ module btac_ctrl
       v.wdata = 0;
     end
 
-    btac_fifo_in.wren = v.wen;
-    btac_fifo_in.wdata = v.wdata;
-
     btac_fifo_in.rden = btac_in.upd_jal0 | btac_in.upd_branch0 | btac_in.upd_jal1 | btac_in.upd_branch1;
 
     if (btac_fifo_out.ready == 1) begin
@@ -303,6 +300,9 @@ module btac_ctrl
       btac_out.pred_pc = 0;
       btac_out.pred_npc = 0;
     end
+
+    btac_fifo_in.wren = btac_out.pred_branch;
+    btac_fifo_in.wdata = {btac_out.pred_baddr,btac_out.pred_pc,btac_out.pred_npc};
 
     if (btac_in.clear == 0) begin
       if (v.taken == 1 && btac_in.upd_pc0 == v.tpc) begin
@@ -362,13 +362,13 @@ module btac_ctrl
     btb_in.waddr = v.waddr;
     btb_in.wdata = v.wdata;
 
-    btac_fifo_in.clear = 0;
-
     rin = v;
 
     btac_out.pred_maddr = r.maddr;
     btac_out.pred_miss = r.miss0 | r.miss1;
     btac_out.pred_hazard = v.miss0;
+
+    btac_fifo_in.clear = r.miss0 | r.miss1;
 
   end
 
