@@ -9,7 +9,6 @@
 ../../fpu/verilog/src/lzc/lzc_64.sv
 ../../fpu/verilog/src/lzc/lzc_128.sv
 ../../fpu/verilog/src/float/fp_wire.sv
-../../fpu/verilog/src/float/fp_cons.sv
 ../../fpu/verilog/src/float/fp_ext.sv
 ../../fpu/verilog/src/float/fp_cmp.sv
 ../../fpu/verilog/src/float/fp_max.sv
