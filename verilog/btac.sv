@@ -221,6 +221,7 @@ module btac_ctrl
     logic [95 : 0] wdata;
     logic [0  : 0] wen;
     logic [0  : 0] wren;
+    logic [0  : 0] rden;
     logic [0  : 0] branch0;
     logic [0  : 0] branch1;
     logic [31 : 0] pc0;
@@ -241,6 +242,7 @@ module btac_ctrl
     wdata : 0,
     wen : 0,
     wren : 0,
+    rden : 0,
     branch0 : 0,
     branch1 : 0,
     pc0 : 0,
@@ -280,7 +282,13 @@ module btac_ctrl
       v.wdata = 0;
     end
 
-    btac_fifo_in.rden = btac_in.upd_jal0 | btac_in.upd_branch0 | btac_in.upd_jal1 | btac_in.upd_branch1;
+    if (btac_in.clear == 0) begin
+      v.rden = btac_in.upd_jal0 | btac_in.upd_branch0 | btac_in.upd_jal1 | btac_in.upd_branch1;
+    end else begin
+      v.rden = 0;
+    end
+
+    btac_fifo_in.rden = v.rden;
 
     if (btac_fifo_out.ready == 1) begin
       v.taken = btac_fifo_out.rdata[96];
