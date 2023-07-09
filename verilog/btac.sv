@@ -220,6 +220,7 @@ module btac_ctrl
     logic [btb_depth-1 : 0] raddr1;
     logic [95 : 0] wdata;
     logic [0  : 0] wen;
+    logic [0  : 0] wren;
     logic [0  : 0] branch0;
     logic [0  : 0] branch1;
     logic [31 : 0] pc0;
@@ -239,6 +240,7 @@ module btac_ctrl
     raddr1 : 0,
     wdata : 0,
     wen : 0,
+    wren : 0,
     branch0 : 0,
     branch1 : 0,
     pc0 : 0,
@@ -301,7 +303,13 @@ module btac_ctrl
       btac_out.pred_npc = 0;
     end
 
-    btac_fifo_in.wren = btac_in.get_jal0 | btac_in.get_branch0 | btac_in.get_jal1 | btac_in.get_branch1;
+    if (btac_in.stall == 0 && btac_in.clear == 0) begin
+      v.wren = btac_in.get_jal0 | btac_in.get_branch0 | btac_in.get_jal1 | btac_in.get_branch1;
+    end else begin
+      v.wren = 0;
+    end
+
+    btac_fifo_in.wren = v.wren;
     btac_fifo_in.wdata = {btac_out.pred_branch,btac_out.pred_baddr,btac_out.pred_pc,btac_out.pred_npc};
 
     if (btac_in.clear == 0) begin
