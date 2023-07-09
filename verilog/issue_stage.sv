@@ -46,12 +46,6 @@ module issue_stage
       v.calc1.op = r.calc1.op_b;
     end
 
-    v.pred = d.d.pred;
-
-    if ((d.i.halt | d.e.stall | d.m.stall) == 1) begin
-      v.pred = r.pred_b;
-    end
-
     v.halt = hazard_out.stall;
     v.stall = 0;
 
@@ -146,15 +140,6 @@ module issue_stage
     v.calc0.op_b = v.calc0.op;
     v.calc1.op_b = v.calc1.op;
 
-    v.pred_b = v.pred;
-
-    if (v.pred.taken == 1 && v.pred.tnpc == v.calc0.pc) begin
-      v.calc0 = init_calculation;
-    end
-    if (v.pred.taken == 1 && v.pred.tnpc == v.calc1.pc) begin
-      v.calc1 = init_calculation;
-    end
-
     if ((v.stall | a.e.stall | a.m.stall) == 1) begin
       v.calc0.op = init_operation;
       v.calc1.op = init_operation;
@@ -174,13 +159,11 @@ module issue_stage
 
     y.calc0 = v.calc0;
     y.calc1 = v.calc1;
-    y.pred = v.pred;
     y.halt = v.halt;
     y.stall = v.stall;
 
     q.calc0 = r.calc0;
     q.calc1 = r.calc1;
-    q.pred = r.pred;
     q.halt = r.halt;
     q.stall = r.stall;
 

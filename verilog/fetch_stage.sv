@@ -36,7 +36,6 @@ module fetch_stage
 
     v.fence = 0;
     v.spec = 0;
-    v.taken = 0;
     
     v.rdata = imem_out.mem_rdata;
     v.ready = imem_out.mem_ready;
@@ -63,51 +62,27 @@ module fetch_stage
     if (csr_out.trap == 1) begin
       v.fence = 0;
       v.spec = 1;
-      v.taken = 0;
       v.pc = csr_out.mtvec;
-      v.taddr = 0;
-      v.tpc = 0;
-      v.tnpc = 0;
     end else if (csr_out.mret == 1) begin
       v.fence = 0;
       v.spec = 1;
-      v.taken = 0;
       v.pc = csr_out.mepc;
-      v.taddr = 0;
-      v.tpc = 0;
-      v.tnpc = 0;
     end else if (btac_out.pred_miss == 1) begin
       v.fence = 0;
       v.spec = 1;
-      v.taken = 0;
       v.pc = btac_out.pred_maddr;
-      v.taddr = 0;
-      v.tpc = 0;
-      v.tnpc = 0;
     end else if (d.m.calc0.op.fence == 1) begin
       v.fence = 1;
       v.spec = 1;
-      v.taken = 0;
       v.pc = d.m.calc0.npc;
-      v.taddr = 0;
-      v.tpc = 0;
-      v.tnpc = 0;
     end else if (btac_out.pred_branch == 1) begin
       v.fence = 0;
       v.spec = 1;
-      v.taken = 1;
       v.pc = btac_out.pred_baddr;
-      v.taddr = btac_out.pred_baddr;
-      v.tpc = btac_out.pred_pc;
-      v.tnpc = btac_out.pred_npc;
     end else if (v.stall == 0) begin
       v.fence = 0;
       v.spec = 0;
-      v.taken = 0;
       v.pc = v.pc + 8;
-      v.taddr = 0;
-      v.tpc = 0;
-      v.tnpc = 0;
     end
 
     case(v.state)
@@ -180,26 +155,6 @@ module fetch_stage
     btac_in.upd_branch1 = a.e.calc1.op.branch;
     btac_in.upd_jump0 = a.e.calc0.op.jump;
     btac_in.upd_jump1 = a.e.calc1.op.jump;
-    btac_in.fetch_taken = v.taken;
-    btac_in.fetch_taddr = v.taddr;
-    btac_in.fetch_tpc = v.tpc;
-    btac_in.fetch_tnpc = v.tnpc;
-    btac_in.decode_taken = a.d.pred.taken;
-    btac_in.decode_taddr = a.d.pred.taddr;
-    btac_in.decode_tpc = a.d.pred.tpc;
-    btac_in.decode_tnpc = a.d.pred.tnpc;
-    btac_in.issue_taken = a.i.pred.taken;
-    btac_in.issue_taddr = a.i.pred.taddr;
-    btac_in.issue_tpc = a.i.pred.tpc;
-    btac_in.issue_tnpc = a.i.pred.tnpc;
-    btac_in.execute_taken = a.e.pred.taken;
-    btac_in.execute_taddr = a.e.pred.taddr;
-    btac_in.execute_tpc = a.e.pred.tpc;
-    btac_in.execute_tnpc = a.e.pred.tnpc;
-    btac_in.memory_taken = a.m.pred.taken;
-    btac_in.memory_taddr = a.m.pred.taddr;
-    btac_in.memory_tpc = a.m.pred.tpc;
-    btac_in.memory_tnpc = a.m.pred.tnpc;
     btac_in.stall = v.stall;
     btac_in.clear = d.w.clear;
 
@@ -208,18 +163,10 @@ module fetch_stage
     y.pc = v.pc;
     y.rdata = v.rdata;
     y.ready = v.ready;
-    y.pred.taken = v.taken;
-    y.pred.taddr = v.taddr;
-    y.pred.tpc = v.tpc;
-    y.pred.tnpc = v.tnpc;
 
     q.pc = r.pc;
     q.rdata = r.rdata;
     q.ready = r.ready;
-    q.pred.taken = r.taken;
-    q.pred.taddr = r.taddr;
-    q.pred.tpc = r.tpc;
-    q.pred.tnpc = r.tnpc;
 
   end
 

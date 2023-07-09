@@ -58,8 +58,6 @@ module execute_stage
     v.calc0 = d.i.calc0;
     v.calc1 = d.i.calc1;
 
-    v.pred = d.i.pred;
-
     forwarding0_rin.rden1 = v.calc0.op.rden1;
     forwarding0_rin.rden2 = v.calc0.op.rden2;
     forwarding0_rin.raddr1 = v.calc0.raddr1;
@@ -110,7 +108,6 @@ module execute_stage
       v = r;
       v.calc0.op = r.calc0.op_b;
       v.calc1.op = r.calc1.op_b;
-      v.pred = r.pred_b;
     end
 
     v.stall = 0;
@@ -378,8 +375,6 @@ module execute_stage
     v.calc0.op_b = v.calc0.op;
     v.calc1.op_b = v.calc1.op;
 
-    v.pred_b = v.pred;
-
     if ((v.calc0.op.fence | v.calc0.op.exception | v.calc0.op.mret | v.calc0.op.jump) == 1 && (v.calc0.npc == v.calc1.pc)) begin
       v.calc1 = init_calculation;
     end
@@ -406,12 +401,10 @@ module execute_stage
 
     y.calc0 = v.calc0;
     y.calc1 = v.calc1;
-    y.pred = v.pred;
     y.stall = v.stall;
 
     q.calc0 = r.calc0;
     q.calc1 = r.calc1;
-    q.pred = r.pred;
     q.stall = r.stall;
 
   end

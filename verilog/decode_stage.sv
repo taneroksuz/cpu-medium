@@ -40,12 +40,6 @@ module decode_stage
     v.instr0.npc = v.instr0.pc + 4;
     v.instr1.npc = v.instr1.pc + 4;
 
-    v.pred = d.f.pred;
-
-    if ((d.d.stall | d.i.halt) == 1) begin
-      v.pred = r.pred_b;
-    end
-
     v.stall = 0;
 
     v.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
@@ -219,8 +213,6 @@ module decode_stage
       end
     end
 
-    v.pred_b = v.pred;
-
     if ((v.stall | a.i.halt) == 1) begin
       v.instr0 = init_instruction;
       v.instr1 = init_instruction;
@@ -235,12 +227,10 @@ module decode_stage
 
     y.instr0 = v.instr0;
     y.instr1 = v.instr1;
-    y.pred = v.pred;
     y.stall = v.stall;
 
     q.instr0 = r.instr0;
     q.instr1 = r.instr1;
-    q.pred = r.pred;
     q.stall = r.stall;
 
   end

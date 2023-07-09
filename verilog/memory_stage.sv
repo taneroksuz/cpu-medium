@@ -41,13 +41,10 @@ module memory_stage
     v.calc0 = d.e.calc0;
     v.calc1 = d.e.calc1;
 
-    v.pred = d.e.pred;
-
     if (d.m.stall == 1) begin
       v = r;
       v.calc0.op = r.calc0.op_b;
       v.calc1.op = r.calc1.op_b;
-      v.pred = r.pred_b;
     end
 
     v.stall = 0;
@@ -123,8 +120,6 @@ module memory_stage
     v.calc0.op_b = v.calc0.op;
     v.calc1.op_b = v.calc1.op;
 
-    v.pred_b = v.pred;
-
     forwarding0_min.wren = v.calc0.op.wren;
     forwarding0_min.waddr = v.calc0.waddr;
     forwarding0_min.wdata = v.calc0.wdata;
@@ -181,12 +176,10 @@ module memory_stage
 
     y.calc0 = v.calc0;
     y.calc1 = v.calc1;
-    y.pred = v.pred;
     y.stall = v.stall;
 
     q.calc0 = r.calc0;
     q.calc1 = r.calc1;
-    q.pred = r.pred;
     q.stall = r.stall;
 
   end

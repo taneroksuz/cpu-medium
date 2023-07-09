@@ -146,38 +146,6 @@ module btac_ctrl
       btac_out.pred_npc = 0;
     end
 
-    if (btac_in.clear == 0 && btac_in.memory_taken == 1) begin
-      v.taken = btac_in.memory_taken;
-      v.taddr = btac_in.memory_taddr;
-      v.tpc = btac_in.memory_tpc;
-      v.tnpc = btac_in.memory_tnpc;
-    end else if (btac_in.clear == 0 && btac_in.execute_taken == 1) begin
-      v.taken = btac_in.execute_taken;
-      v.taddr = btac_in.execute_taddr;
-      v.tpc = btac_in.execute_tpc;
-      v.tnpc = btac_in.execute_tnpc;
-    end else if (btac_in.clear == 0 && btac_in.issue_taken == 1) begin
-      v.taken = btac_in.issue_taken;
-      v.taddr = btac_in.issue_taddr;
-      v.tpc = btac_in.issue_tpc;
-      v.tnpc = btac_in.issue_tnpc;
-    end else if (btac_in.clear == 0 && btac_in.decode_taken == 1) begin
-      v.taken = btac_in.decode_taken;
-      v.taddr = btac_in.decode_taddr;
-      v.tpc = btac_in.decode_tpc;
-      v.tnpc = btac_in.decode_tnpc;
-    end else if (btac_in.clear == 0 && btac_in.fetch_taken == 1) begin
-      v.taken = btac_in.fetch_taken;
-      v.taddr = btac_in.fetch_taddr;
-      v.tpc = btac_in.fetch_tpc;
-      v.tnpc = btac_in.fetch_tnpc;
-    end else begin
-      v.taken = 0;
-      v.taddr = 0;
-      v.tpc = 0;
-      v.tnpc = 0;
-    end
-
     if (btac_in.clear == 0) begin
       if (v.taken == 1 && btac_in.upd_pc0 == v.tpc) begin
         if (btac_in.upd_jump0 == 1) begin
