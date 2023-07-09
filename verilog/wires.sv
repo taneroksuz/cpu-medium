@@ -389,6 +389,10 @@ package wires;
   typedef struct packed{
     logic [31 : 0] get_pc0;
     logic [31 : 0] get_pc1;
+    logic [0  : 0] get_jal0;
+    logic [0  : 0] get_jal1;
+    logic [0  : 0] get_branch0;
+    logic [0  : 0] get_branch1;
     logic [31 : 0] upd_pc0;
     logic [31 : 0] upd_pc1;
     logic [31 : 0] upd_npc0;

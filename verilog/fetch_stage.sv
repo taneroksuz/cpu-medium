@@ -141,6 +141,10 @@ module fetch_stage
 
     btac_in.get_pc0 = v.pc;
     btac_in.get_pc1 = v.pc+4;
+    btac_in.get_jal0 = a.d.instr0.op.jal;
+    btac_in.get_jal1 = a.d.instr1.op.jal;
+    btac_in.get_branch0 = a.d.instr0.op.branch;
+    btac_in.get_branch1 = a.d.instr1.op.branch;
     btac_in.upd_pc0 = a.e.calc0.pc;
     btac_in.upd_pc1 = a.e.calc1.pc;
     btac_in.upd_npc0 = a.e.calc0.npc;

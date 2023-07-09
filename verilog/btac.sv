@@ -23,22 +23,22 @@ package btac_wires;
     logic [0  : 0] wen;
     logic [2  : 0] waddr;
     logic [2  : 0] raddr;
-    logic [95 : 0] wdata;
+    logic [96 : 0] wdata;
   } btac_pred_in_type;
 
   typedef struct packed{
-    logic [95 : 0] rdata;
+    logic [96 : 0] rdata;
   } btac_pred_out_type;
 
   typedef struct packed{
     logic [0  : 0] rden;
     logic [0  : 0] wren;
-    logic [95 : 0] wdata;
+    logic [96 : 0] wdata;
     logic [0  : 0] clear;
   } btac_fifo_in_type;
 
   typedef struct packed{
-    logic [95 : 0] rdata;
+    logic [96 : 0] rdata;
     logic [0  : 0] ready;
   } btac_fifo_out_type;
 
@@ -47,6 +47,35 @@ endpackage
 import configure::*;
 import wires::*;
 import btac_wires::*;
+
+module btb
+(
+  input logic clock,
+  input btb_in_type btb_in,
+  output btb_out_type btb_out
+);
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  localparam btb_depth = $clog2(branchtarget_depth-1);
+
+  logic [95:0] btb_array[0:branchtarget_depth-1] = '{default:'0};
+
+  logic [btb_depth-1 : 0] raddr0 = 0;
+  logic [btb_depth-1 : 0] raddr1 = 0;
+
+  always_ff @(posedge clock) begin
+    raddr0 <= btb_in.raddr0;
+    raddr1 <= btb_in.raddr1;
+    if (btb_in.wen == 1) begin
+      btb_array[btb_in.waddr] <= btb_in.wdata;
+    end
+  end
+
+  assign btb_out.rdata0 = btb_array[raddr0];
+  assign btb_out.rdata1 = btb_array[raddr1];
+
+endmodule
 
 module btac_pred
 (
@@ -57,7 +86,7 @@ module btac_pred
   timeunit 1ns;
   timeprecision 1ps;
 
-  logic [95 : 0] btac_pred_array[0:7] = '{default:'0};
+  logic [96 : 0] btac_pred_array[0:7] = '{default:'0};
 
   assign btac_pred_out.rdata = btac_pred_array[btac_pred_in.raddr];
 
@@ -169,35 +198,6 @@ module btac_fifo
 
 endmodule
 
-module btb
-(
-  input logic clock,
-  input btb_in_type btb_in,
-  output btb_out_type btb_out
-);
-  timeunit 1ns;
-  timeprecision 1ps;
-
-  localparam btb_depth = $clog2(branchtarget_depth-1);
-
-  logic [95:0] btb_array[0:branchtarget_depth-1] = '{default:'0};
-
-  logic [btb_depth-1 : 0] raddr0 = 0;
-  logic [btb_depth-1 : 0] raddr1 = 0;
-
-  always_ff @(posedge clock) begin
-    raddr0 <= btb_in.raddr0;
-    raddr1 <= btb_in.raddr1;
-    if (btb_in.wen == 1) begin
-      btb_array[btb_in.waddr] <= btb_in.wdata;
-    end
-  end
-
-  assign btb_out.rdata0 = btb_array[raddr0];
-  assign btb_out.rdata1 = btb_array[raddr1];
-
-endmodule
-
 module btac_ctrl
 (
   input logic reset,
@@ -281,7 +281,7 @@ module btac_ctrl
     btac_fifo_in.rden = btac_in.upd_jal0 | btac_in.upd_branch0 | btac_in.upd_jal1 | btac_in.upd_branch1;
 
     if (btac_fifo_out.ready == 1) begin
-      v.taken = 1;
+      v.taken = btac_fifo_out.rdata[96];
       v.taddr = btac_fifo_out.rdata[95:64];
       v.tpc = btac_fifo_out.rdata[63:32];
       v.tnpc = btac_fifo_out.rdata[31:0];
@@ -301,8 +301,8 @@ module btac_ctrl
       btac_out.pred_npc = 0;
     end
 
-    btac_fifo_in.wren = btac_out.pred_branch;
-    btac_fifo_in.wdata = {btac_out.pred_baddr,btac_out.pred_pc,btac_out.pred_npc};
+    btac_fifo_in.wren = btac_in.get_jal0 | btac_in.get_branch0 | btac_in.get_jal1 | btac_in.get_branch1;
+    btac_fifo_in.wdata = {btac_out.pred_branch,btac_out.pred_baddr,btac_out.pred_pc,btac_out.pred_npc};
 
     if (btac_in.clear == 0) begin
       if (v.taken == 1 && btac_in.upd_pc0 == v.tpc) begin
