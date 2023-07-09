@@ -169,7 +169,7 @@ module memory_stage
     fp_csr_win.cwaddr = v.calc0.op.cwren ? v.calc0.caddr : v.calc1.caddr;
     fp_csr_win.cdata = v.calc0.op.cwren ? v.calc0.cdata : v.calc1.cdata;
 
-    fp_csr_ein.fpu = v.calc0.op.fpuf | v.calc1.op.fpuf;
+    fp_csr_ein.fpunit = v.calc0.op.fpuf | v.calc1.op.fpuf;
     fp_csr_ein.fflags = v.calc0.op.fpuf ? v.calc0.flags : v.calc1.flags;
     
     rin = v;

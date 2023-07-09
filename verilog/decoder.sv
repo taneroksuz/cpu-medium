@@ -39,7 +39,7 @@ module decoder
   logic [0  : 0] cwren;
   logic [0  : 0] crden;
 
-  logic [0  : 0] alu;
+  logic [0  : 0] alunit;
   logic [0  : 0] auipc;
   logic [0  : 0] lui;
   logic [0  : 0] jal;
@@ -112,7 +112,7 @@ module decoder
     cwren = 0;
     crden = 0;
 
-    alu = 0;
+    alunit = 0;
     auipc = 0;
     lui = 0;
     jal = 0;
@@ -229,38 +229,38 @@ module decoder
         case (funct3)
           funct_add : begin
             instr_str = "addi";
-            alu = 1;
+            alunit = 1;
             alu_op.alu_add = 1;
           end
           funct_slt : begin
             instr_str = "slti";
-            alu = 1;
+            alunit = 1;
             alu_op.alu_slt = 1;
           end
           funct_sltu : begin
             instr_str = "sltiu";
-            alu = 1;
+            alunit = 1;
             alu_op.alu_sltu = 1;
           end
           funct_and : begin
             instr_str = "andi";
-            alu = 1;
+            alunit = 1;
             alu_op.alu_and = 1;
           end
           funct_or : begin
             instr_str = "ori";
-            alu = 1;
+            alunit = 1;
             alu_op.alu_or = 1;
           end
           funct_xor : begin
             instr_str = "xori";
-            alu = 1;
+            alunit = 1;
             alu_op.alu_xor = 1;
           end
           funct_sll : begin
             if (funct7 == 7'b0000000) begin
               instr_str = "slli";
-              alu = 1;
+              alunit = 1;
               alu_op.alu_sll = 1;
             end else if (funct7 == 7'b0100100) begin
               instr_str = "bclr";
@@ -305,11 +305,11 @@ module decoder
           funct_srl : begin
             if (funct7 == 7'b0000000) begin
               instr_str = "srli";
-              alu = 1;
+              alunit = 1;
               alu_op.alu_srl = 1;
             end else if (funct7 == 7'b0100000) begin
               instr_str = "srai";
-              alu = 1;
+              alunit = 1;
               alu_op.alu_sra = 1;
             end else if (funct7 == 7'b0100100) begin
               instr_str = "bext";
@@ -342,42 +342,42 @@ module decoder
           case (funct3)
             funct_add : begin
               instr_str = "add";
-              alu = 1;
+              alunit = 1;
               alu_op.alu_add = 1;
             end
             funct_sll : begin
               instr_str = "sll";
-              alu = 1;
+              alunit = 1;
               alu_op.alu_sll = 1;
             end
             funct_srl : begin
               instr_str = "srl";
-              alu = 1;
+              alunit = 1;
               alu_op.alu_srl = 1;
             end
             funct_slt : begin
               instr_str = "slt";
-              alu = 1;
+              alunit = 1;
               alu_op.alu_slt = 1;
             end
             funct_sltu : begin
               instr_str = "sltu";
-              alu = 1;
+              alunit = 1;
               alu_op.alu_sltu = 1;
             end
             funct_and : begin
               instr_str = "and";
-              alu = 1;
+              alunit = 1;
               alu_op.alu_and = 1;
             end
             funct_or : begin
               instr_str = "or";
-              alu = 1;
+              alunit = 1;
               alu_op.alu_or = 1;
             end
             funct_xor : begin
               instr_str = "xor";
-              alu = 1;
+              alunit = 1;
               alu_op.alu_xor = 1;
             end
             default : valid = 0;
@@ -386,12 +386,12 @@ module decoder
           case (funct3)
             funct_add : begin
               instr_str = "sub";
-              alu = 1;
+              alunit = 1;
               alu_op.alu_sub = 1;
             end
             funct_srl : begin
               instr_str = "sra";
-              alu = 1;
+              alunit = 1;
               alu_op.alu_sra = 1;
             end
             funct_and : begin
@@ -666,7 +666,7 @@ module decoder
     decoder_out.rden2 = rden2;
     decoder_out.cwren = cwren;
     decoder_out.crden = crden;
-    decoder_out.alu = alu;
+    decoder_out.alunit = alunit;
     decoder_out.auipc = auipc;
     decoder_out.lui = lui;
     decoder_out.jal = jal;

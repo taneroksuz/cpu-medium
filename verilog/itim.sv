@@ -405,19 +405,23 @@ module itim
   timeunit 1ns;
   timeprecision 1ps;
 
-  genvar i;
-
   itim_vec_in_type ivec_in;
   itim_vec_out_type ivec_out;
 
-  for (i=0; i<itim_width; i=i+1) begin
-    itim_ram itim_ram_comp
-    (
-      .clock (clock),
-      .itim_ram_in (ivec_in[i]),
-      .itim_ram_out (ivec_out[i])
-    );
-  end
+  generate
+
+    genvar i;
+
+    for (i=0; i<itim_width; i=i+1) begin : itim_ram
+      itim_ram itim_ram_comp
+      (
+        .clock (clock),
+        .itim_ram_in (ivec_in[i]),
+        .itim_ram_out (ivec_out[i])
+      );
+    end
+
+  endgenerate
 
   itim_ctrl itim_ctrl_comp
   (

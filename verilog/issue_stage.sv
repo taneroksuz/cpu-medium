@@ -60,7 +60,7 @@ module issue_stage
       v.calc0.op.frden3 = 0;
       v.calc0.op.fload = 0;
       v.calc0.op.fstore = 0;
-      v.calc0.op.fpu = 0;
+      v.calc0.op.fpunit = 0;
       v.calc0.op.fpuc = 0;
       v.calc0.op.fpuf = 0;
     end
@@ -74,7 +74,7 @@ module issue_stage
       v.calc1.op.frden3 = 0;
       v.calc1.op.fload = 0;
       v.calc1.op.fstore = 0;
-      v.calc1.op.fpu = 0;
+      v.calc1.op.fpunit = 0;
       v.calc1.op.fpuc = 0;
       v.calc1.op.fpuf = 0;
     end

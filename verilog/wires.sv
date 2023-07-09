@@ -431,7 +431,7 @@ package wires;
     logic [0  : 0] frden1;
     logic [0  : 0] frden2;
     logic [0  : 0] frden3;
-    logic [0  : 0] alu;
+    logic [0  : 0] alunit;
     logic [0  : 0] auipc;
     logic [0  : 0] lui;
     logic [0  : 0] jal;
@@ -452,7 +452,7 @@ package wires;
     logic [0  : 0] ebreak;
     logic [0  : 0] mret;
     logic [0  : 0] wfi;
-    logic [0  : 0] fpu;
+    logic [0  : 0] fpunit;
     logic [0  : 0] fpuc;
     logic [0  : 0] fpuf;
     logic [0  : 0] jump;
@@ -470,7 +470,7 @@ package wires;
     frden1 : 0,
     frden2 : 0,
     frden3 : 0,
-    alu : 0,
+    alunit : 0,
     auipc : 0,
     lui : 0,
     jal : 0,
@@ -491,7 +491,7 @@ package wires;
     ebreak : 0,
     mret : 0,
     wfi : 0,
-    fpu : 0,
+    fpunit : 0,
     fpuc : 0,
     fpuf : 0,
     jump : 0,
@@ -680,7 +680,7 @@ package wires;
     logic [0  : 0] rden2;
     logic [0  : 0] cwren;
     logic [0  : 0] crden;
-    logic [0  : 0] alu;
+    logic [0  : 0] alunit;
     logic [0  : 0] auipc;
     logic [0  : 0] lui;
     logic [0  : 0] jal;
@@ -726,7 +726,7 @@ package wires;
     logic [0  : 0] fstore;
     logic [1  : 0] fmt;
     logic [2  : 0] rm;
-    logic [0  : 0] fpu;
+    logic [0  : 0] fpunit;
     logic [0  : 0] fpuc;
     logic [0  : 0] fpuf;
     logic [0  : 0] valid;
@@ -1047,7 +1047,7 @@ package wires;
   } fp_csr_write_in_type;
 
   typedef struct packed{
-    logic [0  : 0] fpu;
+    logic [0  : 0] fpunit;
     logic [4  : 0] fflags;
   } fp_csr_exception_in_type;
 

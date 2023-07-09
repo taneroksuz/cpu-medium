@@ -96,11 +96,11 @@ module execute_stage
     v.calc1.frdata2 = fp_forwarding_out.data2;
     v.calc1.frdata3 = fp_forwarding_out.data3;
 
-    if ((v.calc0.op.fpu & v.calc0.op.rden1) == 1) begin
+    if ((v.calc0.op.fpunit & v.calc0.op.rden1) == 1) begin
       v.calc0.frdata1 = v.calc0.rdata1;
     end
 
-    if ((v.calc1.op.fpu & v.calc1.op.rden1) == 1) begin
+    if ((v.calc1.op.fpunit & v.calc1.op.rden1) == 1) begin
       v.calc1.frdata1 = v.calc1.rdata1;
     end
 
@@ -276,13 +276,13 @@ module execute_stage
     v.calc0.bcready = bit_clmul_out.ready;
     v.calc1.bcready = bit_clmul_out.ready;
 
-    fp_execute_in.data1 = v.calc0.op.fpu ? v.calc0.frdata1 : v.calc1.frdata1;
-    fp_execute_in.data2 = v.calc0.op.fpu ? v.calc0.frdata2 : v.calc1.frdata2;
-    fp_execute_in.data3 = v.calc0.op.fpu ? v.calc0.frdata3 : v.calc1.frdata3;
-    fp_execute_in.fpu_op = v.calc0.op.fpu ? v.calc0.fpu_op : v.calc1.fpu_op;
-    fp_execute_in.fmt = v.calc0.op.fpu ? v.calc0.fmt : v.calc1.fmt;
-    fp_execute_in.rm = v.calc0.op.fpu ? v.calc0.rm : v.calc1.rm;
-    fp_execute_in.enable = (v.calc0.op.fpu | v.calc1.op.fpu) & v.enable;
+    fp_execute_in.data1 = v.calc0.op.fpunit ? v.calc0.frdata1 : v.calc1.frdata1;
+    fp_execute_in.data2 = v.calc0.op.fpunit ? v.calc0.frdata2 : v.calc1.frdata2;
+    fp_execute_in.data3 = v.calc0.op.fpunit ? v.calc0.frdata3 : v.calc1.frdata3;
+    fp_execute_in.fpu_op = v.calc0.op.fpunit ? v.calc0.fpu_op : v.calc1.fpu_op;
+    fp_execute_in.fmt = v.calc0.op.fpunit ? v.calc0.fmt : v.calc1.fmt;
+    fp_execute_in.rm = v.calc0.op.fpunit ? v.calc0.rm : v.calc1.rm;
+    fp_execute_in.enable = (v.calc0.op.fpunit | v.calc1.op.fpunit) & v.enable;
 
     v.calc0.fdata = fp_execute_out.result;
     v.calc1.fdata = fp_execute_out.result;
@@ -309,7 +309,7 @@ module execute_stage
       v.calc0.wdata = v.calc0.bdata;
     end else if (v.calc0.op.bitc == 1) begin
       v.calc0.wdata = v.calc0.bcdata;
-    end else if (v.calc0.op.fpu == 1) begin
+    end else if (v.calc0.op.fpunit == 1) begin
       v.calc0.wdata = v.calc0.fdata;
     end
 
@@ -331,7 +331,7 @@ module execute_stage
       v.calc1.wdata = v.calc1.bdata;
     end else if (v.calc1.op.bitc == 1) begin
       v.calc1.wdata = v.calc1.bcdata;
-    end else if (v.calc1.op.fpu == 1) begin
+    end else if (v.calc1.op.fpunit == 1) begin
       v.calc1.wdata = v.calc1.fdata;
     end
 

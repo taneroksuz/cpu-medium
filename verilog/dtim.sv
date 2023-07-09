@@ -621,19 +621,23 @@ module dtim
   timeunit 1ns;
   timeprecision 1ps;
 
-  genvar i;
-
   dtim_vec_in_type dvec_in;
   dtim_vec_out_type dvec_out;
 
-  for (i=0; i<dtim_width; i=i+1) begin
-    dtim_ram dtim_ram_comp
-    (
-      .clock (clock),
-      .dtim_ram_in (dvec_in[i]),
-      .dtim_ram_out (dvec_out[i])
-    );
-  end
+  generate
+
+    genvar i;
+
+    for (i=0; i<dtim_width; i=i+1) begin : dtim_ram
+      dtim_ram dtim_ram_comp
+      (
+        .clock (clock),
+        .dtim_ram_in (dvec_in[i]),
+        .dtim_ram_out (dvec_out[i])
+      );
+    end
+
+  endgenerate
 
   dtim_ctrl dtim_ctrl_comp
   (

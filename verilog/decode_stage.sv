@@ -64,7 +64,7 @@ module decode_stage
     v.instr0.op.frden3 = 0;
     v.instr0.op.fload = 0;
     v.instr0.op.fstore = 0;
-    v.instr0.op.fpu = 0;
+    v.instr0.op.fpunit = 0;
     v.instr0.op.fpuc = 0;
     v.instr0.op.fpuf = 0;
     v.instr0.fpu_op = init_fp_operation;
@@ -77,7 +77,7 @@ module decode_stage
     v.instr1.op.frden3 = 0;
     v.instr1.op.fload = 0;
     v.instr1.op.fstore = 0;
-    v.instr1.op.fpu = 0;
+    v.instr1.op.fpunit = 0;
     v.instr1.op.fpuc = 0;
     v.instr1.op.fpuf = 0;
     v.instr1.fpu_op = init_fp_operation;
@@ -91,7 +91,7 @@ module decode_stage
     v.instr0.op.rden2 = decoder0_out.rden2;
     v.instr0.op.cwren = decoder0_out.cwren;
     v.instr0.op.crden = decoder0_out.crden;
-    v.instr0.op.alu = decoder0_out.alu;
+    v.instr0.op.alunit = decoder0_out.alunit;
     v.instr0.op.auipc = decoder0_out.auipc;
     v.instr0.op.lui = decoder0_out.lui;
     v.instr0.op.jal = decoder0_out.jal;
@@ -128,7 +128,7 @@ module decode_stage
     v.instr1.op.rden2 = decoder1_out.rden2;
     v.instr1.op.cwren = decoder1_out.cwren;
     v.instr1.op.crden = decoder1_out.crden;
-    v.instr1.op.alu = decoder1_out.alu;
+    v.instr1.op.alunit = decoder1_out.alunit;
     v.instr1.op.auipc = decoder1_out.auipc;
     v.instr1.op.lui = decoder1_out.lui;
     v.instr1.op.jal = decoder1_out.jal;
@@ -171,7 +171,7 @@ module decode_stage
       v.instr0.op.frden3 = fp_decode0_out.frden3;
       v.instr0.op.fload = fp_decode0_out.fload;
       v.instr0.op.fstore = fp_decode0_out.fstore;
-      v.instr0.op.fpu = fp_decode0_out.fpu;
+      v.instr0.op.fpunit = fp_decode0_out.fpunit;
       v.instr0.op.fpuc = fp_decode0_out.fpuc;
       v.instr0.op.fpuf = fp_decode0_out.fpuf;
       v.instr0.op.valid = fp_decode0_out.valid;
@@ -194,7 +194,7 @@ module decode_stage
       v.instr1.op.frden3 = fp_decode1_out.frden3;
       v.instr1.op.fload = fp_decode1_out.fload;
       v.instr1.op.fstore = fp_decode1_out.fstore;
-      v.instr1.op.fpu = fp_decode1_out.fpu;
+      v.instr1.op.fpunit = fp_decode1_out.fpunit;
       v.instr1.op.fpuc = fp_decode1_out.fpuc;
       v.instr1.op.fpuf = fp_decode1_out.fpuf;
       v.instr1.op.valid = fp_decode1_out.valid;
