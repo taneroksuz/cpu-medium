@@ -423,8 +423,6 @@ package wires;
     logic [31 : 0] pred_baddr;
     logic [0  : 0] pred_branch0;
     logic [0  : 0] pred_branch1;
-    logic [31 : 0] pred_pc;
-    logic [31 : 0] pred_npc;
     logic [31 : 0] pred_maddr;
     logic [0  : 0] pred_miss;
     logic [0  : 0] pred_hazard0;
