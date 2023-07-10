@@ -141,13 +141,13 @@ module btac_ctrl
     end
 
     if (btac_in.clear == 0) begin
-      if (btac_in.upd_pred0.taken == 1 && btac_in.upd_pc0 == btac_in.upd_pred0.tpc) begin
+      if (btac_in.upd_pred0.taken == 1) begin
         if (btac_in.upd_jump0 == 1) begin
           v.maddr = btac_in.upd_addr0;
           v.miss0 = |(btac_in.upd_addr0 ^ btac_in.upd_pred0.taddr);
           v.miss1 = 0;
         end else if (btac_in.upd_jump0 == 0 && btac_in.upd_branch0 == 1) begin
-          v.maddr = btac_in.upd_pred0.tnpc;
+          v.maddr = btac_in.upd_npc0;
           v.miss0 = 1;
           v.miss1 = 0;
         end else begin
@@ -155,13 +155,13 @@ module btac_ctrl
           v.miss0 = 0;
           v.miss1 = 0;
         end
-      end else if (btac_in.upd_pred1.taken == 1 && btac_in.upd_pc1 == btac_in.upd_pred1.tpc) begin
+      end else if (btac_in.upd_pred1.taken == 1) begin
         if (btac_in.upd_jump1 == 1) begin
           v.maddr = btac_in.upd_addr1;
           v.miss0 = 0;
           v.miss1 = |(btac_in.upd_addr1 ^ btac_in.upd_pred1.taddr);
         end else if (btac_in.upd_jump1 == 0 && btac_in.upd_branch1 == 1) begin
-          v.maddr = btac_in.upd_pred1.tnpc;
+          v.maddr = btac_in.upd_npc1;
           v.miss0 = 0;
           v.miss1 = 1;
         end else begin

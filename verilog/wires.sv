@@ -389,15 +389,11 @@ package wires;
   typedef struct packed{
     logic [0  : 0] taken;
     logic [31 : 0] taddr;
-    logic [31 : 0] tpc;
-    logic [31 : 0] tnpc;
   } prediction_type;
 
   parameter prediction_type init_prediction = '{
     taken : 0,
-    taddr : 0,
-    tpc : 0,
-    tnpc : 0
+    taddr : 0
   };
 
   typedef struct packed{
