@@ -88,8 +88,8 @@ module btac_ctrl
     logic [btb_depth-1 : 0] raddr1;
     logic [63-btb_depth : 0] wdata;
     logic [0  : 0] wen;
-    logic [0  : 0] branch0;
-    logic [0  : 0] branch1;
+    logic [0  : 0] taken0;
+    logic [0  : 0] taken1;
     logic [1  : 0] sat0;
     logic [1  : 0] sat1;
     logic [31 : 0] pc0;
@@ -105,8 +105,8 @@ module btac_ctrl
     raddr1 : 0,
     wdata : 0,
     wen : 0,
-    branch0 : 0,
-    branch1 : 0,
+    taken0 : 0,
+    taken1 : 0,
     sat0 : 0,
     sat1 : 0,
     pc0 : 0,
@@ -145,17 +145,21 @@ module btac_ctrl
     end
 
     if (btac_in.stall == 0 && btac_in.clear == 0) begin
-      v.branch0 = btb_out.rdata0[1] & (~(|(btb_out.rdata0[63-btb_depth:34] ^ r.pc0[31:btb_depth+2])));
-      v.branch1 = btb_out.rdata1[1] & (~(|(btb_out.rdata1[63-btb_depth:34] ^ r.pc1[31:btb_depth+2])));
-      btac_out.pred_branch0 = v.branch0;
-      btac_out.pred_branch1 = v.branch0 ? 0 : v.branch1;
-      btac_out.pred_bsat = v.branch0 ? btb_out.rdata0[1:0] : btb_out.rdata1[1:0];
-      btac_out.pred_baddr = v.branch0 ? btb_out.rdata0[33:2] : btb_out.rdata1[33:2];
+      v.taken0 = btb_out.rdata0[1] & (~(|(btb_out.rdata0[63-btb_depth:34] ^ r.pc0[31:btb_depth+2])));
+      v.taken1 = btb_out.rdata1[1] & (~(|(btb_out.rdata1[63-btb_depth:34] ^ r.pc1[31:btb_depth+2])));
+      btac_out.pred0.taken = v.taken0;
+      btac_out.pred1.taken = v.taken1;
+      btac_out.pred0.taddr = btb_out.rdata0[33:2];
+      btac_out.pred1.taddr = btb_out.rdata1[33:2];
+      btac_out.pred0.tsat = btb_out.rdata0[1:0];
+      btac_out.pred1.tsat = btb_out.rdata1[1:0];
     end else begin
-      btac_out.pred_branch0 = 0;
-      btac_out.pred_branch1 = 0;
-      btac_out.pred_bsat = 0;
-      btac_out.pred_baddr = 0;
+      btac_out.pred0.taken = 0;
+      btac_out.pred1.taken = 0;
+      btac_out.pred0.taddr = 0;
+      btac_out.pred1.taddr = 0;
+      btac_out.pred0.tsat = 0;
+      btac_out.pred1.tsat = 0;
     end
 
     if (btac_in.clear == 0) begin

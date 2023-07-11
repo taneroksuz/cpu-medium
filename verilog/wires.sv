@@ -422,10 +422,8 @@ package wires;
   } btac_in_type;
 
   typedef struct packed{
-    logic [31 : 0] pred_baddr;
-    logic [1  : 0] pred_bsat;
-    logic [0  : 0] pred_branch0;
-    logic [0  : 0] pred_branch1;
+    prediction_type pred0;
+    prediction_type pred1;
     logic [31 : 0] pred_maddr;
     logic [0  : 0] pred_miss;
     logic [0  : 0] pred_hazard0;
