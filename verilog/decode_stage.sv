@@ -44,6 +44,8 @@ module decode_stage
     v.instr1.pred.taken = btac_out.pred_branch1;
     v.instr0.pred.taddr = btac_out.pred_baddr;
     v.instr1.pred.taddr = btac_out.pred_baddr;
+    v.instr0.pred.tsat = btac_out.pred_bsat;
+    v.instr1.pred.tsat = btac_out.pred_bsat;
 
     v.stall = 0;
 

@@ -11,12 +11,12 @@ package btac_wires;
     logic [btb_depth-1 : 0] waddr;
     logic [btb_depth-1 : 0] raddr0;
     logic [btb_depth-1 : 0] raddr1;
-    logic [61-btb_depth : 0] wdata;
+    logic [63-btb_depth : 0] wdata;
   } btb_in_type;
 
   typedef struct packed{
-    logic [61-btb_depth : 0] rdata0;
-    logic [61-btb_depth : 0] rdata1;
+    logic [63-btb_depth : 0] rdata0;
+    logic [63-btb_depth : 0] rdata1;
   } btb_out_type;
 
 endpackage
@@ -36,7 +36,7 @@ module btb
 
   localparam btb_depth = $clog2(branchtarget_depth-1);
 
-  logic [61-btb_depth:0] btb_array[0:branchtarget_depth-1] = '{default:'0};
+  logic [63-btb_depth:0] btb_array[0:branchtarget_depth-1] = '{default:'0};
 
   logic [btb_depth-1 : 0] raddr0 = 0;
   logic [btb_depth-1 : 0] raddr1 = 0;
@@ -68,14 +68,30 @@ module btac_ctrl
 
   localparam btb_depth = $clog2(branchtarget_depth-1);
 
+  task saturation;
+    output logic [1:0] sat_o;
+    input logic [1:0] sat_i;
+    input logic [0:0] jump;
+    begin
+      if (jump == 0 && |sat_i == 1)
+        sat_o = sat_i - 1;
+      else if (jump == 1 && &sat_i == 0)
+        sat_o = sat_i + 1;
+      else
+        sat_o = sat_i;
+    end
+  endtask
+
   typedef struct packed{
     logic [btb_depth-1 : 0] waddr;
     logic [btb_depth-1 : 0] raddr0;
     logic [btb_depth-1 : 0] raddr1;
-    logic [61-btb_depth : 0] wdata;
+    logic [63-btb_depth : 0] wdata;
     logic [0  : 0] wen;
     logic [0  : 0] branch0;
     logic [0  : 0] branch1;
+    logic [1  : 0] sat0;
+    logic [1  : 0] sat1;
     logic [31 : 0] pc0;
     logic [31 : 0] pc1;
     logic [31 : 0] maddr;
@@ -91,6 +107,8 @@ module btac_ctrl
     wen : 0,
     branch0 : 0,
     branch1 : 0,
+    sat0 : 0,
+    sat1 : 0,
     pc0 : 0,
     pc1 : 0,
     maddr : 0,
@@ -115,9 +133,11 @@ module btac_ctrl
     btb_in.raddr1 = v.raddr1;
 
     if (btac_in.clear == 0) begin
+      saturation(v.sat0,btac_in.upd_pred0.tsat,btac_in.upd_jump0);
+      saturation(v.sat1,btac_in.upd_pred1.tsat,btac_in.upd_jump1);
       v.wen = ((btac_in.upd_jal0 | btac_in.upd_branch0) & btac_in.upd_jump0) | ((btac_in.upd_jal1 | btac_in.upd_branch1) & btac_in.upd_jump1);
       v.waddr = btac_in.upd_jump0 ? btac_in.upd_pc0[btb_depth+1:2] : btac_in.upd_pc1[btb_depth+1:2];
-      v.wdata = btac_in.upd_jump0 ? {btac_in.upd_pc0[31:btb_depth+2],btac_in.upd_addr0} : {btac_in.upd_pc1[31:btb_depth+2],btac_in.upd_addr1};
+      v.wdata = btac_in.upd_jump0 ? {btac_in.upd_pc0[31:btb_depth+2],btac_in.upd_addr0,v.sat0} : {btac_in.upd_pc1[31:btb_depth+2],btac_in.upd_addr1,v.sat1};
     end else begin
       v.wen = 0;
       v.waddr = 0;
@@ -125,14 +145,16 @@ module btac_ctrl
     end
 
     if (btac_in.stall == 0 && btac_in.clear == 0) begin
-      v.branch0 = (|btb_out.rdata0) & (~(|(btb_out.rdata0[61-btb_depth:32] ^ r.pc0[31:btb_depth+2])));
-      v.branch1 = (|btb_out.rdata1) & (~(|(btb_out.rdata1[61-btb_depth:32] ^ r.pc1[31:btb_depth+2])));
+      v.branch0 = btb_out.rdata0[1] & (~(|(btb_out.rdata0[63-btb_depth:34] ^ r.pc0[31:btb_depth+2])));
+      v.branch1 = btb_out.rdata1[1] & (~(|(btb_out.rdata1[63-btb_depth:34] ^ r.pc1[31:btb_depth+2])));
       btac_out.pred_branch0 = v.branch0;
-      btac_out.pred_branch1 = v.branch1;
-      btac_out.pred_baddr = v.branch0 ? btb_out.rdata0[31:0] : btb_out.rdata1[31:0];
+      btac_out.pred_branch1 = v.branch0 ? 0 : v.branch1;
+      btac_out.pred_bsat = v.branch0 ? btb_out.rdata0[1:0] : btb_out.rdata1[1:0];
+      btac_out.pred_baddr = v.branch0 ? btb_out.rdata0[33:2] : btb_out.rdata1[33:2];
     end else begin
       btac_out.pred_branch0 = 0;
       btac_out.pred_branch1 = 0;
+      btac_out.pred_bsat = 0;
       btac_out.pred_baddr = 0;
     end
 
