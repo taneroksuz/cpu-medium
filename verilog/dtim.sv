@@ -389,6 +389,10 @@ module dtim_ctrl
           v_b.hit0 = 0;
           v_b.hit1 = 0;
           ///////////////////////////////////////////////////////////////////////////////////
+          if (v_b.addr0[31:2] == v_b.addr1[31:2]) begin
+            v_b.equal = v_b.enable0 & v_b.enable1;
+          end
+          ///////////////////////////////////////////////////////////////////////////////////
           if (v_b.fence == 1) begin
             v_b.clear = v_b.enable0;
           end else if (v_b.addr0 < dtim_base_addr || v_b.addr0 >= dtim_top_addr) begin
@@ -409,10 +413,6 @@ module dtim_ctrl
             v_b.ldst1 = v_b.enable1;
           end else begin
             v_b.hit1 = v_b.enable1;
-          end
-          ///////////////////////////////////////////////////////////////////////////////////
-          if (v_b.addr0[31:2] == v_b.addr1[31:2]) begin
-            v_b.equal = 1;
           end
           ///////////////////////////////////////////////////////////////////////////////////
           if (v_b.clear == 1) begin

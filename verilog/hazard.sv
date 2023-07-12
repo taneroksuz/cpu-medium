@@ -128,11 +128,7 @@ module hazard
 
     v.single = v.calc1.op.fence | v.calc1.op.mret | v.calc1.op.wfi;
 
-    v.dual = ((v.calc0.op.load | v.calc0.op.store) & (v.calc1.op.load | v.calc1.op.store));
-    v.dual = v.dual | ((v.calc0.op.load | v.calc0.op.store) & (v.calc1.op.fload | v.calc1.op.fstore));
-    v.dual = v.dual | ((v.calc0.op.fload | v.calc0.op.fstore) & (v.calc1.op.load | v.calc1.op.store));
-    v.dual = v.dual | ((v.calc0.op.fload | v.calc0.op.fstore) & (v.calc1.op.fload | v.calc1.op.fstore));
-    v.dual = v.dual | (v.calc0.op.branch & v.calc1.op.branch);
+    v.dual = (v.calc0.op.branch & v.calc1.op.branch);
     v.dual = v.dual | (v.calc0.op.fpunit & v.calc1.op.fpunit);
     v.dual = v.dual | (v.calc0.op.division & v.calc1.op.division);
     v.dual = v.dual | (v.calc0.op.mult & v.calc1.op.mult);
