@@ -168,8 +168,8 @@ module execute_stage
     agu1_in.jal = v.calc1.op.jal;
     agu1_in.jalr = v.calc1.op.jalr;
     agu1_in.branch = v.calc1.op.branch;
-    agu1_in.load = v.calc1.op.load;
-    agu1_in.store = v.calc1.op.store;
+    agu1_in.load = v.calc1.op.load | v.calc1.op.fload;
+    agu1_in.store = v.calc1.op.store | v.calc1.op.fstore;
     agu1_in.lsu_op = v.calc1.lsu_op;
 
     v.calc1.address = agu1_out.address;

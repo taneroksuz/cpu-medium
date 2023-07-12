@@ -381,6 +381,7 @@ module dtim_ctrl
           v_b.ddata0 = dvec_out[v_b.wid0].rdata[31:0];
           v_b.ddata1 = dvec_out[v_b.wid1].rdata[31:0];
           ///////////////////////////////////////////////////////////////////////////////////
+          v_b.equal = 0;
           v_b.clear = 0;
           v_b.ldst0 = 0;
           v_b.ldst1 = 0;
@@ -492,6 +493,9 @@ module dtim_ctrl
               v_b.sdata0 = 0;
               v_b.miss0 = 0;
               if (v_b.equal == 1) begin
+                v_b.wen1 = 1;
+                v_b.lock1 = 1;
+                v_b.dirty1 = v_b.store1;
                 enable_data(v_b.data1,v_b.data0,v_b.sdata1,v_b.sstrb1,1);
                 v_b.rdata1 = v_b.data0;
                 v_b.ready1 = 1;
