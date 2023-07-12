@@ -433,7 +433,7 @@ module dtim_ctrl
               v_b.lock0 = v_b.wren0;
               v_b.dirty0 = v_b.wren0;
               enable_data(v_b.data0,v_b.data0,v_b.ddata0,v_b.strb0,0);
-              v_b.rdata0 = v_b.rden0 ? v_b.ddata0 : 0;
+              v_b.rdata0 = v_b.ddata0;
               v_b.ready0 = 1;
             end
             if (v_b.miss1 == 1) begin
@@ -449,10 +449,10 @@ module dtim_ctrl
               v_b.dirty1 = v_b.wren1;
               if (v_b.equal == 1) begin
                 enable_data(v_b.data1,v_b.data0,v_b.ddata0,v_b.strb1,0);
-                v_b.rdata1 = v_b.rden1 ? v_b.data0 : 0;
+                v_b.rdata1 = v_b.data0;
               end else begin
                 enable_data(v_b.data1,v_b.data1,v_b.ddata1,v_b.strb1,0);
-                v_b.rdata1 = v_b.rden1 ? v_b.ddata1 : 0;
+                v_b.rdata1 = v_b.ddata1;
               end
               v_b.ready1 = 1;
             end
@@ -491,7 +491,12 @@ module dtim_ctrl
               v_b.sstrb0 = 0;
               v_b.sdata0 = 0;
               v_b.miss0 = 0;
-              if (v_b.miss1 == 1) begin
+              if (v_b.equal == 1) begin
+                enable_data(v_b.data1,v_b.data0,v_b.sdata1,v_b.sstrb1,1);
+                v_b.rdata1 = v_b.data0;
+                v_b.ready1 = 1;
+                v_b.state = hit;
+              end else if (v_b.miss1 == 1) begin
                 v_b.valid1 = 1;
                 v_b.state = miss;
               end else if (v_b.ldst1 == 1) begin
@@ -505,13 +510,8 @@ module dtim_ctrl
               v_b.lock1 = 1;
               v_b.dirty1 = v_b.store1;
               v_b.data1 = dmem_out.mem_rdata;
-              if (v_b.equal == 1) begin
-                enable_data(v_b.data1,v_b.data0,v_b.sdata1,v_b.sstrb1,0);
-                v_b.rdata1 = v_b.data0;
-              end else begin
-                enable_data(v_b.data1,v_b.data1,v_b.sdata1,v_b.sstrb1,1);
-                v_b.rdata1 = dmem_out.mem_rdata;
-              end
+              enable_data(v_b.data1,v_b.data1,v_b.sdata1,v_b.sstrb1,1);
+              v_b.rdata1 = dmem_out.mem_rdata;
               v_b.ready1 = 1;
               v_b.store1 = 0;
               v_b.sstrb1 = 0;
@@ -533,7 +533,11 @@ module dtim_ctrl
               v_b.rdata0 = dmem_out.mem_rdata;
               v_b.ready0 = 1;
               v_b.ldst0 = 0;
-              if (v_b.ldst1 == 1) begin
+              if (v_b.equal == 1) begin
+                v_b.rdata1 = dmem_out.mem_rdata;
+                v_b.ready1 = 1;
+                v_b.state = hit;
+              end else if (v_b.ldst1 == 1) begin
                 v_b.valid1 = 1;
                 v_b.state = ldst;
               end else if (v_b.miss1 == 1) begin

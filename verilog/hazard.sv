@@ -126,7 +126,8 @@ module hazard
     v.calc1.fpu_op = v.instr1.fpu_op;
     v.calc1.pred = v.instr1.pred;
 
-    v.single = v.calc1.op.fence | v.calc1.op.mret | v.calc1.op.wfi;
+    v.single = v.calc0.op.fence | v.calc0.op.mret | v.calc0.op.wfi;
+    v.single = v.single | v.calc1.op.fence | v.calc1.op.mret | v.calc1.op.wfi;
 
     v.dual = (v.calc0.op.branch & v.calc1.op.branch);
     v.dual = v.dual | (v.calc0.op.fpunit & v.calc1.op.fpunit);
