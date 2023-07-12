@@ -164,22 +164,26 @@ module dtim_ctrl
     logic [31:0] data;
     logic [3:0] strb0;
     logic [3:0] strb1;
-    logic [3:0] strb;
     logic [0:0] dlock0;
     logic [0:0] dlock1;
     logic [0:0] ddirty0;
     logic [0:0] ddirty1;
     logic [0:0] wren0;
     logic [0:0] wren1;
+    logic [0:0] wren;
     logic [0:0] rden0;
     logic [0:0] rden1;
+    logic [0:0] rden;
     logic [0:0] fence;
     logic [0:0] equal;
     logic [0:0] enable0;
     logic [0:0] enable1;
-    logic [31:0] sdata;
-    logic [3:0] sstrb;
-    logic [0:0] store;
+    logic [31:0] sdata0;
+    logic [31:0] sdata1;
+    logic [3:0] sstrb0;
+    logic [3:0] sstrb1;
+    logic [0:0] store0;
+    logic [0:0] store1;
     logic [0:0] clear;
     logic [0:0] ldst0;
     logic [0:0] ldst1;
@@ -195,17 +199,18 @@ module dtim_ctrl
     logic [0:0] dirty;
     logic [0:0] wen0;
     logic [0:0] wen1;
-    logic [0:0] en;
-    logic [0:0] inv;
-    logic [0:0] pass;
+    logic [0:0] valid0;
+    logic [0:0] valid1;
     logic [0:0] valid;
-    logic [31:0] addr;
-    logic [31:0] wdata;
-    logic [3:0] wstrb;
+    logic [31:0] wdata0;
+    logic [31:0] wdata1;
+    logic [3:0] wstrb0;
+    logic [3:0] wstrb1;
     logic [31:0] rdata0;
     logic [31:0] rdata1;
     logic [0:0] ready0;
     logic [0:0] ready1;
+    logic [0:0] ready;
     logic [2:0] state;
   } back_type;
 
@@ -230,22 +235,26 @@ module dtim_ctrl
     data : 0,
     strb0 : 0,
     strb1 : 0,
-    strb : 0,
     dlock0 : 0,
     dlock1 : 0,
     ddirty0 : 0,
     ddirty1 : 0,
     wren0 : 0,
     wren1 : 0,
+    wren : 0,
     rden0 : 0,
     rden1 : 0,
+    rden : 0,
     fence : 0,
     equal : 0,
     enable0 : 0,
     enable1 : 0,
-    sdata : 0,
-    sstrb : 0,
-    store : 0,
+    sdata0 : 0,
+    sdata1 : 0,
+    sstrb0 : 0,
+    sstrb1 : 0,
+    store0 : 0,
+    store1 : 0,
     clear : 0,
     ldst0 : 0,
     ldst1 : 0,
@@ -261,17 +270,18 @@ module dtim_ctrl
     dirty : 0,
     wen0 : 0,
     wen1 : 0,
-    en : 0,
-    inv : 0,
-    pass : 0,
+    valid0 : 0,
+    valid1 : 0,
     valid : 0,
-    addr : 0,
-    wdata : 0,
-    wstrb : 0,
+    wdata0 : 0,
+    wdata1 : 0,
+    wstrb0 : 0,
+    wstrb1 : 0,
     rdata0 : 0,
     rdata1 : 0,
     ready0 : 0,
     ready1 : 0,
+    ready : 0,
     state : 0
   };
 
@@ -339,17 +349,16 @@ module dtim_ctrl
 
     v_b.wen0 = 0;
     v_b.wen1 = 0;
-    v_b.en = 0;
-    v_b.inv = 0;
-    v_b.pass = 0;
 
-    v_b.valid = 0;
-    v_b.addr = 0;
-    v_b.wdata = 0;
-    v_b.wstrb = 0;
+    v_b.wren = 0;
+    v_b.rden = 0;
 
     v_b.ready0 = 0;
     v_b.ready1 = 0;
+    v_b.ready = 0;
+
+    v_b.valid0 = 0;
+    v_b.valid1 = 0;
 
     case(r_b.state)
       hit :
@@ -415,107 +424,160 @@ module dtim_ctrl
           end
           ///////////////////////////////////////////////////////////////////////////////////
           if (v_b.clear == 1) begin
-            v_b.state = fence;
-            v_b.did = 0;
-            v_b.wid = 0;
-            v_b.inv = 1;
-            v_b.pass = 1;
-            v_b.valid = 0;
-          end else if (v_b.miss0 == 1) begin
-            v_b.state = miss;
-            v_b.valid = 1;
-            v_b.addr = v_b.addr0;
-            v_b.store = v_b.wren0;
-            v_b.sstrb = v_b.wren0 ? v_b.strb0 : 0;
-            v_b.sdata = v_b.wren0 ? v_b.data0 : 0;
-          end else if (v_b.ldst0 == 1) begin
-            v_b.state = ldst;
-            v_b.valid = 1;
-            v_b.addr = v_b.addr0;
-            v_b.wstrb = v_b.wren0 ? v_b.strb0 : 0;
-            v_b.wdata = v_b.wren0 ? v_b.data0 : 0;
-          end else if (v_b.hit0 == 1) begin
-            v_b.wen0 = v_b.wren0;
-            v_b.lock0 = v_b.wren0;
-            v_b.dirty0 = v_b.wren0;
-            enable_data(v_b.data0,v_b.data0,v_b.ddata0,v_b.strb0,0);
-            v_b.rdata0 = v_b.rden0 ? v_b.ddata0 : 0;
-            v_b.ready0 = 1;
-            v_b.valid = 0;
+            v_b.did0 = 0;
+            v_b.wid0 = 0;
+            v_b.wren = 0;
+            v_b.rden = 1;
+          end else begin
+            if (v_b.miss0 == 1) begin
+              v_b.store0 = v_b.wren0;
+              v_b.sstrb0 = v_b.wren0 ? v_b.strb0 : 0;
+              v_b.sdata0 = v_b.wren0 ? v_b.data0 : 0;
+            end else if (v_b.ldst0 == 1) begin
+              v_b.wstrb0 = v_b.wren0 ? v_b.strb0 : 0;
+              v_b.wdata0 = v_b.wren0 ? v_b.data0 : 0;
+            end else if (v_b.hit0 == 1) begin
+              v_b.wen0 = v_b.wren0;
+              v_b.lock0 = v_b.wren0;
+              v_b.dirty0 = v_b.wren0;
+              enable_data(v_b.data0,v_b.data0,v_b.ddata0,v_b.strb0,0);
+              v_b.rdata0 = v_b.rden0 ? v_b.ddata0 : 0;
+              v_b.ready0 = 1;
+            end
+            if (v_b.miss1 == 1) begin
+              v_b.store1 = v_b.wren1;
+              v_b.sstrb1 = v_b.wren1 ? v_b.strb1 : 0;
+              v_b.sdata1 = v_b.wren1 ? v_b.data1 : 0;
+            end else if (v_b.ldst1 == 1) begin
+              v_b.wstrb1 = v_b.wren1 ? v_b.strb1 : 0;
+              v_b.wdata1 = v_b.wren1 ? v_b.data1 : 0;
+            end else if (v_b.hit1 == 1) begin
+              v_b.wen1 = v_b.wren1;
+              v_b.lock1 = v_b.wren1;
+              v_b.dirty1 = v_b.wren1;
+              enable_data(v_b.data1,v_b.data1,v_b.ddata1,v_b.strb1,0);
+              v_b.rdata1 = v_b.rden1 ? v_b.ddata1 : 0;
+              v_b.ready1 = 1;
+            end
           end
           ///////////////////////////////////////////////////////////////////////////////////
-          if (v_b.miss1 == 1 && v_b.clear == 0 && v_b.miss0 == 0 && v_b.ldst0 == 0) begin
+          if (v_b.clear == 1) begin
+            v_b.valid0 = 0;
+            v_b.state = fence;
+          end else if ((v_b.miss0 | v_b.miss1) == 1) begin
+            if (v_b.miss0 == 1) begin
+              v_b.valid0 = 1;
+            end else if (v_b.miss1 == 1) begin
+              v_b.valid1 = 1;
+            end
             v_b.state = miss;
-            v_b.valid = 1;
-            v_b.addr = v_b.addr1;
-            v_b.store = v_b.wren1;
-            v_b.sstrb = v_b.wren1 ? v_b.strb1 : 0;
-            v_b.sdata = v_b.wren1 ? v_b.data1 : 0;
-          end else if (v_b.ldst1 == 1 && v_b.clear == 0 && v_b.miss0 == 0 && v_b.ldst0 == 0) begin
+          end else if ((v_b.ldst0 | v_b.ldst1) == 1) begin
+            if (v_b.ldst0 == 1) begin
+              v_b.valid0 = 1;
+            end else if (v_b.ldst1 == 1) begin
+              v_b.valid1 = 1;
+            end
             v_b.state = ldst;
-            v_b.valid = 1;
-            v_b.addr = v_b.addr1;
-            v_b.wstrb = v_b.wren1 ? v_b.strb1 : 0;
-            v_b.wdata = v_b.wren1 ? v_b.data1 : 0;
-          end else if (v_b.hit1 == 1 && v_b.clear == 0) begin
-            v_b.wen1 = v_b.wren1;
-            v_b.lock1 = v_b.wren1;
-            v_b.dirty1 = v_b.wren1;
-            enable_data(v_b.data1,v_b.data1,v_b.ddata1,v_b.strb1,0);
-            v_b.rdata1 = v_b.rden1 ? v_b.ddata1 : 0;
-            v_b.ready1 = 1;
-            v_b.valid = 0;
           end
         end
       miss :
         begin
           if (dmem_out.mem_ready == 1) begin
-            v_b.wen0 = 1;
-            v_b.lock0 = 1;
-            v_b.dirty0 = v_b.store;
-            v_b.data0 = dmem_out.mem_rdata;
-            enable_data(v_b.data0,v_b.data0,v_b.sdata,v_b.sstrb,1);
-            v_b.rdata0 = dmem_out.mem_rdata;
-            v_b.ready0 = 1;
-            v_b.valid = 0;
-            v_b.store = 0;
-            v_b.sstrb = 0;
-            v_b.sdata = 0;
-            v_b.state = hit;
+            if (v_b.miss0 == 1) begin
+              v_b.wen0 = 1;
+              v_b.lock0 = 1;
+              v_b.dirty0 = v_b.store0;
+              v_b.data0 = dmem_out.mem_rdata;
+              enable_data(v_b.data0,v_b.data0,v_b.sdata0,v_b.sstrb0,1);
+              v_b.rdata0 = dmem_out.mem_rdata;
+              v_b.ready0 = 1;
+              v_b.store0 = 0;
+              v_b.sstrb0 = 0;
+              v_b.sdata0 = 0;
+              v_b.miss0 = 0;
+              v_b.valid0 = 0;
+              if (v_b.miss1 == 1) begin
+                v_b.valid1 = 1;
+                v_b.state = miss;
+              end else if (v_b.ldst1 == 1) begin
+                v_b.valid1 = 1;
+                v_b.state = ldst;
+              end else begin
+                v_b.state = hit;
+              end
+            end else if (v_b.miss1 == 1) begin
+              v_b.wen1 = 1;
+              v_b.lock1 = 1;
+              v_b.dirty1 = v_b.store1;
+              v_b.data1 = dmem_out.mem_rdata;
+              enable_data(v_b.data1,v_b.data1,v_b.sdata1,v_b.sstrb1,1);
+              v_b.rdata1 = dmem_out.mem_rdata;
+              v_b.ready1 = 1;
+              v_b.store1 = 0;
+              v_b.sstrb1 = 0;
+              v_b.sdata1 = 0;
+              v_b.miss1 = 0;
+              v_b.valid1 = 0;
+              if (v_b.ldst0 == 1) begin
+                v_b.valid1 = 1;
+                v_b.state = ldst;
+              end else begin
+                v_b.state = hit;
+              end
+            end
           end
         end
       ldst :
         begin
           if (dmem_out.mem_ready == 1) begin
-            v_b.rdata0 = dmem_out.mem_rdata;
-            v_b.ready0 = 1;
-            v_b.valid = 0;
-            v_b.state = hit;
+            if (v_b.ldst0 == 1) begin
+              v_b.rdata0 = dmem_out.mem_rdata;
+              v_b.ready0 = 1;
+              v_b.ldst0 = 0;
+              v_b.valid0 = 0;
+              if (v_b.ldst1 == 1) begin
+                v_b.valid1 = 1;
+                v_b.state = ldst;
+              end else if (v_b.miss1 == 1) begin
+                v_b.valid1 = 1;
+                v_b.state = miss;
+              end else begin
+                v_b.state = hit;
+              end
+            end else if (v_b.ldst1 == 1) begin
+              v_b.rdata1 = dmem_out.mem_rdata;
+              v_b.ready1 = 1;
+              v_b.ldst1 = 0;
+              v_b.valid1 = 0;
+              if (v_b.miss0 == 1) begin
+                v_b.valid1 = 1;
+                v_b.state = miss;
+              end else begin
+                v_b.state = hit;
+              end
+            end
           end
         end
       fence :
         begin
-          if (dmem_out.mem_ready == 1 || v_b.valid == 0) begin
-            if (&(v_b.wid) == 1 && &(v_b.did) == 1) begin
+          if (dmem_out.mem_ready == 1 || v_b.valid0 == 0) begin
+            v_b.wren = 1;
+            v_b.did = v_b.did0;
+            v_b.wid = v_b.wid0;
+            if (&(v_b.wid0) == 1 && &(v_b.did0) == 1) begin
               v_b.rdata0 = 0;
               v_b.ready0 = 1;
               v_b.state = hit;
-              v_b.en = 0;
-              v_b.inv = 1;
-              v_b.pass = 1;
-              v_b.did = 0;
-              v_b.wid = 0;
-            end else if (&(v_b.wid) == 1 && &(v_b.did) == 0) begin
-              v_b.en = 1;
-              v_b.inv = 1;
-              v_b.pass = 1;
-              v_b.did = v_b.did + 1;
-              v_b.wid = 0;
+              v_b.rden = 0;
+              v_b.did0 = 0;
+              v_b.wid0 = 0;
+            end else if (&(v_b.wid0) == 1 && &(v_b.did0) == 0) begin
+              v_b.rden = 1;
+              v_b.did0 = v_b.did0 + 1;
+              v_b.wid0 = 0;
             end else begin
-              v_b.en = 1;
-              v_b.inv = 1;
-              v_b.pass = 1;
-              v_b.wid = v_b.wid + 1;
+              v_b.rden = 1;
+              v_b.wid0 = v_b.wid0 + 1;
             end
           end
           v_b.tag = dvec_out[v_b.wid].rdata[61-(depth+width):32];
@@ -523,10 +585,15 @@ module dtim_ctrl
           v_b.dirty = dvec_out[v_b.wid].rdata[62-(depth+width)];
           v_b.data = dvec_out[v_b.wid].rdata[31:0];
           if (v_b.lock == 1 && v_b.dirty == 1) begin
-            v_b.valid = 1;
-            v_b.addr = {v_b.tag,v_b.did,v_b.wid,2'b0};
-            v_b.wdata = v_b.data;
-            v_b.wstrb = 4'hF;
+            v_b.valid0 = 1;
+            v_b.addr0 = {v_b.tag,v_b.did,v_b.wid,2'b0};
+            v_b.wdata0 = v_b.data;
+            v_b.wstrb0 = 4'hF;
+          end else begin
+            v_b.valid0 = 0;
+            v_b.addr0 = 0;
+            v_b.wdata0 = 0;
+            v_b.wstrb0 = 0;
           end
         end
       default :
@@ -545,12 +612,10 @@ module dtim_ctrl
       dvec_in[rin_f.wid1].raddr = rin_f.did1;
     end
 
-    if (v_b.pass == 1) begin
-      for (int i=0; i<dtim_width; i=i+1) begin
-        dvec_in[i].raddr = v_b.did;
-      end
+    if (v_b.rden == 1) begin
+      dvec_in[v_b.wid0].raddr = v_b.did0;
     end
-    
+
     for (int i=0; i<dtim_width; i=i+1) begin
       dvec_in[i].wen = 0;
       dvec_in[i].waddr = 0;
@@ -568,22 +633,18 @@ module dtim_ctrl
       dvec_in[v_b.wid1].wdata = {v_b.lock1,v_b.dirty1,v_b.tag1,v_b.data1};
     end
 
-    if (v_b.inv == 1) begin
-      for (int i=0; i<dtim_width; i=i+1) begin
-        if (i[width-1:0] == v_b.wid) begin
-          dvec_in[i].wen = v_b.en;
-          dvec_in[i].waddr = v_b.did;
-          dvec_in[i].wdata = 0;
-        end
-      end
+    if (v_b.wren == 1) begin
+      dvec_in[v_b.wid].wen = v_b.wren;
+      dvec_in[v_b.wid].waddr = v_b.did;
+      dvec_in[v_b.wid].wdata = 0;
     end
 
-    dmem_in.mem_valid = v_b.valid;
+    dmem_in.mem_valid = v_b.valid0 | v_b.valid1;
     dmem_in.mem_fence = 0;
     dmem_in.mem_instr = 0;
-    dmem_in.mem_addr = v_b.addr;
-    dmem_in.mem_wdata = v_b.wdata;
-    dmem_in.mem_wstrb = v_b.wstrb;
+    dmem_in.mem_addr = v_b.valid0 ? v_b.addr0 : v_b.addr1;
+    dmem_in.mem_wdata = v_b.valid0 ? v_b.wdata0 : v_b.wdata1;
+    dmem_in.mem_wstrb = v_b.valid0 ? v_b.wstrb0 : v_b.wstrb1;
 
     dtim0_out.mem_rdata = v_b.rdata0;
     dtim0_out.mem_ready = v_b.ready0;
