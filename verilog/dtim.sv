@@ -115,7 +115,6 @@ module dtim_ctrl
     logic [0:0] rden0;
     logic [0:0] rden1;
     logic [0:0] fence;
-    logic [0:0] equal;
     logic [0:0] enable0;
     logic [0:0] enable1;
   } front_type;
@@ -138,7 +137,6 @@ module dtim_ctrl
     rden0 : 0,
     rden1 : 0,
     fence : 0,
-    equal : 0,
     enable0 : 0,
     enable1 : 0
   };
@@ -201,7 +199,6 @@ module dtim_ctrl
     logic [0:0] wen1;
     logic [0:0] valid0;
     logic [0:0] valid1;
-    logic [0:0] valid;
     logic [31:0] wdata0;
     logic [31:0] wdata1;
     logic [3:0] wstrb0;
@@ -210,7 +207,6 @@ module dtim_ctrl
     logic [31:0] rdata1;
     logic [0:0] ready0;
     logic [0:0] ready1;
-    logic [0:0] ready;
     logic [2:0] state;
   } back_type;
 
@@ -272,7 +268,6 @@ module dtim_ctrl
     wen1 : 0,
     valid0 : 0,
     valid1 : 0,
-    valid : 0,
     wdata0 : 0,
     wdata1 : 0,
     wstrb0 : 0,
@@ -281,7 +276,6 @@ module dtim_ctrl
     rdata1 : 0,
     ready0 : 0,
     ready1 : 0,
-    ready : 0,
     state : 0
   };
 
@@ -300,7 +294,6 @@ module dtim_ctrl
     v_f.enable0 = 0;
     v_f.enable1 = 0;
 
-    v_f.equal = 0;
     v_f.fence = 0;
 
     v_f.wren0 = 0;
@@ -333,12 +326,6 @@ module dtim_ctrl
       v_f.wid1 = dtim1_in.mem_addr[(width+1):2];
     end
 
-    if (dtim0_in.mem_valid == 1 && dtim1_in.mem_valid == 1) begin
-      if (|(v_f.addr0[31:2] ^ v_f.addr1[31:2]) == 1) begin
-        v_f.equal = 1;
-      end
-    end
-
     rin_f = v_f;
 
   end
@@ -353,19 +340,20 @@ module dtim_ctrl
     v_b.wren = 0;
     v_b.rden = 0;
 
-    v_b.ready0 = 0;
-    v_b.ready1 = 0;
-    v_b.ready = 0;
-
     v_b.valid0 = 0;
     v_b.valid1 = 0;
+    v_b.wdata0 = 0;
+    v_b.wdata1 = 0;
+    v_b.wstrb0 = 0;
+    v_b.wstrb1 = 0;
 
     case(r_b.state)
       hit :
         begin
+          v_b.ready0 = 0;
+          v_b.ready1 = 0;
           v_b.enable0 = r_f.enable0;
           v_b.enable1 = r_f.enable1;
-          v_b.equal = r_f.equal;
           v_b.fence = r_f.fence;
           v_b.wren0 = r_f.wren0;
           v_b.wren1 = r_f.wren1;
@@ -423,6 +411,10 @@ module dtim_ctrl
             v_b.hit1 = v_b.enable1;
           end
           ///////////////////////////////////////////////////////////////////////////////////
+          if (v_b.addr0[31:2] == v_b.addr1[31:2]) begin
+            v_b.equal = 1;
+          end
+          ///////////////////////////////////////////////////////////////////////////////////
           if (v_b.clear == 1) begin
             v_b.did0 = 0;
             v_b.wid0 = 0;
@@ -462,7 +454,6 @@ module dtim_ctrl
           end
           ///////////////////////////////////////////////////////////////////////////////////
           if (v_b.clear == 1) begin
-            v_b.valid0 = 0;
             v_b.state = fence;
           end else if ((v_b.miss0 | v_b.miss1) == 1) begin
             if (v_b.miss0 == 1) begin
@@ -495,7 +486,6 @@ module dtim_ctrl
               v_b.sstrb0 = 0;
               v_b.sdata0 = 0;
               v_b.miss0 = 0;
-              v_b.valid0 = 0;
               if (v_b.miss1 == 1) begin
                 v_b.valid1 = 1;
                 v_b.state = miss;
@@ -517,9 +507,8 @@ module dtim_ctrl
               v_b.sstrb1 = 0;
               v_b.sdata1 = 0;
               v_b.miss1 = 0;
-              v_b.valid1 = 0;
               if (v_b.ldst0 == 1) begin
-                v_b.valid1 = 1;
+                v_b.valid0 = 1;
                 v_b.state = ldst;
               end else begin
                 v_b.state = hit;
@@ -534,7 +523,6 @@ module dtim_ctrl
               v_b.rdata0 = dmem_out.mem_rdata;
               v_b.ready0 = 1;
               v_b.ldst0 = 0;
-              v_b.valid0 = 0;
               if (v_b.ldst1 == 1) begin
                 v_b.valid1 = 1;
                 v_b.state = ldst;
@@ -548,9 +536,8 @@ module dtim_ctrl
               v_b.rdata1 = dmem_out.mem_rdata;
               v_b.ready1 = 1;
               v_b.ldst1 = 0;
-              v_b.valid1 = 0;
               if (v_b.miss0 == 1) begin
-                v_b.valid1 = 1;
+                v_b.valid0 = 1;
                 v_b.state = miss;
               end else begin
                 v_b.state = hit;
@@ -590,10 +577,7 @@ module dtim_ctrl
             v_b.wdata0 = v_b.data;
             v_b.wstrb0 = 4'hF;
           end else begin
-            v_b.valid0 = 0;
             v_b.addr0 = 0;
-            v_b.wdata0 = 0;
-            v_b.wstrb0 = 0;
           end
         end
       default :
