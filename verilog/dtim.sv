@@ -447,8 +447,13 @@ module dtim_ctrl
               v_b.wen1 = v_b.wren1;
               v_b.lock1 = v_b.wren1;
               v_b.dirty1 = v_b.wren1;
-              enable_data(v_b.data1,v_b.data1,v_b.ddata1,v_b.strb1,0);
-              v_b.rdata1 = v_b.rden1 ? v_b.ddata1 : 0;
+              if (v_b.equal == 1) begin
+                enable_data(v_b.data1,v_b.data0,v_b.ddata0,v_b.strb1,0);
+                v_b.rdata1 = v_b.rden1 ? v_b.data0 : 0;
+              end else begin
+                enable_data(v_b.data1,v_b.data1,v_b.ddata1,v_b.strb1,0);
+                v_b.rdata1 = v_b.rden1 ? v_b.ddata1 : 0;
+              end
               v_b.ready1 = 1;
             end
           end
