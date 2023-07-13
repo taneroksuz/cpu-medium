@@ -8,14 +8,19 @@ package dtim_wires;
   localparam width = $clog2(dtim_width-1);
 
   typedef struct packed{
-    logic [0 : 0] wen;
-    logic [depth-1 : 0] waddr;
-    logic [depth-1 : 0] raddr;
-    logic [63-(depth+width) : 0] wdata;
+    logic [0 : 0] wen0;
+    logic [0 : 0] wen1;
+    logic [depth-1 : 0] waddr0;
+    logic [depth-1 : 0] waddr1;
+    logic [depth-1 : 0] raddr0;
+    logic [depth-1 : 0] raddr1;
+    logic [63-(depth+width) : 0] wdata0;
+    logic [63-(depth+width) : 0] wdata1;
   } dtim_ram_in_type;
 
   typedef struct packed{
-    logic [63-(depth+width) : 0] rdata;
+    logic [63-(depth+width) : 0] rdata0;
+    logic [63-(depth+width) : 0] rdata1;
   } dtim_ram_out_type;
 
   typedef dtim_ram_in_type dtim_vec_in_type [dtim_width];
@@ -41,16 +46,22 @@ module dtim_ram
 
   logic [63-(depth+width) : 0] ram_array[0:dtim_depth-1] = '{default:'0};
 
-  logic [depth-1 : 0] raddr = 0;
+  logic [depth-1 : 0] raddr0 = 0;
+  logic [depth-1 : 0] raddr1 = 0;
 
   always_ff @(posedge clock) begin
-    raddr <= dtim_ram_in.raddr;
-    if (dtim_ram_in.wen == 1) begin
-      ram_array[dtim_ram_in.waddr] <= dtim_ram_in.wdata;
+    raddr0 <= dtim_ram_in.raddr0;
+    raddr1 <= dtim_ram_in.raddr1;
+    if (dtim_ram_in.wen0 == 1) begin
+      ram_array[dtim_ram_in.waddr0] <= dtim_ram_in.wdata0;
+    end
+    if (dtim_ram_in.wen1 == 1) begin
+      ram_array[dtim_ram_in.waddr1] <= dtim_ram_in.wdata1;
     end
   end
 
-  assign dtim_ram_out.rdata = ram_array[raddr];
+  assign dtim_ram_out.rdata0 = ram_array[raddr0];
+  assign dtim_ram_out.rdata1 = ram_array[raddr1];
 
 endmodule
 
@@ -372,14 +383,14 @@ module dtim_ctrl
           v_b.wid0 = r_f.wid0;
           v_b.wid1 = r_f.wid1;
           ///////////////////////////////////////////////////////////////////////////////////
-          v_b.dtag0 = dvec_out[v_b.wid0].rdata[61-(depth+width):32];
-          v_b.dtag1 = dvec_out[v_b.wid1].rdata[61-(depth+width):32];
-          v_b.dlock0 = dvec_out[v_b.wid0].rdata[63-(depth+width)];
-          v_b.dlock1 = dvec_out[v_b.wid1].rdata[63-(depth+width)];
-          v_b.ddirty0 = dvec_out[v_b.wid0].rdata[62-(depth+width)];
-          v_b.ddirty1 = dvec_out[v_b.wid1].rdata[62-(depth+width)];
-          v_b.ddata0 = dvec_out[v_b.wid0].rdata[31:0];
-          v_b.ddata1 = dvec_out[v_b.wid1].rdata[31:0];
+          v_b.dtag0 = dvec_out[v_b.wid0].rdata0[61-(depth+width):32];
+          v_b.dtag1 = dvec_out[v_b.wid1].rdata1[61-(depth+width):32];
+          v_b.dlock0 = dvec_out[v_b.wid0].rdata0[63-(depth+width)];
+          v_b.dlock1 = dvec_out[v_b.wid1].rdata1[63-(depth+width)];
+          v_b.ddirty0 = dvec_out[v_b.wid0].rdata0[62-(depth+width)];
+          v_b.ddirty1 = dvec_out[v_b.wid1].rdata1[62-(depth+width)];
+          v_b.ddata0 = dvec_out[v_b.wid0].rdata0[31:0];
+          v_b.ddata1 = dvec_out[v_b.wid1].rdata1[31:0];
           ///////////////////////////////////////////////////////////////////////////////////
           v_b.equal = 0;
           v_b.clear = 0;
@@ -581,10 +592,10 @@ module dtim_ctrl
               v_b.wid0 = v_b.wid0 + 1;
             end
           end
-          v_b.tag = dvec_out[v_b.wid].rdata[61-(depth+width):32];
-          v_b.lock = dvec_out[v_b.wid].rdata[63-(depth+width)];
-          v_b.dirty = dvec_out[v_b.wid].rdata[62-(depth+width)];
-          v_b.data = dvec_out[v_b.wid].rdata[31:0];
+          v_b.tag = dvec_out[v_b.wid].rdata0[61-(depth+width):32];
+          v_b.lock = dvec_out[v_b.wid].rdata0[63-(depth+width)];
+          v_b.dirty = dvec_out[v_b.wid].rdata0[62-(depth+width)];
+          v_b.data = dvec_out[v_b.wid].rdata0[31:0];
           if (v_b.lock == 1 && v_b.dirty == 1) begin
             v_b.valid0 = 1;
             v_b.addr0 = {v_b.tag,v_b.did,v_b.wid,2'b0};
@@ -600,41 +611,45 @@ module dtim_ctrl
     endcase
     
     for (int i=0; i<dtim_width; i=i+1) begin
-      dvec_in[i].raddr = 0;
+      dvec_in[i].raddr0 = 0;
+      dvec_in[i].raddr1 = 0;
     end
 
     if (rin_f.rden0 == 1 || rin_f.wren0 == 1) begin
-      dvec_in[rin_f.wid0].raddr = rin_f.did0;
+      dvec_in[rin_f.wid0].raddr0 = rin_f.did0;
     end
     if (rin_f.rden1 == 1 || rin_f.wren1 == 1) begin
-      dvec_in[rin_f.wid1].raddr = rin_f.did1;
+      dvec_in[rin_f.wid1].raddr1 = rin_f.did1;
     end
 
     if (v_b.rden == 1) begin
-      dvec_in[v_b.wid0].raddr = v_b.did0;
+      dvec_in[v_b.wid0].raddr0 = v_b.did0;
     end
 
     for (int i=0; i<dtim_width; i=i+1) begin
-      dvec_in[i].wen = 0;
-      dvec_in[i].waddr = 0;
-      dvec_in[i].wdata = 0;
+      dvec_in[i].wen0 = 0;
+      dvec_in[i].wen1 = 0;
+      dvec_in[i].waddr0 = 0;
+      dvec_in[i].waddr1 = 0;
+      dvec_in[i].wdata0 = 0;
+      dvec_in[i].wdata1 = 0;
     end
 
     if (v_b.wen0 == 1) begin
-      dvec_in[v_b.wid0].wen = v_b.wen0;
-      dvec_in[v_b.wid0].waddr = v_b.did0;
-      dvec_in[v_b.wid0].wdata = {v_b.lock0,v_b.dirty0,v_b.tag0,v_b.data0};
+      dvec_in[v_b.wid0].wen0 = v_b.wen0;
+      dvec_in[v_b.wid0].waddr0 = v_b.did0;
+      dvec_in[v_b.wid0].wdata0 = {v_b.lock0,v_b.dirty0,v_b.tag0,v_b.data0};
     end
     if (v_b.wen1 == 1) begin
-      dvec_in[v_b.wid1].wen = v_b.wen1;
-      dvec_in[v_b.wid1].waddr = v_b.did1;
-      dvec_in[v_b.wid1].wdata = {v_b.lock1,v_b.dirty1,v_b.tag1,v_b.data1};
+      dvec_in[v_b.wid1].wen1 = v_b.wen1;
+      dvec_in[v_b.wid1].waddr1 = v_b.did1;
+      dvec_in[v_b.wid1].wdata1 = {v_b.lock1,v_b.dirty1,v_b.tag1,v_b.data1};
     end
 
     if (v_b.wren == 1) begin
-      dvec_in[v_b.wid].wen = v_b.wren;
-      dvec_in[v_b.wid].waddr = v_b.did;
-      dvec_in[v_b.wid].wdata = 0;
+      dvec_in[v_b.wid].wen0 = v_b.wren;
+      dvec_in[v_b.wid].waddr0 = v_b.did;
+      dvec_in[v_b.wid].wdata0 = 0;
     end
 
     dmem_in.mem_valid = v_b.valid0 | v_b.valid1;
