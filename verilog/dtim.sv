@@ -537,11 +537,7 @@ module dtim_ctrl
               v_b.rdata0 = dmem_out.mem_rdata;
               v_b.ready0 = 1;
               v_b.ldst0 = 0;
-              if (v_b.equal == 1) begin
-                v_b.rdata1 = dmem_out.mem_rdata;
-                v_b.ready1 = 1;
-                v_b.state = hit;
-              end else if (v_b.ldst1 == 1) begin
+              if (v_b.ldst1 == 1) begin
                 v_b.valid1 = 1;
                 v_b.state = ldst;
               end else if (v_b.miss1 == 1) begin
