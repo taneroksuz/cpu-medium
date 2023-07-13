@@ -460,7 +460,7 @@ module dtim_ctrl
               v_b.lock1 = v_b.wren1;
               v_b.dirty1 = v_b.wren1;
               if (v_b.equal == 1) begin
-                enable_data(v_b.data1,v_b.data0,v_b.ddata0,v_b.strb1,0);
+                enable_data(v_b.data1,v_b.data1,v_b.data0,v_b.strb1,0);
                 v_b.rdata1 = v_b.data0;
               end else begin
                 enable_data(v_b.data1,v_b.data1,v_b.ddata1,v_b.strb1,0);
