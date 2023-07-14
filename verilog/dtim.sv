@@ -353,14 +353,14 @@ module dtim_ctrl
 
     v_b.valid0 = 0;
     v_b.valid1 = 0;
-    v_b.wdata0 = 0;
-    v_b.wdata1 = 0;
-    v_b.wstrb0 = 0;
-    v_b.wstrb1 = 0;
 
     case(r_b.state)
       hit :
         begin
+          v_b.wdata0 = 0;
+          v_b.wdata1 = 0;
+          v_b.wstrb0 = 0;
+          v_b.wstrb1 = 0;
           v_b.ready0 = 0;
           v_b.ready1 = 0;
           v_b.enable0 = r_f.enable0;
