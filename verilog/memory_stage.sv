@@ -148,7 +148,9 @@ module memory_stage
     csr_win.cwaddr = v.calc0.op.cwren ? v.calc0.caddr : v.calc1.caddr;
     csr_win.cdata = v.calc0.op.cwren ? v.calc0.cdata : v.calc1.cdata;
 
-    csr_ein.valid = v.calc0.op.valid | v.calc1.op.valid;
+    csr_ein.valid0 = v.calc0.op.valid;
+    csr_ein.valid1 = v.calc1.op.valid;
+    csr_ein.pc = v.calc0.op.valid ? v.calc0.pc : v.calc1.pc;
     csr_ein.mret = v.calc0.op.mret;
     csr_ein.exception = v.calc0.op.exception | v.calc1.op.exception;
     csr_ein.epc = v.calc0.op.exception ? v.calc0.pc : v.calc1.pc;

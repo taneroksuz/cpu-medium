@@ -19,9 +19,24 @@ module csr
 
   csr_machine_reg_type csr_machine_reg;
 
-  logic [0:0] exception = 0;
-  logic [0:0] interrupt = 0;
-  logic [0:0] mret = 0;
+  logic [0 : 0] exception = 0;
+  logic [0 : 0] interrupt = 0;
+  logic [0 : 0] mret = 0;
+
+  logic [0  : 0] valid;
+  logic [63 : 0] incr;
+
+  assign valid = csr_ein.valid0 | csr_ein.valid1;
+
+  always_comb begin
+    if ((csr_ein.valid0 & csr_ein.valid1) == 1) begin
+      incr = 2;
+    end else if ((csr_ein.valid0 | csr_ein.valid1) == 1) begin
+      incr = 1;
+    end else begin
+      incr = 0;
+    end
+  end
 
   always_comb begin
     if (csr_rin.crden == 1) begin
@@ -168,9 +183,8 @@ module csr
         endcase
       end
 
-      if (csr_ein.valid == 1) begin
-        csr_machine_reg.minstret <= csr_machine_reg.minstret + 1;
-      end
+      csr_machine_reg.minstret <= csr_machine_reg.minstret + incr;
+      csr_machine_reg.mcycle <= csr_machine_reg.mcycle + 1;
 
       if (meip == 1) begin
         csr_machine_reg.mip.meip <= 1;
@@ -190,8 +204,6 @@ module csr
         csr_machine_reg.mip.msip <= 0;
       end
 
-      csr_machine_reg.mcycle <= csr_machine_reg.mcycle + 1;
-
       exception <= 0;
       interrupt <= 0;
 
@@ -205,31 +217,31 @@ module csr
       end else if (csr_machine_reg.mstatus.mie == 1 &&
                    csr_machine_reg.mie.meie == 1 &&
                    csr_machine_reg.mip.meip == 1 &&
-                   csr_ein.valid == 1) begin
+                   valid == 1) begin
         csr_machine_reg.mstatus.mpie <= csr_machine_reg.mstatus.mie;
         csr_machine_reg.mstatus.mie <= 0;
-        csr_machine_reg.mepc <= csr_ein.epc;
-        csr_machine_reg.mtval <= csr_ein.etval;
+        csr_machine_reg.mepc <= csr_ein.pc;
+        csr_machine_reg.mtval <= 0;
         csr_machine_reg.mcause <= {1'b1,27'b0,interrupt_mach_extern};
         interrupt <= 1;
       end else if (csr_machine_reg.mstatus.mie == 1 &&
                    csr_machine_reg.mie.mtie == 1 &&
                    csr_machine_reg.mip.mtip == 1 &&
-                   csr_ein.valid == 1) begin
+                   valid == 1) begin
         csr_machine_reg.mstatus.mpie <= csr_machine_reg.mstatus.mie;
         csr_machine_reg.mstatus.mie <= 0;
-        csr_machine_reg.mepc <= csr_ein.epc;
-        csr_machine_reg.mtval <= csr_ein.etval;
+        csr_machine_reg.mepc <= csr_ein.pc;
+        csr_machine_reg.mtval <= 0;
         csr_machine_reg.mcause <= {1'b1,27'b0,interrupt_mach_timer};
         interrupt <= 1;
       end else if (csr_machine_reg.mstatus.mie == 1 &&
                    csr_machine_reg.mie.msie == 1 &&
                    csr_machine_reg.mip.msip == 1 &&
-                   csr_ein.valid == 1) begin
+                   valid == 1) begin
         csr_machine_reg.mstatus.mpie <= csr_machine_reg.mstatus.mie;
         csr_machine_reg.mstatus.mie <= 0;
-        csr_machine_reg.mepc <= csr_ein.epc;
-        csr_machine_reg.mtval <= csr_ein.etval;
+        csr_machine_reg.mepc <= csr_ein.pc;
+        csr_machine_reg.mtval <= 0;
         csr_machine_reg.mcause <= {1'b1,27'b0,interrupt_mach_soft};
         interrupt <= 1;
       end

@@ -1068,7 +1068,9 @@ package wires;
   } csr_write_in_type;
 
   typedef struct packed{
-    logic [0  : 0] valid;
+    logic [0  : 0] valid0;
+    logic [0  : 0] valid1;
+    logic [31 : 0] pc;
     logic [0  : 0] mret;
     logic [0  : 0] exception;
     logic [31 : 0] epc;
