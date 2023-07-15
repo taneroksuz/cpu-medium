@@ -95,16 +95,16 @@ module memory_stage
 
     if (v.calc1.op.load == 1) begin
       v.calc1.wdata = v.calc1.ldata;
-      v.stall = ~(dmem1_out.mem_ready);
+      v.stall = v.stall | ~(dmem1_out.mem_ready);
     end else if (v.calc1.op.store == 1) begin
-      v.stall = ~(dmem1_out.mem_ready);
+      v.stall = v.stall | ~(dmem1_out.mem_ready);
     end else if (v.calc1.op.fload == 1) begin
       v.calc1.fdata = v.calc1.ldata;
-      v.stall = ~(dmem1_out.mem_ready);
+      v.stall = v.stall | ~(dmem1_out.mem_ready);
     end else if (v.calc1.op.fstore == 1) begin
-      v.stall = ~(dmem1_out.mem_ready);
+      v.stall = v.stall | ~(dmem1_out.mem_ready);
     end else if (v.calc1.op.fence == 1) begin
-      v.stall = ~(dmem1_out.mem_ready);
+      v.stall = v.stall | ~(dmem1_out.mem_ready);
     end
 
     v.calc0.op_b = v.calc0.op;
