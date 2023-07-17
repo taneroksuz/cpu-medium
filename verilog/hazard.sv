@@ -25,7 +25,7 @@ module hazard
     calculation_type calc1;
     logic [depth-1 : 0] wid;
     logic [depth-1 : 0] rid;
-    logic [depth-1: 0] pass;
+    logic [depth-1 : 0] pass;
     logic [depth : 0] count;
     logic [0 : 0] dual;
     logic [0 : 0] single;
