@@ -25,8 +25,8 @@ module hazard
     calculation_type calc1;
     logic [depth-1 : 0] wid;
     logic [depth-1 : 0] rid;
+    logic [depth-1: 0] pass;
     logic [depth : 0] count;
-    logic [1 : 0] pass;
     logic [0 : 0] dual;
     logic [0 : 0] single;
     logic [0 : 0] stall;
@@ -39,8 +39,8 @@ module hazard
     calc1 : init_calculation,
     wid : 0,
     rid : 0,
-    count : 0,
     pass : 0,
+    count : 0,
     dual : 0,
     single : 0,
     stall : 0
