@@ -145,6 +145,13 @@ module issue_stage
       v.calc1.op = init_operation;
     end
 
+    if (a.e.calc1.op.jump == 1 && (a.e.calc1.npc == v.calc0.pc)) begin
+      v.calc0 = init_calculation;
+    end
+    if (a.e.calc0.op.jump == 1 && (a.e.calc0.npc == v.calc0.pc)) begin
+      v.calc0 = init_calculation;
+    end
+
     if (v.clear == 1) begin
       v.calc0 = init_calculation;
       v.calc1 = init_calculation;

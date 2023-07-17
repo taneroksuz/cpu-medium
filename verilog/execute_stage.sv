@@ -114,13 +114,6 @@ module execute_stage
 
     v.clear = d.e.calc0.op.exception | d.e.calc0.op.mret | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
 
-    if (d.e.calc1.op.jump == 1 && (d.e.calc1.npc == v.calc0.pc)) begin
-      v.calc0 = init_calculation;
-    end
-    if (d.e.calc0.op.jump == 1 && (d.e.calc0.npc == v.calc0.pc)) begin
-      v.calc0 = init_calculation;
-    end
-
     v.enable = ~(d.e.stall | a.m.stall | v.clear);
 
     alu0_in.rdata1 = v.calc0.rdata1;
