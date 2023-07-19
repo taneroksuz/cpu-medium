@@ -13,8 +13,10 @@ module execute_stage
   output agu_in_type agu0_in,
   input agu_out_type agu1_out,
   output agu_in_type agu1_in,
-  input bcu_out_type bcu_out,
-  output bcu_in_type bcu_in,
+  input bcu_out_type bcu0_out,
+  output bcu_in_type bcu0_in,
+  input bcu_out_type bcu1_out,
+  output bcu_in_type bcu1_in,
   input csr_alu_out_type csr_alu_out,
   output csr_alu_in_type csr_alu_in,
   input div_out_type div_out,
@@ -132,13 +134,19 @@ module execute_stage
 
     v.calc1.wdata = alu1_out.result;
 
-    bcu_in.rdata1 = v.calc0.op.branch ? v.calc0.rdata1 : v.calc1.rdata1;
-    bcu_in.rdata2 = v.calc0.op.branch ? v.calc0.rdata2 : v.calc1.rdata2;
-    bcu_in.enable = v.calc0.op.branch | v.calc1.op.branch;
-    bcu_in.bcu_op = v.calc0.op.branch ? v.calc0.bcu_op : v.calc1.bcu_op;
+    bcu0_in.rdata1 = v.calc0.rdata1;
+    bcu0_in.rdata2 = v.calc0.rdata2;
+    bcu0_in.enable = v.calc0.op.branch;
+    bcu0_in.bcu_op = v.calc0.bcu_op;
 
-    v.calc0.op.jump = v.calc0.op.jal | v.calc0.op.jalr | (v.calc0.op.branch & bcu_out.branch);
-    v.calc1.op.jump = v.calc1.op.jal | v.calc1.op.jalr | (v.calc1.op.branch & bcu_out.branch);
+    v.calc0.op.jump = v.calc0.op.jal | v.calc0.op.jalr | (v.calc0.op.branch & bcu0_out.branch);
+
+    bcu1_in.rdata1 = v.calc1.rdata1;
+    bcu1_in.rdata2 = v.calc1.rdata2;
+    bcu1_in.enable = v.calc1.op.branch;
+    bcu1_in.bcu_op = v.calc1.bcu_op;
+
+    v.calc1.op.jump = v.calc1.op.jal | v.calc1.op.jalr | (v.calc1.op.branch & bcu1_out.branch);
 
     agu0_in.rdata1 = v.calc0.rdata1;
     agu0_in.imm = v.calc0.imm;
