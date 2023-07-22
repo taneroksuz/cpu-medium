@@ -31,6 +31,7 @@
 ../../verilog/csr_alu.sv
 ../../verilog/mul.sv
 ../../verilog/div.sv
+../../verilog/compress.sv
 ../../verilog/decoder.sv
 ../../verilog/register.sv
 ../../verilog/csr.sv

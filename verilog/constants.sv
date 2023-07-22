@@ -4,6 +4,8 @@ package constants;
 
 	parameter [31 : 0] nop_instr                  = 32'h00000013;
 
+	parameter [15 : 0] cnop_instr                 = 16'h0001;
+
 	parameter [1  : 0] u_mode                     = 2'b00;
 	parameter [1  : 0] m_mode                     = 2'b11;
 
