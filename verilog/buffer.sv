@@ -135,6 +135,8 @@ module buffer
     end
 
     if (buffer_in.stall == 1) begin
+      v.pass0 = 0;
+      v.pass1 = 0;
       v.diff = 0;
     end
 
