@@ -193,7 +193,7 @@ module decode_stage
       v.instr0.lsu_op = compress0_out.lsu_op;
     end
 
-    compress1_in.instr = v.instr0.instr;
+    compress1_in.instr = v.instr1.instr;
 
     if (compress1_out.valid == 1) begin
       v.instr0.instr_str = decoder1_out.instr_str;
