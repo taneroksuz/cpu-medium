@@ -32,10 +32,10 @@ module decode_stage
 
     v = r;
 
-    v.instr0.pc = a.f.ready0 ? a.f.pc0 : 32'hFFFFFFFF;
-    v.instr1.pc = a.f.ready1 ? a.f.pc1 : 32'hFFFFFFFF;
-    v.instr0.instr = a.f.ready0 ? a.f.instr0 : 0;
-    v.instr1.instr = a.f.ready1 ? a.f.instr1 : 0;
+    v.instr0.pc = d.f.ready0 ? d.f.pc0 : 32'hFFFFFFFF;
+    v.instr1.pc = d.f.ready1 ? d.f.pc1 : 32'hFFFFFFFF;
+    v.instr0.instr = d.f.ready0 ? d.f.instr0 : 0;
+    v.instr1.instr = d.f.ready1 ? d.f.instr1 : 0;
 
     v.instr0.npc = v.instr0.pc + 4;
     v.instr1.npc = v.instr1.pc + 4;
@@ -46,6 +46,10 @@ module decode_stage
     v.instr1.pred.taddr = btac_out.pred1.taddr;
     v.instr0.pred.tsat = btac_out.pred0.tsat;
     v.instr1.pred.tsat = btac_out.pred1.tsat;
+
+    if (d.i.halt == 1) begin
+      v = r;
+    end
 
     v.stall = 0;
 
@@ -209,21 +213,21 @@ module decode_stage
       v.instr1.fpu_op = fp_decode1_out.fpu_op;
     end
 
-    if (a.f.ready0 == 1) begin
+    if (d.f.ready0 == 1) begin
       if (v.instr0.op.valid == 0) begin
         v.instr0.op.exception = 1;
         v.instr0.op.valid = 1;
       end
     end
 
-    if (a.f.ready1 == 1) begin
+    if (d.f.ready1 == 1) begin
       if (v.instr1.op.valid == 0) begin
         v.instr1.op.exception = 1;
         v.instr1.op.valid = 1;
       end
     end
 
-    if ((v.stall | a.i.halt) == 1) begin
+    if (v.stall == 1) begin
       v.instr0 = init_instruction;
       v.instr1 = init_instruction;
     end
@@ -231,6 +235,10 @@ module decode_stage
     if (v.clear == 1) begin
       v.instr0 = init_instruction;
       v.instr1 = init_instruction;
+    end
+
+    if (v.clear == 1) begin
+      v.stall = 0;
     end
 
     rin = v;

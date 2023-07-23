@@ -42,12 +42,6 @@ module fetch_stage
     v.rdata = imem_out.mem_rdata;
     v.ready = imem_out.mem_ready;
 
-    buffer_in.pc = v.pc;
-    buffer_in.rdata = v.rdata;
-    buffer_in.ready = v.ready;
-    buffer_in.clear = v.spec;
-    buffer_in.stall = a.i.halt;
-
     v.pc0 = buffer_out.pc0;
     v.pc1 = buffer_out.pc1;
     v.instr0 = buffer_out.instr0;
@@ -149,6 +143,12 @@ module fetch_stage
       default : begin
       end
     endcase
+
+    buffer_in.pc = r.pc;
+    buffer_in.rdata = v.rdata;
+    buffer_in.ready = v.ready;
+    buffer_in.clear = v.spec;
+    buffer_in.stall = v.stall;
 
     imem_in.mem_valid = v.valid;
     imem_in.mem_fence = v.fence;

@@ -151,7 +151,7 @@ module buffer
     end
 
     v.count = v.count - v.diff;
-    v.rid = v.rid - v.diff;
+    v.rid = v.rid + v.diff;
 
     v.stall = 0;
 
