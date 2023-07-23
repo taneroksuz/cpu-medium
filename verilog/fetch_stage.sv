@@ -34,7 +34,7 @@ module fetch_stage
     v = r;
 
     v.valid = 0;
-    v.stall = a.i.halt | buffer_out.stall;
+    v.stall = buffer_out.stall;
 
     v.fence = 0;
     v.spec = 0;
@@ -148,7 +148,7 @@ module fetch_stage
     buffer_in.rdata = v.rdata;
     buffer_in.ready = v.ready;
     buffer_in.clear = v.spec;
-    buffer_in.stall = v.stall;
+    buffer_in.stall = d.i.halt;
 
     imem_in.mem_valid = v.valid;
     imem_in.mem_fence = v.fence;
