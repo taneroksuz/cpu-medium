@@ -655,6 +655,7 @@ package wires;
   };
 
   typedef struct packed{
+    logic [31 : 0] pc;
     logic [63 : 0] rdata;
     logic [0  : 0] ready;
     logic [0  : 0] clear;
@@ -662,8 +663,12 @@ package wires;
   } buffer_in_type;
 
   typedef struct packed{
+    logic [31 : 0] pc0;
+    logic [31 : 0] pc1;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
+    logic [0  : 0] ready0;
+    logic [0  : 0] ready1;
     logic [0  : 0] stall;
   } buffer_out_type;
 
@@ -837,15 +842,24 @@ package wires;
   } register_out_type;
 
   typedef struct packed{
-    logic [31 : 0] pc;
-    logic [63 : 0] rdata;
-    logic [0  : 0] ready;
+    logic [31 : 0] pc0;
+    logic [31 : 0] pc1;
+    logic [31 : 0] instr0;
+    logic [31 : 0] instr1;
+    logic [0  : 0] ready0;
+    logic [0  : 0] ready1;
   } fetch_out_type;
 
   typedef struct packed{
     logic [31 : 0] pc;
     logic [63 : 0] rdata;
     logic [0  : 0] ready;
+    logic [31 : 0] pc0;
+    logic [31 : 0] pc1;
+    logic [31 : 0] instr0;
+    logic [31 : 0] instr1;
+    logic [0  : 0] ready0;
+    logic [0  : 0] ready1;
     logic [0  : 0] valid;
     logic [0  : 0] fence;
     logic [0  : 0] spec;
@@ -857,6 +871,12 @@ package wires;
     pc : 0,
     rdata : 0,
     ready : 0,
+    pc0 : 0,
+    pc1 : 0,
+    instr0 : 0,
+    instr1 : 0,
+    ready0 : 0,
+    ready1 : 0,
     valid : 0,
     fence : 0,
     spec : 0,

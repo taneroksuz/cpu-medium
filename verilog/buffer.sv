@@ -15,18 +15,20 @@ module buffer
   localparam depth = $clog2(buffer_depth-1);
   localparam total = 2**(depth+1);
 
-  logic [15 : 0] buffer [0:buffer_depth-1];
-  logic [15 : 0] buffer_reg [0:buffer_depth-1];
+  logic [47 : 0] buffer [0:buffer_depth-1];
+  logic [47 : 0] buffer_reg [0:buffer_depth-1];
 
   typedef struct packed{
     logic [depth-1 : 0] wid;
     logic [depth-1 : 0] rid;
     logic [depth-1 : 0] diff;
     logic [depth : 0] count;
-    logic [15 : 0] data0;
-    logic [15 : 0] data1;
-    logic [15 : 0] data2;
-    logic [15 : 0] data3;
+    logic [47 : 0] data0;
+    logic [47 : 0] data1;
+    logic [47 : 0] data2;
+    logic [47 : 0] data3;
+    logic [31 : 0] pc0;
+    logic [31 : 0] pc1;
     logic [31 : 0] instr0;
     logic [31 : 0] instr1;
     logic [0 : 0] comp0;
@@ -45,8 +47,10 @@ module buffer
     data1 : 0,
     data2 : 0,
     data3 : 0,
-    instr0 : nop_instr,
-    instr1 : nop_instr,
+    pc0 : 0,
+    pc1 : 0,
+    instr0 : 0,
+    instr1 : 0,
     comp0 : 0,
     comp1 : 0,
     pass0 : 0,
@@ -67,13 +71,13 @@ module buffer
       v.wid = 0;
       v.rid = 0;
     end else if (buffer_in.ready == 1) begin
-      buffer[v.wid] = buffer_in.rdata[15:0];
+      buffer[v.wid] = {buffer_in.pc,buffer_in.rdata[15:0]};
       v.wid = v.wid + 1;
-      buffer[v.wid] = buffer_in.rdata[31:16];
+      buffer[v.wid] = {buffer_in.pc+2,buffer_in.rdata[31:16]};
       v.wid = v.wid + 1;
-      buffer[v.wid] = buffer_in.rdata[47:32];
+      buffer[v.wid] = {buffer_in.pc+4,buffer_in.rdata[47:32]};
       v.wid = v.wid + 1;
-      buffer[v.wid] = buffer_in.rdata[63:48];
+      buffer[v.wid] = {buffer_in.pc+6,buffer_in.rdata[63:48]};
       v.wid = v.wid + 1;
       v.count = v.count + 4;
     end
@@ -82,6 +86,9 @@ module buffer
     v.data1 = buffer[v.rid+1];
     v.data2 = buffer[v.rid+2];
     v.data3 = buffer[v.rid+3];
+
+    v.pc0 = 0;
+    v.pc1 = 0;
 
     v.instr0 = 0;
     v.instr1 = 0;
@@ -95,19 +102,21 @@ module buffer
     v.diff = 0;
 
     if (v.count > 0) begin
-      v.instr0[15:0] = v.data0;
+      v.pc0 = v.data0[47:16];
+      v.instr0[15:0] = v.data0[15:0];
       v.comp0 = ~(&v.data0[1:0]);
       v.pass0 = v.comp0;
       v.diff = v.comp0 ? 1 : 0;
     end
     if (v.count > 1) begin
       if (v.comp0 == 0) begin
-        v.instr0[31:16] = v.data1;
+        v.instr0[31:16] = v.data1[15:0];
         v.pass0 = 1;
         v.diff = 2;
       end
       if (v.comp0 == 1) begin
-        v.instr1[15:0] = v.data1;
+        v.pc1 = v.data1[47:16];
+        v.instr1[15:0] = v.data1[15:0];
         v.comp1 = ~(&v.data1[1:0]);
         v.pass1 = v.comp1;
         v.diff = v.comp1 ? 2 : 1;
@@ -115,12 +124,13 @@ module buffer
     end
     if (v.count > 2) begin
       if (v.comp0 == 1 && v.comp1 == 0) begin
-        v.instr1[31:16] = v.data2;
+        v.instr1[31:16] = v.data2[15:0];
         v.pass1 = 1;
         v.diff = 3;
       end
       if (v.comp0 == 0 && v.comp1 == 0) begin
-        v.instr1[15:0] = v.data2;
+        v.pc1 = v.data2[47:16];
+        v.instr1[15:0] = v.data2[15:0];
         v.comp1 = ~(&v.data2[1:0]);
         v.pass1 = v.comp1;
         v.diff = v.comp1 ? 3 : 2;
@@ -128,7 +138,7 @@ module buffer
     end
     if (v.count > 3) begin
       if (v.comp0 == 0 && v.comp1 == 0) begin
-        v.instr1[31:16] = v.data3;
+        v.instr1[31:16] = v.data3[15:0];
         v.pass1 = 1;
         v.diff = 4;
       end
@@ -149,8 +159,12 @@ module buffer
       v.stall = 1;
     end
 
-    buffer_out.instr0 = v.pass0 ? v.instr0 : nop_instr;
-    buffer_out.instr1 = v.pass1 ? v.instr1 : nop_instr;
+    buffer_out.pc0 = v.pass0 ? v.pc0 : 32'hFFFFFFFF;
+    buffer_out.pc1 = v.pass1 ? v.pc1 : 32'hFFFFFFFF;
+    buffer_out.instr0 = v.pass0 ? v.instr0 : 0;
+    buffer_out.instr1 = v.pass1 ? v.instr1 : 0;
+    buffer_out.ready0 = v.pass0;
+    buffer_out.ready1 = v.pass1;
     buffer_out.stall = v.stall;
 
     rin = v;

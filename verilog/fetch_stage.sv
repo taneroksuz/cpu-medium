@@ -6,6 +6,8 @@ module fetch_stage
 (
   input logic reset,
   input logic clock,
+  input buffer_out_type buffer_out,
+  output buffer_in_type buffer_in,
   input csr_out_type csr_out,
   input btac_out_type btac_out,
   output btac_in_type btac_in,
@@ -32,13 +34,26 @@ module fetch_stage
     v = r;
 
     v.valid = 0;
-    v.stall = a.i.halt;
+    v.stall = a.i.halt | buffer_out.stall;
 
     v.fence = 0;
     v.spec = 0;
     
     v.rdata = imem_out.mem_rdata;
     v.ready = imem_out.mem_ready;
+
+    buffer_in.pc = v.pc;
+    buffer_in.rdata = v.rdata;
+    buffer_in.ready = v.ready;
+    buffer_in.clear = v.spec;
+    buffer_in.stall = a.i.halt;
+
+    v.pc0 = buffer_out.pc0;
+    v.pc1 = buffer_out.pc1;
+    v.instr0 = buffer_out.instr0;
+    v.instr1 = buffer_out.instr1;
+    v.ready0 = buffer_out.ready0;
+    v.ready1 = buffer_out.ready1;
 
     case(v.state)
       idle : begin
@@ -143,8 +158,8 @@ module fetch_stage
     imem_in.mem_wdata = 0;
     imem_in.mem_wstrb = 0;
 
-    btac_in.get_pc0 = v.pc;
-    btac_in.get_pc1 = v.pc+4;
+    btac_in.get_pc0 = v.pc0;
+    btac_in.get_pc1 = v.pc1;
     btac_in.upd_pc0 = a.e.calc0.pc;
     btac_in.upd_pc1 = a.e.calc1.pc;
     btac_in.upd_npc0 = a.e.calc0.npc;
@@ -166,13 +181,19 @@ module fetch_stage
 
     rin = v;
 
-    y.pc = v.pc;
-    y.rdata = v.rdata;
-    y.ready = v.ready;
+    y.pc0 = v.pc0;
+    y.pc1 = v.pc1;
+    y.instr0 = v.instr0;
+    y.instr1 = v.instr1;
+    y.ready0 = v.ready0;
+    y.ready1 = v.ready1;
 
-    q.pc = r.pc;
-    q.rdata = r.rdata;
-    q.ready = r.ready;
+    q.pc0 = r.pc0;
+    q.pc1 = r.pc1;
+    q.instr0 = r.instr0;
+    q.instr1 = r.instr1;
+    q.ready0 = r.ready0;
+    q.ready1 = r.ready1;
 
   end
 
