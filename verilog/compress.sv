@@ -11,7 +11,7 @@ module compress
 
   logic [31 : 0] instr;
 
-  logic [47 : 0] instr_str;
+  logic [79 : 0] instr_str;
 
   logic [31 : 0] imm_lwsp;
   logic [31 : 0] imm_swsp;
@@ -147,7 +147,7 @@ module compress
       opcode_c0 : begin
         case(funct3)
           c0_addispn : begin
-            instr_str = "c.addisp";
+            instr_str = "c.addi4sp";
             imm = imm_w;
             waddr = {2'b01,instr[4:2]};
             raddr1 = 2;
@@ -228,7 +228,7 @@ module compress
           end
           c1_lui : begin
             if (raddr1 == 2) begin
-              instr_str = "c.addisp";
+              instr_str = "c.addi16sp";
               imm = imm_p;
               wren = nonzero_imm_p;
               rden1 = nonzero_imm_p;

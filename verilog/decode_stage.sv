@@ -11,6 +11,10 @@ module decode_stage
   output decoder_in_type decoder0_in,
   input decoder_out_type decoder1_out,
   output decoder_in_type decoder1_in,
+  input compress_out_type compress0_out,
+  output compress_in_type compress0_in,
+  input compress_out_type compress1_out,
+  output compress_in_type compress1_in,
   input fp_decode_out_type fp_decode0_out,
   output fp_decode_in_type fp_decode0_in,
   input fp_decode_out_type fp_decode1_out,
@@ -166,6 +170,72 @@ module decode_stage
     v.instr1.div_op = decoder1_out.div_op;
     v.instr1.mul_op = decoder1_out.mul_op;
     v.instr1.bit_op = decoder1_out.bit_op;
+
+    compress0_in.instr = v.instr0.instr;
+
+    if (compress0_out.valid == 1) begin
+      v.instr0.instr_str = decoder1_out.instr_str;
+      v.instr0.imm = compress0_out.imm;
+      v.instr0.waddr = compress0_out.waddr;
+      v.instr0.raddr1 = compress0_out.raddr1;
+      v.instr0.raddr2 = compress0_out.raddr2;
+      v.instr0.op.wren = compress0_out.wren;
+      v.instr0.op.rden1 = compress0_out.rden1;
+      v.instr0.op.rden2 = compress0_out.rden2;
+      v.instr0.op.fwren = compress0_out.fwren;
+      v.instr0.op.frden1 = compress0_out.frden1;
+      v.instr0.op.frden2 = compress0_out.frden2;
+      v.instr0.op.frden3 = compress0_out.frden3;
+      v.instr0.op.alunit = compress0_out.alunit;
+      v.instr0.op.lui = compress0_out.lui;
+      v.instr0.op.jal = compress0_out.jal;
+      v.instr0.op.jalr = compress0_out.jalr;
+      v.instr0.op.branch = compress0_out.branch;
+      v.instr0.op.load = compress0_out.load;
+      v.instr0.op.store = compress0_out.store;
+      v.instr0.op.nop = compress0_out.nop;
+      v.instr0.op.fload = compress0_out.fload;
+      v.instr0.op.fstore = compress0_out.fstore;
+      v.instr0.op.fpunit = compress0_out.fpunit;
+      v.instr0.op.ebreak = compress0_out.ebreak;
+      v.instr0.op.valid = compress0_out.valid;
+      v.instr0.alu_op = compress0_out.alu_op;
+      v.instr0.bcu_op = compress0_out.bcu_op;
+      v.instr0.lsu_op = compress0_out.lsu_op;
+    end
+
+    compress1_in.instr = v.instr0.instr;
+
+    if (compress1_out.valid == 1) begin
+      v.instr0.instr_str = decoder1_out.instr_str;
+      v.instr0.imm = compress1_out.imm;
+      v.instr0.waddr = compress1_out.waddr;
+      v.instr0.raddr1 = compress1_out.raddr1;
+      v.instr0.raddr2 = compress1_out.raddr2;
+      v.instr0.op.wren = compress1_out.wren;
+      v.instr0.op.rden1 = compress1_out.rden1;
+      v.instr0.op.rden2 = compress1_out.rden2;
+      v.instr0.op.fwren = compress1_out.fwren;
+      v.instr0.op.frden1 = compress1_out.frden1;
+      v.instr0.op.frden2 = compress1_out.frden2;
+      v.instr0.op.frden3 = compress1_out.frden3;
+      v.instr0.op.alunit = compress1_out.alunit;
+      v.instr0.op.lui = compress1_out.lui;
+      v.instr0.op.jal = compress1_out.jal;
+      v.instr0.op.jalr = compress1_out.jalr;
+      v.instr0.op.branch = compress1_out.branch;
+      v.instr0.op.load = compress1_out.load;
+      v.instr0.op.store = compress1_out.store;
+      v.instr0.op.nop = compress1_out.nop;
+      v.instr0.op.fload = compress1_out.fload;
+      v.instr0.op.fstore = compress1_out.fstore;
+      v.instr0.op.fpunit = compress1_out.fpunit;
+      v.instr0.op.ebreak = compress1_out.ebreak;
+      v.instr0.op.valid = compress1_out.valid;
+      v.instr0.alu_op = compress1_out.alu_op;
+      v.instr0.bcu_op = compress1_out.bcu_op;
+      v.instr0.lsu_op = compress1_out.lsu_op;
+    end
 
     fp_decode0_in.instr = v.instr0.instr;
 

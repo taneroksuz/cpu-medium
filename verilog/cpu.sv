@@ -65,6 +65,10 @@ module cpu
   decoder_out_type decoder0_out;
   decoder_in_type decoder1_in;
   decoder_out_type decoder1_out;
+  compress_in_type compress0_in;
+  compress_out_type compress0_out;
+  compress_in_type compress1_in;
+  compress_out_type compress1_out;
   forwarding_register_in_type forwarding0_rin;
   forwarding_register_in_type forwarding1_rin;
   forwarding_memory_in_type forwarding0_min;
@@ -368,6 +372,18 @@ module cpu
     .decoder_out (decoder1_out)
   );
 
+  compress compress0_comp
+  (
+    .compress_in (compress0_in),
+    .compress_out (compress0_out)
+  );
+
+  compress compress1_comp
+  (
+    .compress_in (compress1_in),
+    .compress_out (compress1_out)
+  );
+
   register register_comp
   (
     .reset (reset),
@@ -419,6 +435,10 @@ module cpu
     .decoder0_in (decoder0_in),
     .decoder1_out (decoder1_out),
     .decoder1_in (decoder1_in),
+    .compress0_out (compress0_out),
+    .compress0_in (compress0_in),
+    .compress1_out (compress1_out),
+    .compress1_in (compress1_in),
     .fp_decode0_out (fp_decode0_out),
     .fp_decode0_in (fp_decode0_in),
     .fp_decode1_out (fp_decode1_out),

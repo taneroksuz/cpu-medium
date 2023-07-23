@@ -512,7 +512,7 @@ package wires;
     logic [31 : 0] pc;
     logic [31 : 0] npc;
     logic [31 : 0] instr;
-    logic [47 : 0] instr_str;
+    logic [79 : 0] instr_str;
     logic [31 : 0] imm;
     logic [4  : 0] waddr;
     logic [4  : 0] raddr1;
@@ -690,7 +690,7 @@ package wires;
   } decoder_in_type;
 
   typedef struct packed{
-    logic [47 : 0] instr_str;
+    logic [79 : 0] instr_str;
     logic [31 : 0] imm;
     logic [0  : 0] wren;
     logic [0  : 0] rden1;
@@ -731,7 +731,7 @@ package wires;
   } compress_in_type;
 
   typedef struct packed{
-    logic [47 : 0] instr_str;
+    logic [79 : 0] instr_str;
     logic [31 : 0] imm;
     logic [4  : 0] waddr;
     logic [4  : 0] raddr1;
@@ -766,7 +766,7 @@ package wires;
   } fp_decode_in_type;
 
   typedef struct packed{
-    logic [47 : 0] instr_str;
+    logic [79 : 0] instr_str;
     logic [31 : 0] imm;
     logic [0  : 0] wren;
     logic [0  : 0] rden1;
