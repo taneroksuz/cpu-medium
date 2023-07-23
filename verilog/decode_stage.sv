@@ -37,8 +37,8 @@ module decode_stage
     v.instr0.instr = d.f.ready0 ? d.f.instr0 : 0;
     v.instr1.instr = d.f.ready1 ? d.f.instr1 : 0;
 
-    v.instr0.npc = v.instr0.pc + 4;
-    v.instr1.npc = v.instr1.pc + 4;
+    v.instr0.npc = v.instr0.pc + ((&v.instr0.instr[1:0]) ? 4 : 2);
+    v.instr1.npc = v.instr1.pc + ((&v.instr1.instr[1:0]) ? 4 : 2);
 
     v.instr0.pred.taken = btac_out.pred0.taken;
     v.instr1.pred.taken = btac_out.pred1.taken;
