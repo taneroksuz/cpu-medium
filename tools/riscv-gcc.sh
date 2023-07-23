@@ -38,7 +38,7 @@ cd build
 ../configure --target=riscv32-unknown-elf --enable-languages=c \
   --disable-shared --disable-threads --disable-multilib --disable-gdb \
   --disable-libssp --with-newlib \
-  --with-arch=rv32imf_zba_zbb_zbc_zbs --with-abi=ilp32f --prefix=$PREFIX
+  --with-arch=rv32imfc_zba_zbb_zbc_zbs --with-abi=ilp32f --prefix=$PREFIX
 
 make -j$(nproc)
 make install
