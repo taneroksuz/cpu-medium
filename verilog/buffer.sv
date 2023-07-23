@@ -33,8 +33,8 @@ module buffer
     logic [31 : 0] instr1;
     logic [0 : 0] comp0;
     logic [0 : 0] comp1;
-    logic [0 : 0] pass0;
-    logic [0 : 0] pass1;
+    logic [0 : 0] ready0;
+    logic [0 : 0] ready1;
     logic [0 : 0] stall;
   } reg_type;
 
@@ -53,8 +53,8 @@ module buffer
     instr1 : 0,
     comp0 : 0,
     comp1 : 0,
-    pass0 : 0,
-    pass1 : 0,
+    ready0 : 0,
+    ready1 : 0,
     stall : 0
   };
 
@@ -96,8 +96,8 @@ module buffer
     v.comp0 = 0;
     v.comp1 = 0;
 
-    v.pass0 = 0;
-    v.pass1 = 0;
+    v.ready0 = 0;
+    v.ready1 = 0;
 
     v.diff = 0;
 
@@ -105,48 +105,48 @@ module buffer
       v.pc0 = v.data0[47:16];
       v.instr0[15:0] = v.data0[15:0];
       v.comp0 = ~(&v.data0[1:0]);
-      v.pass0 = v.comp0;
+      v.ready0 = v.comp0;
       v.diff = v.comp0 ? 1 : 0;
     end
     if (v.count > 1) begin
       if (v.comp0 == 0) begin
         v.instr0[31:16] = v.data1[15:0];
-        v.pass0 = 1;
+        v.ready0 = 1;
         v.diff = 2;
       end
       if (v.comp0 == 1) begin
         v.pc1 = v.data1[47:16];
         v.instr1[15:0] = v.data1[15:0];
         v.comp1 = ~(&v.data1[1:0]);
-        v.pass1 = v.comp1;
+        v.ready1 = v.comp1;
         v.diff = v.comp1 ? 2 : 1;
       end
     end
     if (v.count > 2) begin
       if (v.comp0 == 1 && v.comp1 == 0) begin
         v.instr1[31:16] = v.data2[15:0];
-        v.pass1 = 1;
+        v.ready1 = 1;
         v.diff = 3;
       end
       if (v.comp0 == 0 && v.comp1 == 0) begin
         v.pc1 = v.data2[47:16];
         v.instr1[15:0] = v.data2[15:0];
         v.comp1 = ~(&v.data2[1:0]);
-        v.pass1 = v.comp1;
+        v.ready1 = v.comp1;
         v.diff = v.comp1 ? 3 : 2;
       end
     end
     if (v.count > 3) begin
       if (v.comp0 == 0 && v.comp1 == 0) begin
         v.instr1[31:16] = v.data3[15:0];
-        v.pass1 = 1;
+        v.ready1 = 1;
         v.diff = 4;
       end
     end
 
     if (buffer_in.stall == 1) begin
-      v.pass0 = 0;
-      v.pass1 = 0;
+      v.ready0 = 0;
+      v.ready1 = 0;
       v.diff = 0;
     end
 
@@ -159,12 +159,12 @@ module buffer
       v.stall = 1;
     end
 
-    buffer_out.pc0 = v.pass0 ? v.pc0 : 32'hFFFFFFFF;
-    buffer_out.pc1 = v.pass1 ? v.pc1 : 32'hFFFFFFFF;
-    buffer_out.instr0 = v.pass0 ? v.instr0 : 0;
-    buffer_out.instr1 = v.pass1 ? v.instr1 : 0;
-    buffer_out.ready0 = v.pass0;
-    buffer_out.ready1 = v.pass1;
+    buffer_out.pc0 = v.ready0 ? v.pc0 : 32'hFFFFFFFF;
+    buffer_out.pc1 = v.ready1 ? v.pc1 : 32'hFFFFFFFF;
+    buffer_out.instr0 = v.ready0 ? v.instr0 : 0;
+    buffer_out.instr1 = v.ready1 ? v.instr1 : 0;
+    buffer_out.ready0 = v.ready0;
+    buffer_out.ready1 = v.ready1;
     buffer_out.stall = v.stall;
 
     rin = v;
