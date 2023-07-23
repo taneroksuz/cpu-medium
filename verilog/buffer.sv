@@ -70,16 +70,18 @@ module buffer
       v.count = 0;
       v.wid = 0;
       v.rid = 0;
-    end else if (buffer_in.ready == 1) begin
-      buffer[v.wid] = {buffer_in.pc,buffer_in.rdata[15:0]};
-      v.wid = v.wid + 1;
-      buffer[v.wid] = {buffer_in.pc+2,buffer_in.rdata[31:16]};
-      v.wid = v.wid + 1;
-      buffer[v.wid] = {buffer_in.pc+4,buffer_in.rdata[47:32]};
-      v.wid = v.wid + 1;
-      buffer[v.wid] = {buffer_in.pc+6,buffer_in.rdata[63:48]};
-      v.wid = v.wid + 1;
-      v.count = v.count + 4;
+    end else if (r.stall == 0) begin
+      if (buffer_in.ready == 1) begin
+        buffer[v.wid] = {buffer_in.pc,buffer_in.rdata[15:0]};
+        v.wid = v.wid + 1;
+        buffer[v.wid] = {buffer_in.pc+2,buffer_in.rdata[31:16]};
+        v.wid = v.wid + 1;
+        buffer[v.wid] = {buffer_in.pc+4,buffer_in.rdata[47:32]};
+        v.wid = v.wid + 1;
+        buffer[v.wid] = {buffer_in.pc+6,buffer_in.rdata[63:48]};
+        v.wid = v.wid + 1;
+        v.count = v.count + 4;
+      end
     end
 
     v.data0 = buffer[v.rid];
