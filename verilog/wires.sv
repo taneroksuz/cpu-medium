@@ -658,6 +658,7 @@ package wires;
     logic [31 : 0] pc;
     logic [63 : 0] rdata;
     logic [0  : 0] ready;
+    logic [0  : 0] align;
     logic [0  : 0] clear;
     logic [0  : 0] stall;
   } buffer_in_type;
