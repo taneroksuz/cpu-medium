@@ -32,13 +32,11 @@ module soc();
   logic [31 : 0] memory_rdata;
   logic [0  : 0] memory_ready;
 
-  logic [0  : 0] bram_valid;
-  logic [0  : 0] bram_instr;
-  logic [31 : 0] bram_addr;
-  logic [31 : 0] bram_wdata;
-  logic [3  : 0] bram_wstrb;
-  logic [31 : 0] bram_rdata;
-  logic [0  : 0] bram_ready;
+  logic [0  : 0] rom_valid;
+  logic [0  : 0] rom_instr;
+  logic [31 : 0] rom_addr;
+  logic [31 : 0] rom_rdata;
+  logic [0  : 0] rom_ready;
 
   logic [0  : 0] print_valid;
   logic [0  : 0] print_instr;
@@ -55,6 +53,14 @@ module soc();
   logic [3  : 0] clint_wstrb;
   logic [31 : 0] clint_rdata;
   logic [0  : 0] clint_ready;
+
+  logic [0  : 0] bram_valid;
+  logic [0  : 0] bram_instr;
+  logic [31 : 0] bram_addr;
+  logic [31 : 0] bram_wdata;
+  logic [3  : 0] bram_wstrb;
+  logic [31 : 0] bram_rdata;
+  logic [0  : 0] bram_ready;
 
   logic [0  : 0] meip;
   logic [0  : 0] msip;
@@ -114,50 +120,54 @@ module soc();
 
   always_comb begin
 
-    bram_valid = 0;
+    rom_valid = 0;
     print_valid = 0;
     clint_valid = 0;
+    bram_valid = 0;
 
     base_addr = 0;
 
     if (memory_valid == 1) begin
-      if (memory_addr >= clint_base_addr &&
+      if (memory_addr == host[0]) begin
+          rom_valid = 0;
+          print_valid = 0;
+          clint_valid = 0;
+          bram_valid = memory_valid;
+          base_addr = 0;
+      end else if (memory_addr >= bram_base_addr &&
+        memory_addr < bram_top_addr) begin
+          rom_valid = 0;
+          print_valid = 0;
+          clint_valid = 0;
+          bram_valid = memory_valid;
+          base_addr = bram_base_addr;
+      end else if (memory_addr >= clint_base_addr &&
         memory_addr < clint_top_addr) begin
-          bram_valid = 0;
+          rom_valid = 0;
           print_valid = 0;
           clint_valid = memory_valid;
+          bram_valid = 0;
           base_addr = clint_base_addr;
       end else if (memory_addr >= print_base_addr &&
         memory_addr < print_top_addr) begin
-          bram_valid = 0;
+          rom_valid = 0;
           print_valid = memory_valid;
           clint_valid = 0;
-          base_addr = print_base_addr;
-      end else if (memory_addr >= bram_base_addr &&
-        memory_addr < bram_top_addr) begin
-          bram_valid = memory_valid;
-          print_valid = 0;
-          clint_valid = 0;
-          base_addr = bram_base_addr;
-      end else if (memory_addr == host[0]) begin
-          bram_valid = memory_valid;
-          print_valid = 0;
-          clint_valid = 0;
-          base_addr = bram_base_addr;
-      end else begin
           bram_valid = 0;
+          base_addr = print_base_addr;
+      end else begin
+          rom_valid = 0;
           print_valid = 0;
           clint_valid = 0;
+          bram_valid = 0;
           base_addr = 0;
       end
     end
 
     mem_addr = memory_addr - base_addr;
 
-    bram_instr = memory_instr;
-    bram_addr = mem_addr;
-    bram_wdata = memory_wdata;
-    bram_wstrb = memory_wstrb;
+    rom_instr = memory_instr;
+    rom_addr = mem_addr;
 
     print_instr = memory_instr;
     print_addr = mem_addr;
@@ -169,15 +179,23 @@ module soc();
     clint_wdata = memory_wdata;
     clint_wstrb = memory_wstrb;
 
-    if (bram_ready == 1) begin
-      memory_rdata = bram_rdata;
-      memory_ready = bram_ready;
+    bram_instr = memory_instr;
+    bram_addr = mem_addr;
+    bram_wdata = memory_wdata;
+    bram_wstrb = memory_wstrb;
+
+    if (rom_ready == 1) begin
+      memory_rdata = rom_rdata;
+      memory_ready = rom_ready;
     end else if  (print_ready == 1) begin
       memory_rdata = print_rdata;
       memory_ready = print_ready;
     end else if  (clint_ready == 1) begin
       memory_rdata = clint_rdata;
       memory_ready = clint_ready;
+    end else if (bram_ready == 1) begin
+      memory_rdata = bram_rdata;
+      memory_ready = bram_ready;
     end else begin
       memory_rdata = 0;
       memory_ready = 0;
@@ -234,6 +252,17 @@ module soc();
     .memory_wstrb (memory_wstrb),
     .memory_rdata (memory_rdata),
     .memory_ready (memory_ready)
+  );
+
+  rom rom_comp
+  (
+    .reset (reset),
+    .clock (clock),
+    .rom_valid (rom_valid),
+    .rom_instr (rom_instr),
+    .rom_addr (rom_addr),
+    .rom_rdata (rom_rdata),
+    .rom_ready (rom_ready)
   );
 
   bram bram_comp
