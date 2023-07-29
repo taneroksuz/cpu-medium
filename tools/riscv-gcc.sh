@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-PREFIX=/opt/rv32imfb
+PREFIX=/opt/rv32imfcb
 
 if [ -d "$PREFIX" ]
 then

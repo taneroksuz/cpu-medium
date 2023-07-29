@@ -1,13 +1,12 @@
 import configure::*;
 
-module soc
-(
-  input  logic reset,
-  input  logic clock
-);
+module soc();
 
   timeunit 1ns;
   timeprecision 1ps;
+
+  logic reset;
+  logic clock;
 
   logic [0  : 0] imemory_valid;
   logic [0  : 0] imemory_instr;
@@ -69,8 +68,49 @@ module soc
 
   logic [31 : 0] host[0:0] = '{default:'0};
 
+  logic [31 : 0] stoptime = 1000;
+  logic [31 : 0] counter = 0;
+
   initial begin
     $readmemh("host.dat", host);
+  end
+
+  initial begin
+    string filename;
+    if ($value$plusargs("FILENAME=%s",filename)) begin
+      $dumpfile(filename);
+      $dumpvars(0, soc);
+    end
+  end
+
+  initial begin
+    string maxtime;
+    if ($value$plusargs("MAXTIME=%s",maxtime)) begin
+      stoptime = maxtime.atoi();
+    end
+  end
+
+  initial begin
+    reset = 0;
+    clock = 1;
+  end
+
+  initial begin
+    #10 reset = 1;
+  end
+
+  always #0.5 clock = ~clock;
+  always #5 clock_irpt = ~clock_irpt;
+
+  always_ff @(posedge clock) begin
+    if (counter == stoptime) begin
+      $write("%c[1;33m",8'h1B);
+      $display("TEST STOPPED");
+      $write("%c[0m",8'h1B);
+      $finish;
+    end else begin
+      counter <= counter + 1;
+    end
   end
 
   always_comb begin
