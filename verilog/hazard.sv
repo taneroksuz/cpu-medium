@@ -15,6 +15,8 @@ module hazard
   localparam depth = $clog2(hazard_depth-1);
   localparam total = 2**(depth-1);
 
+  localparam [depth-1:0] one = 1;
+
   instruction_type buffer [0:hazard_depth-1];
   instruction_type buffer_reg [0:hazard_depth-1];
 
@@ -75,7 +77,7 @@ module hazard
     end
 
     v.instr0 = v.count > 0 ? buffer[v.rid] : init_instruction;
-    v.instr1 = v.count > 1 ? buffer[v.rid+1] : init_instruction;
+    v.instr1 = v.count > 1 ? buffer[v.rid+one] : init_instruction;
 
     v.calc0 = init_calculation;
     v.calc1 = init_calculation;

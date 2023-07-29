@@ -15,6 +15,10 @@ module buffer
   localparam depth = $clog2(buffer_depth-1);
   localparam total = 2**(depth-1);
 
+  localparam [depth-1:0] one = 1;
+  localparam [depth-1:0] two = 2;
+  localparam [depth-1:0] three = 3;
+
   logic [47 : 0] buffer [0:buffer_depth-1];
   logic [47 : 0] buffer_reg [0:buffer_depth-1];
 
@@ -88,9 +92,9 @@ module buffer
     end
 
     v.data0 = buffer[v.rid];
-    v.data1 = buffer[v.rid+1];
-    v.data2 = buffer[v.rid+2];
-    v.data3 = buffer[v.rid+3];
+    v.data1 = buffer[v.rid+one];
+    v.data2 = buffer[v.rid+two];
+    v.data3 = buffer[v.rid+three];
 
     v.pc0 = 0;
     v.pc1 = 0;
