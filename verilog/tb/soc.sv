@@ -100,7 +100,6 @@ module soc();
   end
 
   always #0.5 clock = ~clock;
-  always #5 clock_irpt = ~clock_irpt;
 
   always_ff @(posedge clock) begin
     if (counter == stoptime) begin
