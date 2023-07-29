@@ -85,7 +85,7 @@ then
   cp $BASEDIR/build/$PROGRAM/elf/$PROGRAM.host host.dat
   if [ "$DUMP" = 'on' ]
   then
-    $XSIM soc_snapshot -R --testplusarg MAXTIME=$MAXTIME --testplusarg FILENAME=$PROGRAM.vcd
+    $XSIM soc_snapshot --tclbatch $BASEDIR/sim/xsim_cfg.tcl --wdb $PROGRAM.wdb --testplusarg MAXTIME=$MAXTIME
   else
     $XSIM soc_snapshot -R --testplusarg MAXTIME=$MAXTIME
   fi
@@ -99,7 +99,7 @@ then
     cp $BASEDIR/build/$PROGRAM/elf/$filename.host host.dat
     if [ "$DUMP" = 'on' ]
     then
-      $XSIM soc_snapshot -R --testplusarg MAXTIME=$MAXTIME --testplusarg FILENAME=$filename.vcd
+      $XSIM soc_snapshot --tclbatch $BASEDIR/sim/xsim_cfg.tcl --wdb $filename.wdb --testplusarg MAXTIME=$MAXTIME
     else
       $XSIM soc_snapshot -R --testplusarg MAXTIME=$MAXTIME
     fi
@@ -112,7 +112,7 @@ else
   cp $BASEDIR/$subpath/elf/$filename.host host.dat
   if [ "$DUMP" = 'on' ]
   then
-    $XSIM soc_snapshot -R --testplusarg MAXTIME=$MAXTIME --testplusarg FILENAME=$filename.vcd
+    $XSIM soc_snapshot --tclbatch $BASEDIR/sim/xsim_cfg.tcl --wdb $filename.wdb --testplusarg MAXTIME=$MAXTIME
   else
     $XSIM soc_snapshot -R --testplusarg MAXTIME=$MAXTIME
   fi
