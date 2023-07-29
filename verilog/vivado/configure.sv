@@ -19,20 +19,20 @@ package configure;
   parameter rom_base_addr = 32'h0;
   parameter rom_top_addr  = 32'h80;
 
-  parameter itim_base_addr = 32'h00000;
-  parameter itim_top_addr  = 32'h20000;
-
-  parameter dtim_base_addr = 32'h00000;
-  parameter dtim_top_addr  = 32'h20000;
-
   parameter uart_base_addr = 32'h1000000;
   parameter uart_top_addr  = 32'h1000004;
 
   parameter clint_base_addr = 32'h2000000;
   parameter clint_top_addr  = 32'h200C000;
 
-  parameter axi_base_addr = 32'h80000000;
-  parameter axi_top_addr  = 32'h90000000;
+  parameter bram_base_addr = 32'h80000000;
+  parameter bram_top_addr  = 32'h90000000;
+
+  parameter itim_base_addr = 32'h80000000;
+  parameter itim_top_addr  = 32'h90000000;
+
+  parameter dtim_base_addr = 32'h80000000;
+  parameter dtim_top_addr  = 32'h90000000;
 
   parameter clk_freq = 25000000; // 25MHz
   parameter rtc_freq = 32768; // 32768Hz

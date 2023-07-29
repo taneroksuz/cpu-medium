@@ -155,6 +155,13 @@ module soc();
           clint_valid = 0;
           bram_valid = 0;
           base_addr = print_base_addr;
+      end else if (memory_addr >= rom_base_addr &&
+        memory_addr < rom_top_addr) begin
+          rom_valid = memory_valid;
+          print_valid = 0;
+          clint_valid = 0;
+          bram_valid = 0;
+          base_addr = rom_base_addr;
       end else begin
           rom_valid = 0;
           print_valid = 0;
@@ -265,19 +272,6 @@ module soc();
     .rom_ready (rom_ready)
   );
 
-  bram bram_comp
-  (
-    .reset (reset),
-    .clock (clock),
-    .bram_valid (bram_valid),
-    .bram_instr (bram_instr),
-    .bram_addr (bram_addr),
-    .bram_wdata (bram_wdata),
-    .bram_wstrb (bram_wstrb),
-    .bram_rdata (bram_rdata),
-    .bram_ready (bram_ready)
-  );
-
   print print_comp
   (
     .reset (reset),
@@ -305,6 +299,19 @@ module soc();
     .clint_msip (msip),
     .clint_mtip (mtip),
     .clint_mtime (mtime)
+  );
+
+  bram bram_comp
+  (
+    .reset (reset),
+    .clock (clock),
+    .bram_valid (bram_valid),
+    .bram_instr (bram_instr),
+    .bram_addr (bram_addr),
+    .bram_wdata (bram_wdata),
+    .bram_wstrb (bram_wstrb),
+    .bram_rdata (bram_rdata),
+    .bram_ready (bram_ready)
   );
 
 endmodule
