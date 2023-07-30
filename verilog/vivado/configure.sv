@@ -25,8 +25,8 @@ package configure;
   parameter clint_base_addr = 32'h2000000;
   parameter clint_top_addr  = 32'h200C000;
 
-  parameter bram_base_addr = 32'h80000000;
-  parameter bram_top_addr  = 32'h90000000;
+  parameter axi_base_addr = 32'h80000000;
+  parameter axi_top_addr  = 32'h90000000;
 
   parameter itim_base_addr = 32'h80000000;
   parameter itim_top_addr  = 32'h90000000;
