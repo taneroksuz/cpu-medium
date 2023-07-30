@@ -199,6 +199,7 @@ else
       if [ "$DUMP" = 'on' ]
       then
         $VSIM -c soc -do $BASEDIR/sim/vsim_cfg.do +MAXTIME=$MAXTIME -wlf $filename.wlf -voptargs="\+acc"
+      else
         $VSIM -c soc -do "run -all" +MAXTIME=$MAXTIME
       fi
     done
