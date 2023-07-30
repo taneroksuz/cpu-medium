@@ -132,10 +132,8 @@ module cpu
   fp_forwarding_out_type fp_forwarding_out;
   itim_in_type itim_in;
   itim_out_type itim_out;
-  dtim_in_type dtim0_in;
-  dtim_out_type dtim0_out;
-  dtim_in_type dtim1_in;
-  dtim_out_type dtim1_out;
+  dtim_in_type dtim_in;
+  dtim_out_type dtim_out;
   mem_in_type imem_in;
   mem_out_type imem_out;
   mem_in_type dmem_in;
@@ -526,10 +524,8 @@ module cpu
     .lsu0_in (lsu0_in),
     .lsu1_out (lsu1_out),
     .lsu1_in (lsu1_in),
-    .dmem0_out (dtim0_out),
-    .dmem0_in (dtim0_in),
-    .dmem1_out (dtim1_out),
-    .dmem1_in (dtim1_in),
+    .dmem_out (dtim_out),
+    .dmem_in (dtim_in),
     .forwarding0_min (forwarding0_min),
     .forwarding1_min (forwarding1_min),
     .fp_forwarding_min (fp_forwarding_min),
@@ -575,10 +571,8 @@ module cpu
   (
     .reset (reset),
     .clock (clock),
-    .dtim0_in (dtim0_in),
-    .dtim0_out (dtim0_out),
-    .dtim1_in (dtim1_in),
-    .dtim1_out (dtim1_out),
+    .dtim_in (dtim_in),
+    .dtim_out (dtim_out),
     .dmem_out (dmem_out),
     .dmem_in (dmem_in)
   );
