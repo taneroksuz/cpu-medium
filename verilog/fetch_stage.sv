@@ -177,7 +177,7 @@ module fetch_stage
     btac_in.upd_jump1 = a.e.calc1.op.jump;
     btac_in.upd_pred0 = a.e.calc0.pred;
     btac_in.upd_pred1 = a.e.calc1.pred;
-    btac_in.stall = v.stall;
+    btac_in.stall = 0;
     btac_in.clear = d.w.clear;
 
     rin = v;
