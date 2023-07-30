@@ -1,6 +1,7 @@
 import configure::*;
 import constants::*;
 import wires::*;
+import lzc_wire::*;
 import fp_wire::*;
 
 module fpu_decode
