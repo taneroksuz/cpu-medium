@@ -184,7 +184,7 @@ else
     cp $BASEDIR/build/$PROGRAM/elf/$PROGRAM.host host.dat
     if [ "$DUMP" = 'on' ]
     then
-      $VSIM -c soc -do $BASEDIR/sim/vsim_cfg.do -wlf $PROGRAM.wlf +MAXTIME=$MAXTIME
+      $VSIM -c soc -do $BASEDIR/sim/vsim_cfg.do +MAXTIME=$MAXTIME -wlf $PROGRAM.wlf -voptargs="\+acc"
     else
       $VSIM -c soc -do "run -all" +MAXTIME=$MAXTIME
     fi
@@ -198,7 +198,7 @@ else
       cp $BASEDIR/build/$PROGRAM/elf/$filename.host host.dat
       if [ "$DUMP" = 'on' ]
       then
-        $VSIM -c soc -do $BASEDIR/sim/vsim_cfg.do -wlf $filename.wlf +MAXTIME=$MAXTIME
+        $VSIM -c soc -do $BASEDIR/sim/vsim_cfg.do +MAXTIME=$MAXTIME -wlf $filename.wlf -voptargs="\+acc"
         $VSIM -c soc -do "run -all" +MAXTIME=$MAXTIME
       fi
     done
@@ -210,7 +210,7 @@ else
     cp $BASEDIR/$subpath/elf/$filename.host host.dat
     if [ "$DUMP" = 'on' ]
     then
-      $VSIM -c soc -do $BASEDIR/sim/vsim_cfg.do -wlf $filename.wlf +MAXTIME=$MAXTIME
+      $VSIM -c soc -do $BASEDIR/sim/vsim_cfg.do +MAXTIME=$MAXTIME -wlf $filename.wlf -voptargs="\+acc"
     else
       $VSIM -c soc -do "run -all" +MAXTIME=$MAXTIME
     fi

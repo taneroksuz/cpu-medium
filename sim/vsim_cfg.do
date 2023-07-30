@@ -1,3 +1,3 @@
-add wave -r /*
+log -r /*
 run -all
 quit
