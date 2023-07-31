@@ -19,38 +19,13 @@ module bram
 
   logic [31 : 0] bram_block[0:bram_depth-1];
 
-  logic [31 : 0] host[0:0] = '{default:'0};
-
   logic [31 : 0] raddr;
   logic [0  : 0] ready;
 
   logic [31 : 0] count = 0;
-  logic [31 : 0] cycle = 0;
-
-  task check;
-    input logic [31 : 0] addr;
-    input logic [31 : 0] wdata;
-    input logic [3  : 0] wstrb;
-    begin
-      if (addr[31:2] == host[0][31:2] && |wstrb == 1) begin
-        if (wdata == 32'h1) begin
-          $write("%c[1;32m",8'h1B);
-          $display("TEST SUCCEEDED");
-          $write("%c[0m",8'h1B);
-          $finish;
-        end else begin
-          $write("%c[1;31m",8'h1B);
-          $display("TEST FAILED");
-          $write("%c[0m",8'h1B);
-          $finish;
-        end
-      end
-    end
-  endtask
 
   initial begin
     $readmemh("bram.dat", bram_block);
-    $readmemh("host.dat", host);
   end
 
   always_ff @(posedge clock) begin
@@ -60,9 +35,7 @@ module bram
 
     if (bram_valid == 1) begin
 
-      if (count == cycle) begin
-
-        check(bram_addr,bram_wdata,bram_wstrb);
+      if (count == bram_cycle) begin
 
         if (bram_wstrb[0] == 1)
           bram_block[bram_addr[(depth+1):2]][7:0] <= bram_wdata[7:0];
