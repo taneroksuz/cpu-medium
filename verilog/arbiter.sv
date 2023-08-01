@@ -46,6 +46,11 @@ module arbiter(
     logic [31:0] dmem_addr;
     logic [31:0] dmem_wdata;
     logic [3:0] dmem_wstrb;
+    logic [0:0] imem_valid;
+    logic [0:0] imem_instr;
+    logic [31:0] imem_addr;
+    logic [31:0] imem_wdata;
+    logic [3:0] imem_wstrb;
   } reg_type;
 
   parameter reg_type init_reg = '{
@@ -60,7 +65,12 @@ module arbiter(
     dmem_instr : 0,
     dmem_addr : 0,
     dmem_wdata : 0,
-    dmem_wstrb : 0
+    dmem_wstrb : 0,
+    imem_valid : 0,
+    imem_instr : 0,
+    imem_addr : 0,
+    imem_wdata : 0,
+    imem_wstrb : 0
   };
 
   reg_type r,rin;
@@ -81,6 +91,14 @@ module arbiter(
       v.dmem_wdata = dmemory_wdata;
       v.dmem_wstrb = dmemory_wstrb;
     end
+    
+    if (imemory_valid == 1) begin
+      v.imem_valid = imemory_valid;
+      v.imem_instr = imemory_instr;
+      v.imem_addr = imemory_addr;
+      v.imem_wdata = imemory_wdata;
+      v.imem_wstrb = imemory_wstrb;
+    end
 
     if (v.access_type == no_access) begin
       if (v.dmem_valid == 1) begin
@@ -95,13 +113,18 @@ module arbiter(
         v.dmem_addr = 0;
         v.dmem_wdata = 0;
         v.dmem_wstrb = 0;
-      end else if (imemory_valid == 1) begin
+      end else if (v.imem_valid == 1) begin
         v.access_type = instr_access;
-        v.mem_valid = imemory_valid;
-        v.mem_instr = imemory_instr;
-        v.mem_addr = imemory_addr;
-        v.mem_wdata = imemory_wdata;
-        v.mem_wstrb = imemory_wstrb;
+        v.mem_valid = v.imem_valid;
+        v.mem_instr = v.imem_instr;
+        v.mem_addr = v.imem_addr;
+        v.mem_wdata = v.imem_wdata;
+        v.mem_wstrb = v.imem_wstrb;
+        v.imem_valid = 0;
+        v.imem_instr = 0;
+        v.imem_addr = 0;
+        v.imem_wdata = 0;
+        v.imem_wstrb = 0;
       end
     end
 
