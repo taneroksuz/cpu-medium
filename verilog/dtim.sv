@@ -406,6 +406,7 @@ module dtim_ctrl
 
     dmem_in.mem_valid = v_b.valid;
     dmem_in.mem_fence = 0;
+    dmem_in.mem_spec = 0;
     dmem_in.mem_instr = 0;
     dmem_in.mem_addr = v_b.addr;
     dmem_in.mem_wdata = v_b.wdata;

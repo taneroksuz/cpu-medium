@@ -369,6 +369,7 @@ module itim_ctrl
 
     imem_in.mem_valid = v_b.valid;
     imem_in.mem_fence = 0;
+    imem_in.mem_spec = 0;
     imem_in.mem_instr = 1;
     imem_in.mem_addr = v_b.addr;
     imem_in.mem_wdata = 0;
