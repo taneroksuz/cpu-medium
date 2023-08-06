@@ -139,17 +139,21 @@ module soc();
   end
 
   always_ff @(posedge clock) begin
-    if (memory_addr[31:2] == host[0][31:2] && |memory_wstrb == 1) begin
-      if (memory_wdata == 32'h1) begin
-        $write("%c[1;32m",8'h1B);
-        $display("TEST SUCCEEDED");
-        $write("%c[0m",8'h1B);
-        $finish;
-      end else begin
-        $write("%c[1;31m",8'h1B);
-        $display("TEST FAILED");
-        $write("%c[0m",8'h1B);
-        $finish;
+    if (soc.cpu_comp.dtim_comp.dtim_in.mem_valid == 1) begin
+      if (soc.cpu_comp.dtim_comp.dtim_in.mem_addr[31:2] == host[0][31:2]) begin
+        if (|soc.cpu_comp.dtim_comp.dtim_in.mem_wstrb == 1) begin
+          if (soc.cpu_comp.dtim_comp.dtim_in.mem_wdata == 32'h1) begin
+            $write("%c[1;32m",8'h1B);
+            $display("TEST SUCCEEDED");
+            $write("%c[0m",8'h1B);
+            $finish;
+          end else begin
+            $write("%c[1;31m",8'h1B);
+            $display("TEST FAILED");
+            $write("%c[0m",8'h1B);
+            $finish;
+          end
+        end
       end
     end
   end
