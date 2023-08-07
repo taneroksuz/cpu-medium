@@ -1,6 +1,6 @@
 default: none
 
-export TOOL ?= vivado# questa verilator vivado
+export TOOL ?= verilator# questa verilator vivado
 export XVLOG ?= xvlog# please set Vivado bin folder into PATH variable
 export XELAB ?= xelab
 export XSIM ?= xsim
