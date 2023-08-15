@@ -504,79 +504,79 @@ module fpu_execute
 
   lzc_32 lzc_32_comp_1
   (
-  .a ( lzc1_32_i.a ),
-  .c ( lzc1_32_o.c ),
-  .v ( lzc1_32_o.v )
+  .a (lzc1_32_i.a),
+  .c (lzc1_32_o.c),
+  .v (lzc1_32_o.v)
   );
 
   lzc_32 lzc_32_comp_2
   (
-  .a ( lzc2_32_i.a ),
-  .c ( lzc2_32_o.c ),
-  .v ( lzc2_32_o.v )
+  .a (lzc2_32_i.a),
+  .c (lzc2_32_o.c),
+  .v (lzc2_32_o.v)
   );
 
   lzc_32 lzc_32_comp_3
   (
-  .a ( lzc3_32_i.a ),
-  .c ( lzc3_32_o.c ),
-  .v ( lzc3_32_o.v )
+  .a (lzc3_32_i.a),
+  .c (lzc3_32_o.c),
+  .v (lzc3_32_o.v)
   );
 
   lzc_32 lzc_32_comp_4
   (
-  .a ( lzc4_32_i.a ),
-  .c ( lzc4_32_o.c ),
-  .v ( lzc4_32_o.v )
+  .a (lzc4_32_i.a),
+  .c (lzc4_32_o.c),
+  .v (lzc4_32_o.v)
   );
 
   lzc_128 lzc_128_comp
   (
-  .a ( lzc_128_i.a ),
-  .c ( lzc_128_o.c ),
-  .v ( lzc_128_o.v )
+  .a (lzc_128_i.a),
+  .c (lzc_128_o.c),
+  .v (lzc_128_o.v)
   );
 
   fp_ext fp_ext_comp_1
   (
-  .fp_ext_i ( fp_ext1_i	),
-  .fp_ext_o ( fp_ext1_o	),
-  .lzc_o ( lzc1_32_o	),
-  .lzc_i ( lzc1_32_i )
+  .fp_ext_i (fp_ext1_i),
+  .fp_ext_o (fp_ext1_o),
+  .lzc_o (lzc1_32_o),
+  .lzc_i (lzc1_32_i)
   );
 
   fp_ext fp_ext_comp_2
   (
-  .fp_ext_i ( fp_ext2_i	),
-  .fp_ext_o ( fp_ext2_o	),
-  .lzc_o ( lzc2_32_o	),
-  .lzc_i ( lzc2_32_i )
+  .fp_ext_i (fp_ext2_i),
+  .fp_ext_o (fp_ext2_o),
+  .lzc_o (lzc2_32_o),
+  .lzc_i (lzc2_32_i)
   );
 
   fp_ext fp_ext_comp_3
   (
-  .fp_ext_i ( fp_ext3_i	),
-  .fp_ext_o ( fp_ext3_o	),
-  .lzc_o ( lzc3_32_o	),
-  .lzc_i ( lzc3_32_i )
+  .fp_ext_i (fp_ext3_i),
+  .fp_ext_o (fp_ext3_o),
+  .lzc_o (lzc3_32_o),
+  .lzc_i (lzc3_32_i)
   );
 
   fp_cmp fp_cmp_comp
   (
-  .fp_cmp_i ( fp_cmp_i ),
-  .fp_cmp_o ( fp_cmp_o )
+  .fp_cmp_i (fp_cmp_i),
+  .fp_cmp_o (fp_cmp_o)
   );
 
   fp_max fp_max_comp
   (
-  .fp_max_i ( fp_max_i ),
-  .fp_max_o ( fp_max_o )
+  .fp_max_i (fp_max_i),
+  .fp_max_o (fp_max_o)
   );
 
   fp_sgnj fp_sgnj_comp
   (
-  .fp_sgnj_i ( fp_sgnj_i ),
-  .fp_sgnj_o ( fp_sgnj_o )
+  .fp_sgnj_i (fp_sgnj_i),
+  .fp_sgnj_o (fp_sgnj_o)
   );
 
   fp_cvt fp_cvt_comp
@@ -591,12 +591,12 @@ module fpu_execute
 
   fp_fma fp_fma_comp
   (
-  .reset ( reset ),
-  .clock ( clock ),
-  .fp_fma_i ( fp_fma_i ),
-  .fp_fma_o ( fp_fma_o ),
-  .lzc_o ( lzc_128_o ),
-  .lzc_i ( lzc_128_i )
+  .reset (reset),
+  .clock (clock),
+  .fp_fma_i (fp_fma_i),
+  .fp_fma_o (fp_fma_o),
+  .lzc_o (lzc_128_o),
+  .lzc_i (lzc_128_i)
   );
 
   fp_mac fp_mac_comp
@@ -625,30 +625,30 @@ module fpu_execute
 
   fp_exe fp_exe_comp
   (
-  .fp_exe_i ( fp_execute_in ),
-  .fp_exe_o ( fp_execute_out ),
-  .fp_ext1_o ( fp_ext1_o ),
-  .fp_ext1_i ( fp_ext1_i ),
-  .fp_ext2_o ( fp_ext2_o ),
-  .fp_ext2_i ( fp_ext2_i ),
-  .fp_ext3_o ( fp_ext3_o ),
-  .fp_ext3_i ( fp_ext3_i ),
-  .fp_cmp_o ( fp_cmp_o ),
-  .fp_cmp_i ( fp_cmp_i ),
-  .fp_max_o ( fp_max_o ),
-  .fp_max_i ( fp_max_i ),
-  .fp_sgnj_o ( fp_sgnj_o ),
-  .fp_sgnj_i ( fp_sgnj_i ),
+  .fp_exe_i (fp_execute_in),
+  .fp_exe_o (fp_execute_out),
+  .fp_ext1_o (fp_ext1_o),
+  .fp_ext1_i (fp_ext1_i),
+  .fp_ext2_o (fp_ext2_o),
+  .fp_ext2_i (fp_ext2_i),
+  .fp_ext3_o (fp_ext3_o),
+  .fp_ext3_i (fp_ext3_i),
+  .fp_cmp_o (fp_cmp_o),
+  .fp_cmp_i (fp_cmp_i),
+  .fp_max_o (fp_max_o),
+  .fp_max_i (fp_max_i),
+  .fp_sgnj_o (fp_sgnj_o),
+  .fp_sgnj_i (fp_sgnj_i),
   .fp_cvt_f2i_i (fp_cvt_f2i_i),
   .fp_cvt_f2i_o (fp_cvt_f2i_o),
   .fp_cvt_i2f_i (fp_cvt_i2f_i),
   .fp_cvt_i2f_o (fp_cvt_i2f_o),
-  .fp_fma_o ( fp_fma_o ),
-  .fp_fma_i ( fp_fma_i ),
+  .fp_fma_o (fp_fma_o),
+  .fp_fma_i (fp_fma_i),
   .fp_fdiv_o (fp_fdiv_o),
   .fp_fdiv_i (fp_fdiv_i),
-  .fp_rnd_o ( fp_rnd_o ),
-  .fp_rnd_i ( fp_rnd_i )
+  .fp_rnd_o (fp_rnd_o),
+  .fp_rnd_i (fp_rnd_i)
   );
 
 endmodule

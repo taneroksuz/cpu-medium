@@ -10,8 +10,8 @@ module rom
   output logic [31 : 0] rom_rdata,
   output logic [0  : 0] rom_ready
 );
-	timeunit 1ns;
-	timeprecision 1ps;
+  timeunit 1ns;
+  timeprecision 1ps;
 
   logic [4  : 0] raddr;
 
