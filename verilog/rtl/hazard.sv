@@ -13,7 +13,7 @@ module hazard
   timeprecision 1ps;
 
   localparam depth = $clog2(hazard_depth-1);
-  localparam total = 2**(depth-1);
+  localparam total = hazard_depth-2;
 
   localparam [depth-1:0] one = 1;
 

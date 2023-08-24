@@ -2,7 +2,7 @@ package configure;
   timeunit 1ns;
   timeprecision 1ps;
 
-  parameter buffer_depth = 16;
+  parameter buffer_depth = 8;
   parameter hazard_depth = 4;
 
   parameter fpu_enable = 1;

@@ -13,7 +13,7 @@ module buffer
   timeprecision 1ps;
 
   localparam depth = $clog2(buffer_depth-1);
-  localparam total = 2**(depth-1);
+  localparam total = buffer_depth-4;
 
   localparam [depth-1:0] one = 1;
   localparam [depth-1:0] two = 2;
