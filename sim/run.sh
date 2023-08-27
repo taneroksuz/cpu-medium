@@ -22,7 +22,7 @@ start=`date +%s`
 
 if [ "$TOOL" = 'verilator' ]
 then
-  $VERILATOR --binary --trace --Wno-UNSIGNED --Wno-UNOPTFLAT --top soc -f $BASEDIR/sim/files.f 2>&1 > /dev/null
+  $VERILATOR --binary --trace --trace-structs --Wno-UNSIGNED --Wno-UNOPTFLAT --top soc -f $BASEDIR/sim/files.f 2>&1 > /dev/null
 elif [ "$TOOL" = 'vivado' ]
 then
   $XVLOG -sv -f $BASEDIR/sim/files.f 2>&1 > /dev/null
