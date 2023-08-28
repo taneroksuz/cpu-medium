@@ -15,6 +15,7 @@ package configure;
 
   parameter btac_enable = 1;
   parameter branchtarget_depth = 64;
+  parameter branchhistory_depth = 1024;
 
   parameter rom_base_addr = 32'h0;
   parameter rom_top_addr  = 32'h80;
