@@ -39,18 +39,18 @@ module dtim_ram
   localparam depth = $clog2(dtim_depth-1);
   localparam width = $clog2(dtim_width-1);
 
-  logic [63-(depth+width) : 0] ram_array[0:dtim_depth-1] = '{default:'0};
+  logic [63-(depth+width) : 0] dtim_ram[0:dtim_depth-1] = '{default:'0};
 
   logic [depth-1 : 0] raddr = 0;
 
   always_ff @(posedge clock) begin
     raddr <= dtim_ram_in.raddr;
     if (dtim_ram_in.wen == 1) begin
-      ram_array[dtim_ram_in.waddr] <= dtim_ram_in.wdata;
+      dtim_ram[dtim_ram_in.waddr] <= dtim_ram_in.wdata;
     end
   end
 
-  assign dtim_ram_out.rdata = ram_array[raddr];
+  assign dtim_ram_out.rdata = dtim_ram[raddr];
 
 endmodule
 
