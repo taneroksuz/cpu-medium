@@ -19,9 +19,6 @@ module bram
 
   logic [31 : 0] bram_block[0:bram_depth-1];
 
-  logic [31 : 0] raddr;
-  logic [0  : 0] ready;
-
   logic [31 : 0] count = 0;
 
   initial begin
@@ -30,8 +27,8 @@ module bram
 
   always_ff @(posedge clock) begin
 
-    raddr <= bram_addr;
-    ready <= 0;
+    bram_rdata <= 0;
+    bram_ready <= 0;
 
     if (bram_valid == 1) begin
 
@@ -46,7 +43,9 @@ module bram
         if (bram_wstrb[3] == 1)
           bram_block[bram_addr[(depth+1):2]][31:24] <= bram_wdata[31:24];
 
-        ready <= 1;
+        bram_rdata <= bram_block[bram_addr[(depth+1):2]];
+        bram_ready <= 1;
+
         count <= 0;
 
       end else begin
@@ -58,9 +57,5 @@ module bram
     end
 
   end
-
-  assign bram_rdata = bram_block[raddr[(depth+1):2]];
-  assign bram_ready = ready;
-
 
 endmodule

@@ -1176,13 +1176,13 @@ package wires;
     logic [0  : 0] wren;
     logic [4  : 0] waddr;
     logic [31 : 0] wdata;
-  } fp_forwarding_memory_in_type;
+  } fp_forwarding_execute_in_type;
 
   typedef struct packed{
     logic [0  : 0] wren;
     logic [4  : 0] waddr;
     logic [31 : 0] wdata;
-  } fp_forwarding_writeback_in_type;
+  } fp_forwarding_memory_in_type;
 
   typedef struct packed{
     logic [31 : 0] data1;
@@ -1203,13 +1203,13 @@ package wires;
     logic [0  : 0] wren;
     logic [4  : 0] waddr;
     logic [31 : 0] wdata;
-  } forwarding_memory_in_type;
+  } forwarding_execute_in_type;
 
   typedef struct packed{
     logic [0  : 0] wren;
     logic [4  : 0] waddr;
     logic [31 : 0] wdata;
-  } forwarding_writeback_in_type;
+  } forwarding_memory_in_type;
 
   typedef struct packed{
     logic [31 : 0] data1;
@@ -1280,8 +1280,8 @@ package wires;
     fp_csr_write_in_type fp_csr_win;
     fp_csr_exception_in_type fp_csr_ein;
     fp_forwarding_register_in_type fp_forwarding_rin;
+    fp_forwarding_execute_in_type fp_forwarding_ein;
     fp_forwarding_memory_in_type fp_forwarding_min;
-    fp_forwarding_writeback_in_type fp_forwarding_win;
   } fpu_in_type;
 
   typedef struct packed{

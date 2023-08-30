@@ -31,17 +31,11 @@ module execute_stage
   output bit_clmul_in_type bit_clmul_in,
   input fp_execute_out_type fp_execute_out,
   output fp_execute_in_type fp_execute_in,
-  input register_out_type register0_out,
-  input register_out_type register1_out,
-  input fp_register_out_type fp_register_out,
-  input forwarding_out_type forwarding0_out,
-  input forwarding_out_type forwarding1_out,
-  output forwarding_register_in_type forwarding0_rin,
-  output forwarding_register_in_type forwarding1_rin,
-  input fp_forwarding_out_type fp_forwarding_out,
-  output fp_forwarding_register_in_type fp_forwarding_rin,
   input csr_out_type csr_out,
   input btac_out_type btac_out,
+  output forwarding_execute_in_type forwarding0_ein,
+  output forwarding_execute_in_type forwarding1_ein,
+  output fp_forwarding_execute_in_type fp_forwarding_ein,
   input execute_in_type a,
   input execute_in_type d,
   output execute_out_type y,
@@ -59,44 +53,6 @@ module execute_stage
 
     v.calc0 = d.i.calc0;
     v.calc1 = d.i.calc1;
-
-    forwarding0_rin.rden1 = v.calc0.op.rden1;
-    forwarding0_rin.rden2 = v.calc0.op.rden2;
-    forwarding0_rin.raddr1 = v.calc0.raddr1;
-    forwarding0_rin.raddr2 = v.calc0.raddr2;
-    forwarding0_rin.rdata1 = register0_out.rdata1;
-    forwarding0_rin.rdata2 = register0_out.rdata2;
-
-    v.calc0.rdata1 = forwarding0_out.data1;
-    v.calc0.rdata2 = forwarding0_out.data2;
-
-    forwarding1_rin.rden1 = v.calc1.op.rden1;
-    forwarding1_rin.rden2 = v.calc1.op.rden2;
-    forwarding1_rin.raddr1 = v.calc1.raddr1;
-    forwarding1_rin.raddr2 = v.calc1.raddr2;
-    forwarding1_rin.rdata1 = register1_out.rdata1;
-    forwarding1_rin.rdata2 = register1_out.rdata2;
-
-    v.calc1.rdata1 = forwarding1_out.data1;
-    v.calc1.rdata2 = forwarding1_out.data2;
-
-    fp_forwarding_rin.rden1 = v.calc0.op.frden1 | v.calc1.op.frden1;
-    fp_forwarding_rin.rden2 = v.calc0.op.frden2 | v.calc1.op.frden2;
-    fp_forwarding_rin.rden3 = v.calc0.op.frden3 | v.calc1.op.frden3;
-    fp_forwarding_rin.raddr1 = v.calc0.op.frden1 ? v.calc0.raddr1 : v.calc1.raddr1;
-    fp_forwarding_rin.raddr2 = v.calc0.op.frden2 ? v.calc0.raddr2 : v.calc1.raddr2;
-    fp_forwarding_rin.raddr3 = v.calc0.op.frden3 ? v.calc0.raddr3 : v.calc1.raddr3;
-    fp_forwarding_rin.rdata1 = fp_register_out.rdata1;
-    fp_forwarding_rin.rdata2 = fp_register_out.rdata2;
-    fp_forwarding_rin.rdata3 = fp_register_out.rdata3;
-
-    v.calc0.frdata1 = fp_forwarding_out.data1;
-    v.calc0.frdata2 = fp_forwarding_out.data2;
-    v.calc0.frdata3 = fp_forwarding_out.data3;
-
-    v.calc1.frdata1 = fp_forwarding_out.data1;
-    v.calc1.frdata2 = fp_forwarding_out.data2;
-    v.calc1.frdata3 = fp_forwarding_out.data3;
 
     if ((v.calc0.op.fpunit & v.calc0.op.rden1) == 1) begin
       v.calc0.frdata1 = v.calc0.rdata1;
@@ -408,6 +364,18 @@ module execute_stage
     if (v.clear == 1) begin
       v.stall = 0;
     end
+
+    forwarding0_ein.wren = v.calc0.op.wren;
+    forwarding0_ein.waddr = v.calc0.waddr;
+    forwarding0_ein.wdata = v.calc0.wdata;
+
+    forwarding1_ein.wren = v.calc1.op.wren;
+    forwarding1_ein.waddr = v.calc1.waddr;
+    forwarding1_ein.wdata = v.calc1.wdata;
+
+    fp_forwarding_ein.wren = v.calc0.op.fwren | v.calc1.op.fwren;
+    fp_forwarding_ein.waddr = v.calc0.op.fwren ? v.calc0.waddr : v.calc1.waddr;
+    fp_forwarding_ein.wdata = v.calc0.op.fwren ? v.calc0.fdata : v.calc1.fdata;
 
     rin = v;
 

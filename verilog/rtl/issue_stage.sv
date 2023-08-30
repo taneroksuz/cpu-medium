@@ -12,6 +12,15 @@ module issue_stage
   output register_read_in_type register0_rin,
   output register_read_in_type register1_rin,
   output fp_register_read_in_type fp_register_rin,
+  input register_out_type register0_out,
+  input register_out_type register1_out,
+  input fp_register_out_type fp_register_out,
+  input forwarding_out_type forwarding0_out,
+  input forwarding_out_type forwarding1_out,
+  output forwarding_register_in_type forwarding0_rin,
+  output forwarding_register_in_type forwarding1_rin,
+  input fp_forwarding_out_type fp_forwarding_out,
+  output fp_forwarding_register_in_type fp_forwarding_rin,
   input csr_out_type csr_out,
   output csr_read_in_type csr_rin,
   input fp_csr_out_type fp_csr_out,
@@ -122,6 +131,44 @@ module issue_stage
 
     v.calc0.cdata = (fp_csr_out.ready == 1) ? fp_csr_out.cdata : csr_out.cdata;
     v.calc1.cdata = (fp_csr_out.ready == 1) ? fp_csr_out.cdata : csr_out.cdata;
+
+    forwarding0_rin.rden1 = v.calc0.op.rden1;
+    forwarding0_rin.rden2 = v.calc0.op.rden2;
+    forwarding0_rin.raddr1 = v.calc0.raddr1;
+    forwarding0_rin.raddr2 = v.calc0.raddr2;
+    forwarding0_rin.rdata1 = register0_out.rdata1;
+    forwarding0_rin.rdata2 = register0_out.rdata2;
+
+    v.calc0.rdata1 = forwarding0_out.data1;
+    v.calc0.rdata2 = forwarding0_out.data2;
+
+    forwarding1_rin.rden1 = v.calc1.op.rden1;
+    forwarding1_rin.rden2 = v.calc1.op.rden2;
+    forwarding1_rin.raddr1 = v.calc1.raddr1;
+    forwarding1_rin.raddr2 = v.calc1.raddr2;
+    forwarding1_rin.rdata1 = register1_out.rdata1;
+    forwarding1_rin.rdata2 = register1_out.rdata2;
+
+    v.calc1.rdata1 = forwarding1_out.data1;
+    v.calc1.rdata2 = forwarding1_out.data2;
+
+    fp_forwarding_rin.rden1 = v.calc0.op.frden1 | v.calc1.op.frden1;
+    fp_forwarding_rin.rden2 = v.calc0.op.frden2 | v.calc1.op.frden2;
+    fp_forwarding_rin.rden3 = v.calc0.op.frden3 | v.calc1.op.frden3;
+    fp_forwarding_rin.raddr1 = v.calc0.op.frden1 ? v.calc0.raddr1 : v.calc1.raddr1;
+    fp_forwarding_rin.raddr2 = v.calc0.op.frden2 ? v.calc0.raddr2 : v.calc1.raddr2;
+    fp_forwarding_rin.raddr3 = v.calc0.op.frden3 ? v.calc0.raddr3 : v.calc1.raddr3;
+    fp_forwarding_rin.rdata1 = fp_register_out.rdata1;
+    fp_forwarding_rin.rdata2 = fp_register_out.rdata2;
+    fp_forwarding_rin.rdata3 = fp_register_out.rdata3;
+
+    v.calc0.frdata1 = fp_forwarding_out.data1;
+    v.calc0.frdata2 = fp_forwarding_out.data2;
+    v.calc0.frdata3 = fp_forwarding_out.data3;
+
+    v.calc1.frdata1 = fp_forwarding_out.data1;
+    v.calc1.frdata2 = fp_forwarding_out.data2;
+    v.calc1.frdata3 = fp_forwarding_out.data3;
 
     if (a.e.calc0.op.cwren == 1 || a.m.calc0.op.cwren == 1 || a.e.calc1.op.cwren == 1 || a.m.calc1.op.cwren == 1) begin
       v.stall = 1;

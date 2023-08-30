@@ -12,10 +12,13 @@ module memory_stage
   output lsu_in_type lsu1_in,
   input dtim_out_type dmem_out,
   output dtim_in_type dmem_in,
+  input csr_out_type csr_out,
   output forwarding_memory_in_type forwarding0_min,
   output forwarding_memory_in_type forwarding1_min,
   output fp_forwarding_memory_in_type fp_forwarding_min,
-  input csr_out_type csr_out,
+  output register_write_in_type register0_win,
+  output register_write_in_type register1_win,
+  output fp_register_write_in_type fp_register_win,
   output csr_write_in_type csr_win,
   output csr_exception_in_type csr_ein,
   input fp_csr_out_type fp_csr_out,
@@ -110,18 +113,6 @@ module memory_stage
     v.calc0.op_b = v.calc0.op;
     v.calc1.op_b = v.calc1.op;
 
-    forwarding0_min.wren = v.calc0.op.wren;
-    forwarding0_min.waddr = v.calc0.waddr;
-    forwarding0_min.wdata = v.calc0.wdata;
-
-    forwarding1_min.wren = v.calc1.op.wren;
-    forwarding1_min.waddr = v.calc1.waddr;
-    forwarding1_min.wdata = v.calc1.wdata;
-
-    fp_forwarding_min.wren = v.calc0.op.fwren | v.calc1.op.fwren;
-    fp_forwarding_min.waddr = v.calc0.op.fwren ? v.calc0.waddr : v.calc1.waddr;
-    fp_forwarding_min.wdata = v.calc0.op.fwren ? v.calc0.fdata : v.calc1.fdata;
-
     if (v.calc0.op.fence == 1) begin
       v.calc1 = init_calculation;
     end
@@ -143,6 +134,30 @@ module memory_stage
     if (v.clear == 1) begin
       v.stall = 0;
     end
+
+    forwarding0_min.wren = v.calc0.op.wren;
+    forwarding0_min.waddr = v.calc0.waddr;
+    forwarding0_min.wdata = v.calc0.wdata;
+
+    forwarding1_min.wren = v.calc1.op.wren;
+    forwarding1_min.waddr = v.calc1.waddr;
+    forwarding1_min.wdata = v.calc1.wdata;
+
+    fp_forwarding_min.wren = v.calc0.op.fwren | v.calc1.op.fwren;
+    fp_forwarding_min.waddr = v.calc0.op.fwren ? v.calc0.waddr : v.calc1.waddr;
+    fp_forwarding_min.wdata = v.calc0.op.fwren ? v.calc0.fdata : v.calc1.fdata;
+
+    register0_win.wren = v.calc0.op.wren & |(v.calc0.waddr);
+    register0_win.waddr = v.calc0.waddr;
+    register0_win.wdata = v.calc0.wdata;
+
+    register1_win.wren = v.calc1.op.wren & |(v.calc1.waddr);
+    register1_win.waddr = v.calc1.waddr;
+    register1_win.wdata = v.calc1.wdata;
+
+    fp_register_win.wren = v.calc0.op.fwren | v.calc1.op.fwren;
+    fp_register_win.waddr = v.calc0.op.fwren ? v.calc0.waddr : v.calc1.waddr;
+    fp_register_win.wdata = v.calc0.op.fwren ? v.calc0.fdata : v.calc1.fdata;
 
     csr_win.cwren = v.calc0.op.cwren | v.calc1.op.cwren;
     csr_win.cwaddr = v.calc0.op.cwren ? v.calc0.caddr : v.calc1.caddr;

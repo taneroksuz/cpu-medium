@@ -71,10 +71,10 @@ module cpu
   compress_out_type compress1_out;
   forwarding_register_in_type forwarding0_rin;
   forwarding_register_in_type forwarding1_rin;
+  forwarding_execute_in_type forwarding0_ein;
+  forwarding_execute_in_type forwarding1_ein;
   forwarding_memory_in_type forwarding0_min;
   forwarding_memory_in_type forwarding1_min;
-  forwarding_writeback_in_type forwarding0_win;
-  forwarding_writeback_in_type forwarding1_win;
   forwarding_out_type forwarding0_out;
   forwarding_out_type forwarding1_out;
   csr_read_in_type csr_rin;
@@ -122,8 +122,8 @@ module cpu
   fp_csr_write_in_type fp_csr_win;
   fp_csr_exception_in_type fp_csr_ein;
   fp_forwarding_register_in_type fp_forwarding_rin;
+  fp_forwarding_execute_in_type fp_forwarding_ein;
   fp_forwarding_memory_in_type fp_forwarding_min;
-  fp_forwarding_writeback_in_type fp_forwarding_win;
   fp_decode_out_type fp_decode0_out;
   fp_decode_out_type fp_decode1_out;
   fp_execute_out_type fp_execute_out;
@@ -148,8 +148,8 @@ module cpu
   assign fpu_in.fp_csr_win = fp_csr_win;
   assign fpu_in.fp_csr_ein = fp_csr_ein;
   assign fpu_in.fp_forwarding_rin = fp_forwarding_rin;
+  assign fpu_in.fp_forwarding_ein = fp_forwarding_ein;
   assign fpu_in.fp_forwarding_min = fp_forwarding_min;
-  assign fpu_in.fp_forwarding_win = fp_forwarding_win;
 
   assign fp_decode0_out = fpu_out.fp_decode0_out;
   assign fp_decode1_out = fpu_out.fp_decode1_out;
@@ -326,8 +326,8 @@ module cpu
   (
     .forwarding0_rin (forwarding0_rin),
     .forwarding1_rin (forwarding1_rin),
-    .forwarding0_win (forwarding0_win),
-    .forwarding1_win (forwarding1_win),
+    .forwarding0_ein (forwarding0_ein),
+    .forwarding1_ein (forwarding1_ein),
     .forwarding0_min (forwarding0_min),
     .forwarding1_min (forwarding1_min),
     .forwarding0_out (forwarding0_out),
@@ -458,6 +458,15 @@ module cpu
     .register0_rin (register0_rin),
     .register1_rin (register1_rin),
     .fp_register_rin (fp_register_rin),
+    .register0_out (register0_out),
+    .register1_out (register1_out),
+    .fp_register_out (fp_register_out),
+    .forwarding0_out (forwarding0_out),
+    .forwarding1_out (forwarding1_out),
+    .forwarding0_rin (forwarding0_rin),
+    .forwarding1_rin (forwarding1_rin),
+    .fp_forwarding_out (fp_forwarding_out),
+    .fp_forwarding_rin (fp_forwarding_rin),
     .csr_out (csr_out),
     .csr_rin (csr_rin),
     .fp_csr_out (fp_csr_out),
@@ -499,17 +508,11 @@ module cpu
     .bit_clmul_in (bit_clmul_in),
     .fp_execute_out (fp_execute_out),
     .fp_execute_in (fp_execute_in),
-    .register0_out (register0_out),
-    .register1_out (register1_out),
-    .fp_register_out (fp_register_out),
-    .forwarding0_out (forwarding0_out),
-    .forwarding1_out (forwarding1_out),
-    .forwarding0_rin (forwarding0_rin),
-    .forwarding1_rin (forwarding1_rin),
-    .fp_forwarding_out (fp_forwarding_out),
-    .fp_forwarding_rin (fp_forwarding_rin),
     .csr_out (csr_out),
     .btac_out (btac_out),
+    .forwarding0_ein (forwarding0_ein),
+    .forwarding1_ein (forwarding1_ein),
+    .fp_forwarding_ein (fp_forwarding_ein),
     .a (execute_in_a),
     .d (execute_in_d),
     .y (execute_out_y),
@@ -526,12 +529,15 @@ module cpu
     .lsu1_in (lsu1_in),
     .dmem_out (dtim_out),
     .dmem_in (dtim_in),
-    .forwarding0_min (forwarding0_min),
-    .forwarding1_min (forwarding1_min),
-    .fp_forwarding_min (fp_forwarding_min),
     .csr_out (csr_out),
     .csr_win (csr_win),
     .csr_ein (csr_ein),
+    .register0_win (register0_win),
+    .register1_win (register1_win),
+    .fp_register_win (fp_register_win),
+    .forwarding0_min (forwarding0_min),
+    .forwarding1_min (forwarding1_min),
+    .fp_forwarding_min (fp_forwarding_min),
     .fp_csr_out (fp_csr_out),
     .fp_csr_win (fp_csr_win),
     .fp_csr_ein (fp_csr_ein),
@@ -545,12 +551,6 @@ module cpu
   (
     .reset (reset),
     .clock (clock),
-    .register0_win (register0_win),
-    .register1_win (register1_win),
-    .fp_register_win (fp_register_win),
-    .forwarding0_win (forwarding0_win),
-    .forwarding1_win (forwarding1_win),
-    .fp_forwarding_win (fp_forwarding_win),
     .a (writeback_in_a),
     .d (writeback_in_d),
     .y (writeback_out_y),
