@@ -29,8 +29,9 @@ for FILE in $BASEDIR/sim/input/*; do
   cp ${FILE%.*}.host host.dat
   if [ "$DUMP" = "1" ]
   then
-    obj_dir/Vsoc +MAXTIME=$MAXTIME +REGFILE=${FILE%.*}.reg +FILENAME=${FILE%.*}.vcd
+    obj_dir/Vsoc +MAXTIME=$MAXTIME +REGFILE=${FILE%.*}.reg +FREGFILE=${FILE%.*}.freg +FILENAME=${FILE%.*}.vcd
     cp ${FILE%.*}.reg $BASEDIR/sim/output/.
+    cp ${FILE%.*}.freg $BASEDIR/sim/output/.
     cp ${FILE%.*}.vcd $BASEDIR/sim/output/.
   else
     obj_dir/Vsoc +MAXTIME=$MAXTIME
