@@ -10,6 +10,8 @@ fi
 sudo mkdir $PREFIX
 sudo chown -R $USER:$USER $PREFIX/
 
+sudo apt-get -y install wget build-essential make g++
+
 if [ -d "systemc-2.3.3" ]; then
   rm -rf systemc-2.3.3
 fi
