@@ -1,4 +1,8 @@
-work
+*
+!input/
+!input/*
+!output/
+!output/*
 !*.sh
 !*.f
 !.gitignore

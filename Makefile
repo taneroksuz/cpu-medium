@@ -13,5 +13,5 @@ export DUMP ?= 0# "1" on, "0" off
 simulate:
 	sim/run.sh
 
-send:
+program:
 	serial/transfer.sh
