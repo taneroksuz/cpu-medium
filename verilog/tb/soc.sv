@@ -137,10 +137,10 @@ module soc();
       freg_file = $fopen(filename,"w");
       for (int i=0; i<stoptime; i=i+1) begin
         @(posedge clock);
-        if (soc.cpu_comp.fpu_comp.fpu_register_comp.fp_register_win.wren == 1) begin
+        if (soc.cpu_comp.fpu_comp.fpu_generate.fpu_register_comp.fp_register_win.wren == 1) begin
           $fwrite(freg_file,"PERIOD = %t\t",$time);
-          $fwrite(freg_file,"WADDR = %d\t",soc.cpu_comp.fpu_comp.fpu_register_comp.fp_register_win.waddr);
-          $fwrite(freg_file,"WDATA = %x\n",soc.cpu_comp.fpu_comp.fpu_register_comp.fp_register_win.wdata);
+          $fwrite(freg_file,"WADDR = %d\t",soc.cpu_comp.fpu_comp.fpu_generate.fpu_register_comp.fp_register_win.waddr);
+          $fwrite(freg_file,"WDATA = %x\n",soc.cpu_comp.fpu_comp.fpu_generate.fpu_register_comp.fp_register_win.wdata);
         end
       end
       $fclose(freg_file);
