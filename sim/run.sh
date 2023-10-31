@@ -30,14 +30,14 @@ for FILE in $BASEDIR/sim/input/*; do
   if [ "$DUMP" = "1" ]
   then
     obj_dir/Vsoc +MAXTIME=$MAXTIME +REGFILE=${FILE%.*}.reg +FILENAME=${FILE%.*}.vcd
-    cp ${FILE%.*}.txt $BASEDIR/output/.
-    cp ${FILE%.*}.vcd $BASEDIR/output/.
+    cp ${FILE%.*}.reg $BASEDIR/sim/output/.
+    cp ${FILE%.*}.vcd $BASEDIR/sim/output/.
   else
     obj_dir/Vsoc +MAXTIME=$MAXTIME
   fi
+  rm ${FILE%.*}.host
+  rm ${FILE%.*}.bin
 done
-
-rm -rf $BASEDIR/input/*
 
 end=`date +%s`
 echo Execution time was `expr $end - $start` seconds.
