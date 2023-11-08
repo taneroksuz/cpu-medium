@@ -78,6 +78,8 @@ module soc();
   logic [31 : 0] counter = 0;
 
   integer reg_file;
+  integer csr_file;
+  integer mem_file;
   integer freg_file;
 
   initial begin
@@ -128,6 +130,41 @@ module soc();
         end
       end
       $fclose(reg_file);
+    end
+  end
+
+  initial begin
+    string filename;
+    if ($value$plusargs("CSRFILE=%s",filename)) begin
+      csr_file = $fopen(filename,"w");
+      for (int i=0; i<stoptime; i=i+1) begin
+        @(posedge clock);
+        if (soc.cpu_comp.csr_comp.csr_win.cwren == 1) begin
+          $fwrite(csr_file,"PERIOD = %t\t",$time);
+          $fwrite(csr_file,"WADDR = %x\t",soc.cpu_comp.csr_comp.csr_win.cwaddr);
+          $fwrite(csr_file,"WDATA = %x\n",soc.cpu_comp.csr_comp.csr_win.cdata);
+        end
+      end
+      $fclose(csr_file);
+    end
+  end
+
+  initial begin
+    string filename;
+    if ($value$plusargs("MEMFILE=%s",filename)) begin
+      mem_file = $fopen(filename,"w");
+      for (int i=0; i<stoptime; i=i+1) begin
+        @(posedge clock);
+        if (soc.bram_comp.bram_valid == 1) begin
+          if (|soc.bram_comp.bram_wstrb == 1) begin
+            $fwrite(mem_file,"PERIOD = %t\t",$time);
+            $fwrite(mem_file,"WADDR = %x\t",soc.bram_comp.bram_addr);
+            $fwrite(mem_file,"WSTRB = %b\t",soc.bram_comp.bram_wstrb);
+            $fwrite(mem_file,"WDATA = %x\n",soc.bram_comp.bram_wdata);
+          end
+        end
+      end
+      $fclose(mem_file);
     end
   end
 
