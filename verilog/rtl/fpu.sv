@@ -572,7 +572,9 @@ module fpu_execute
   .fp_sgnj_o (fp_sgnj_o)
   );
 
-  fp_cvt fp_cvt_comp
+  fp_cvt#(
+    .RISCV (1)
+  ) fp_cvt_comp
   (
   .fp_cvt_f2i_i (fp_cvt_f2i_i),
   .fp_cvt_f2i_o (fp_cvt_f2i_o),

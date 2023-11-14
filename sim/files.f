@@ -13,7 +13,7 @@ $BASEDIR/fpu/verilog/src/float/fp_ext.sv
 $BASEDIR/fpu/verilog/src/float/fp_cmp.sv
 $BASEDIR/fpu/verilog/src/float/fp_max.sv
 $BASEDIR/fpu/verilog/src/float/fp_sgnj.sv
-$BASEDIR/fpu/verilog/src/float/fp_cvt_rv.sv
+$BASEDIR/fpu/verilog/src/float/fp_cvt.sv
 $BASEDIR/fpu/verilog/src/float/fp_fma.sv
 $BASEDIR/fpu/verilog/src/float/fp_mac.sv
 $BASEDIR/fpu/verilog/src/float/fp_fdiv.sv
