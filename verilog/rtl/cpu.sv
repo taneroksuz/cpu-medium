@@ -130,10 +130,6 @@ module cpu
   fp_register_out_type fp_register_out;
   fp_csr_out_type fp_csr_out;
   fp_forwarding_out_type fp_forwarding_out;
-  itim_in_type itim_in;
-  itim_out_type itim_out;
-  dtim_in_type dtim_in;
-  dtim_out_type dtim_out;
   mem_in_type imem_in;
   mem_out_type imem_out;
   mem_in_type dmem_in;
@@ -417,8 +413,8 @@ module cpu
     .csr_out (csr_out),
     .btac_out (btac_out),
     .btac_in (btac_in),
-    .imem_out (itim_out),
-    .imem_in (itim_in),
+    .imem_out (imem_out),
+    .imem_in (imem_in),
     .a (fetch_in_a),
     .d (fetch_in_d),
     .y (fetch_out_y),
@@ -527,8 +523,8 @@ module cpu
     .lsu0_in (lsu0_in),
     .lsu1_out (lsu1_out),
     .lsu1_in (lsu1_in),
-    .dmem_out (dtim_out),
-    .dmem_in (dtim_in),
+    .dmem_out (dmem_out),
+    .dmem_in (dmem_in),
     .csr_out (csr_out),
     .csr_win (csr_win),
     .csr_ein (csr_ein),
@@ -557,26 +553,6 @@ module cpu
     .q (writeback_out_q)
   );
 
-  itim itim_comp
-  (
-    .reset (reset),
-    .clock (clock),
-    .itim_in (itim_in),
-    .itim_out (itim_out),
-    .imem_out (imem_out),
-    .imem_in (imem_in)
-  );
-
-  dtim dtim_comp
-  (
-    .reset (reset),
-    .clock (clock),
-    .dtim_in (dtim_in),
-    .dtim_out (dtim_out),
-    .dmem_out (dmem_out),
-    .dmem_in (dmem_in)
-  );
-
   fpu#(
     .fpu_enable (fpu_enable)
   ) fpu_comp
@@ -589,17 +565,19 @@ module cpu
 
   assign imemory_valid = imem_in.mem_valid;
   assign imemory_instr = imem_in.mem_instr;
-  assign imemory_addr = imem_in.mem_addr;
+  assign imemory_addr  = imem_in.mem_addr;
   assign imemory_wdata = imem_in.mem_wdata;
   assign imemory_wstrb = imem_in.mem_wstrb;
+
   assign imem_out.mem_rdata = imemory_rdata;
   assign imem_out.mem_ready = imemory_ready;
 
   assign dmemory_valid = dmem_in.mem_valid;
   assign dmemory_instr = dmem_in.mem_instr;
-  assign dmemory_addr = dmem_in.mem_addr;
+  assign dmemory_addr  = dmem_in.mem_addr;
   assign dmemory_wdata = dmem_in.mem_wdata;
   assign dmemory_wstrb = dmem_in.mem_wstrb;
+
   assign dmem_out.mem_rdata = dmemory_rdata;
   assign dmem_out.mem_ready = dmemory_ready;
 

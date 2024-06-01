@@ -54,13 +54,29 @@ module soc();
   logic [31 : 0] clint_rdata;
   logic [0  : 0] clint_ready;
 
-  logic [0  : 0] bram_valid;
-  logic [0  : 0] bram_instr;
-  logic [31 : 0] bram_addr;
-  logic [31 : 0] bram_wdata;
-  logic [3  : 0] bram_wstrb;
-  logic [31 : 0] bram_rdata;
-  logic [0  : 0] bram_ready;
+  logic [0  : 0] tim0_valid;
+  logic [0  : 0] tim0_instr;
+  logic [31 : 0] tim0_addr;
+  logic [31 : 0] tim0_wdata;
+  logic [3  : 0] tim0_wstrb;
+  logic [31 : 0] tim0_rdata;
+  logic [0  : 0] tim0_ready;
+
+  logic [0  : 0] tim1_valid;
+  logic [0  : 0] tim1_instr;
+  logic [31 : 0] tim1_addr;
+  logic [31 : 0] tim1_wdata;
+  logic [3  : 0] tim1_wstrb;
+  logic [31 : 0] tim1_rdata;
+  logic [0  : 0] tim1_ready;
+
+  logic [0  : 0] ram_valid;
+  logic [0  : 0] ram_instr;
+  logic [31 : 0] ram_addr;
+  logic [31 : 0] ram_wdata;
+  logic [3  : 0] ram_wstrb;
+  logic [31 : 0] ram_rdata;
+  logic [0  : 0] ram_ready;
 
   logic [0  : 0] meip;
   logic [0  : 0] msip;
@@ -162,12 +178,12 @@ module soc();
       mem_file = $fopen(filename,"w");
       for (int i=0; i<stoptime; i=i+1) begin
         @(posedge clock);
-        if (soc.bram_comp.bram_valid == 1) begin
-          if (|soc.bram_comp.bram_wstrb == 1) begin
+        if (soc.ram_comp.ram_valid == 1) begin
+          if (|soc.ram_comp.ram_wstrb == 1) begin
             $fwrite(mem_file,"PERIOD = %t\t",$time);
-            $fwrite(mem_file,"WADDR = %x\t",soc.bram_comp.bram_addr);
-            $fwrite(mem_file,"WSTRB = %b\t",soc.bram_comp.bram_wstrb);
-            $fwrite(mem_file,"WDATA = %x\n",soc.bram_comp.bram_wdata);
+            $fwrite(mem_file,"WADDR = %x\t",soc.ram_comp.ram_addr);
+            $fwrite(mem_file,"WSTRB = %b\t",soc.ram_comp.ram_wstrb);
+            $fwrite(mem_file,"WDATA = %x\n",soc.ram_comp.ram_wdata);
           end
         end
       end
@@ -205,10 +221,10 @@ module soc();
   end
 
   always_ff @(posedge clock) begin
-    if (soc.cpu_comp.dtim_comp.dtim_in.mem_valid == 1) begin
-      if (soc.cpu_comp.dtim_comp.dtim_in.mem_addr[31:2] == host[0][31:2]) begin
-        if (|soc.cpu_comp.dtim_comp.dtim_in.mem_wstrb == 1) begin
-          if (|soc.cpu_comp.dtim_comp.dtim_in.mem_wdata == 1) begin
+    if (soc.cpu_comp.memory_stage_comp.dmem_in.mem_valid == 1) begin
+      if (soc.cpu_comp.memory_stage_comp.dmem_in.mem_addr[31:2] == host[0][31:2]) begin
+        if (|soc.cpu_comp.memory_stage_comp.dmem_in.mem_wstrb == 1) begin
+          if (|soc.cpu_comp.memory_stage_comp.dmem_in.mem_wdata == 1) begin
             $finish;
           end
         end
@@ -221,45 +237,31 @@ module soc();
     rom_valid = 0;
     print_valid = 0;
     clint_valid = 0;
-    bram_valid = 0;
+    tim0_valid = 0;
+    tim1_valid = 0;
+    ram_valid = 0;
 
     base_addr = 0;
 
     if (memory_valid == 1) begin
-      if (memory_addr >= bram_base_addr &&
-        memory_addr < bram_top_addr) begin
-          rom_valid = 0;
-          print_valid = 0;
-          clint_valid = 0;
-          bram_valid = memory_valid;
-          base_addr = bram_base_addr;
-      end else if (memory_addr >= clint_base_addr &&
-        memory_addr < clint_top_addr) begin
-          rom_valid = 0;
-          print_valid = 0;
+      if (memory_addr >= ram_base_addr && memory_addr < ram_top_addr) begin
+          ram_valid = memory_valid;
+          base_addr = ram_base_addr;
+      end else if (memory_addr >= tim1_base_addr && memory_addr < tim1_top_addr) begin
+          tim1_valid = memory_valid;
+          base_addr = tim1_base_addr;
+      end else if (memory_addr >= tim0_base_addr && memory_addr < tim0_top_addr) begin
+          tim0_valid = memory_valid;
+          base_addr = tim0_base_addr;
+      end else if (memory_addr >= clint_base_addr && memory_addr < clint_top_addr) begin
           clint_valid = memory_valid;
-          bram_valid = 0;
           base_addr = clint_base_addr;
-      end else if (memory_addr >= print_base_addr &&
-        memory_addr < print_top_addr) begin
-          rom_valid = 0;
+      end else if (memory_addr >= print_base_addr && memory_addr < print_top_addr) begin
           print_valid = memory_valid;
-          clint_valid = 0;
-          bram_valid = 0;
           base_addr = print_base_addr;
-      end else if (memory_addr >= rom_base_addr &&
-        memory_addr < rom_top_addr) begin
+      end else if (memory_addr >= rom_base_addr && memory_addr < rom_top_addr) begin
           rom_valid = memory_valid;
-          print_valid = 0;
-          clint_valid = 0;
-          bram_valid = 0;
           base_addr = rom_base_addr;
-      end else begin
-          rom_valid = 0;
-          print_valid = 0;
-          clint_valid = 0;
-          bram_valid = 0;
-          base_addr = 0;
       end
     end
 
@@ -278,10 +280,20 @@ module soc();
     clint_wdata = memory_wdata;
     clint_wstrb = memory_wstrb;
 
-    bram_instr = memory_instr;
-    bram_addr = mem_addr;
-    bram_wdata = memory_wdata;
-    bram_wstrb = memory_wstrb;
+    tim0_instr = memory_instr;
+    tim0_addr = mem_addr;
+    tim0_wdata = memory_wdata;
+    tim0_wstrb = memory_wstrb;
+
+    tim1_instr = memory_instr;
+    tim1_addr = mem_addr;
+    tim1_wdata = memory_wdata;
+    tim1_wstrb = memory_wstrb;
+
+    ram_instr = memory_instr;
+    ram_addr = mem_addr;
+    ram_wdata = memory_wdata;
+    ram_wstrb = memory_wstrb;
 
     if (rom_ready == 1) begin
       memory_rdata = rom_rdata;
@@ -292,9 +304,15 @@ module soc();
     end else if  (clint_ready == 1) begin
       memory_rdata = clint_rdata;
       memory_ready = clint_ready;
-    end else if (bram_ready == 1) begin
-      memory_rdata = bram_rdata;
-      memory_ready = bram_ready;
+    end else if (tim0_ready == 1) begin
+      memory_rdata = tim0_rdata;
+      memory_ready = tim0_ready;
+    end else if (tim1_ready == 1) begin
+      memory_rdata = tim1_rdata;
+      memory_ready = tim1_ready;
+    end else if (ram_ready == 1) begin
+      memory_rdata = ram_rdata;
+      memory_ready = ram_ready;
     end else begin
       memory_rdata = 0;
       memory_ready = 0;
@@ -393,17 +411,43 @@ module soc();
     .clint_mtime (mtime)
   );
 
-  bram bram_comp
+  tim tim0_comp
   (
     .reset (reset),
     .clock (clock),
-    .bram_valid (bram_valid),
-    .bram_instr (bram_instr),
-    .bram_addr (bram_addr),
-    .bram_wdata (bram_wdata),
-    .bram_wstrb (bram_wstrb),
-    .bram_rdata (bram_rdata),
-    .bram_ready (bram_ready)
+    .tim_valid (tim0_valid),
+    .tim_instr (tim0_instr),
+    .tim_addr (tim0_addr),
+    .tim_wdata (tim0_wdata),
+    .tim_wstrb (tim0_wstrb),
+    .tim_rdata (tim0_rdata),
+    .tim_ready (tim0_ready)
+  );
+
+  tim tim1_comp
+  (
+    .reset (reset),
+    .clock (clock),
+    .tim_valid (tim1_valid),
+    .tim_instr (tim1_instr),
+    .tim_addr (tim1_addr),
+    .tim_wdata (tim1_wdata),
+    .tim_wstrb (tim1_wstrb),
+    .tim_rdata (tim1_rdata),
+    .tim_ready (tim1_ready)
+  );
+
+  ram ram_comp
+  (
+    .reset (reset),
+    .clock (clock),
+    .ram_valid (ram_valid),
+    .ram_instr (ram_instr),
+    .ram_addr (ram_addr),
+    .ram_wdata (ram_wdata),
+    .ram_wstrb (ram_wstrb),
+    .ram_rdata (ram_rdata),
+    .ram_ready (ram_ready)
   );
 
 endmodule

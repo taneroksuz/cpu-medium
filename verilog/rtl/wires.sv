@@ -1301,41 +1301,11 @@ package wires;
     logic [31 : 0] mem_addr;
     logic [63 : 0] mem_wdata;
     logic [3  : 0] mem_wstrb;
-  } itim_in_type;
-
-  typedef struct packed{
-    logic [0  : 0] mem_ready;
-    logic [63 : 0] mem_rdata;
-  } itim_out_type;
-
-  typedef struct packed{
-    logic [0  : 0] mem_valid;
-    logic [0  : 0] mem_fence;
-    logic [0  : 0] mem_spec;
-    logic [0  : 0] mem_instr;
-    logic [31 : 0] mem_addr;
-    logic [31 : 0] mem_wdata;
-    logic [3  : 0] mem_wstrb;
-  } dtim_in_type;
-
-  typedef struct packed{
-    logic [0  : 0] mem_ready;
-    logic [31 : 0] mem_rdata;
-  } dtim_out_type;
-
-  typedef struct packed{
-    logic [0  : 0] mem_valid;
-    logic [0  : 0] mem_fence;
-    logic [0  : 0] mem_spec;
-    logic [0  : 0] mem_instr;
-    logic [31 : 0] mem_addr;
-    logic [31 : 0] mem_wdata;
-    logic [3  : 0] mem_wstrb;
   } mem_in_type;
 
   typedef struct packed{
     logic [0  : 0] mem_ready;
-    logic [31 : 0] mem_rdata;
+    logic [63 : 0] mem_rdata;
   } mem_out_type;
 
 endpackage

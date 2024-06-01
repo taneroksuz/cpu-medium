@@ -47,10 +47,9 @@ $BASEDIR/verilog/rtl/writeback_stage.sv
 $BASEDIR/verilog/rtl/fpu.sv
 $BASEDIR/verilog/rtl/arbiter.sv
 $BASEDIR/verilog/rtl/clint.sv
-$BASEDIR/verilog/rtl/itim.sv
-$BASEDIR/verilog/rtl/dtim.sv
+$BASEDIR/verilog/rtl/tim.sv
 $BASEDIR/verilog/rtl/cpu.sv
 $BASEDIR/verilog/tb/rom.sv
-$BASEDIR/verilog/tb/bram.sv
+$BASEDIR/verilog/tb/ram.sv
 $BASEDIR/verilog/tb/print.sv
 $BASEDIR/verilog/tb/soc.sv
