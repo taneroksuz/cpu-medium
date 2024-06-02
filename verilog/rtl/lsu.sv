@@ -18,26 +18,47 @@ module lsu
     data_b = 0;
     data_h = 0;
     data_w = 0;
-    if (lsu_in.byteenable == 4'h1) begin
+    if (lsu_in.byteenable == 8'h01) begin
       data_b = lsu_in.ldata[7:0];
     end
-    if (lsu_in.byteenable == 4'h2) begin
+    if (lsu_in.byteenable == 8'h02) begin
       data_b = lsu_in.ldata[15:8];
     end
-    if (lsu_in.byteenable == 4'h4) begin
+    if (lsu_in.byteenable == 8'h04) begin
       data_b = lsu_in.ldata[23:16];
     end
-    if (lsu_in.byteenable == 4'h8) begin
+    if (lsu_in.byteenable == 8'h08) begin
       data_b = lsu_in.ldata[31:24];
     end
-    if (lsu_in.byteenable == 4'h3) begin
+    if (lsu_in.byteenable == 8'h10) begin
+      data_b = lsu_in.ldata[39:32];
+    end
+    if (lsu_in.byteenable == 8'h20) begin
+      data_b = lsu_in.ldata[47:40];
+    end
+    if (lsu_in.byteenable == 8'h40) begin
+      data_b = lsu_in.ldata[55:48];
+    end
+    if (lsu_in.byteenable == 8'h80) begin
+      data_b = lsu_in.ldata[63:56];
+    end
+    if (lsu_in.byteenable == 8'h03) begin
       data_h = lsu_in.ldata[15:0];
     end
-    if (lsu_in.byteenable == 4'hC) begin
+    if (lsu_in.byteenable == 8'h0C) begin
       data_h = lsu_in.ldata[31:16];
     end
-    if (lsu_in.byteenable == 4'hF) begin
-      data_w = lsu_in.ldata;
+    if (lsu_in.byteenable == 8'h30) begin
+      data_h = lsu_in.ldata[47:32];
+    end
+    if (lsu_in.byteenable == 8'hC0) begin
+      data_h = lsu_in.ldata[63:48];
+    end
+    if (lsu_in.byteenable == 8'h0F) begin
+      data_w = lsu_in.ldata[31:0];
+    end
+    if (lsu_in.byteenable == 8'hF0) begin
+      data_w = lsu_in.ldata[63:32];
     end
 
     ldata = 0;

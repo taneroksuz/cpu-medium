@@ -7,23 +7,23 @@ module arbiter(
   input logic [0  : 0] imemory_valid,
   input logic [0  : 0] imemory_instr,
   input logic [31 : 0] imemory_addr ,
-  input logic [31 : 0] imemory_wdata,
-  input logic [3  : 0] imemory_wstrb,
-  output logic [31  : 0] imemory_rdata,
+  input logic [63 : 0] imemory_wdata,
+  input logic [7  : 0] imemory_wstrb,
+  output logic [63  : 0] imemory_rdata,
   output logic [0   : 0] imemory_ready,
   input logic [0  : 0] dmemory_valid,
   input logic [0  : 0] dmemory_instr,
   input logic [31 : 0] dmemory_addr ,
-  input logic [31 : 0] dmemory_wdata,
-  input logic [3  : 0] dmemory_wstrb,
-  output logic [31  : 0] dmemory_rdata,
+  input logic [63 : 0] dmemory_wdata,
+  input logic [7  : 0] dmemory_wstrb,
+  output logic [63  : 0] dmemory_rdata,
   output logic [0   : 0] dmemory_ready,
   output logic [0  : 0] memory_valid,
   output logic [0  : 0] memory_instr,
   output logic [31 : 0] memory_addr,
-  output logic [31 : 0] memory_wdata,
-  output logic [3  : 0] memory_wstrb,
-  input logic [31  : 0] memory_rdata,
+  output logic [63 : 0] memory_wdata,
+  output logic [7  : 0] memory_wstrb,
+  input logic [63  : 0] memory_rdata,
   input logic [0   : 0] memory_ready
 );
   timeunit 1ns;
@@ -38,19 +38,19 @@ module arbiter(
     logic [0:0] mem_valid;
     logic [0:0] mem_instr;
     logic [31:0] mem_addr;
-    logic [31:0] mem_wdata;
-    logic [3:0] mem_wstrb;
+    logic [63:0] mem_wdata;
+    logic [7:0] mem_wstrb;
     logic [0:0] mem_error;
     logic [0:0] dmem_valid;
     logic [0:0] dmem_instr;
     logic [31:0] dmem_addr;
-    logic [31:0] dmem_wdata;
-    logic [3:0] dmem_wstrb;
+    logic [63:0] dmem_wdata;
+    logic [7:0] dmem_wstrb;
     logic [0:0] imem_valid;
     logic [0:0] imem_instr;
     logic [31:0] imem_addr;
-    logic [31:0] imem_wdata;
-    logic [3:0] imem_wstrb;
+    logic [63:0] imem_wdata;
+    logic [7:0] imem_wstrb;
   } reg_type;
 
   parameter reg_type init_reg = '{

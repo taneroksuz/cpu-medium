@@ -49,8 +49,8 @@ if __name__ == '__main__':
 
     lines = len(content)
 
-    output.write("DEPTH = {:d};\n".format(int(offset/4)).encode('ascii'))
-    output.write("WIDTH = 32;\n".encode('ascii'))
+    output.write("DEPTH = {:d};\n".format(int(offset/8)).encode('ascii'))
+    output.write("WIDTH = 64;\n".encode('ascii'))
     output.write("ADDRESS_RADIX = HEX;\n".encode('ascii'))
     output.write("string_RADIX = HEX;\n".encode('ascii'))
     output.write("CONTENT;\n".encode('ascii'))
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     total_lines = offset
 
-    byte = "04"
+    byte = "08"
 
     string = "00"
 
@@ -70,28 +70,52 @@ if __name__ == '__main__':
             string1 = "00"
             string2 = "00"
             string3 = "00"
+            string4 = "00"
+            string5 = "00"
+            string6 = "00"
+            string7 = "00"
         elif address-start_address < lines:
-            if (address-start_address+3) < lines:
-                string0 = "{:02X}".format(content[address-start_address+3])
+            if (address-start_address+7) < lines:
+                string0 = "{:02X}".format(content[address-start_address+7])
             else:
                 string0 = "00"
-            if (address-start_address+2) < lines:
-                string1 = "{:02X}".format(content[address-start_address+2])
+            if (address-start_address+6) < lines:
+                string1 = "{:02X}".format(content[address-start_address+6])
             else:
                 string1 = "00"
-            if (address-start_address+1) < lines:
-                string2 = "{:02X}".format(content[address-start_address+1])
+            if (address-start_address+5) < lines:
+                string2 = "{:02X}".format(content[address-start_address+5])
             else:
                 string2 = "00"
-            if (address-start_address) < lines:
-                string3 = "{:02X}".format(content[address-start_address])
+            if (address-start_address+4) < lines:
+                string3 = "{:02X}".format(content[address-start_address+4])
             else:
                 string3 = "00"
+            if (address-start_address+3) < lines:
+                string4 = "{:02X}".format(content[address-start_address+3])
+            else:
+                string4 = "00"
+            if (address-start_address+2) < lines:
+                string5 = "{:02X}".format(content[address-start_address+2])
+            else:
+                string5 = "00"
+            if (address-start_address+1) < lines:
+                string6 = "{:02X}".format(content[address-start_address+1])
+            else:
+                string6 = "00"
+            if (address-start_address) < lines:
+                string7 = "{:02X}".format(content[address-start_address])
+            else:
+                string7 = "00"
         else:
             string0 = "00"
             string1 = "00"
             string2 = "00"
             string3 = "00"
-        w_line = byte_addr + " : " + string0 + string1 + string2 + string3 + ";\n"
+            string4 = "00"
+            string5 = "00"
+            string6 = "00"
+            string7 = "00"
+        w_line = byte_addr + " : " + string0 + string1 + string2 + string3 + string4 + string5 + string6 + string7 + ";\n"
         output.write(w_line.encode('ascii'))
-        address = address + 4
+        address = address + 8

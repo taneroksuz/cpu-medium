@@ -358,15 +358,15 @@ package wires;
 
   typedef struct packed{
     logic [31 : 0] address;
-    logic [3  : 0] byteenable;
+    logic [7  : 0] byteenable;
     logic [0  : 0] exception;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
   } agu_out_type;
 
   typedef struct packed{
-    logic [31 : 0] ldata;
-    logic [3  : 0] byteenable;
+    logic [63 : 0] ldata;
+    logic [7  : 0] byteenable;
     lsu_op_type lsu_op;
   } lsu_in_type;
 
@@ -590,7 +590,7 @@ package wires;
     logic [0  : 0] dready;
     logic [0  : 0] bcready;
     logic [31 : 0] address;
-    logic [3  : 0] byteenable;
+    logic [7  : 0] byteenable;
     logic [3  : 0] ecause;
     logic [31 : 0] etval;
     logic [4  : 0] flags;
@@ -1300,7 +1300,7 @@ package wires;
     logic [0  : 0] mem_instr;
     logic [31 : 0] mem_addr;
     logic [63 : 0] mem_wdata;
-    logic [3  : 0] mem_wstrb;
+    logic [7  : 0] mem_wstrb;
   } mem_in_type;
 
   typedef struct packed{

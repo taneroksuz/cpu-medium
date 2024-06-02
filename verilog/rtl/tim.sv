@@ -11,11 +11,11 @@ package tim_wires;
     logic [0 : 0] wen;
     logic [depth-1 : 0] waddr;
     logic [depth-1 : 0] raddr;
-    logic [31 : 0] wdata;
+    logic [63 : 0] wdata;
   } tim_ram_in_type;
 
   typedef struct packed{
-    logic [31 : 0] rdata;
+    logic [63 : 0] rdata;
   } tim_ram_out_type;
 
   typedef tim_ram_in_type tim_vec_in_type [tim_width];
@@ -39,7 +39,7 @@ module tim_ram
   localparam depth = $clog2(tim_depth-1);
   localparam width = $clog2(tim_width-1);
 
-  logic [31 : 0] tim_ram[0:tim_depth-1] = '{default:'0};
+  logic [63 : 0] tim_ram[0:tim_depth-1] = '{default:'0};
 
   logic [depth-1 : 0] raddr = 0;
 
@@ -72,8 +72,8 @@ module tim_ctrl
   typedef struct packed{
     logic [width-1:0] wid;
     logic [depth-1:0] did;
-    logic [31:0] data;
-    logic [3:0] strb;
+    logic [63:0] data;
+    logic [7:0] strb;
     logic [0:0] wren;
     logic [0:0] rden;
     logic [0:0] enable;
@@ -92,9 +92,9 @@ module tim_ctrl
   typedef struct packed{
     logic [depth-1:0] did;
     logic [width-1:0] wid;
-    logic [3:0] strb;
-    logic [31:0] data;
-    logic [31:0] rdata;
+    logic [7:0] strb;
+    logic [63:0] data;
+    logic [63:0] rdata;
     logic [0:0] enable;
     logic [0:0] wren;
     logic [0:0] rden;
@@ -133,8 +133,8 @@ module tim_ctrl
       v_f.rden = ~(|tim_in.mem_wstrb);
       v_f.data = tim_in.mem_wdata;
       v_f.strb = tim_in.mem_wstrb;
-      v_f.did = tim_in.mem_addr[(depth+width+1):(width+2)];
-      v_f.wid = tim_in.mem_addr[(width+1):2];
+      v_f.did = tim_in.mem_addr[(depth+width+2):(width+3)];
+      v_f.wid = tim_in.mem_addr[(width+2):3];
     end
 
     rin_f = v_f;
@@ -156,7 +156,7 @@ module tim_ctrl
     v_b.rdata = 0;
 
     if (v_b.enable == 1) begin
-      v_b.rdata = dvec_out[v_b.wid].rdata[31:0];
+      v_b.rdata = dvec_out[v_b.wid].rdata[63:0];
       if (v_b.strb[0] == 0) begin
         v_b.data[7:0] = v_b.rdata[7:0];
       end
@@ -168,6 +168,18 @@ module tim_ctrl
       end
       if (v_b.strb[3] == 0) begin
         v_b.data[31:24] = v_b.rdata[31:24];
+      end
+      if (v_b.strb[4] == 0) begin
+        v_b.data[39:32] = v_b.rdata[39:32];
+      end
+      if (v_b.strb[5] == 0) begin
+        v_b.data[47:40] = v_b.rdata[47:40];
+      end
+      if (v_b.strb[6] == 0) begin
+        v_b.data[55:48] = v_b.rdata[55:48];
+      end
+      if (v_b.strb[7] == 0) begin
+        v_b.data[63:56] = v_b.rdata[63:56];
       end
     end
 
@@ -219,9 +231,9 @@ module tim
   input  logic [0  : 0] tim_valid,
   input  logic [0  : 0] tim_instr,
   input  logic [31 : 0] tim_addr,
-  input  logic [31 : 0] tim_wdata,
-  input  logic [3  : 0] tim_wstrb,
-  output logic [31 : 0] tim_rdata,
+  input  logic [63 : 0] tim_wdata,
+  input  logic [7  : 0] tim_wstrb,
+  output logic [63 : 0] tim_rdata,
   output logic [0  : 0] tim_ready
 );
   timeunit 1ns;

@@ -14,18 +14,18 @@ package functions;
     end
   endfunction
 
-  function [31:0] store_data;
+  function [63:0] store_data;
     input [31:0] sdata;
     input [0:0] sb;
     input [0:0] sh;
     input [0:0] sw;
     begin
       if (sb == 1)
-        store_data = {sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0]};
+        store_data = {sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0]};
       else if (sh == 1)
-        store_data = {sdata[15:0],sdata[15:0]};
+        store_data = {sdata[15:0],sdata[15:0],sdata[15:0],sdata[15:0]};
       else if (sw == 1)
-        store_data = sdata;
+        store_data = {sdata[31:0],sdata[31:0]};
       else
         store_data = 0;
     end

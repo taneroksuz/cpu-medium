@@ -8,9 +8,9 @@ module clint
   input logic [0   : 0] clint_valid,
   input logic [0   : 0] clint_instr,
   input logic [31  : 0] clint_addr,
-  input logic [31  : 0] clint_wdata,
-  input logic [3   : 0] clint_wstrb,
-  output logic [31 : 0] clint_rdata,
+  input logic [63  : 0] clint_wdata,
+  input logic [7   : 0] clint_wstrb,
+  output logic [63 : 0] clint_rdata,
   output logic [0  : 0] clint_ready,
   output logic [63 : 0] clint_mtime,
   output logic clint_msip,
@@ -35,9 +35,9 @@ module clint
   logic [31 : 0] count = 0;
   logic [0  : 0] enable = 0;
 
-  logic [31 : 0] rdata_ms = 0;
-  logic [31 : 0] rdata_mt = 0;
-  logic [31 : 0] rdata_mtc = 0;
+  logic [63 : 0] rdata_ms = 0;
+  logic [63 : 0] rdata_mt = 0;
+  logic [63 : 0] rdata_mtc = 0;
 
   logic [0  : 0] ready_ms = 0;
   logic [0  : 0] ready_mt = 0;
@@ -79,18 +79,10 @@ module clint
       if (clint_valid == 1) begin
         if (clint_addr >= clint_mtime_start && clint_addr < clint_mtime_end) begin
           if (|clint_wstrb == 0) begin
-            if (clint_addr[2] == 0) begin
-              rdata_mt <= mtime[31:0];
-            end else begin
-              rdata_mt <= mtime[63:32];
-            end
+            rdata_mt <= mtime;
             ready_mt <= 1;
           end else begin
-            if (clint_addr[2] == 0) begin
-              mtime[31:0] <= clint_wdata;
-            end else begin
-              mtime[63:32] <= clint_wdata;
-            end
+            mtime <= clint_wdata;
             ready_mt <= 1;
           end
         end
@@ -109,18 +101,10 @@ module clint
       if (clint_valid == 1) begin
         if (clint_addr >= clint_mtimecmp_start && clint_addr < clint_mtimecmp_end) begin
           if (|clint_wstrb == 0) begin
-            if (clint_addr[2] == 0) begin
-              rdata_mtc <= mtimecmp[31:0];
-            end else begin
-              rdata_mtc <= mtimecmp[63:32];
-            end
+            rdata_mtc <= mtimecmp;
             ready_mtc <= 1;
           end else begin
-            if (clint_addr[2] == 0) begin
-              mtimecmp[31:0] <= clint_wdata;
-            end else begin
-              mtimecmp[63:32] <= clint_wdata;
-            end
+            mtimecmp <= clint_wdata;
             ready_mtc <= 1;
           end
         end
