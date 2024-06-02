@@ -322,7 +322,7 @@ module soc();
 
   always_ff @(posedge clock) begin
     if (soc.cpu_comp.memory_stage_comp.dmem_in.mem_valid == 1) begin
-      if (soc.cpu_comp.memory_stage_comp.dmem_in.mem_addr[31:2] == host[0][31:2]) begin
+      if (soc.cpu_comp.memory_stage_comp.dmem_in.mem_addr[31:3] == host[0][31:3]) begin
         if (|soc.cpu_comp.memory_stage_comp.dmem_in.mem_wstrb == 1) begin
           if (|soc.cpu_comp.memory_stage_comp.dmem_in.mem_wdata == 1) begin
             $finish;
