@@ -107,7 +107,7 @@ module buffer_ctrl
     logic [depth+1 : 0] wid;
     logic [depth+1 : 0] rid;
     logic [depth+1 : 0] diff;
-    logic [depth+1 : 0] incr;
+    logic [depth+1 : 0] align;
     logic [depth+1 : 0] count;
     logic [47 : 0] wdata0;
     logic [47 : 0] wdata1;
@@ -126,7 +126,6 @@ module buffer_ctrl
     logic [0 : 0] comp1;
     logic [0 : 0] ready0;
     logic [0 : 0] ready1;
-    logic [0 : 0] clear;
     logic [0 : 0] stall;
   } reg_type;
 
@@ -134,7 +133,7 @@ module buffer_ctrl
     wid : 0,
     rid : 0,
     diff : 0,
-    incr : 0,
+    align : 0,
     count : 0,
     wdata0 : 0,
     wdata1 : 0,
@@ -153,7 +152,6 @@ module buffer_ctrl
     comp1 : 0,
     ready0 : 0,
     ready1 : 0,
-    clear : 0,
     stall : 0
   };
 
@@ -163,32 +161,15 @@ module buffer_ctrl
 
     v = r;
 
-    v.incr = 4;
-
     if (buffer_in.clear == 1) begin
       v.wid = 0;
       v.rid = 0;
       v.count = 0;
-      v.clear = 1;
     end
 
-    if (r.clear == 1 && buffer_in.ready == 1) begin
-      v.clear = 0;
-      if (buffer_in.pc[2:1] == 0) begin
-        v.incr = 4;
-      end
-      if (buffer_in.pc[2:1] == 1) begin
-        v.incr = 3;
-      end
-      if (buffer_in.pc[2:1] == 2) begin
-        v.incr = 2;
-      end
-      if (buffer_in.pc[2:1] == 3) begin
-        v.incr = 1;
-      end
-    end
+    v.align = {{depth{1'b0}},buffer_in.pc[2:1]};
 
-    v.wen = (~v.clear) & (~r.stall) & buffer_in.ready;
+    v.wen = (~buffer_in.clear) & (~r.stall) & buffer_in.ready;
 
     v.wdata0 = {buffer_in.pc[31:3],3'b000,buffer_in.rdata[15:0]};
     v.wdata1 = {buffer_in.pc[31:3],3'b010,buffer_in.rdata[31:16]};
@@ -291,7 +272,7 @@ module buffer_ctrl
 
     if (v.wen == 1) begin
       v.wid = v.wid + 4;
-      v.count = v.count + v.incr;
+      v.count = v.count + 4;
     end
 
     v.diff = 0;
@@ -306,14 +287,14 @@ module buffer_ctrl
     v.ready0 = 0;
     v.ready1 = 0;
 
-    if (v.count > 0) begin
+    if (v.count > v.align) begin
       v.pc0 = v.rdata0[47:16];
       v.instr0[15:0] = v.rdata0[15:0];
       v.comp0 = ~(&v.rdata0[1:0]);
       v.ready0 = v.comp0;
       v.diff = v.comp0 ? 1 : 0;
     end
-    if (v.count > 1) begin
+    if (v.count > v.align+1) begin
       if (v.comp0 == 0) begin
         v.instr0[31:16] = v.rdata1[15:0];
         v.ready0 = 1;
@@ -327,7 +308,7 @@ module buffer_ctrl
         v.diff = v.comp1 ? 2 : 1;
       end
     end
-    if (v.count > 2) begin
+    if (v.count > v.align+2) begin
       if (v.comp0 == 1 && v.comp1 == 0) begin
         v.instr1[31:16] = v.rdata2[15:0];
         v.ready1 = 1;
@@ -341,7 +322,7 @@ module buffer_ctrl
         v.diff = v.comp1 ? 3 : 2;
       end
     end
-    if (v.count > 3) begin
+    if (v.count > v.align+3) begin
       if (v.comp0 == 0 && v.comp1 == 0) begin
         v.instr1[31:16] = v.rdata3[15:0];
         v.ready1 = 1;
