@@ -55,6 +55,11 @@ module buffer_reg
   logic [47:0] buffer_reg_array2[0:buffer_depth-1] = '{default:'0};
   logic [47:0] buffer_reg_array3[0:buffer_depth-1] = '{default:'0};
 
+  logic [47:0] rdata0;
+  logic [47:0] rdata1;
+  logic [47:0] rdata2;
+  logic [47:0] rdata3;
+
   always_ff @(posedge clock) begin
     if (buffer_reg_in.wen0 == 1) begin
       buffer_reg_array0[buffer_reg_in.waddr0] <= buffer_reg_in.wdata0;
@@ -79,10 +84,19 @@ module buffer_reg
     end
   end
 
-  assign buffer_reg_out.rdata0 = buffer_reg_array0[buffer_reg_in.raddr0];
-  assign buffer_reg_out.rdata1 = buffer_reg_array1[buffer_reg_in.raddr1];
-  assign buffer_reg_out.rdata2 = buffer_reg_array2[buffer_reg_in.raddr2];
-  assign buffer_reg_out.rdata3 = buffer_reg_array3[buffer_reg_in.raddr3];
+  always_comb begin
+    rdata0 = buffer_reg_array0[buffer_reg_in.raddr0];
+    rdata1 = buffer_reg_array1[buffer_reg_in.raddr1];
+    rdata2 = buffer_reg_array2[buffer_reg_in.raddr2];
+    rdata3 = buffer_reg_array3[buffer_reg_in.raddr3];
+  end
+
+  always_comb begin
+    buffer_reg_out.rdata0 = buffer_reg_in.raddr0 == buffer_reg_in.waddr0 ? buffer_reg_in.wdata0 : rdata0;
+    buffer_reg_out.rdata1 = buffer_reg_in.raddr1 == buffer_reg_in.waddr1 ? buffer_reg_in.wdata1 : rdata1;
+    buffer_reg_out.rdata2 = buffer_reg_in.raddr2 == buffer_reg_in.waddr2 ? buffer_reg_in.wdata2 : rdata2;
+    buffer_reg_out.rdata3 = buffer_reg_in.raddr3 == buffer_reg_in.waddr3 ? buffer_reg_in.wdata3 : rdata3;
+  end
 
 endmodule
 
@@ -194,81 +208,27 @@ module buffer_ctrl
       buffer_reg_in.raddr1 = v.rid[depth+1:2];
       buffer_reg_in.raddr2 = v.rid[depth+1:2];
       buffer_reg_in.raddr3 = v.rid[depth+1:2];
-      if (v.wid[depth+1:2] == v.rid[depth+1:2]) begin
-        v.rdata0 = v.wdata0;
-        v.rdata1 = v.wdata1;
-        v.rdata2 = v.wdata2;
-        v.rdata3 = v.wdata3;
-      end else begin
-        v.rdata0 = buffer_reg_out.rdata0;
-        v.rdata1 = buffer_reg_out.rdata1;
-        v.rdata2 = buffer_reg_out.rdata2;
-        v.rdata3 = buffer_reg_out.rdata3;
-      end
     end else if (v.rid[1:0] == 1) begin
       buffer_reg_in.raddr0 = v.rid[depth+1:2] + one;
       buffer_reg_in.raddr1 = v.rid[depth+1:2];
       buffer_reg_in.raddr2 = v.rid[depth+1:2];
       buffer_reg_in.raddr3 = v.rid[depth+1:2];
-      if (v.wid[depth+1:2] == v.rid[depth+1:2]) begin
-        v.rdata0 = v.wdata1;
-        v.rdata1 = v.wdata2;
-        v.rdata2 = v.wdata3;
-        v.rdata3 = v.wdata0;
-      end else if (v.wid[depth+1:2] == v.rid[depth+1:2] + one) begin
-        v.rdata0 = buffer_reg_out.rdata1;
-        v.rdata1 = buffer_reg_out.rdata2;
-        v.rdata2 = buffer_reg_out.rdata3;
-        v.rdata3 = v.wdata0;
-      end else begin
-        v.rdata0 = buffer_reg_out.rdata1;
-        v.rdata1 = buffer_reg_out.rdata2;
-        v.rdata2 = buffer_reg_out.rdata3;
-        v.rdata3 = buffer_reg_out.rdata0;
-      end
     end else if (v.rid[1:0] == 2) begin
       buffer_reg_in.raddr0 = v.rid[depth+1:2] + one;
       buffer_reg_in.raddr1 = v.rid[depth+1:2] + one;
       buffer_reg_in.raddr2 = v.rid[depth+1:2];
       buffer_reg_in.raddr3 = v.rid[depth+1:2];
-      if (v.wid[depth+1:2] == v.rid[depth+1:2]) begin
-        v.rdata0 = v.wdata2;
-        v.rdata1 = v.wdata3;
-        v.rdata2 = v.wdata0;
-        v.rdata3 = v.wdata1;
-      end else if (v.wid[depth+1:2] == v.rid[depth+1:2] + one) begin
-        v.rdata0 = buffer_reg_out.rdata2;
-        v.rdata1 = buffer_reg_out.rdata3;
-        v.rdata2 = v.wdata0;
-        v.rdata3 = v.wdata1;
-      end else begin
-        v.rdata0 = buffer_reg_out.rdata2;
-        v.rdata1 = buffer_reg_out.rdata3;
-        v.rdata2 = buffer_reg_out.rdata0;
-        v.rdata3 = buffer_reg_out.rdata1;
-      end
     end else begin
       buffer_reg_in.raddr0 = v.rid[depth+1:2] + one;
       buffer_reg_in.raddr1 = v.rid[depth+1:2] + one;
       buffer_reg_in.raddr2 = v.rid[depth+1:2] + one;
       buffer_reg_in.raddr3 = v.rid[depth+1:2];
-      if (v.wid[depth+1:2] == v.rid[depth+1:2]) begin
-        v.rdata0 = v.wdata3;
-        v.rdata1 = v.wdata0;
-        v.rdata2 = v.wdata1;
-        v.rdata3 = v.wdata2;
-      end else if (v.wid[depth+1:2] == v.rid[depth+1:2] + one) begin
-        v.rdata0 = buffer_reg_out.rdata3;
-        v.rdata1 = v.wdata0;
-        v.rdata2 = v.wdata1;
-        v.rdata3 = v.wdata2;
-      end else begin
-        v.rdata0 = buffer_reg_out.rdata3;
-        v.rdata1 = buffer_reg_out.rdata0;
-        v.rdata2 = buffer_reg_out.rdata1;
-        v.rdata3 = buffer_reg_out.rdata2;
-      end
     end
+
+    v.rdata0 = buffer_reg_out.rdata0;
+    v.rdata1 = buffer_reg_out.rdata1;
+    v.rdata2 = buffer_reg_out.rdata2;
+    v.rdata3 = buffer_reg_out.rdata3;
 
     if (v.wen == 1) begin
       v.wid = v.wid + 4;
