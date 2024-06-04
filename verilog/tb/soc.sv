@@ -257,15 +257,16 @@ module soc();
       csr_file = $fopen(filename,"w");
       for (int i=0; i<stoptime; i=i+1) begin
         @(posedge clock);
-        if (soc.cpu_comp.csr_comp.csr_win.cwren == 1) begin
+        if (soc.cpu_comp.execute_stage_comp.a.m.calc0.op.cwren == 1) begin
           $fwrite(csr_file,"PERIOD = %t\t",$time);
-          if (soc.cpu_comp.execute_stage_comp.a.m.calc0.op.cwren == 1) begin
-            $fwrite(csr_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.pc);
-          end else begin
-            $fwrite(csr_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.pc);
-          end
-          $fwrite(csr_file,"WADDR = %x\t",soc.cpu_comp.csr_comp.csr_win.cwaddr);
-          $fwrite(csr_file,"WDATA = %x\n",soc.cpu_comp.csr_comp.csr_win.cdata);
+          $fwrite(csr_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.pc);
+          $fwrite(csr_file,"WADDR = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.caddr);
+          $fwrite(csr_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc0.cdata);
+        end else if (soc.cpu_comp.execute_stage_comp.a.m.calc1.op.cwren == 1) begin
+          $fwrite(csr_file,"PERIOD = %t\t",$time);
+          $fwrite(csr_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.pc);
+          $fwrite(csr_file,"WADDR = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.caddr);
+          $fwrite(csr_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc1.cdata);
         end
       end
       $fclose(csr_file);
@@ -278,12 +279,21 @@ module soc();
       mem_file = $fopen(filename,"w");
       for (int i=0; i<stoptime; i=i+1) begin
         @(posedge clock);
-        if (soc.ram_comp.ram_valid == 1) begin
-          if (|soc.ram_comp.ram_wstrb == 1) begin
+        if ((soc.cpu_comp.execute_stage_comp.a.m.calc0.op.store | soc.cpu_comp.execute_stage_comp.a.m.calc0.op.fstore) == 1) begin
+          if (|soc.cpu_comp.execute_stage_comp.a.m.calc0.byteenable == 1) begin
             $fwrite(mem_file,"PERIOD = %t\t",$time);
-            $fwrite(mem_file,"WADDR = %x\t",soc.ram_comp.ram_addr);
-            $fwrite(mem_file,"WSTRB = %b\t",soc.ram_comp.ram_wstrb);
-            $fwrite(mem_file,"WDATA = %x\n",soc.ram_comp.ram_wdata);
+            $fwrite(mem_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.pc);
+            $fwrite(mem_file,"WADDR = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.address);
+            $fwrite(mem_file,"WSTRB = %b\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.byteenable);
+            $fwrite(mem_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc0.sdata);
+          end
+        end else if ((soc.cpu_comp.execute_stage_comp.a.m.calc1.op.store | soc.cpu_comp.execute_stage_comp.a.m.calc1.op.fstore) == 1) begin
+          if (|soc.cpu_comp.execute_stage_comp.a.m.calc1.byteenable == 1) begin
+            $fwrite(mem_file,"PERIOD = %t\t",$time);
+            $fwrite(mem_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.pc);
+            $fwrite(mem_file,"WADDR = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.address);
+            $fwrite(mem_file,"WSTRB = %b\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.byteenable);
+            $fwrite(mem_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc1.sdata);
           end
         end
       end
@@ -297,15 +307,16 @@ module soc();
       freg_file = $fopen(filename,"w");
       for (int i=0; i<stoptime; i=i+1) begin
         @(posedge clock);
-        if (soc.cpu_comp.fpu_comp.fpu_generate.fpu_register_comp.fp_register_win.wren == 1) begin
+        if (soc.cpu_comp.execute_stage_comp.a.m.calc0.op.fwren == 1) begin
           $fwrite(freg_file,"PERIOD = %t\t",$time);
-          if (soc.cpu_comp.execute_stage_comp.a.m.calc0.op.fwren == 1) begin
-            $fwrite(freg_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.pc);
-          end else begin
-            $fwrite(freg_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.pc);
-          end
-          $fwrite(freg_file,"WADDR = %d\t",soc.cpu_comp.fpu_comp.fpu_generate.fpu_register_comp.fp_register_win.waddr);
-          $fwrite(freg_file,"WDATA = %x\n",soc.cpu_comp.fpu_comp.fpu_generate.fpu_register_comp.fp_register_win.wdata);
+          $fwrite(freg_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.pc);
+          $fwrite(freg_file,"WADDR = %d\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.waddr);
+          $fwrite(freg_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc0.fdata);
+        end else if (soc.cpu_comp.execute_stage_comp.a.m.calc1.op.fwren == 1) begin
+          $fwrite(freg_file,"PERIOD = %t\t",$time);
+          $fwrite(freg_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.pc);
+          $fwrite(freg_file,"WADDR = %d\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.waddr);
+          $fwrite(freg_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc1.fdata);
         end
       end
       $fclose(freg_file);
@@ -324,9 +335,8 @@ module soc();
     if (soc.cpu_comp.memory_stage_comp.dmem_in.mem_valid == 1) begin
       if (soc.cpu_comp.memory_stage_comp.dmem_in.mem_addr[31:3] == host[0][31:3]) begin
         if (|soc.cpu_comp.memory_stage_comp.dmem_in.mem_wstrb == 1) begin
-          if (|soc.cpu_comp.memory_stage_comp.dmem_in.mem_wdata == 1) begin
-            $finish;
-          end
+          $display("%d",soc.cpu_comp.memory_stage_comp.dmem_in.mem_wdata[31:0]);
+          $finish;
         end
       end
     end
