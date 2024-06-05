@@ -237,13 +237,13 @@ module soc();
         if (soc.cpu_comp.register_comp.register0_win.wren == 1) begin
           $fwrite(reg_file,"PERIOD = %t\t",$time);
           $fwrite(reg_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.pc);
-          $fwrite(reg_file,"WADDR = %d\t",soc.cpu_comp.register_comp.register0_win.waddr);
+          $fwrite(reg_file,"WADDR = %x\t",soc.cpu_comp.register_comp.register0_win.waddr);
           $fwrite(reg_file,"WDATA = %x\n",soc.cpu_comp.register_comp.register0_win.wdata);
         end
         if (soc.cpu_comp.register_comp.register1_win.wren == 1) begin
           $fwrite(reg_file,"PERIOD = %t\t",$time);
           $fwrite(reg_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.pc);
-          $fwrite(reg_file,"WADDR = %d\t",soc.cpu_comp.register_comp.register1_win.waddr);
+          $fwrite(reg_file,"WADDR = %x\t",soc.cpu_comp.register_comp.register1_win.waddr);
           $fwrite(reg_file,"WDATA = %x\n",soc.cpu_comp.register_comp.register1_win.wdata);
         end
       end
@@ -310,12 +310,12 @@ module soc();
         if (soc.cpu_comp.execute_stage_comp.a.m.calc0.op.fwren == 1) begin
           $fwrite(freg_file,"PERIOD = %t\t",$time);
           $fwrite(freg_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.pc);
-          $fwrite(freg_file,"WADDR = %d\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.waddr);
+          $fwrite(freg_file,"WADDR = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.waddr);
           $fwrite(freg_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc0.fdata);
         end else if (soc.cpu_comp.execute_stage_comp.a.m.calc1.op.fwren == 1) begin
           $fwrite(freg_file,"PERIOD = %t\t",$time);
           $fwrite(freg_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.pc);
-          $fwrite(freg_file,"WADDR = %d\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.waddr);
+          $fwrite(freg_file,"WADDR = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.waddr);
           $fwrite(freg_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc1.fdata);
         end
       end

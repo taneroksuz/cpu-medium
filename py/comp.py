@@ -20,9 +20,10 @@ if __name__ == '__main__':
 
     for src_line in src_txt:
         src_num = re.findall(r'[0-9a-f]+', src_line)
-        src_waddr = src_num[1]
-        src_wdata = src_num[2]
-        src_list.append([src_waddr,src_wdata])
+        src_pc = src_num[1]
+        src_waddr = src_num[2]
+        src_wdata = src_num[3]
+        src_list.append([src_pc,src_waddr,src_wdata])
 
     #print(src_list)
     #exit(0)
@@ -32,9 +33,10 @@ if __name__ == '__main__':
     for dst_line in dst_txt:
         dst_num = re.findall(r'[0-9a-f]+', dst_line)
         dst_period = dst_num[0]
-        dst_waddr = dst_num[1]
-        dst_wdata = dst_num[2]
-        dst_list.append([dst_period,dst_waddr,dst_wdata])
+        dst_pc = dst_num[1]
+        dst_waddr = dst_num[2]
+        dst_wdata = dst_num[3]
+        dst_list.append([dst_period,dst_pc,dst_waddr,dst_wdata])
 
     #print(dst_list)
     #exit(0)
@@ -47,8 +49,8 @@ if __name__ == '__main__':
     f = open("difference.txt", "w")
 
     for i in range(len(dst_list)):
-        if (dst_list[i][1] != src_list[i][0] or dst_list[i][2] != src_list[i][1]):
-            f.writelines("Difference at "+str(dst_list[i][0]).rjust(10)+": \twaddr = "+str(int(dst_list[i][1],10)).rjust(2)+" \twdata = "+("0x%08X" % int(dst_list[i][2],16))+"\n")
+        if (dst_list[i][1] != src_list[i][0] or dst_list[i][2] != src_list[i][1] or dst_list[i][3] != src_list[i][2]):
+            f.writelines("Difference at "+str(dst_list[i][0]).rjust(10)+" \tpc = "+("%08X" % int(dst_list[i][1],16))+": \twaddr = "+("%02X" % int(dst_list[i][2],16))+" \twdata = "+("%08X" % int(dst_list[i][3],16))+"\n")
         i += 1
 
     f.close()
