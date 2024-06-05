@@ -355,7 +355,7 @@ module buffer_ctrl
     buffer_out.instr1 = v.ready1 ? v.instr1 : 0;
     buffer_out.ready0 = v.ready0;
     buffer_out.ready1 = v.ready1;
-    buffer_out.stall = v.stall;
+    buffer_out.stall = ~v.wen;
 
     rin = v;
 
