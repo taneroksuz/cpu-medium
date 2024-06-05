@@ -188,13 +188,13 @@ module buffer_ctrl
       v.clear = 1;
     end
 
-    if (r.clear == 1 && buffer_in.ready == 1) begin
+    if (r.clear == 1 && buffer_in.clear == 0 && buffer_in.ready == 1) begin
       v.rid = {{depth{1'b0}},buffer_in.pc[2:1]};
       v.align = {{depth{1'b0}},buffer_in.pc[2:1]};
       v.clear = 0;
     end
 
-    v.wen = (~v.clear) & (~r.stall) & buffer_in.ready;
+    v.wen = (~buffer_in.clear) & (~r.stall) & buffer_in.ready;
 
     v.wdata0 = {buffer_in.pc[31:3],3'b000,buffer_in.rdata[15:0]};
     v.wdata1 = {buffer_in.pc[31:3],3'b010,buffer_in.rdata[31:16]};
