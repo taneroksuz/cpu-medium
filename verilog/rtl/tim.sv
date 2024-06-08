@@ -50,7 +50,9 @@ module tim_ram
     end
   end
 
-  assign tim_ram_out.rdata = tim_ram[raddr];
+  always_ff @(posedge clock) begin
+    tim_ram_out.rdata = tim_ram[raddr];
+  end
 
 endmodule
 
@@ -94,6 +96,7 @@ module tim_ctrl
     logic [width-1:0] wid;
     logic [7:0] strb;
     logic [63:0] data;
+    logic [63:0] wdata;
     logic [63:0] rdata;
     logic [0:0] enable;
     logic [0:0] wren;
@@ -105,6 +108,7 @@ module tim_ctrl
     wid : 0,
     strb : 0,
     data : 0,
+    wdata : 0,
     rdata : 0,
     enable : 0,
     wren : 0,
@@ -153,33 +157,31 @@ module tim_ctrl
     v_b.did = r_f.did;
     v_b.wid = r_f.wid;
 
-    v_b.rdata = 0;
-
     if (v_b.enable == 1) begin
-      v_b.rdata = dvec_out[v_b.wid].rdata[63:0];
+      v_b.wdata = dvec_out[v_b.wid].rdata[63:0];
       if (v_b.strb[0] == 0) begin
-        v_b.data[7:0] = v_b.rdata[7:0];
+        v_b.data[7:0] = v_b.wdata[7:0];
       end
       if (v_b.strb[1] == 0) begin
-        v_b.data[15:8] = v_b.rdata[15:8];
+        v_b.data[15:8] = v_b.wdata[15:8];
       end
       if (v_b.strb[2] == 0) begin
-        v_b.data[23:16] = v_b.rdata[23:16];
+        v_b.data[23:16] = v_b.wdata[23:16];
       end
       if (v_b.strb[3] == 0) begin
-        v_b.data[31:24] = v_b.rdata[31:24];
+        v_b.data[31:24] = v_b.wdata[31:24];
       end
       if (v_b.strb[4] == 0) begin
-        v_b.data[39:32] = v_b.rdata[39:32];
+        v_b.data[39:32] = v_b.wdata[39:32];
       end
       if (v_b.strb[5] == 0) begin
-        v_b.data[47:40] = v_b.rdata[47:40];
+        v_b.data[47:40] = v_b.wdata[47:40];
       end
       if (v_b.strb[6] == 0) begin
-        v_b.data[55:48] = v_b.rdata[55:48];
+        v_b.data[55:48] = v_b.wdata[55:48];
       end
       if (v_b.strb[7] == 0) begin
-        v_b.data[63:56] = v_b.rdata[63:56];
+        v_b.data[63:56] = v_b.wdata[63:56];
       end
     end
 
@@ -204,6 +206,12 @@ module tim_ctrl
     dvec_in[v_b.wid].wdata = v_b.data;
 
     // Output
+
+    if (r_b.wren == v_b.rden && r_b.did == v_b.did && r_b.wid == v_b.wid) begin
+      v_b.rdata = r_b.data;
+    end else begin
+      v_b.rdata = v_b.wdata;
+    end
 
     tim_out.mem_rdata = v_b.rden ? v_b.rdata : 0;
     tim_out.mem_ready = v_b.rden | v_b.wren;
