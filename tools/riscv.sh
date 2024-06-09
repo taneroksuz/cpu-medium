@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-PREFIX=/opt/rv32imfcb
+PREFIX=/opt/rv32imfdcb
 
 if [ -d "$PREFIX" ]
 then
@@ -28,7 +28,7 @@ cd riscv-gnu-toolchain
 mkdir build
 cd build
 
-../configure --prefix=$PREFIX --disable-linux --with-arch=rv32imfc_zba_zbb_zbc_zbs \
-             --with-abi=ilp32
+../configure --prefix=$PREFIX --disable-linux --with-arch=rv32imfdc_zba_zbb_zbc_zbs \
+             --with-abi=ilp32d
 
 make -j$(nproc) newlib
