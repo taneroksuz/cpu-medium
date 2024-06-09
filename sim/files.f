@@ -8,6 +8,7 @@ $BASEDIR/fpu/verilog/src/lzc/lzc_16.sv
 $BASEDIR/fpu/verilog/src/lzc/lzc_32.sv
 $BASEDIR/fpu/verilog/src/lzc/lzc_64.sv
 $BASEDIR/fpu/verilog/src/lzc/lzc_128.sv
+$BASEDIR/fpu/verilog/src/lzc/lzc_256.sv
 $BASEDIR/fpu/verilog/src/float/fp_wire.sv
 $BASEDIR/fpu/verilog/src/float/fp_ext.sv
 $BASEDIR/fpu/verilog/src/float/fp_cmp.sv

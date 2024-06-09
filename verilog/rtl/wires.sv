@@ -574,14 +574,14 @@ package wires;
     logic [2  : 0] rm;
     logic [31 : 0] rdata1;
     logic [31 : 0] rdata2;
-    logic [31 : 0] frdata1;
-    logic [31 : 0] frdata2;
-    logic [31 : 0] frdata3;
+    logic [63 : 0] frdata1;
+    logic [63 : 0] frdata2;
+    logic [63 : 0] frdata3;
     logic [31 : 0] cdata;
     logic [31 : 0] bdata;
     logic [31 : 0] mdata;
     logic [31 : 0] wdata;
-    logic [31 : 0] fdata;
+    logic [63 : 0] fdata;
     logic [31 : 0] ldata;
     logic [31 : 0] sdata;
     logic [31 : 0] ddata;
@@ -787,9 +787,9 @@ package wires;
   } fp_decode_out_type;
 
   typedef struct packed{
-    logic [31 : 0] data1;
-    logic [31 : 0] data2;
-    logic [31 : 0] data3;
+    logic [63 : 0] data1;
+    logic [63 : 0] data2;
+    logic [63 : 0] data3;
     fp_operation_type fpu_op;
     logic [1  : 0] fmt;
     logic [2  : 0] rm;
@@ -797,7 +797,7 @@ package wires;
   } fp_execute_in_type;
 
   typedef struct packed{
-    logic [31 : 0] result;
+    logic [63 : 0] result;
     logic [4  : 0] flags;
     logic [0  : 0] ready;
   } fp_execute_out_type;
@@ -814,13 +814,13 @@ package wires;
   typedef struct packed{
     logic [0  : 0] wren;
     logic [4  : 0] waddr;
-    logic [31 : 0] wdata;
+    logic [63 : 0] wdata;
   } fp_register_write_in_type;
 
   typedef struct packed{
-    logic [31 : 0] rdata1;
-    logic [31 : 0] rdata2;
-    logic [31 : 0] rdata3;
+    logic [63 : 0] rdata1;
+    logic [63 : 0] rdata2;
+    logic [63 : 0] rdata3;
   } fp_register_out_type;
 
   typedef struct packed{
@@ -1166,27 +1166,27 @@ package wires;
     logic [4  : 0] raddr1;
     logic [4  : 0] raddr2;
     logic [4  : 0] raddr3;
-    logic [31 : 0] rdata1;
-    logic [31 : 0] rdata2;
-    logic [31 : 0] rdata3;
+    logic [63 : 0] rdata1;
+    logic [63 : 0] rdata2;
+    logic [63 : 0] rdata3;
   } fp_forwarding_register_in_type;
 
   typedef struct packed{
     logic [0  : 0] wren;
     logic [4  : 0] waddr;
-    logic [31 : 0] wdata;
+    logic [63 : 0] wdata;
   } fp_forwarding_execute_in_type;
 
   typedef struct packed{
     logic [0  : 0] wren;
     logic [4  : 0] waddr;
-    logic [31 : 0] wdata;
+    logic [63 : 0] wdata;
   } fp_forwarding_memory_in_type;
 
   typedef struct packed{
-    logic [31 : 0] data1;
-    logic [31 : 0] data2;
-    logic [31 : 0] data3;
+    logic [63 : 0] data1;
+    logic [63 : 0] data2;
+    logic [63 : 0] data3;
   } fp_forwarding_out_type;
 
   typedef struct packed{
