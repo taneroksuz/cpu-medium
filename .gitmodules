@@ -1,0 +1,4 @@
+[submodule "fpu"]
+	path = fpu
+	url = https://github.com/taneroksuz/fpu.git
+	branch = main
