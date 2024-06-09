@@ -88,7 +88,7 @@ module memory_stage
     end else if (v.calc0.op.store == 1) begin
       v.stall = ~(dmem_out.mem_ready);
     end else if (v.calc0.op.fload == 1) begin
-      v.calc0.fdata = v.calc0.ldata;
+      v.calc0.fdata = nan_box(v.calc0.ldata,v.calc0.lsu_op.lsu_lw);
       v.stall = ~(dmem_out.mem_ready);
     end else if (v.calc0.op.fstore == 1) begin
       v.stall = ~(dmem_out.mem_ready);
@@ -102,7 +102,7 @@ module memory_stage
     end else if (v.calc1.op.store == 1) begin
       v.stall = v.stall | ~(dmem_out.mem_ready);
     end else if (v.calc1.op.fload == 1) begin
-      v.calc1.fdata = v.calc1.ldata;
+      v.calc1.fdata = nan_box(v.calc1.ldata,v.calc1.lsu_op.lsu_lw);
       v.stall = v.stall | ~(dmem_out.mem_ready);
     end else if (v.calc1.op.fstore == 1) begin
       v.stall = v.stall | ~(dmem_out.mem_ready);

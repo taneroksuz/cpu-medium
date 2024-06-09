@@ -34,6 +34,16 @@ package functions;
     end
   endfunction
 
+  function [63:0] nan_box;
+    input [63:0] ldata;
+    input [0:0] flw;
+    begin
+      nan_box = ldata;
+      if (flw == 1)
+        nan_box[63:32] = 32'hFFFFFFFF;
+    end
+  endfunction
+
   function [31:0] bit_andn;
     input [31:0] rs1;
     input [31:0] rs2;
