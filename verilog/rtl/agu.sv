@@ -78,6 +78,12 @@ module agu
           default : misalign = 1;
         endcase
       end
+      if (agu_in.lsu_op.lsu_sd == 1 || agu_in.lsu_op.lsu_ld == 1) begin
+        case (address[2:0])
+          0 : byteenable = 8'hFF;
+          default : misalign = 1;
+        endcase
+      end
     end
 
     if (misalign == 1) begin
