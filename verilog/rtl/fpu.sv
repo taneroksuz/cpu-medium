@@ -99,6 +99,8 @@ module fpu_decode
         fpunit = 1;
         if (funct3 == funct_lw) begin
           lsu_op.lsu_lw = 1;
+        end else if (funct3 == funct_ld) begin
+          lsu_op.lsu_ld = 1;
         end else begin
           valid = 0;
         end
@@ -112,6 +114,8 @@ module fpu_decode
         fpunit = 1;
         if (funct3 == funct_sw) begin
           lsu_op.lsu_sw = 1;
+        end else if (funct3 == funct_sd) begin
+          lsu_op.lsu_sd = 1;
         end else begin
           valid = 0;
         end
@@ -210,6 +214,14 @@ module fpu_decode
             fwren = 1;
             fpunit = 1;
             fpu_op.fmv_i2f = 1;
+          end
+          funct_fconv_f2f : begin
+            instr_str = "fconv";
+            fwren = 1;
+            frden1 = 1;
+            fpunit = 1;
+            fpuf = 1;
+            fpu_op.fcvt_f2f = 1;
           end
           funct_fconv_f2i : begin
             instr_str = "fconv";

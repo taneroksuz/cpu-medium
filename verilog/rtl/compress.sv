@@ -17,6 +17,10 @@ module compress
   logic [31 : 0] imm_swsp;
   logic [31 : 0] imm_lswr;
 
+  logic [31 : 0] imm_ldsp;
+  logic [31 : 0] imm_sdsp;
+  logic [31 : 0] imm_lsdr;
+
   logic [31 : 0] imm_j;
   logic [31 : 0] imm_b;
   logic [31 : 0] imm_w;
@@ -84,6 +88,10 @@ module compress
     imm_lwsp = {24'b0,instr[3:2],instr[12],instr[6:4],2'b0};
     imm_swsp = {24'b0,instr[8:7],instr[12:9],2'b0};
     imm_lswr = {25'b0,instr[5],instr[12:10],instr[6],2'b0};
+
+    imm_ldsp = {23'b0,instr[4:2],instr[12],instr[6:5],3'b0};
+    imm_sdsp = {23'b0,instr[9:7],instr[12:10],3'b0};
+    imm_lsdr = {24'b0,instr[6:5],instr[12:10],3'b0};
 
     imm_j = {{20{instr[12]}},instr[12],instr[8],instr[10:9],instr[6],instr[7],instr[2],instr[11],instr[5:3],1'b0};
     imm_b = {{23{instr[12]}},instr[12],instr[6:5],instr[2],instr[11:10],instr[4:3],1'b0};
@@ -178,6 +186,17 @@ module compress
             fpunit = 1;
             lsu_op.lsu_lw = 1;
           end
+          c0_fld : begin
+            instr_str = "c.fld";
+            imm = imm_lsdr;
+            waddr = {2'b01,instr[4:2]};
+            raddr1 = {2'b01,instr[9:7]};
+            fwren = 1;
+            rden1 = 1;
+            fload = 1;
+            fpunit = 1;
+            lsu_op.lsu_ld = 1;
+          end
           c0_sw : begin
             instr_str = "c.sw";
             imm = imm_lswr;
@@ -198,6 +217,17 @@ module compress
             fstore = 1;
             fpunit = 1;
             lsu_op.lsu_sw = 1;
+          end
+          c0_fsd : begin
+            instr_str = "c.fsd";
+            imm = imm_lsdr;
+            raddr1 = {2'b01,instr[9:7]};
+            raddr2 = {2'b01,instr[4:2]};
+            rden1 = 1;
+            frden2 = 1;
+            fstore = 1;
+            fpunit = 1;
+            lsu_op.lsu_sd = 1;
           end
           default : valid = 0;
         endcase
@@ -374,6 +404,16 @@ module compress
             fpunit = 1;
             lsu_op.lsu_lw = 1;
           end
+          c2_fldsp : begin
+            instr_str = "c.fldsp";
+            imm = imm_ldsp;
+            fwren = 1;
+            rden1 = 1;
+            raddr1 = 2;
+            fload = 1;
+            fpunit = 1;
+            lsu_op.lsu_ld = 1;
+          end
           c2_alu : begin
             case (funct4)
               0 : begin
@@ -436,6 +476,16 @@ module compress
             fstore = 1;
             fpunit = 1;
             lsu_op.lsu_sw = 1;
+          end
+          c2_fsdsp : begin
+            instr_str = "c.fsdsp";
+            imm = imm_sdsp;
+            rden1 = 1;
+            frden2 = 1;
+            raddr1 = 2;
+            fstore = 1;
+            fpunit = 1;
+            lsu_op.lsu_sd = 1;
           end
           default : valid = 0;
         endcase
