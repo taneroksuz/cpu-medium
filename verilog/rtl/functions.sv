@@ -15,10 +15,11 @@ package functions;
   endfunction
 
   function [63:0] store_data;
-    input [31:0] sdata;
+    input [63:0] sdata;
     input [0:0] sb;
     input [0:0] sh;
     input [0:0] sw;
+    input [0:0] sd;
     begin
       if (sb == 1)
         store_data = {sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0]};
@@ -26,6 +27,8 @@ package functions;
         store_data = {sdata[15:0],sdata[15:0],sdata[15:0],sdata[15:0]};
       else if (sw == 1)
         store_data = {sdata[31:0],sdata[31:0]};
+      else if (sd == 1)
+        store_data = sdata;
       else
         store_data = 0;
     end

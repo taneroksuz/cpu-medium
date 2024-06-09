@@ -58,7 +58,7 @@ module memory_stage
       dmem_in.mem_spec = 0;
       dmem_in.mem_instr = 0;
       dmem_in.mem_addr = a.e.calc0.address;
-      dmem_in.mem_wdata = store_data(a.e.calc0.sdata,a.e.calc0.lsu_op.lsu_sb,a.e.calc0.lsu_op.lsu_sh,a.e.calc0.lsu_op.lsu_sw);
+      dmem_in.mem_wdata = store_data(a.e.calc0.sdata,a.e.calc0.lsu_op.lsu_sb,a.e.calc0.lsu_op.lsu_sh,a.e.calc0.lsu_op.lsu_sw,a.e.calc0.lsu_op.lsu_sd);
       dmem_in.mem_wstrb = (a.e.calc0.op.load | a.e.calc0.op.fload) == 1 ? 8'h00 : a.e.calc0.byteenable;
     end else begin
       dmem_in.mem_valid = a.e.calc1.op.load | a.e.calc1.op.store | a.e.calc1.op.fload | a.e.calc1.op.fstore | a.e.calc1.op.fence;
@@ -66,7 +66,7 @@ module memory_stage
       dmem_in.mem_spec = 0;
       dmem_in.mem_instr = 0;
       dmem_in.mem_addr = a.e.calc1.address;
-      dmem_in.mem_wdata = store_data(a.e.calc1.sdata,a.e.calc1.lsu_op.lsu_sb,a.e.calc1.lsu_op.lsu_sh,a.e.calc1.lsu_op.lsu_sw);
+      dmem_in.mem_wdata = store_data(a.e.calc1.sdata,a.e.calc1.lsu_op.lsu_sb,a.e.calc1.lsu_op.lsu_sh,a.e.calc1.lsu_op.lsu_sw,a.e.calc1.lsu_op.lsu_sd);
       dmem_in.mem_wstrb = (a.e.calc1.op.load | a.e.calc1.op.fload) == 1 ? 8'h00 : a.e.calc1.byteenable;
     end
 
@@ -83,7 +83,7 @@ module memory_stage
     v.calc1.ldata = lsu1_out.result;
 
     if (v.calc0.op.load == 1) begin
-      v.calc0.wdata = v.calc0.ldata;
+      v.calc0.wdata = v.calc0.ldata[31:0];
       v.stall = ~(dmem_out.mem_ready);
     end else if (v.calc0.op.store == 1) begin
       v.stall = ~(dmem_out.mem_ready);
@@ -97,7 +97,7 @@ module memory_stage
     end
 
     if (v.calc1.op.load == 1) begin
-      v.calc1.wdata = v.calc1.ldata;
+      v.calc1.wdata = v.calc1.ldata[31:0];
       v.stall = v.stall | ~(dmem_out.mem_ready);
     end else if (v.calc1.op.store == 1) begin
       v.stall = v.stall | ~(dmem_out.mem_ready);

@@ -210,9 +210,12 @@ package wires;
     logic [0 : 0] lsu_lh;
     logic [0 : 0] lsu_lhu;
     logic [0 : 0] lsu_lw;
+    logic [0 : 0] lsu_lwu;
+    logic [0 : 0] lsu_ld;
     logic [0 : 0] lsu_sb;
     logic [0 : 0] lsu_sh;
     logic [0 : 0] lsu_sw;
+    logic [0 : 0] lsu_sd;
   } lsu_op_type;
 
   parameter lsu_op_type init_lsu_op = '{
@@ -221,9 +224,12 @@ package wires;
     lsu_lh : 0,
     lsu_lhu : 0,
     lsu_lw : 0,
+    lsu_lwu : 0,
+    lsu_ld : 0,
     lsu_sb : 0,
     lsu_sh : 0,
-    lsu_sw : 0
+    lsu_sw : 0,
+    lsu_sd : 0
   };
 
   typedef struct packed{
@@ -371,7 +377,7 @@ package wires;
   } lsu_in_type;
 
   typedef struct packed{
-    logic [31 : 0] result;
+    logic [63 : 0] result;
   } lsu_out_type;
 
   typedef struct packed{
@@ -582,8 +588,8 @@ package wires;
     logic [31 : 0] mdata;
     logic [31 : 0] wdata;
     logic [63 : 0] fdata;
-    logic [31 : 0] ldata;
-    logic [31 : 0] sdata;
+    logic [63 : 0] ldata;
+    logic [63 : 0] sdata;
     logic [31 : 0] ddata;
     logic [31 : 0] bcdata;
     logic [0  : 0] fready;
