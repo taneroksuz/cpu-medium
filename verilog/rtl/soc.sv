@@ -1,13 +1,21 @@
 import configure::*;
 
-module soc();
+module soc
+(
+  input  logic reset,
+  input  logic clock,
+  input  logic clock_ram,
+  output logic [0  : 0] uart_valid,
+  output logic [0  : 0] uart_instr,
+  output logic [31 : 0] uart_addr,
+  output logic [63 : 0] uart_wdata,
+  output logic [7  : 0] uart_wstrb,
+  input  logic [63 : 0] uart_rdata,
+  input  logic [0  : 0] uart_ready
+);
 
   timeunit 1ns;
   timeprecision 1ps;
-
-  logic reset;
-  logic clock;
-  logic clock_ram;
 
   logic [0  : 0] imemory_valid;
   logic [0  : 0] imemory_instr;
@@ -57,29 +65,21 @@ module soc();
   logic [63 : 0] rom_rdata;
   logic [0  : 0] rom_ready;
 
-  logic [0  : 0] iprint_valid;
-  logic [0  : 0] iprint_instr;
-  logic [31 : 0] iprint_addr;
-  logic [63 : 0] iprint_wdata;
-  logic [7  : 0] iprint_wstrb;
-  logic [63 : 0] iprint_rdata;
-  logic [0  : 0] iprint_ready;
+  logic [0  : 0] iuart_valid;
+  logic [0  : 0] iuart_instr;
+  logic [31 : 0] iuart_addr;
+  logic [63 : 0] iuart_wdata;
+  logic [7  : 0] iuart_wstrb;
+  logic [63 : 0] iuart_rdata;
+  logic [0  : 0] iuart_ready;
 
-  logic [0  : 0] dprint_valid;
-  logic [0  : 0] dprint_instr;
-  logic [31 : 0] dprint_addr;
-  logic [63 : 0] dprint_wdata;
-  logic [7  : 0] dprint_wstrb;
-  logic [63 : 0] dprint_rdata;
-  logic [0  : 0] dprint_ready;
-
-  logic [0  : 0] print_valid;
-  logic [0  : 0] print_instr;
-  logic [31 : 0] print_addr;
-  logic [63 : 0] print_wdata;
-  logic [7  : 0] print_wstrb;
-  logic [63 : 0] print_rdata;
-  logic [0  : 0] print_ready;
+  logic [0  : 0] duart_valid;
+  logic [0  : 0] duart_instr;
+  logic [31 : 0] duart_addr;
+  logic [63 : 0] duart_wdata;
+  logic [7  : 0] duart_wstrb;
+  logic [63 : 0] duart_rdata;
+  logic [0  : 0] duart_ready;
 
   logic [0  : 0] iclint_valid;
   logic [0  : 0] iclint_instr;
@@ -189,166 +189,10 @@ module soc();
   logic [31 : 0] ibase_addr;
   logic [31 : 0] dbase_addr;
 
-  logic [31 : 0] host[0:0];
-
-  logic [31 : 0] stoptime = 1000;
-  logic [31 : 0] counter = 0;
-
-  integer reg_file;
-  integer csr_file;
-  integer mem_file;
-  integer freg_file;
-
-  initial begin
-    $readmemh("host.dat", host);
-  end
-
-  initial begin
-    string filename;
-    if ($value$plusargs("FILENAME=%s",filename)) begin
-      $dumpfile(filename);
-      $dumpvars(0, soc);
-    end
-  end
-
-  initial begin
-    string maxtime;
-    if ($value$plusargs("MAXTIME=%s",maxtime)) begin
-      stoptime = maxtime.atoi();
-    end
-  end
-
-  initial begin
-    reset = 0;
-    clock = 1;
-    clock_ram = 1;
-  end
-
-  initial begin
-    #10 reset = 1;
-  end
-
-  always #0.5 clock = ~clock;
-  always #5.0 clock_ram = ~clock_ram;
-
-  initial begin
-    string filename;
-    if ($value$plusargs("REGFILE=%s",filename)) begin
-      reg_file = $fopen(filename,"w");
-      for (int i=0; i<stoptime; i=i+1) begin
-        @(posedge clock);
-        if (soc.cpu_comp.register_comp.register0_win.wren == 1) begin
-          $fwrite(reg_file,"PERIOD = %t\t",$time);
-          $fwrite(reg_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.pc);
-          $fwrite(reg_file,"WADDR = %x\t",soc.cpu_comp.register_comp.register0_win.waddr);
-          $fwrite(reg_file,"WDATA = %x\n",soc.cpu_comp.register_comp.register0_win.wdata);
-        end
-        if (soc.cpu_comp.register_comp.register1_win.wren == 1) begin
-          $fwrite(reg_file,"PERIOD = %t\t",$time);
-          $fwrite(reg_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.pc);
-          $fwrite(reg_file,"WADDR = %x\t",soc.cpu_comp.register_comp.register1_win.waddr);
-          $fwrite(reg_file,"WDATA = %x\n",soc.cpu_comp.register_comp.register1_win.wdata);
-        end
-      end
-      $fclose(reg_file);
-    end
-  end
-
-  initial begin
-    string filename;
-    if ($value$plusargs("CSRFILE=%s",filename)) begin
-      csr_file = $fopen(filename,"w");
-      for (int i=0; i<stoptime; i=i+1) begin
-        @(posedge clock);
-        if (soc.cpu_comp.execute_stage_comp.a.m.calc0.op.cwren == 1) begin
-          $fwrite(csr_file,"PERIOD = %t\t",$time);
-          $fwrite(csr_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.pc);
-          $fwrite(csr_file,"WADDR = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.caddr);
-          $fwrite(csr_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc0.cdata);
-        end else if (soc.cpu_comp.execute_stage_comp.a.m.calc1.op.cwren == 1) begin
-          $fwrite(csr_file,"PERIOD = %t\t",$time);
-          $fwrite(csr_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.pc);
-          $fwrite(csr_file,"WADDR = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.caddr);
-          $fwrite(csr_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc1.cdata);
-        end
-      end
-      $fclose(csr_file);
-    end
-  end
-
-  initial begin
-    string filename;
-    if ($value$plusargs("MEMFILE=%s",filename)) begin
-      mem_file = $fopen(filename,"w");
-      for (int i=0; i<stoptime; i=i+1) begin
-        @(posedge clock);
-        if ((soc.cpu_comp.execute_stage_comp.a.m.calc0.op.store | soc.cpu_comp.execute_stage_comp.a.m.calc0.op.fstore) == 1) begin
-          if (|soc.cpu_comp.execute_stage_comp.a.m.calc0.byteenable == 1) begin
-            $fwrite(mem_file,"PERIOD = %t\t",$time);
-            $fwrite(mem_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.pc);
-            $fwrite(mem_file,"WADDR = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.address);
-            $fwrite(mem_file,"WSTRB = %b\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.byteenable);
-            $fwrite(mem_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc0.sdata);
-          end
-        end else if ((soc.cpu_comp.execute_stage_comp.a.m.calc1.op.store | soc.cpu_comp.execute_stage_comp.a.m.calc1.op.fstore) == 1) begin
-          if (|soc.cpu_comp.execute_stage_comp.a.m.calc1.byteenable == 1) begin
-            $fwrite(mem_file,"PERIOD = %t\t",$time);
-            $fwrite(mem_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.pc);
-            $fwrite(mem_file,"WADDR = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.address);
-            $fwrite(mem_file,"WSTRB = %b\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.byteenable);
-            $fwrite(mem_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc1.sdata);
-          end
-        end
-      end
-      $fclose(mem_file);
-    end
-  end
-
-  initial begin
-    string filename;
-    if ($value$plusargs("FREGFILE=%s",filename)) begin
-      freg_file = $fopen(filename,"w");
-      for (int i=0; i<stoptime; i=i+1) begin
-        @(posedge clock);
-        if (soc.cpu_comp.execute_stage_comp.a.m.calc0.op.fwren == 1) begin
-          $fwrite(freg_file,"PERIOD = %t\t",$time);
-          $fwrite(freg_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.pc);
-          $fwrite(freg_file,"WADDR = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc0.waddr);
-          $fwrite(freg_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc0.fdata);
-        end else if (soc.cpu_comp.execute_stage_comp.a.m.calc1.op.fwren == 1) begin
-          $fwrite(freg_file,"PERIOD = %t\t",$time);
-          $fwrite(freg_file,"PC = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.pc);
-          $fwrite(freg_file,"WADDR = %x\t",soc.cpu_comp.execute_stage_comp.a.m.calc1.waddr);
-          $fwrite(freg_file,"WDATA = %x\n",soc.cpu_comp.execute_stage_comp.a.m.calc1.fdata);
-        end
-      end
-      $fclose(freg_file);
-    end
-  end
-
-  always_ff @(posedge clock) begin
-    if (counter == stoptime) begin
-      $finish;
-    end else begin
-      counter <= counter + 1;
-    end
-  end
-
-  always_ff @(posedge clock) begin
-    if (soc.cpu_comp.memory_stage_comp.dmem_in.mem_valid == 1) begin
-      if (soc.cpu_comp.memory_stage_comp.dmem_in.mem_addr[31:3] == host[0][31:3]) begin
-        if (|soc.cpu_comp.memory_stage_comp.dmem_in.mem_wstrb == 1) begin
-          $display("%d",soc.cpu_comp.memory_stage_comp.dmem_in.mem_wdata[31:0]);
-          $finish;
-        end
-      end
-    end
-  end
-
   always_comb begin
 
     irom_valid = 0;
-    iprint_valid = 0;
+    iuart_valid = 0;
     iclint_valid = 0;
     itim0_valid = 0;
     itim1_valid = 0;
@@ -369,9 +213,9 @@ module soc();
       end else if (imemory_addr >= clint_base_addr && imemory_addr < clint_top_addr) begin
           iclint_valid = imemory_valid;
           ibase_addr = clint_base_addr;
-      end else if (imemory_addr >= print_base_addr && imemory_addr < print_top_addr) begin
-          iprint_valid = imemory_valid;
-          ibase_addr = print_base_addr;
+      end else if (imemory_addr >= uart_base_addr && imemory_addr < uart_top_addr) begin
+          iuart_valid = imemory_valid;
+          ibase_addr = uart_base_addr;
       end else if (imemory_addr >= rom_base_addr && imemory_addr < rom_top_addr) begin
           irom_valid = imemory_valid;
           ibase_addr = rom_base_addr;
@@ -385,10 +229,10 @@ module soc();
     irom_wdata = imemory_wdata;
     irom_wstrb = imemory_wstrb;
 
-    iprint_instr = imemory_instr;
-    iprint_addr = imem_addr;
-    iprint_wdata = imemory_wdata;
-    iprint_wstrb = imemory_wstrb;
+    iuart_instr = imemory_instr;
+    iuart_addr = imem_addr;
+    iuart_wdata = imemory_wdata;
+    iuart_wstrb = imemory_wstrb;
 
     iclint_instr = imemory_instr;
     iclint_addr = imem_addr;
@@ -413,9 +257,9 @@ module soc();
     if (irom_ready == 1) begin
       imemory_rdata = irom_rdata;
       imemory_ready = irom_ready;
-    end else if  (iprint_ready == 1) begin
-      imemory_rdata = iprint_rdata;
-      imemory_ready = iprint_ready;
+    end else if  (iuart_ready == 1) begin
+      imemory_rdata = iuart_rdata;
+      imemory_ready = iuart_ready;
     end else if  (iclint_ready == 1) begin
       imemory_rdata = iclint_rdata;
       imemory_ready = iclint_ready;
@@ -438,7 +282,7 @@ module soc();
   always_comb begin
 
     drom_valid = 0;
-    dprint_valid = 0;
+    duart_valid = 0;
     dclint_valid = 0;
     dtim0_valid = 0;
     dtim1_valid = 0;
@@ -459,9 +303,9 @@ module soc();
       end else if (dmemory_addr >= clint_base_addr && dmemory_addr < clint_top_addr) begin
           dclint_valid = dmemory_valid;
           dbase_addr = clint_base_addr;
-      end else if (dmemory_addr >= print_base_addr && dmemory_addr < print_top_addr) begin
-          dprint_valid = dmemory_valid;
-          dbase_addr = print_base_addr;
+      end else if (dmemory_addr >= uart_base_addr && dmemory_addr < uart_top_addr) begin
+          duart_valid = dmemory_valid;
+          dbase_addr = uart_base_addr;
       end else if (dmemory_addr >= rom_base_addr && dmemory_addr < rom_top_addr) begin
           drom_valid = dmemory_valid;
           dbase_addr = rom_base_addr;
@@ -475,10 +319,10 @@ module soc();
     drom_wdata = dmemory_wdata;
     drom_wstrb = dmemory_wstrb;
 
-    dprint_instr = dmemory_instr;
-    dprint_addr = dmem_addr;
-    dprint_wdata = dmemory_wdata;
-    dprint_wstrb = dmemory_wstrb;
+    duart_instr = dmemory_instr;
+    duart_addr = dmem_addr;
+    duart_wdata = dmemory_wdata;
+    duart_wstrb = dmemory_wstrb;
 
     dclint_instr = dmemory_instr;
     dclint_addr = dmem_addr;
@@ -503,9 +347,9 @@ module soc();
     if (drom_ready == 1) begin
       dmemory_rdata = drom_rdata;
       dmemory_ready = drom_ready;
-    end else if  (dprint_ready == 1) begin
-      dmemory_rdata = dprint_rdata;
-      dmemory_ready = dprint_ready;
+    end else if  (duart_ready == 1) begin
+      dmemory_rdata = duart_rdata;
+      dmemory_ready = duart_ready;
     end else if  (clint_ready == 1) begin
       dmemory_rdata = dclint_rdata;
       dmemory_ready = dclint_ready;
@@ -587,44 +431,31 @@ module soc();
     .rom_ready (rom_ready)
   );
 
-  arbiter arbiter_print_comp
+  arbiter arbiter_uart_comp
   (
     .reset (reset),
     .clock (clock),
-    .imemory_valid (iprint_valid),
-    .imemory_instr (iprint_instr),
-    .imemory_addr (iprint_addr),
-    .imemory_wdata (iprint_wdata),
-    .imemory_wstrb (iprint_wstrb),
-    .imemory_rdata (iprint_rdata),
-    .imemory_ready (iprint_ready),
-    .dmemory_valid (dprint_valid),
-    .dmemory_instr (dprint_instr),
-    .dmemory_addr (dprint_addr),
-    .dmemory_wdata (dprint_wdata),
-    .dmemory_wstrb (dprint_wstrb),
-    .dmemory_rdata (dprint_rdata),
-    .dmemory_ready (dprint_ready),
-    .memory_valid (print_valid),
-    .memory_instr (print_instr),
-    .memory_addr (print_addr),
-    .memory_wdata (print_wdata),
-    .memory_wstrb (print_wstrb),
-    .memory_rdata (print_rdata),
-    .memory_ready (print_ready)
-  );
-
-  print print_comp
-  (
-    .reset (reset),
-    .clock (clock),
-    .print_valid (print_valid),
-    .print_instr (print_instr),
-    .print_addr (print_addr),
-    .print_wdata (print_wdata),
-    .print_wstrb (print_wstrb),
-    .print_rdata (print_rdata),
-    .print_ready (print_ready)
+    .imemory_valid (iuart_valid),
+    .imemory_instr (iuart_instr),
+    .imemory_addr (iuart_addr),
+    .imemory_wdata (iuart_wdata),
+    .imemory_wstrb (iuart_wstrb),
+    .imemory_rdata (iuart_rdata),
+    .imemory_ready (iuart_ready),
+    .dmemory_valid (duart_valid),
+    .dmemory_instr (duart_instr),
+    .dmemory_addr (duart_addr),
+    .dmemory_wdata (duart_wdata),
+    .dmemory_wstrb (duart_wstrb),
+    .dmemory_rdata (duart_rdata),
+    .dmemory_ready (duart_ready),
+    .memory_valid (uart_valid),
+    .memory_instr (uart_instr),
+    .memory_addr (uart_addr),
+    .memory_wdata (uart_wdata),
+    .memory_wstrb (uart_wstrb),
+    .memory_rdata (uart_rdata),
+    .memory_ready (uart_ready)
   );
 
   arbiter arbiter_clint_comp

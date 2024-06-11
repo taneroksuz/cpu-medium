@@ -29,7 +29,7 @@ cd $BASEDIR/sim/work
 
 start=`date +%s`
 
-$VERILATOR --binary --trace --trace-structs --Wno-UNSIGNED --Wno-UNOPTFLAT --top soc -f $BASEDIR/sim/files.f 2>&1 > /dev/null
+$VERILATOR --binary --trace --trace-structs --Wno-UNSIGNED --Wno-UNOPTFLAT --top tb_soc -f $BASEDIR/sim/files.f 2>&1 > /dev/null
 
 for FILE in $BASEDIR/sim/input/*; do
   $RISCV-nm -A $FILE | grep -sw 'tohost' | sed -e 's/.*:\(.*\) D.*/\1/' > ${FILE%.*}.host
@@ -39,14 +39,14 @@ for FILE in $BASEDIR/sim/input/*; do
   cp ${FILE%.*}.host host.dat
   if [ "$DUMP" = "1" ]
   then
-    obj_dir/Vsoc +MAXTIME=$MAXTIME +REGFILE=${FILE%.*}.reg +CSRFILE=${FILE%.*}.csr +MEMFILE=${FILE%.*}.mem +FREGFILE=${FILE%.*}.freg +FILENAME=${FILE%.*}.vcd
+    obj_dir/Vtb_soc +MAXTIME=$MAXTIME +REGFILE=${FILE%.*}.reg +CSRFILE=${FILE%.*}.csr +MEMFILE=${FILE%.*}.mem +FREGFILE=${FILE%.*}.freg +FILENAME=${FILE%.*}.vcd
     cp ${FILE%.*}.reg $BASEDIR/sim/output/.
     cp ${FILE%.*}.csr $BASEDIR/sim/output/.
     cp ${FILE%.*}.mem $BASEDIR/sim/output/.
     cp ${FILE%.*}.vcd $BASEDIR/sim/output/.
     cp ${FILE%.*}.freg $BASEDIR/sim/output/.
   else
-    obj_dir/Vsoc +MAXTIME=$MAXTIME
+    obj_dir/Vtb_soc +MAXTIME=$MAXTIME
   fi
 done
 
