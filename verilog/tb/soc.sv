@@ -7,6 +7,7 @@ module soc();
 
   logic reset;
   logic clock;
+  logic clock_ram;
 
   logic [0  : 0] imemory_valid;
   logic [0  : 0] imemory_instr;
@@ -220,6 +221,7 @@ module soc();
   initial begin
     reset = 0;
     clock = 1;
+    clock_ram = 1;
   end
 
   initial begin
@@ -227,6 +229,7 @@ module soc();
   end
 
   always #0.5 clock = ~clock;
+  always #5.0 clock_ram = ~clock_ram;
 
   initial begin
     string filename;
