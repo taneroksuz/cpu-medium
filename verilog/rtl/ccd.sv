@@ -12,16 +12,16 @@ module ccd
   input  logic [0  : 0] memory_valid,
   input  logic [0  : 0] memory_instr,
   input  logic [31 : 0] memory_addr,
-  input  logic [31 : 0] memory_wdata,
-  input  logic [3  : 0] memory_wstrb,
-  output logic [31 : 0] memory_rdata,
+  input  logic [63 : 0] memory_wdata,
+  input  logic [7  : 0] memory_wstrb,
+  output logic [63 : 0] memory_rdata,
   output logic [0  : 0] memory_ready,
   output logic [0  : 0] memory_slow_valid,
   output logic [0  : 0] memory_slow_instr,
   output logic [31 : 0] memory_slow_addr ,
-  output logic [31 : 0] memory_slow_wdata,
-  output logic [3  : 0] memory_slow_wstrb,
-  input  logic [31 : 0] memory_slow_rdata,
+  output logic [63 : 0] memory_slow_wdata,
+  output logic [7  : 0] memory_slow_wstrb,
+  input  logic [63 : 0] memory_slow_rdata,
   input  logic [0  : 0] memory_slow_ready
 );
   timeunit 1ns;
@@ -38,9 +38,9 @@ module ccd
     logic [0  : 0] memory_valid;
     logic [0  : 0] memory_instr;
     logic [31 : 0] memory_addr;
-    logic [31 : 0] memory_wdata;
-    logic [3  : 0] memory_wstrb;
-    logic [31 : 0] memory_rdata;
+    logic [63 : 0] memory_wdata;
+    logic [7  : 0] memory_wstrb;
+    logic [63 : 0] memory_rdata;
     logic [0  : 0] memory_ready;
   } reg_type;
 

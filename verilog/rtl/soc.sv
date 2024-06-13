@@ -177,6 +177,14 @@ module soc
   logic [63 : 0] ram_rdata;
   logic [0  : 0] ram_ready;
 
+  logic [0  : 0] ram_slow_valid;
+  logic [0  : 0] ram_slow_instr;
+  logic [31 : 0] ram_slow_addr;
+  logic [63 : 0] ram_slow_wdata;
+  logic [7  : 0] ram_slow_wstrb;
+  logic [63 : 0] ram_slow_rdata;
+  logic [0  : 0] ram_slow_ready;
+
   logic [0  : 0] meip;
   logic [0  : 0] msip;
   logic [0  : 0] mtip;
@@ -608,17 +616,40 @@ module soc
     .memory_ready (ram_ready)
   );
 
-  ram ram_comp
+  ccd #(
+    .clock_rate (clk_divider_slow)
+  ) ccd_comp
   (
     .reset (reset),
     .clock (clock),
-    .ram_valid (ram_valid),
-    .ram_instr (ram_instr),
-    .ram_addr (ram_addr),
-    .ram_wdata (ram_wdata),
-    .ram_wstrb (ram_wstrb),
-    .ram_rdata (ram_rdata),
-    .ram_ready (ram_ready)
+    .clock_slow (clock_slow),
+    .memory_valid (ram_valid),
+    .memory_instr (ram_instr),
+    .memory_addr (ram_addr),
+    .memory_wdata (ram_wdata),
+    .memory_wstrb (ram_wstrb),
+    .memory_rdata (ram_rdata),
+    .memory_ready (ram_ready),
+    .memory_slow_valid (ram_slow_valid),
+    .memory_slow_instr (ram_slow_instr),
+    .memory_slow_addr (ram_slow_addr),
+    .memory_slow_wdata (ram_slow_wdata),
+    .memory_slow_wstrb (ram_slow_wstrb),
+    .memory_slow_rdata (ram_slow_rdata),
+    .memory_slow_ready (ram_slow_ready)
+  );
+
+  ram ram_comp
+  (
+    .reset (reset),
+    .clock (clock_slow),
+    .ram_valid (ram_slow_valid),
+    .ram_instr (ram_slow_instr),
+    .ram_addr (ram_slow_addr),
+    .ram_wdata (ram_slow_wdata),
+    .ram_wstrb (ram_slow_wstrb),
+    .ram_rdata (ram_slow_rdata),
+    .ram_ready (ram_slow_ready)
   );
 
 endmodule
