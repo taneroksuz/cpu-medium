@@ -4,7 +4,7 @@ module soc
 (
   input  logic reset,
   input  logic clock,
-  input  logic clock_ram,
+  input  logic clock_slow,
   output logic [0  : 0] uart_valid,
   output logic [0  : 0] uart_instr,
   output logic [31 : 0] uart_addr,

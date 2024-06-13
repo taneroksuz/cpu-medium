@@ -7,7 +7,7 @@ module tb_soc();
 
   logic reset;
   logic clock;
-  logic clock_ram;
+  logic clock_slow;
 
   logic [0  : 0] print_valid;
   logic [0  : 0] print_instr;
@@ -49,7 +49,7 @@ module tb_soc();
   initial begin
     reset = 0;
     clock = 1;
-    clock_ram = 1;
+    clock_slow = 1;
   end
 
   initial begin
@@ -57,7 +57,7 @@ module tb_soc();
   end
 
   always #0.5 clock = ~clock;
-  always #5.0 clock_ram = ~clock_ram;
+  always #5.0 clock_slow = ~clock_slow;
 
   initial begin
     string filename;
@@ -177,7 +177,7 @@ module tb_soc();
   (
     .reset (reset),
     .clock (clock),
-    .clock_ram (clock_ram),
+    .clock_slow (clock_slow),
     .uart_valid (print_valid),
     .uart_instr (print_instr),
     .uart_addr (print_addr),
