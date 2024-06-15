@@ -41,17 +41,11 @@ module tim_ram
 
   logic [63 : 0] tim_ram[0:tim_depth-1] = '{default:'0};
 
-  logic [depth-1 : 0] raddr = 0;
-
   always_ff @(posedge clock) begin
-    raddr <= tim_ram_in.raddr;
     if (tim_ram_in.wen == 1) begin
       tim_ram[tim_ram_in.waddr] <= tim_ram_in.wdata;
     end
-  end
-
-  always_ff @(posedge clock) begin
-    tim_ram_out.rdata = tim_ram[raddr];
+    tim_ram_out.rdata <= tim_ram[tim_ram_in.raddr];
   end
 
 endmodule
