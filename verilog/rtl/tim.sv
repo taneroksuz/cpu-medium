@@ -278,6 +278,8 @@ module tim
   );
 
   assign tim_in.mem_valid = tim_valid;
+  assign tim_in.mem_fence = 0;
+  assign tim_in.mem_spec = 0;
   assign tim_in.mem_instr = tim_instr;
   assign tim_in.mem_addr  = tim_addr;
   assign tim_in.mem_wdata = tim_wdata;
