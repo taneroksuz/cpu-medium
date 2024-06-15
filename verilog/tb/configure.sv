@@ -8,6 +8,7 @@ package configure;
   parameter tim_width = 32;
   parameter tim_depth = 4096;
 
+  parameter ram_type = 0;
   parameter ram_depth = 131072;
 
   parameter fpu_enable = 1;
