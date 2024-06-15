@@ -44,16 +44,6 @@ module ccd
     logic [0  : 0] memory_ready;
   } reg_type;
 
-  localparam reg_type init_reg = '{
-    memory_valid : 0,
-    memory_instr : 0,
-    memory_addr : 0,
-    memory_wdata : 0,
-    memory_wstrb : 0,
-    memory_rdata : 0,
-    memory_ready : 0
-  };
-
   reg_type r,rin,v;
 
   always_comb begin
