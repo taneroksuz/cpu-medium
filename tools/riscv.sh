@@ -23,30 +23,30 @@ sudo apt-get -y install autoconf automake autotools-dev curl \
                         zlib1g-dev libexpat-dev ninja-build git \
                         cmake libglib2.0-dev libslirp-dev
 
-if [ -d "$BASEDIR/gcc" ]; then
-  rm -rf $BASEDIR/gcc
+if [ -d "gcc" ]; then
+  rm -rf gcc
 fi
-if [ -d "$BASEDIR/binutils" ]; then
-  rm -rf $BASEDIR/binutils
+if [ -d "binutils" ]; then
+  rm -rf binutils
 fi
-if [ -d "$BASEDIR/newlib" ]; then
-  rm -rf $BASEDIR/newlib
+if [ -d "newlib" ]; then
+  rm -rf newlib
 fi
-if [ -d "$BASEDIR/combined" ]; then
-  rm -rf $BASEDIR/combined
+if [ -d "combined" ]; then
+  rm -rf combined
 fi
 
-git clone --branch $GCC_VERSION --depth=1 https://github.com/gcc-mirror/gcc.git $BASEDIR/gcc
-git clone --branch $NEWLIB_VERSION --depth=1 https://github.com/bminor/newlib.git $BASEDIR/newlib
-git clone --branch $BINTUILS_VERSION --depth=1 https://github.com/bminor/binutils-gdb.git $BASEDIR/binutils
+git clone --branch $GCC_VERSION --depth=1 https://github.com/gcc-mirror/gcc.git gcc
+git clone --branch $NEWLIB_VERSION --depth=1 https://github.com/bminor/newlib.git newlib
+git clone --branch $BINTUILS_VERSION --depth=1 https://github.com/bminor/binutils-gdb.git binutils
 
-mkdir -p $BASEDIR/combined/build
+mkdir -p combined/build
 
-ln -s $BASEDIR/newlib/* $BASEDIR/combined/.
-ln --force -s $BASEDIR/binutils/* $BASEDIR/combined/.
-ln --force -s $BASEDIR/gcc/* $BASEDIR/combined/.
+ln -s newlib/* combined/.
+ln --force -s binutils/* combined/.
+ln --force -s gcc/* combined/.
 
-cd $BASEDIR/combined/build
+cd combined/build
 
 ../configure --target=riscv32-unknown-elf --enable-languages=c \
              --disable-shared --disable-threads --disable-multilib \
