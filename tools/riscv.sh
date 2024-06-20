@@ -1,34 +1,57 @@
 #!/bin/bash
 set -e
 
-PREFIX=/opt/rv32imfdcb
+RISCV=/opt/rv32imfdcb/
+ARCH=rv32imfdc_zba_zbb_zbc_zbs_zicsr_zifencei
+ABI=ilp32d
 
-if [ -d "$PREFIX" ]
-then
-  sudo rm -rf $PREFIX
+GCC_VERSION="basepoints/gcc-15"
+NEWLIB_VERSION="newlib-4.4.0"
+BINTUILS_VERSION="binutils-2_42"
+
+if [ -d "$RISCV" ]; then
+  sudo rm -rf $RISCV
 fi
-sudo mkdir $PREFIX
-sudo chown -R $USER:$USER $PREFIX/
 
-if [ -d "riscv-gnu-toolchain" ]; then
-  rm -rf riscv-gnu-toolchain/
-fi
-
-mkdir riscv-gnu-toolchain
+sudo mkdir -p $RISCV
+sudo chown -R $USER:$USER $RISCV
 
 sudo apt-get -y install autoconf automake autotools-dev curl \
                         python3 python3-pip libmpc-dev libmpfr-dev \
                         libgmp-dev gawk build-essential bison flex \
-                        texinfo gperf libtool patchutils bc zlib1g-dev \
-                        libexpat-dev ninja-build git cmake libglib2.0-dev
+                        texinfo gperf libtool patchutils bc \
+                        zlib1g-dev libexpat-dev ninja-build git \
+                        cmake libglib2.0-dev libslirp-dev
 
-git clone https://github.com/riscv/riscv-gnu-toolchain
-cd riscv-gnu-toolchain
+if [ -d "$BASEDIR/gcc" ]; then
+  rm -rf $BASEDIR/gcc
+fi
+if [ -d "$BASEDIR/binutils" ]; then
+  rm -rf $BASEDIR/binutils
+fi
+if [ -d "$BASEDIR/newlib" ]; then
+  rm -rf $BASEDIR/newlib
+fi
+if [ -d "$BASEDIR/combined" ]; then
+  rm -rf $BASEDIR/combined
+fi
 
-mkdir build
-cd build
+git clone --branch $GCC_VERSION --depth=1 https://github.com/gcc-mirror/gcc.git $BASEDIR/gcc
+git clone --branch $NEWLIB_VERSION --depth=1 https://github.com/bminor/newlib.git $BASEDIR/newlib
+git clone --branch $BINTUILS_VERSION --depth=1 https://github.com/bminor/binutils-gdb.git $BASEDIR/binutils
 
-../configure --prefix=$PREFIX --disable-linux --with-arch=rv32imfdc_zba_zbb_zbc_zbs \
-             --with-abi=ilp32d
+mkdir -p $BASEDIR/combined/build
 
-make -j$(nproc) newlib
+ln -s $BASEDIR/newlib/* $BASEDIR/combined/.
+ln --force -s $BASEDIR/binutils/* $BASEDIR/combined/.
+ln --force -s $BASEDIR/gcc/* $BASEDIR/combined/.
+
+cd $BASEDIR/combined/build
+
+../configure --target=riscv32-unknown-elf --enable-languages=c \
+             --disable-shared --disable-threads --disable-multilib \
+             --disable-gdb --disable-libssp --with-newlib \
+             --with-arch=$ARCH --with-abi=$ABI --prefix=$RISCV
+
+make -j$(nproc)
+make install
