@@ -42,9 +42,9 @@ git clone --branch $BINTUILS_VERSION --depth=1 https://github.com/bminor/binutil
 
 mkdir -p combined/build
 
-ln -s newlib/* combined/.
-ln --force -s binutils/* combined/.
-ln --force -s gcc/* combined/.
+ln -r -s newlib/* combined/.
+ln --force -r -s binutils/* combined/.
+ln --force -r -s gcc/* combined/.
 
 cd combined/build
 
