@@ -40,7 +40,7 @@ package configure;
   parameter slow_freq = 10000000; // 10MHz
   parameter baudrate = 115200;
 
-  parameter clk_divider_rtc = (clk_freq/rtc_freq)/2-1;
+  parameter clk_divider_rtc = clk_freq/rtc_freq;
   parameter clk_divider_slow = clk_freq/slow_freq;
   parameter clks_per_bit = clk_freq/baudrate-1;
 
