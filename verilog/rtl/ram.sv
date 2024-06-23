@@ -73,13 +73,13 @@ module ram
       always_ff @(posedge clock) begin
 
           if (ram_wstrb[0] == 1)
-            ram_block[ram_addr[(depth+1):2]][0] <= ram_wdata[7:0];
+            ram_block[ram_addr[(depth+2):3]][0] <= ram_wdata[7:0];
           if (ram_wstrb[1] == 1)
-            ram_block[ram_addr[(depth+1):2]][1] <= ram_wdata[15:8];
+            ram_block[ram_addr[(depth+2):3]][1] <= ram_wdata[15:8];
           if (ram_wstrb[2] == 1)
-            ram_block[ram_addr[(depth+1):2]][2] <= ram_wdata[23:16];
+            ram_block[ram_addr[(depth+2):3]][2] <= ram_wdata[23:16];
           if (ram_wstrb[3] == 1)
-            ram_block[ram_addr[(depth+1):2]][3] <= ram_wdata[31:24];
+            ram_block[ram_addr[(depth+2):3]][3] <= ram_wdata[31:24];
           if (ram_wstrb[4] == 1)
             ram_block[ram_addr[(depth+2):3]][4] <= ram_wdata[39:32];
           if (ram_wstrb[5] == 1)
