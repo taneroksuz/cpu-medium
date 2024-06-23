@@ -3,7 +3,6 @@ import configure::*;
 module top(
   input  logic reset,
   input  logic clock,
-  input  logic clock_slow,
   input  logic uart_rx,
   output logic uart_tx
 );
