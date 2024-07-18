@@ -6,7 +6,7 @@ package configure;
   parameter hazard_depth = 4;
 
   parameter tim_width = 32;
-  parameter tim_depth = 4096;
+  parameter tim_depth = 2048;
 
   parameter ram_type = 0;
   parameter ram_depth = 131072;
@@ -27,13 +27,13 @@ package configure;
   parameter clint_top_addr  = 32'h200C000;
 
   parameter tim0_base_addr = 32'h10000000;
-  parameter tim0_top_addr  = 32'h10100000;
+  parameter tim0_top_addr  = 32'h10080000;
 
   parameter tim1_base_addr = 32'h20000000;
-  parameter tim1_top_addr  = 32'h20100000;
+  parameter tim1_top_addr  = 32'h20080000;
 
   parameter ram_base_addr = 32'h80000000;
-  parameter ram_top_addr  = 32'h90000000;
+  parameter ram_top_addr  = 32'h80100000;
 
   parameter clk_freq = 100000000; // 100MHz
   parameter rtc_freq = 1000000; // 1MHz
