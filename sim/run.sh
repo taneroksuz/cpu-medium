@@ -32,8 +32,8 @@ start=`date +%s`
 $VERILATOR --binary --trace --trace-structs --Wno-UNSIGNED --Wno-UNOPTFLAT --top tb_soc -f $BASEDIR/sim/files.f 2>&1 > /dev/null
 
 for FILE in $BASEDIR/sim/input/*; do
-  $RISCV-nm -A $FILE | grep -sw 'tohost' | sed -e 's/.*:\(.*\) D.*/\1/' > ${FILE%.*}.host
-  $RISCV-objcopy -O binary $FILE ${FILE%.*}.bin
+  ${RISCV}bin/riscv32-unknown-elf-nm -A $FILE | grep -sw 'tohost' | sed -e 's/.*:\(.*\) D.*/\1/' > ${FILE%.*}.host
+  ${RISCV}bin/riscv32-unknown-elf-objcopy -O binary $FILE ${FILE%.*}.bin
   $PYTHON $BASEDIR/py/bin2dat.py --input $FILE --address 0x0 --offset 0x100000
   cp ${FILE%.*}.dat ram.dat
   cp ${FILE%.*}.host host.dat
