@@ -1,0 +1,8 @@
+riscv/
+dump/
+benchmarks/
+coremark/
+dhrystone/
+isa/
+env/
+whetstone/

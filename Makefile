@@ -16,5 +16,12 @@ export DUMP ?= 0# "1" on, "0" off
 simulate:
 	sim/run.sh
 
+compile:
+	wolv-benchmark/benchmarks.sh
+	wolv-benchmark/coremark.sh
+	wolv-benchmark/dhrystone.sh
+	wolv-benchmark/isa.sh
+	wolv-benchmark/whetstone.sh
+
 program:
 	serial/transfer.sh
