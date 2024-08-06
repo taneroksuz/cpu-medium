@@ -1,7 +1,8 @@
 default: simulate
 
-export VERILATOR ?= /opt/verilator/bin/verilator
-export PYTHON ?= /usr/bin/python3
+export VERILATOR ?= verilator
+export VERIBLE ?= verible
+export PYTHON ?= python3
 export SERIAL ?= /dev/ttyUSB0
 export BASEDIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
@@ -23,6 +24,9 @@ compile:
 	wolv-benchmark/isa.sh
 	wolv-benchmark/whetstone.sh
 	wolv-benchmark/free-rtos.sh
+
+parse:
+	check/run.sh
 
 program:
 	serial/transfer.sh

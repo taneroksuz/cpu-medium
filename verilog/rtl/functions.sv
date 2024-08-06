@@ -1,16 +1,13 @@
 package functions;
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
   function [31:0] multiplexer;
     input [31:0] data0;
     input [31:0] data1;
     input [0:0] sel;
     begin
-      if (sel == 0)
-        multiplexer = data0;
-      else
-        multiplexer = data1;
+      if (sel == 0) multiplexer = data0;
+      else multiplexer = data1;
     end
   endfunction
 
@@ -22,15 +19,20 @@ package functions;
     input [0:0] sd;
     begin
       if (sb == 1)
-        store_data = {sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0],sdata[7:0]};
-      else if (sh == 1)
-        store_data = {sdata[15:0],sdata[15:0],sdata[15:0],sdata[15:0]};
-      else if (sw == 1)
-        store_data = {sdata[31:0],sdata[31:0]};
-      else if (sd == 1)
-        store_data = sdata;
-      else
-        store_data = 0;
+        store_data = {
+          sdata[7:0],
+          sdata[7:0],
+          sdata[7:0],
+          sdata[7:0],
+          sdata[7:0],
+          sdata[7:0],
+          sdata[7:0],
+          sdata[7:0]
+        };
+      else if (sh == 1) store_data = {sdata[15:0], sdata[15:0], sdata[15:0], sdata[15:0]};
+      else if (sw == 1) store_data = {sdata[31:0], sdata[31:0]};
+      else if (sd == 1) store_data = sdata;
+      else store_data = 0;
     end
   endfunction
 
@@ -39,8 +41,7 @@ package functions;
     input [0:0] flw;
     begin
       nan_box = ldata;
-      if (flw == 1)
-        nan_box[63:32] = 32'hFFFFFFFF;
+      if (flw == 1) nan_box[63:32] = 32'hFFFFFFFF;
     end
   endfunction
 
@@ -58,13 +59,13 @@ package functions;
     integer i;
     begin
       res = 0;
-      for (i = 31; i >= 0; i=i-1) begin
+      for (i = 31; i >= 0; i = i - 1) begin
         if (rs1[i] == 1) begin
           break;
         end
         res = res + 6'b1;
       end
-      bit_clz = {26'h0,res};
+      bit_clz = {26'h0, res};
     end
   endfunction
 
@@ -74,12 +75,12 @@ package functions;
     integer i;
     begin
       res = 0;
-      for (i = 0; i < 32; i=i+1) begin
+      for (i = 0; i < 32; i = i + 1) begin
         if (rs1[i] == 1) begin
           res = res + 6'b1;
         end
       end
-      bit_cpop = {26'h0,res};
+      bit_cpop = {26'h0, res};
     end
   endfunction
 
@@ -89,13 +90,13 @@ package functions;
     integer i;
     begin
       res = 0;
-      for (i = 0; i < 32; i=i+1) begin
+      for (i = 0; i < 32; i = i + 1) begin
         if (rs1[i] == 1) begin
           break;
         end
         res = res + 6'b1;
       end
-      bit_ctz = {26'h0,res};
+      bit_ctz = {26'h0, res};
     end
   endfunction
 
@@ -106,13 +107,13 @@ package functions;
     logic [32:0] r1;
     logic [32:0] r2;
     begin
-      r1 = {1'b0,rs1};
-      r2 = {1'b0,rs2};
-      if (op == 0 || op == 2) begin // max & min
+      r1 = {1'b0, rs1};
+      r2 = {1'b0, rs2};
+      if (op == 0 || op == 2) begin  // max & min
         r1[32] = rs1[31];
         r2[32] = rs2[31];
       end
-      if (op == 2 || op == 3) begin // min & minu
+      if (op == 2 || op == 3) begin  // min & minu
         r1 = -r1;
         r2 = -r2;
       end
@@ -130,7 +131,7 @@ package functions;
     integer i;
     begin
       res = 0;
-      for (i=0; i<32; i=i+8) begin
+      for (i = 0; i < 32; i = i + 8) begin
         if (|(rs1[i+:8]) == 1) begin
           res[i+:8] = 8'hFF;
         end
@@ -153,7 +154,7 @@ package functions;
     integer i;
     begin
       res = 0;
-      for (i=0; i<32; i=i+8) begin
+      for (i = 0; i < 32; i = i + 8) begin
         res[i+:8] = rs1[(24-i)+:8];
       end
       bit_rev8 = res;
@@ -166,7 +167,7 @@ package functions;
     logic [31:0] res;
     begin
       res = rs1 << rs2[4:0];
-      res = res | (rs1 >> (32-rs2[4:0]));
+      res = res | (rs1 >> (32 - rs2[4:0]));
       bit_rol = res;
     end
   endfunction
@@ -177,7 +178,7 @@ package functions;
     logic [31:0] res;
     begin
       res = rs1 >> rs2[4:0];
-      res = res | (rs1 << (32-rs2[4:0]));
+      res = res | (rs1 << (32 - rs2[4:0]));
       bit_ror = res;
     end
   endfunction
@@ -230,14 +231,14 @@ package functions;
   function [31:0] bit_sextb;
     input [31:0] rs1;
     begin
-      bit_sextb = {{24{rs1[7]}},rs1[7:0]};
+      bit_sextb = {{24{rs1[7]}}, rs1[7:0]};
     end
   endfunction
 
   function [31:0] bit_sexth;
     input [31:0] rs1;
     begin
-      bit_sexth = {{16{rs1[15]}},rs1[15:0]};
+      bit_sexth = {{16{rs1[15]}}, rs1[15:0]};
     end
   endfunction
 
@@ -261,7 +262,7 @@ package functions;
   function [31:0] bit_zexth;
     input [31:0] rs1;
     begin
-      bit_zexth = {16'h0,rs1[15:0]};
+      bit_zexth = {16'h0, rs1[15:0]};
     end
   endfunction
 

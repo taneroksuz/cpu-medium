@@ -3,38 +3,36 @@ import wires::*;
 import functions::*;
 import fp_wire::*;
 
-module issue_stage
-(
-  input logic reset,
-  input logic clock,
-  input hazard_out_type hazard_out,
-  output hazard_in_type hazard_in,
-  output register_read_in_type register0_rin,
-  output register_read_in_type register1_rin,
-  output fp_register_read_in_type fp_register_rin,
-  input register_out_type register0_out,
-  input register_out_type register1_out,
-  input fp_register_out_type fp_register_out,
-  input forwarding_out_type forwarding0_out,
-  input forwarding_out_type forwarding1_out,
-  output forwarding_register_in_type forwarding0_rin,
-  output forwarding_register_in_type forwarding1_rin,
-  input fp_forwarding_out_type fp_forwarding_out,
-  output fp_forwarding_register_in_type fp_forwarding_rin,
-  input csr_out_type csr_out,
-  output csr_read_in_type csr_rin,
-  input fp_csr_out_type fp_csr_out,
-  output fp_csr_read_in_type fp_csr_rin,
-  input btac_out_type btac_out,
-  input issue_in_type a,
-  input issue_in_type d,
-  output issue_out_type y,
-  output issue_out_type q
+module issue_stage (
+    input logic reset,
+    input logic clock,
+    input hazard_out_type hazard_out,
+    output hazard_in_type hazard_in,
+    output register_read_in_type register0_rin,
+    output register_read_in_type register1_rin,
+    output fp_register_read_in_type fp_register_rin,
+    input register_out_type register0_out,
+    input register_out_type register1_out,
+    input fp_register_out_type fp_register_out,
+    input forwarding_out_type forwarding0_out,
+    input forwarding_out_type forwarding1_out,
+    output forwarding_register_in_type forwarding0_rin,
+    output forwarding_register_in_type forwarding1_rin,
+    input fp_forwarding_out_type fp_forwarding_out,
+    output fp_forwarding_register_in_type fp_forwarding_rin,
+    input csr_out_type csr_out,
+    output csr_read_in_type csr_rin,
+    input fp_csr_out_type fp_csr_out,
+    output fp_csr_read_in_type fp_csr_rin,
+    input btac_out_type btac_out,
+    input issue_in_type a,
+    input issue_in_type d,
+    output issue_out_type y,
+    output issue_out_type q
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
-  issue_reg_type r,rin;
+  issue_reg_type r, rin;
   issue_reg_type v;
 
   always_comb begin
@@ -65,7 +63,7 @@ module issue_stage
       v.calc1.op = r.calc1.op_b;
     end
 
-    v.halt = hazard_out.stall;
+    v.halt  = hazard_out.stall;
     v.stall = 0;
 
     v.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | d.w.clear;
@@ -176,21 +174,21 @@ module issue_stage
       v.stall = 1;
     end else if (v.calc1.op.crden == 1 && (v.calc1.caddr == csr_fflags || v.calc1.caddr == csr_fcsr) && (a.e.calc0.op.fpuf == 1 || a.m.calc0.op.fpuf == 1 || a.e.calc1.op.fpuf == 1 || a.m.calc1.op.fpuf == 1)) begin
       v.stall = 1;
-    end else if (a.e.calc0.op.load == 1 && ((v.calc0.op.rden1 == 1 && a.e.calc0.waddr == v.calc0.raddr1) || (v.calc0.op.rden2 == 1 && a.e.calc0.waddr == v.calc0.raddr2))) begin 
+    end else if (a.e.calc0.op.load == 1 && ((v.calc0.op.rden1 == 1 && a.e.calc0.waddr == v.calc0.raddr1) || (v.calc0.op.rden2 == 1 && a.e.calc0.waddr == v.calc0.raddr2))) begin
       v.stall = 1;
-    end else if (a.e.calc1.op.load == 1 && ((v.calc0.op.rden1 == 1 && a.e.calc1.waddr == v.calc0.raddr1) || (v.calc0.op.rden2 == 1 && a.e.calc1.waddr == v.calc0.raddr2))) begin 
+    end else if (a.e.calc1.op.load == 1 && ((v.calc0.op.rden1 == 1 && a.e.calc1.waddr == v.calc0.raddr1) || (v.calc0.op.rden2 == 1 && a.e.calc1.waddr == v.calc0.raddr2))) begin
       v.stall = 1;
-    end else if (a.e.calc0.op.load == 1 && ((v.calc1.op.rden1 == 1 && a.e.calc0.waddr == v.calc1.raddr1) || (v.calc1.op.rden2 == 1 && a.e.calc0.waddr == v.calc1.raddr2))) begin 
+    end else if (a.e.calc0.op.load == 1 && ((v.calc1.op.rden1 == 1 && a.e.calc0.waddr == v.calc1.raddr1) || (v.calc1.op.rden2 == 1 && a.e.calc0.waddr == v.calc1.raddr2))) begin
       v.stall = 1;
-    end else if (a.e.calc1.op.load == 1 && ((v.calc1.op.rden1 == 1 && a.e.calc1.waddr == v.calc1.raddr1) || (v.calc1.op.rden2 == 1 && a.e.calc1.waddr == v.calc1.raddr2))) begin 
+    end else if (a.e.calc1.op.load == 1 && ((v.calc1.op.rden1 == 1 && a.e.calc1.waddr == v.calc1.raddr1) || (v.calc1.op.rden2 == 1 && a.e.calc1.waddr == v.calc1.raddr2))) begin
       v.stall = 1;
-    end else if (a.e.calc0.op.fload == 1 && ((v.calc0.op.frden1 == 1 && a.e.calc0.waddr == v.calc0.raddr1) || (v.calc0.op.frden2 == 1 && a.e.calc0.waddr == v.calc0.raddr2) || (v.calc0.op.frden3 == 1 && a.e.calc0.waddr == v.calc0.raddr3))) begin 
+    end else if (a.e.calc0.op.fload == 1 && ((v.calc0.op.frden1 == 1 && a.e.calc0.waddr == v.calc0.raddr1) || (v.calc0.op.frden2 == 1 && a.e.calc0.waddr == v.calc0.raddr2) || (v.calc0.op.frden3 == 1 && a.e.calc0.waddr == v.calc0.raddr3))) begin
       v.stall = 1;
-    end else if (a.e.calc1.op.fload == 1 && ((v.calc0.op.frden1 == 1 && a.e.calc1.waddr == v.calc0.raddr1) || (v.calc0.op.frden2 == 1 && a.e.calc1.waddr == v.calc0.raddr2) || (v.calc0.op.frden3 == 1 && a.e.calc1.waddr == v.calc0.raddr3))) begin 
+    end else if (a.e.calc1.op.fload == 1 && ((v.calc0.op.frden1 == 1 && a.e.calc1.waddr == v.calc0.raddr1) || (v.calc0.op.frden2 == 1 && a.e.calc1.waddr == v.calc0.raddr2) || (v.calc0.op.frden3 == 1 && a.e.calc1.waddr == v.calc0.raddr3))) begin
       v.stall = 1;
-    end else if (a.e.calc0.op.fload == 1 && ((v.calc1.op.frden1 == 1 && a.e.calc0.waddr == v.calc1.raddr1) || (v.calc1.op.frden2 == 1 && a.e.calc0.waddr == v.calc1.raddr2) || (v.calc1.op.frden3 == 1 && a.e.calc0.waddr == v.calc1.raddr3))) begin 
+    end else if (a.e.calc0.op.fload == 1 && ((v.calc1.op.frden1 == 1 && a.e.calc0.waddr == v.calc1.raddr1) || (v.calc1.op.frden2 == 1 && a.e.calc0.waddr == v.calc1.raddr2) || (v.calc1.op.frden3 == 1 && a.e.calc0.waddr == v.calc1.raddr3))) begin
       v.stall = 1;
-    end else if (a.e.calc1.op.fload == 1 && ((v.calc1.op.frden1 == 1 && a.e.calc1.waddr == v.calc1.raddr1) || (v.calc1.op.frden2 == 1 && a.e.calc1.waddr == v.calc1.raddr2) || (v.calc1.op.frden3 == 1 && a.e.calc1.waddr == v.calc1.raddr3))) begin 
+    end else if (a.e.calc1.op.fload == 1 && ((v.calc1.op.frden1 == 1 && a.e.calc1.waddr == v.calc1.raddr1) || (v.calc1.op.frden2 == 1 && a.e.calc1.waddr == v.calc1.raddr2) || (v.calc1.op.frden3 == 1 && a.e.calc1.waddr == v.calc1.raddr3))) begin
       v.stall = 1;
     end
 
@@ -215,7 +213,7 @@ module issue_stage
     end
 
     if (v.clear == 1) begin
-      v.halt = 0;
+      v.halt  = 0;
       v.stall = 0;
     end
 

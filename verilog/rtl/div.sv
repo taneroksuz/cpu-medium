@@ -1,16 +1,14 @@
 import wires::*;
 
-module div
-(
-  input logic reset,
-  input logic clock,
-  input div_in_type div_in,
-  output div_out_type div_out
+module div (
+    input logic reset,
+    input logic clock,
+    input div_in_type div_in,
+    output div_out_type div_out
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
-  div_reg_type r,rin;
+  div_reg_type r, rin;
   div_reg_type v;
 
   always_comb begin
@@ -18,12 +16,11 @@ module div
     v = r;
 
     case (r.counter)
-      0 : begin
+      0: begin
         v.data1 = div_in.rdata1;
         v.data2 = div_in.rdata2;
         v.div_op = div_in.div_op;
-        v.division = v.div_op.divs | v.div_op.rem |
-                v.div_op.divu | v.div_op.remu;
+        v.division = v.div_op.divs | v.div_op.rem | v.div_op.divu | v.div_op.remu;
         v.op1_signed = v.div_op.divs | v.div_op.rem;
         v.op2_signed = v.div_op.divs | v.div_op.rem;
         v.negativ = 0;
@@ -41,7 +38,7 @@ module div
         end else begin
           v.op2 = v.data2;
         end
-        for (int i=31; i>=0; i=i-1) begin
+        for (int i = 31; i >= 0; i = i - 1) begin
           v.counter = i[5:0];
           if (v.op1[i] == 1) begin
             break;
@@ -57,10 +54,10 @@ module div
         if ((v.div_op.divs == 1 | v.div_op.rem == 1) &&
             v.op1 == 32'h80000000 && v.op2 == 32'hFFFFFFFF) begin
           v.overflow = 1;
-          v.counter = 32;
+          v.counter  = 32;
         end
         if (v.division == 1) begin
-          v.result = {33'b0,v.op1};
+          v.result = {33'b0, v.op1};
           v.result = v.result << v.counter;
         end
         if (div_in.enable == 0) begin
@@ -69,9 +66,9 @@ module div
           v.counter = v.counter + 6'h1;
         end
         div_out.result = 0;
-        div_out.ready = 0;
+        div_out.ready  = 0;
       end
-      33 : begin
+      33: begin
         if (v.negativ == 1) begin
           if (v.division == 1) begin
             v.result[31:0] = -v.result[31:0];
@@ -116,14 +113,14 @@ module div
         end
         div_out.ready = 1;
       end
-      default : begin
+      default: begin
         if (v.division == 1) begin
-          v.result = {v.result[63:0],1'b0};
-          v.result[64:32] = v.result[64:32] - {1'b0,v.op2};
+          v.result = {v.result[63:0], 1'b0};
+          v.result[64:32] = v.result[64:32] - {1'b0, v.op2};
           if (v.result[64] == 0) begin
             v.result[0] = 1;
           end else if (v.result[64] == 1) begin
-            v.result = {r.result[63:0],1'b0};
+            v.result = {r.result[63:0], 1'b0};
           end
         end
         v.counter = v.counter + 6'h1;
@@ -136,7 +133,7 @@ module div
 
   end
 
-  always_ff @ (posedge clock) begin
+  always_ff @(posedge clock) begin
     if (reset == 0) begin
       r <= init_div_reg;
     end else begin

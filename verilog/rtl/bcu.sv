@@ -1,12 +1,10 @@
 import wires::*;
 
-module bcu
-(
-  input bcu_in_type bcu_in,
-  output bcu_out_type bcu_out
+module bcu (
+    input  bcu_in_type  bcu_in,
+    output bcu_out_type bcu_out
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
   logic [0:0] branch;
 
@@ -29,7 +27,7 @@ module bcu
         branch = bcu_in.rdata1 >= bcu_in.rdata2;
       end
     end
-    
+
     bcu_out.branch = branch;
 
   end

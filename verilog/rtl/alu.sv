@@ -1,20 +1,18 @@
 import wires::*;
 import functions::*;
 
-module alu
-(
-  input alu_in_type alu_in,
-  output alu_out_type alu_out
+module alu (
+    input  alu_in_type  alu_in,
+    output alu_out_type alu_out
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
   logic [31 : 0] rdata2;
   logic [31 : 0] result;
 
   always_comb begin
 
-    rdata2 = multiplexer(alu_in.imm,alu_in.rdata2,alu_in.sel);
+    rdata2 = multiplexer(alu_in.imm, alu_in.rdata2, alu_in.sel);
     result = 0;
 
     if (alu_in.alu_op.alu_add == 1) begin

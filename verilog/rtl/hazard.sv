@@ -1,13 +1,12 @@
 package hazard_wires;
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
   import configure::*;
   import wires::*;
 
-  localparam depth = $clog2(hazard_depth-1);
+  localparam depth = $clog2(hazard_depth - 1);
 
-  typedef struct packed{
+  typedef struct packed {
     logic [0 : 0] wen0;
     logic [0 : 0] wen1;
     logic [depth-1 : 0] waddr0;
@@ -18,7 +17,7 @@ package hazard_wires;
     instruction_type wdata1;
   } hazard_reg_in_type;
 
-  typedef struct packed{
+  typedef struct packed {
     instruction_type rdata0;
     instruction_type rdata1;
   } hazard_reg_out_type;
@@ -30,19 +29,17 @@ import constants::*;
 import wires::*;
 import hazard_wires::*;
 
-module hazard_reg
-(
-  input logic clock,
-  input hazard_reg_in_type hazard_reg_in,
-  output hazard_reg_out_type hazard_reg_out
+module hazard_reg (
+    input logic clock,
+    input hazard_reg_in_type hazard_reg_in,
+    output hazard_reg_out_type hazard_reg_out
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
-  localparam depth = $clog2(hazard_depth-1);
+  localparam depth = $clog2(hazard_depth - 1);
 
-  instruction_type hazard_reg_array0[0:hazard_depth-1] = '{default:'0};
-  instruction_type hazard_reg_array1[0:hazard_depth-1] = '{default:'0};
+  instruction_type hazard_reg_array0[0:hazard_depth-1] = '{default: '0};
+  instruction_type hazard_reg_array1[0:hazard_depth-1] = '{default: '0};
 
   always_ff @(posedge clock) begin
     if (hazard_reg_in.wen0 == 1) begin
@@ -61,24 +58,22 @@ module hazard_reg
 
 endmodule
 
-module hazard_ctrl
-(
-  input logic reset,
-  input logic clock,
-  input hazard_in_type hazard_in,
-  output hazard_out_type hazard_out,
-  input hazard_reg_out_type hazard_reg_out,
-  output hazard_reg_in_type hazard_reg_in
+module hazard_ctrl (
+    input logic reset,
+    input logic clock,
+    input hazard_in_type hazard_in,
+    output hazard_out_type hazard_out,
+    input hazard_reg_out_type hazard_reg_out,
+    output hazard_reg_in_type hazard_reg_in
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
-  localparam depth = $clog2(hazard_depth-1);
-  localparam total = hazard_depth-2;
+  localparam depth = $clog2(hazard_depth - 1);
+  localparam total = hazard_depth - 2;
 
   localparam [depth-1:0] one = 1;
 
-  typedef struct packed{
+  typedef struct packed {
     instruction_type wdata0;
     instruction_type wdata1;
     instruction_type instr0;
@@ -95,19 +90,19 @@ module hazard_ctrl
   } reg_type;
 
   parameter reg_type init_reg = '{
-    wdata0 : init_instruction,
-    wdata1 : init_instruction,
-    instr0 : init_instruction,
-    instr1 : init_instruction,
-    calc0 : init_calculation,
-    calc1 : init_calculation,
-    wid : 0,
-    rid : 0,
-    diff : 0,
-    count : 0,
-    wen : 0,
-    single : 0,
-    stall : 0
+      wdata0 : init_instruction,
+      wdata1 : init_instruction,
+      instr0 : init_instruction,
+      instr1 : init_instruction,
+      calc0 : init_calculation,
+      calc1 : init_calculation,
+      wid : 0,
+      rid : 0,
+      diff : 0,
+      count : 0,
+      wen : 0,
+      single : 0,
+      stall : 0
   };
 
   reg_type r, rin, v;
@@ -117,8 +112,8 @@ module hazard_ctrl
     v = r;
 
     if (hazard_in.clear == 1) begin
-      v.wid = 0;
-      v.rid = 0;
+      v.wid   = 0;
+      v.rid   = 0;
       v.count = 0;
     end
 
@@ -159,7 +154,7 @@ module hazard_ctrl
     end
 
     if (v.wen == 1) begin
-      v.wid = v.wid + 1;
+      v.wid   = v.wid + 1;
       v.count = v.count + 2;
     end
 
@@ -257,7 +252,7 @@ module hazard_ctrl
     end
 
     v.count = v.count - v.diff;
-    v.rid = v.rid + v.diff;
+    v.rid   = v.rid + v.diff;
 
     v.stall = 0;
 
@@ -283,34 +278,30 @@ module hazard_ctrl
 
 endmodule
 
-module hazard
-(
-  input logic reset,
-  input logic clock,
-  input hazard_in_type hazard_in,
-  output hazard_out_type hazard_out
+module hazard (
+    input logic reset,
+    input logic clock,
+    input hazard_in_type hazard_in,
+    output hazard_out_type hazard_out
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
-  hazard_reg_in_type hazard_reg_in;
+  hazard_reg_in_type  hazard_reg_in;
   hazard_reg_out_type hazard_reg_out;
 
-  hazard_reg hazard_reg_comp
-  (
-    .clock (clock),
-    .hazard_reg_in (hazard_reg_in),
-    .hazard_reg_out (hazard_reg_out)
+  hazard_reg hazard_reg_comp (
+      .clock(clock),
+      .hazard_reg_in(hazard_reg_in),
+      .hazard_reg_out(hazard_reg_out)
   );
 
-  hazard_ctrl hazard_ctrl_comp
-  (
-    .reset (reset),
-    .clock (clock),
-    .hazard_in (hazard_in),
-    .hazard_out (hazard_out),
-    .hazard_reg_in (hazard_reg_in),
-    .hazard_reg_out (hazard_reg_out)
+  hazard_ctrl hazard_ctrl_comp (
+      .reset(reset),
+      .clock(clock),
+      .hazard_in(hazard_in),
+      .hazard_out(hazard_out),
+      .hazard_reg_in(hazard_reg_in),
+      .hazard_reg_out(hazard_reg_out)
   );
 
 endmodule

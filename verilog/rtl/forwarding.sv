@@ -1,18 +1,16 @@
 import wires::*;
 
-module forwarding
-(
-  input forwarding_register_in_type forwarding0_rin,
-  input forwarding_register_in_type forwarding1_rin,
-  input forwarding_execute_in_type forwarding0_ein,
-  input forwarding_execute_in_type forwarding1_ein,
-  input forwarding_memory_in_type forwarding0_min,
-  input forwarding_memory_in_type forwarding1_min,
-  output forwarding_out_type forwarding0_out,
-  output forwarding_out_type forwarding1_out
+module forwarding (
+    input forwarding_register_in_type forwarding0_rin,
+    input forwarding_register_in_type forwarding1_rin,
+    input forwarding_execute_in_type forwarding0_ein,
+    input forwarding_execute_in_type forwarding1_ein,
+    input forwarding_memory_in_type forwarding0_min,
+    input forwarding_memory_in_type forwarding1_min,
+    output forwarding_out_type forwarding0_out,
+    output forwarding_out_type forwarding1_out
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
   logic [31:0] res0_1;
   logic [31:0] res0_2;

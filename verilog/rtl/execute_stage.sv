@@ -1,50 +1,48 @@
 import constants::*;
 import wires::*;
 
-module execute_stage
-(
-  input logic reset,
-  input logic clock,
-  input alu_out_type alu0_out,
-  output alu_in_type alu0_in,
-  input alu_out_type alu1_out,
-  output alu_in_type alu1_in,
-  input agu_out_type agu0_out,
-  output agu_in_type agu0_in,
-  input agu_out_type agu1_out,
-  output agu_in_type agu1_in,
-  input bcu_out_type bcu0_out,
-  output bcu_in_type bcu0_in,
-  input bcu_out_type bcu1_out,
-  output bcu_in_type bcu1_in,
-  input csr_alu_out_type csr_alu_out,
-  output csr_alu_in_type csr_alu_in,
-  input div_out_type div_out,
-  output div_in_type div_in,
-  input mul_out_type mul_out,
-  output mul_in_type mul_in,
-  input bit_alu_out_type bit_alu0_out,
-  output bit_alu_in_type bit_alu0_in,
-  input bit_alu_out_type bit_alu1_out,
-  output bit_alu_in_type bit_alu1_in,
-  input bit_clmul_out_type bit_clmul_out,
-  output bit_clmul_in_type bit_clmul_in,
-  input fp_execute_out_type fp_execute_out,
-  output fp_execute_in_type fp_execute_in,
-  input csr_out_type csr_out,
-  input btac_out_type btac_out,
-  output forwarding_execute_in_type forwarding0_ein,
-  output forwarding_execute_in_type forwarding1_ein,
-  output fp_forwarding_execute_in_type fp_forwarding_ein,
-  input execute_in_type a,
-  input execute_in_type d,
-  output execute_out_type y,
-  output execute_out_type q
+module execute_stage (
+    input logic reset,
+    input logic clock,
+    input alu_out_type alu0_out,
+    output alu_in_type alu0_in,
+    input alu_out_type alu1_out,
+    output alu_in_type alu1_in,
+    input agu_out_type agu0_out,
+    output agu_in_type agu0_in,
+    input agu_out_type agu1_out,
+    output agu_in_type agu1_in,
+    input bcu_out_type bcu0_out,
+    output bcu_in_type bcu0_in,
+    input bcu_out_type bcu1_out,
+    output bcu_in_type bcu1_in,
+    input csr_alu_out_type csr_alu_out,
+    output csr_alu_in_type csr_alu_in,
+    input div_out_type div_out,
+    output div_in_type div_in,
+    input mul_out_type mul_out,
+    output mul_in_type mul_in,
+    input bit_alu_out_type bit_alu0_out,
+    output bit_alu_in_type bit_alu0_in,
+    input bit_alu_out_type bit_alu1_out,
+    output bit_alu_in_type bit_alu1_in,
+    input bit_clmul_out_type bit_clmul_out,
+    output bit_clmul_in_type bit_clmul_in,
+    input fp_execute_out_type fp_execute_out,
+    output fp_execute_in_type fp_execute_in,
+    input csr_out_type csr_out,
+    input btac_out_type btac_out,
+    output forwarding_execute_in_type forwarding0_ein,
+    output forwarding_execute_in_type forwarding1_ein,
+    output fp_forwarding_execute_in_type fp_forwarding_ein,
+    input execute_in_type a,
+    input execute_in_type d,
+    output execute_out_type y,
+    output execute_out_type q
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
-  execute_reg_type r,rin;
+  execute_reg_type r, rin;
   execute_reg_type v;
 
   always_comb begin
@@ -55,11 +53,11 @@ module execute_stage
     v.calc1 = d.i.calc1;
 
     if ((v.calc0.op.fpunit & v.calc0.op.rden1) == 1) begin
-      v.calc0.frdata1 = {32'h0,v.calc0.rdata1};
+      v.calc0.frdata1 = {32'h0, v.calc0.rdata1};
     end
 
     if ((v.calc1.op.fpunit & v.calc1.op.rden1) == 1) begin
-      v.calc1.frdata1 = {32'h0,v.calc1.rdata1};
+      v.calc1.frdata1 = {32'h0, v.calc1.rdata1};
     end
 
     if ((d.e.stall | d.m.stall) == 1) begin
@@ -150,11 +148,11 @@ module execute_stage
       v.calc0.etval = agu0_out.etval;
       if (v.calc0.op.exception == 1) begin
         if ((v.calc0.op.load | v.calc0.op.fload) == 1) begin
-          v.calc0.op.load = 0;
+          v.calc0.op.load  = 0;
           v.calc0.op.fload = 0;
-          v.calc0.op.wren = 0;
+          v.calc0.op.wren  = 0;
         end else if ((v.calc0.op.store | v.calc0.op.fstore) == 1) begin
-          v.calc0.op.store = 0;
+          v.calc0.op.store  = 0;
           v.calc0.op.fstore = 0;
         end else if (v.calc0.op.jump == 1) begin
           v.calc0.op.jump = 0;
@@ -181,11 +179,11 @@ module execute_stage
       v.calc1.etval = agu1_out.etval;
       if (v.calc1.op.exception == 1) begin
         if ((v.calc1.op.load | v.calc1.op.fload) == 1) begin
-          v.calc1.op.load = 0;
+          v.calc1.op.load  = 0;
           v.calc1.op.fload = 0;
-          v.calc1.op.wren = 0;
+          v.calc1.op.wren  = 0;
         end else if ((v.calc1.op.store | v.calc1.op.fstore) == 1) begin
-          v.calc1.op.store = 0;
+          v.calc1.op.store  = 0;
           v.calc1.op.fstore = 0;
         end else if (v.calc1.op.jump == 1) begin
           v.calc1.op.jump = 0;
@@ -194,8 +192,8 @@ module execute_stage
       end
     end
 
-    v.calc0.sdata = (v.calc0.op.fstore == 1) ? v.calc0.frdata2 : {32'h0,v.calc0.rdata2};
-    v.calc1.sdata = (v.calc1.op.fstore == 1) ? v.calc1.frdata2 : {32'h0,v.calc1.rdata2};
+    v.calc0.sdata = (v.calc0.op.fstore == 1) ? v.calc0.frdata2 : {32'h0, v.calc0.rdata2};
+    v.calc1.sdata = (v.calc1.op.fstore == 1) ? v.calc1.frdata2 : {32'h0, v.calc1.rdata2};
 
     mul_in.rdata1 = v.calc0.op.mult ? v.calc0.rdata1 : v.calc1.rdata1;
     mul_in.rdata2 = v.calc0.op.mult ? v.calc0.rdata2 : v.calc1.rdata2;

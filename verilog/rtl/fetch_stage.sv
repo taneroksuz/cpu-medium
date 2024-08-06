@@ -2,31 +2,29 @@ import constants::*;
 import functions::*;
 import wires::*;
 
-module fetch_stage
-(
-  input logic reset,
-  input logic clock,
-  input buffer_out_type buffer_out,
-  output buffer_in_type buffer_in,
-  input csr_out_type csr_out,
-  input btac_out_type btac_out,
-  output btac_in_type btac_in,
-  input mem_out_type imem_out,
-  output mem_in_type imem_in,
-  input fetch_in_type a,
-  input fetch_in_type d,
-  output fetch_out_type y,
-  output fetch_out_type q
+module fetch_stage (
+    input logic reset,
+    input logic clock,
+    input buffer_out_type buffer_out,
+    output buffer_in_type buffer_in,
+    input csr_out_type csr_out,
+    input btac_out_type btac_out,
+    output btac_in_type btac_in,
+    input mem_out_type imem_out,
+    output mem_in_type imem_in,
+    input fetch_in_type a,
+    input fetch_in_type d,
+    output fetch_out_type y,
+    output fetch_out_type q
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
   localparam [1:0] idle = 0;
   localparam [1:0] busy = 1;
   localparam [1:0] ctrl = 2;
   localparam [1:0] inv = 3;
 
-  fetch_reg_type r,rin;
+  fetch_reg_type r, rin;
   fetch_reg_type v;
 
   always_comb begin
@@ -38,7 +36,7 @@ module fetch_stage
 
     v.fence = 0;
     v.spec = 0;
-    
+
     v.rdata = imem_out.mem_rdata;
     v.ready = imem_out.mem_ready;
 
@@ -49,22 +47,22 @@ module fetch_stage
     v.ready0 = buffer_out.ready0;
     v.ready1 = buffer_out.ready1;
 
-    case(v.state)
-      idle : begin
+    case (v.state)
+      idle: begin
         v.stall = 1;
       end
-      busy : begin
+      busy: begin
         if (v.ready == 0) begin
           v.stall = 1;
         end
       end
-      ctrl : begin
+      ctrl: begin
         v.stall = 1;
       end
-      inv : begin
+      inv: begin
         v.stall = 1;
       end
-      default : begin
+      default: begin
       end
     endcase
 
@@ -98,14 +96,14 @@ module fetch_stage
       v.pc = v.pc + 8;
     end
 
-    case(v.state)
-      idle : begin
+    case (v.state)
+      idle: begin
         if (d.w.clear == 0) begin
           v.state = busy;
           v.valid = 1;
         end
       end
-      busy : begin
+      busy: begin
         if (v.ready == 1) begin
           v.state = busy;
           v.valid = 1;
@@ -120,7 +118,7 @@ module fetch_stage
           v.valid = 0;
         end
       end
-      ctrl : begin
+      ctrl: begin
         if (v.ready == 1) begin
           v.state = busy;
           v.valid = 1;
@@ -130,7 +128,7 @@ module fetch_stage
         end
         v.ready = 0;
       end
-      inv : begin
+      inv: begin
         if (v.ready == 1) begin
           v.state = busy;
           v.valid = 1;
@@ -140,7 +138,7 @@ module fetch_stage
         end
         v.ready = 0;
       end
-      default : begin
+      default: begin
       end
     endcase
 

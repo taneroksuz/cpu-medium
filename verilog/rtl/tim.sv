@@ -1,25 +1,22 @@
 package tim_wires;
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
   import configure::*;
 
-  localparam depth = $clog2(tim_depth-1);
-  localparam width = $clog2(tim_width-1);
+  localparam depth = $clog2(tim_depth - 1);
+  localparam width = $clog2(tim_width - 1);
 
-  typedef struct packed{
+  typedef struct packed {
     logic [0 : 0] wen;
     logic [depth-1 : 0] waddr;
     logic [depth-1 : 0] raddr;
     logic [63 : 0] wdata;
   } tim_ram_in_type;
 
-  typedef struct packed{
-    logic [63 : 0] rdata;
-  } tim_ram_out_type;
+  typedef struct packed {logic [63 : 0] rdata;} tim_ram_out_type;
 
-  typedef tim_ram_in_type tim_vec_in_type [tim_width];
-  typedef tim_ram_out_type tim_vec_out_type [tim_width];
+  typedef tim_ram_in_type tim_vec_in_type[tim_width];
+  typedef tim_ram_out_type tim_vec_out_type[tim_width];
 
 endpackage
 
@@ -27,19 +24,17 @@ import configure::*;
 import wires::*;
 import tim_wires::*;
 
-module tim_ram
-(
-  input logic clock,
-  input tim_ram_in_type tim_ram_in,
-  output tim_ram_out_type tim_ram_out
+module tim_ram (
+    input logic clock,
+    input tim_ram_in_type tim_ram_in,
+    output tim_ram_out_type tim_ram_out
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
-  localparam depth = $clog2(tim_depth-1);
-  localparam width = $clog2(tim_width-1);
+  localparam depth = $clog2(tim_depth - 1);
+  localparam width = $clog2(tim_width - 1);
 
-  logic [63 : 0] tim_ram[0:tim_depth-1] = '{default:'0};
+  logic [63 : 0] tim_ram[0:tim_depth-1] = '{default: '0};
 
   always_ff @(posedge clock) begin
     if (tim_ram_in.wen == 1) begin
@@ -50,22 +45,20 @@ module tim_ram
 
 endmodule
 
-module tim_ctrl
-(
-  input logic reset,
-  input logic clock,
-  input tim_vec_out_type dvec_out,
-  output tim_vec_in_type dvec_in,
-  input mem_in_type tim_in,
-  output mem_out_type tim_out
+module tim_ctrl (
+    input logic reset,
+    input logic clock,
+    input tim_vec_out_type dvec_out,
+    output tim_vec_in_type dvec_in,
+    input mem_in_type tim_in,
+    output mem_out_type tim_out
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
-  localparam depth = $clog2(tim_depth-1);
-  localparam width = $clog2(tim_width-1);
+  localparam depth = $clog2(tim_depth - 1);
+  localparam width = $clog2(tim_width - 1);
 
-  typedef struct packed{
+  typedef struct packed {
     logic [width-1:0] wid;
     logic [depth-1:0] did;
     logic [63:0] data;
@@ -76,16 +69,16 @@ module tim_ctrl
   } front_type;
 
   parameter front_type init_front = '{
-    wid : 0,
-    did : 0,
-    data : 0,
-    strb : 0,
-    wren : 0,
-    rden : 0,
-    enable : 0
+      wid : 0,
+      did : 0,
+      data : 0,
+      strb : 0,
+      wren : 0,
+      rden : 0,
+      enable : 0
   };
 
-  typedef struct packed{
+  typedef struct packed {
     logic [depth-1:0] did;
     logic [width-1:0] wid;
     logic [7:0] strb;
@@ -97,22 +90,22 @@ module tim_ctrl
   } back_type;
 
   parameter back_type init_back = '{
-    did : 0,
-    wid : 0,
-    strb : 0,
-    data : 0,
-    rdata : 0,
-    enable : 0,
-    wren : 0,
-    rden : 0
+      did : 0,
+      wid : 0,
+      strb : 0,
+      data : 0,
+      rdata : 0,
+      enable : 0,
+      wren : 0,
+      rden : 0
   };
 
   integer i;
 
-  front_type r_f,rin_f;
+  front_type r_f, rin_f;
   front_type v_f;
 
-  back_type r_b,rin_b;
+  back_type r_b, rin_b;
   back_type v_b;
 
   always_comb begin
@@ -183,7 +176,7 @@ module tim_ctrl
 
     // Read data
 
-    for (int i=0; i<tim_width; i=i+1) begin
+    for (int i = 0; i < tim_width; i = i + 1) begin
       dvec_in[i].raddr = 0;
     end
 
@@ -191,8 +184,8 @@ module tim_ctrl
 
     // Write data
 
-    for (int i=0; i<tim_width; i=i+1) begin
-      dvec_in[i].wen = 0;
+    for (int i = 0; i < tim_width; i = i + 1) begin
+      dvec_in[i].wen   = 0;
       dvec_in[i].waddr = 0;
       dvec_in[i].wdata = 0;
     end
@@ -222,20 +215,18 @@ module tim_ctrl
 
 endmodule
 
-module tim
-(
-  input  logic reset,
-  input  logic clock,
-  input  logic [0  : 0] tim_valid,
-  input  logic [0  : 0] tim_instr,
-  input  logic [31 : 0] tim_addr,
-  input  logic [63 : 0] tim_wdata,
-  input  logic [7  : 0] tim_wstrb,
-  output logic [63 : 0] tim_rdata,
-  output logic [0  : 0] tim_ready
+module tim (
+    input logic reset,
+    input logic clock,
+    input logic [0 : 0] tim_valid,
+    input logic [0 : 0] tim_instr,
+    input logic [31 : 0] tim_addr,
+    input logic [63 : 0] tim_wdata,
+    input logic [7 : 0] tim_wstrb,
+    output logic [63 : 0] tim_rdata,
+    output logic [0 : 0] tim_ready
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
   tim_vec_in_type dvec_in;
   tim_vec_out_type dvec_out;
@@ -246,32 +237,30 @@ module tim
 
     genvar i;
 
-    for (i=0; i<tim_width; i=i+1) begin : tim_ram
-      tim_ram tim_ram_comp
-      (
-        .clock (clock),
-        .tim_ram_in (dvec_in[i]),
-        .tim_ram_out (dvec_out[i])
+    for (i = 0; i < tim_width; i = i + 1) begin : tim_ram
+      tim_ram tim_ram_comp (
+          .clock(clock),
+          .tim_ram_in(dvec_in[i]),
+          .tim_ram_out(dvec_out[i])
       );
     end
 
   endgenerate
 
-  tim_ctrl tim_ctrl_comp
-  (
-    .reset (reset),
-    .clock (clock),
-    .dvec_out (dvec_out),
-    .dvec_in (dvec_in),
-    .tim_in (tim_in),
-    .tim_out (tim_out)
+  tim_ctrl tim_ctrl_comp (
+      .reset(reset),
+      .clock(clock),
+      .dvec_out(dvec_out),
+      .dvec_in(dvec_in),
+      .tim_in(tim_in),
+      .tim_out(tim_out)
   );
 
   assign tim_in.mem_valid = tim_valid;
   assign tim_in.mem_fence = 0;
   assign tim_in.mem_spec = 0;
   assign tim_in.mem_instr = tim_instr;
-  assign tim_in.mem_addr  = tim_addr;
+  assign tim_in.mem_addr = tim_addr;
   assign tim_in.mem_wdata = tim_wdata;
   assign tim_in.mem_wstrb = tim_wstrb;
 

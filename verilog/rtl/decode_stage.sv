@@ -3,33 +3,31 @@ import wires::*;
 import functions::*;
 import fp_wire::*;
 
-module decode_stage
-(
-  input logic reset,
-  input logic clock,
-  input decoder_out_type decoder0_out,
-  output decoder_in_type decoder0_in,
-  input decoder_out_type decoder1_out,
-  output decoder_in_type decoder1_in,
-  input compress_out_type compress0_out,
-  output compress_in_type compress0_in,
-  input compress_out_type compress1_out,
-  output compress_in_type compress1_in,
-  input fp_decode_out_type fp_decode0_out,
-  output fp_decode_in_type fp_decode0_in,
-  input fp_decode_out_type fp_decode1_out,
-  output fp_decode_in_type fp_decode1_in,
-  input csr_out_type csr_out,
-  input btac_out_type btac_out,
-  input decode_in_type a,
-  input decode_in_type d,
-  output decode_out_type y,
-  output decode_out_type q
+module decode_stage (
+    input logic reset,
+    input logic clock,
+    input decoder_out_type decoder0_out,
+    output decoder_in_type decoder0_in,
+    input decoder_out_type decoder1_out,
+    output decoder_in_type decoder1_in,
+    input compress_out_type compress0_out,
+    output compress_in_type compress0_in,
+    input compress_out_type compress1_out,
+    output compress_in_type compress1_in,
+    input fp_decode_out_type fp_decode0_out,
+    output fp_decode_in_type fp_decode0_in,
+    input fp_decode_out_type fp_decode1_out,
+    output fp_decode_in_type fp_decode1_in,
+    input csr_out_type csr_out,
+    input btac_out_type btac_out,
+    input decode_in_type a,
+    input decode_in_type d,
+    output decode_out_type y,
+    output decode_out_type q
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
-  decode_reg_type r,rin;
+  decode_reg_type r, rin;
   decode_reg_type v;
 
   always_comb begin

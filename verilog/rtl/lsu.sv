@@ -1,15 +1,13 @@
 import wires::*;
 
-module lsu
-(
-  input lsu_in_type lsu_in,
-  output lsu_out_type lsu_out
+module lsu (
+    input  lsu_in_type  lsu_in,
+    output lsu_out_type lsu_out
 );
-  timeunit 1ns;
-  timeprecision 1ps;
+  timeunit 1ns; timeprecision 1ps;
 
   logic [63:0] ldata;
-  logic [7:0]  data_b;
+  logic [ 7:0] data_b;
   logic [15:0] data_h;
   logic [31:0] data_w;
   logic [63:0] data_d;
@@ -68,25 +66,25 @@ module lsu
 
     ldata = 0;
     if (lsu_in.lsu_op.lsu_lb == 1) begin
-      ldata = {{56{data_b[7]}},data_b};
+      ldata = {{56{data_b[7]}}, data_b};
     end
     if (lsu_in.lsu_op.lsu_lh == 1) begin
-      ldata = {{48{data_h[15]}},data_h};
+      ldata = {{48{data_h[15]}}, data_h};
     end
     if (lsu_in.lsu_op.lsu_lw == 1) begin
-      ldata = {{32{data_h[15]}},data_w};
+      ldata = {{32{data_h[15]}}, data_w};
     end
     if (lsu_in.lsu_op.lsu_ld == 1) begin
       ldata = data_d;
     end
     if (lsu_in.lsu_op.lsu_lbu == 1) begin
-      ldata = {56'b0,data_b};
+      ldata = {56'b0, data_b};
     end
     if (lsu_in.lsu_op.lsu_lhu == 1) begin
-      ldata = {48'b0,data_h};
+      ldata = {48'b0, data_h};
     end
     if (lsu_in.lsu_op.lsu_lwu == 1) begin
-      ldata = {32'b0,data_w};
+      ldata = {32'b0, data_w};
     end
 
     lsu_out.result = ldata;
