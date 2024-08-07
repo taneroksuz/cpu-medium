@@ -18,12 +18,12 @@ simulate:
 	sim/run.sh
 
 compile:
-	wolv-benchmark/benchmarks.sh
-	wolv-benchmark/coremark.sh
-	wolv-benchmark/dhrystone.sh
-	wolv-benchmark/isa.sh
-	wolv-benchmark/whetstone.sh
-	wolv-benchmark/free-rtos.sh
+	benchmark/benchmarks.sh
+	benchmark/coremark.sh
+	benchmark/dhrystone.sh
+	benchmark/isa.sh
+	benchmark/whetstone.sh
+	benchmark/free-rtos.sh
 
 parse:
 	check/run.sh
