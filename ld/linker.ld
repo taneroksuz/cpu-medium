@@ -61,5 +61,8 @@ SECTIONS
   PROVIDE(__tim1_start = ORIGIN(tim1));
   PROVIDE(__tim1_end = ORIGIN(tim1) + LENGTH(tim1));
 
+  PROVIDE(__freertos_irq_stack_top = (__tim1_end - 8K));
+  PROVIDE(_stack = (__tim1_end));
+
 }
 
