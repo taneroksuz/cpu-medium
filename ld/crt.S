@@ -1,0 +1,37 @@
+  .section .text.init, "ax"
+  .global _start
+  .extern freertos_risc_v_trap_handler
+_start:
+  la      t0, freertos_risc_v_trap_handler
+  csrw    mtvec, t0
+
+  la t0, __load_start_text
+  la t1, __load_stop_text
+
+  la t2, __tim0_start
+  la t3, __tim0_end
+
+copy_text:
+  lb t4,0(t0)
+  sb t4,0(t2)
+  addi t0,t0,1
+  addi t2,t2,1
+  blt t0,t1,copy_text
+
+  la t0, __load_start_data
+  la t1, __load_stop_data
+
+  la t2, __tim1_start
+  la t3, __tim1_end
+
+copy_data:
+  lb t4,0(t0)
+  sb t4,0(t2)
+  addi t0,t0,1
+  addi t2,t2,1
+  blt t0,t1,copy_data
+
+  la sp, _stack
+
+  call main
+  tail exit
