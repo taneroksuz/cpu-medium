@@ -5,6 +5,7 @@ export VERIBLE ?= verible
 export PYTHON ?= python3
 export SERIAL ?= /dev/ttyUSB0
 export BASEDIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+export BENCHMARK ?= benchmark
 
 export RISCV ?= /opt/rv32imfdcb
 export ARCH ?= rv32imfdc_zba_zbb_zbc_zbs_zicsr_zifencei
@@ -18,7 +19,7 @@ simulate:
 	sim/run.sh
 
 compile:
-	benchmark/benchmarks.sh
+	benchmark/riscv-tests.sh
 	benchmark/coremark.sh
 	benchmark/dhrystone.sh
 	benchmark/isa.sh

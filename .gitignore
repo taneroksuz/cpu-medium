@@ -1,6 +1,6 @@
 riscv/
 dump/
-benchmarks/
+riscv-tests/
 coremark/
 dhrystone/
 isa/
