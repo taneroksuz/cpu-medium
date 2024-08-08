@@ -1,3 +1,13 @@
+#ifdef __riscv64
+# define LREG ld
+# define SREG sd
+# define REGBYTES 8
+#else
+# define LREG lw
+# define SREG sw
+# define REGBYTES 4
+#endif
+
   .section .text.init, "ax"
   .global _start
   .extern freertos_risc_v_trap_handler
@@ -12,10 +22,10 @@ _start:
   la t3, __tim0_end
 
 copy_text:
-  lb t4,0(t0)
-  sb t4,0(t2)
-  addi t0,t0,1
-  addi t2,t2,1
+  LREG t4,0(t0)
+  SREG t4,0(t2)
+  addi t0,t0,REGBYTES
+  addi t2,t2,REGBYTES
   blt t0,t1,copy_text
 
   la t0, __load_start_data
@@ -25,10 +35,10 @@ copy_text:
   la t3, __tim1_end
 
 copy_data:
-  lb t4,0(t0)
-  sb t4,0(t2)
-  addi t0,t0,1
-  addi t2,t2,1
+  LREG t4,0(t0)
+  SREG t4,0(t2)
+  addi t0,t0,REGBYTES
+  addi t2,t2,REGBYTES
   blt t0,t1,copy_data
 
   la sp, _stack
