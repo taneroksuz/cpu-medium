@@ -39,10 +39,8 @@ ${VERIBLE}-verilog-format --inplace ${BASEDIR}/verilog/tb/configure.sv \
                                     ${BASEDIR}/verilog/rtl/cpu.sv \
                                     ${BASEDIR}/verilog/rtl/rom.sv \
                                     ${BASEDIR}/verilog/rtl/ram.sv \
-                                    ${BASEDIR}/verilog/rtl/print.sv \
                                     ${BASEDIR}/verilog/rtl/uart.sv \
                                     ${BASEDIR}/verilog/rtl/soc.sv \
-                                    ${BASEDIR}/verilog/rtl/top.sv \
                                     ${BASEDIR}/verilog/tb/tb_soc.sv
 
 end=`date +%s`

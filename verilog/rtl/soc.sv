@@ -1,16 +1,11 @@
 import configure::*;
 
 module soc (
-    input logic reset,
-    input logic clock,
-    input logic clock_slow,
-    output logic [0 : 0] uart_valid,
-    output logic [0 : 0] uart_instr,
-    output logic [31 : 0] uart_addr,
-    output logic [63 : 0] uart_wdata,
-    output logic [7 : 0] uart_wstrb,
-    input logic [63 : 0] uart_rdata,
-    input logic [0 : 0] uart_ready
+    input  logic reset,
+    input  logic clock,
+    input  logic clock_slow,
+    input  logic uart_rx,
+    output logic uart_tx
 );
 
   timeunit 1ns; timeprecision 1ps;
@@ -182,6 +177,22 @@ module soc (
   logic [ 7 : 0] ram_slow_wstrb;
   logic [63 : 0] ram_slow_rdata;
   logic [ 0 : 0] ram_slow_ready;
+
+  logic [ 0 : 0] uart_valid;
+  logic [ 0 : 0] uart_instr;
+  logic [31 : 0] uart_addr;
+  logic [63 : 0] uart_wdata;
+  logic [ 7 : 0] uart_wstrb;
+  logic [63 : 0] uart_rdata;
+  logic [ 0 : 0] uart_ready;
+
+  logic [ 0 : 0] uart_slow_valid;
+  logic [ 0 : 0] uart_slow_instr;
+  logic [31 : 0] uart_slow_addr;
+  logic [63 : 0] uart_slow_wdata;
+  logic [ 7 : 0] uart_slow_wstrb;
+  logic [63 : 0] uart_slow_rdata;
+  logic [ 0 : 0] uart_slow_ready;
 
   logic [ 0 : 0] meip;
   logic [ 0 : 0] msip;
@@ -458,6 +469,42 @@ module soc (
       .memory_wstrb(uart_wstrb),
       .memory_rdata(uart_rdata),
       .memory_ready(uart_ready)
+  );
+
+  ccd #(
+      .clock_rate(clk_divider_slow)
+  ) ccd_uart_comp (
+      .reset(reset),
+      .clock(clock),
+      .clock_slow(clock_slow),
+      .memory_valid(uart_valid),
+      .memory_instr(uart_instr),
+      .memory_addr(uart_addr),
+      .memory_wdata(uart_wdata),
+      .memory_wstrb(uart_wstrb),
+      .memory_rdata(uart_rdata),
+      .memory_ready(uart_ready),
+      .memory_slow_valid(uart_slow_valid),
+      .memory_slow_instr(uart_slow_instr),
+      .memory_slow_addr(uart_slow_addr),
+      .memory_slow_wdata(uart_slow_wdata),
+      .memory_slow_wstrb(uart_slow_wstrb),
+      .memory_slow_rdata(uart_slow_rdata),
+      .memory_slow_ready(uart_slow_ready)
+  );
+
+  uart uart_comp (
+      .reset(reset),
+      .clock(clock_slow),
+      .uart_valid(uart_slow_valid),
+      .uart_instr(uart_slow_instr),
+      .uart_addr(uart_slow_addr),
+      .uart_wdata(uart_slow_wdata),
+      .uart_wstrb(uart_slow_wstrb),
+      .uart_rdata(uart_slow_rdata),
+      .uart_ready(uart_slow_ready),
+      .uart_rx(uart_rx),
+      .uart_tx(uart_tx)
   );
 
   arbiter arbiter_clint_comp (

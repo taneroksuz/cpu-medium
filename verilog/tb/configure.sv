@@ -1,6 +1,8 @@
 package configure;
   timeunit 1ns; timeprecision 1ps;
 
+  parameter simulation = 1;
+
   parameter buffer_depth = 8;
   parameter hazard_depth = 4;
 
@@ -41,6 +43,6 @@ package configure;
 
   parameter clk_divider_rtc = clk_freq / rtc_freq;
   parameter clk_divider_slow = clk_freq / slow_freq;
-  parameter clks_per_bit = clk_freq / baudrate - 1;
+  parameter clks_per_bit = slow_freq / baudrate - 1;
 
 endpackage
