@@ -33,7 +33,7 @@ The installation scripts of necessary tools are located in directory **tools**. 
 git clone --recurse-submodules https://github.com/taneroksuz/wolv-z7.git
 ```
 
-2. Execute scripts in directory **tools** to install necessary tools for compilation and simulation.
+2. Execute scripts in directory **tools** to install necessary tools for compilation and simulation:
 ```console
 cd tools
 ./riscv.sh
