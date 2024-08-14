@@ -8,7 +8,7 @@
 # define REGBYTES 4
 #endif
 
-  .section .text.init, "ax"
+  .section ".text.init","ax"
   .global _start
   .extern freertos_risc_v_trap_handler
 _start:
