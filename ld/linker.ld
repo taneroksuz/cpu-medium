@@ -42,14 +42,7 @@ SECTIONS
       *(.sdata*)
       *(.bss*)
       *(.sbss*)
-    }
-    .heap
-    {
       _end = .;
-    }
-    .stack
-    {
-      _sp = ORIGIN(tim1) + LENGTH(tim1);
     }
   } >tim1 AT>dram
 
