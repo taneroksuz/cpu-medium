@@ -626,7 +626,7 @@ package wires;
     logic [0 : 0]  ready;
     logic [0 : 0]  clear;
     logic [0 : 0]  stall;
-  } buffer_in_type;
+  } fetchbuffer_in_type;
 
   typedef struct packed {
     logic [31 : 0] pc0;
@@ -636,7 +636,7 @@ package wires;
     logic [0 : 0]  ready0;
     logic [0 : 0]  ready1;
     logic [0 : 0]  stall;
-  } buffer_out_type;
+  } fetchbuffer_out_type;
 
   typedef struct packed {
     instruction_type instr0;

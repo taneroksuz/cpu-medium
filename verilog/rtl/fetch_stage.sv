@@ -5,8 +5,8 @@ import wires::*;
 module fetch_stage (
     input logic reset,
     input logic clock,
-    input buffer_out_type buffer_out,
-    output buffer_in_type buffer_in,
+    input fetchbuffer_out_type fetchbuffer_out,
+    output fetchbuffer_in_type fetchbuffer_in,
     input csr_out_type csr_out,
     input btac_out_type btac_out,
     output btac_in_type btac_in,
@@ -32,7 +32,7 @@ module fetch_stage (
     v = r;
 
     v.valid = 0;
-    v.stall = buffer_out.stall;
+    v.stall = fetchbuffer_out.stall;
 
     v.fence = 0;
     v.spec = 0;
@@ -40,12 +40,12 @@ module fetch_stage (
     v.rdata = imem_out.mem_rdata;
     v.ready = imem_out.mem_ready;
 
-    v.pc0 = buffer_out.pc0;
-    v.pc1 = buffer_out.pc1;
-    v.instr0 = buffer_out.instr0;
-    v.instr1 = buffer_out.instr1;
-    v.ready0 = buffer_out.ready0;
-    v.ready1 = buffer_out.ready1;
+    v.pc0 = fetchbuffer_out.pc0;
+    v.pc1 = fetchbuffer_out.pc1;
+    v.instr0 = fetchbuffer_out.instr0;
+    v.instr1 = fetchbuffer_out.instr1;
+    v.ready0 = fetchbuffer_out.ready0;
+    v.ready1 = fetchbuffer_out.ready1;
 
     case (v.state)
       idle: begin
@@ -142,11 +142,11 @@ module fetch_stage (
       end
     endcase
 
-    buffer_in.pc = r.pc;
-    buffer_in.rdata = v.rdata;
-    buffer_in.ready = v.ready;
-    buffer_in.clear = v.spec;
-    buffer_in.stall = a.i.halt;
+    fetchbuffer_in.pc = r.pc;
+    fetchbuffer_in.rdata = v.rdata;
+    fetchbuffer_in.ready = v.ready;
+    fetchbuffer_in.clear = v.spec;
+    fetchbuffer_in.stall = a.i.halt;
 
     imem_in.mem_valid = v.valid;
     imem_in.mem_fence = v.fence;

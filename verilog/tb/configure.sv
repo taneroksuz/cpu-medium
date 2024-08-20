@@ -3,7 +3,8 @@ package configure;
 
   parameter simulation = 1;
 
-  parameter buffer_depth = 8;
+  parameter fetchbuffer_depth = 8;
+
   parameter hazard_depth = 4;
 
   parameter tim_width = 32;
