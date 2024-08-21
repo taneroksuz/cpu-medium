@@ -69,11 +69,6 @@ make simulate MAXTIME=1000
 
 ## BENCHMARKS
 
-### Dhrystone (Legal) Benchmark
-| Cycles | Dhrystone/s/MHz | DMIPS/s/MHz | Iteration |
-| ------ | --------------- | ----------- | --------- |
-|    327 |            3057 |        1.74 |       500 |
-
 ### Coremark Benchmark
 | Cycles | Iteration/s/MHz | Iteration |
 | ------ | --------------- | --------- |
