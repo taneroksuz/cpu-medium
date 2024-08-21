@@ -63,7 +63,7 @@ module memory_stage (
         a.e.calc0.lsu_op.lsu_sw,
         a.e.calc0.lsu_op.lsu_sd
       );
-      dmem_in.mem_wstrb = (a.e.calc0.op.load | a.e.calc0.op.fload) == 1 ? 8'h00 : a.e.calc0.byteenable;
+      dmem_in.mem_store = a.e.calc0.op.store | a.e.calc0.op.fstore;
     end else begin
       dmem_in.mem_valid = a.e.calc1.op.load | a.e.calc1.op.store | a.e.calc1.op.fload | a.e.calc1.op.fstore | a.e.calc1.op.fence;
       dmem_in.mem_fence = a.e.calc1.op.fence;
@@ -77,7 +77,7 @@ module memory_stage (
         a.e.calc1.lsu_op.lsu_sw,
         a.e.calc1.lsu_op.lsu_sd
       );
-      dmem_in.mem_wstrb = (a.e.calc1.op.load | a.e.calc1.op.fload) == 1 ? 8'h00 : a.e.calc1.byteenable;
+      dmem_in.mem_store = a.e.calc1.op.store | a.e.calc1.op.fstore;
     end
 
     lsu0_in.ldata = dmem_out.mem_rdata;

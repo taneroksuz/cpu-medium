@@ -1257,9 +1257,9 @@ package wires;
     logic [0 : 0]  mem_fence;
     logic [0 : 0]  mem_spec;
     logic [0 : 0]  mem_instr;
+    logic [0 : 0]  mem_store;
     logic [31 : 0] mem_addr;
     logic [63 : 0] mem_wdata;
-    logic [7 : 0]  mem_wstrb;
   } mem_in_type;
 
   typedef struct packed {

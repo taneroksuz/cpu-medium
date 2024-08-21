@@ -7,16 +7,24 @@ package tim_wires;
   localparam width = $clog2(tim_width - 1);
 
   typedef struct packed {
-    logic [0 : 0] wen;
-    logic [depth-1 : 0] waddr;
-    logic [depth-1 : 0] raddr;
-    logic [63 : 0] wdata;
+    logic [0 : 0] en0;
+    logic [0 : 0] en1;
+    logic [depth-1 : 0] addr0;
+    logic [depth-1 : 0] addr1;
+    logic [63 : 0] data0;
+    logic [63 : 0] data1;
   } tim_ram_in_type;
 
-  typedef struct packed {logic [63 : 0] rdata;} tim_ram_out_type;
+  typedef struct packed {
+    logic [63 : 0] data0;
+    logic [63 : 0] data1;
+  } tim_ram_out_type;
 
   typedef tim_ram_in_type tim_vec_in_type[tim_width];
   typedef tim_ram_out_type tim_vec_out_type[tim_width];
+
+  localparam tim_vec_in_type init_tim_vec_in = '{default: 0};
+  localparam tim_vec_out_type init_tim_vec_out = '{default: 0};
 
 endpackage
 
@@ -37,10 +45,14 @@ module tim_ram (
   logic [63 : 0] tim_ram[0:tim_depth-1] = '{default: '0};
 
   always_ff @(posedge clock) begin
-    if (tim_ram_in.wen == 1) begin
-      tim_ram[tim_ram_in.waddr] <= tim_ram_in.wdata;
+    if (tim_ram_in.en0 == 1) begin
+      tim_ram[tim_ram_in.addr0] <= tim_ram_in.data0;
     end
-    tim_ram_out.rdata <= tim_ram[tim_ram_in.raddr];
+    if (tim_ram_in.en1 == 1) begin
+      tim_ram[tim_ram_in.addr1] <= tim_ram_in.data1;
+    end
+    tim_ram_out.data0 <= tim_ram[tim_ram_in.addr0];
+    tim_ram_out.data1 <= tim_ram[tim_ram_in.addr1];
   end
 
 endmodule
@@ -62,154 +74,49 @@ module tim_ctrl (
     logic [width-1:0] wid;
     logic [depth-1:0] did;
     logic [63:0] data;
-    logic [7:0] strb;
     logic [0:0] wren;
-    logic [0:0] rden;
     logic [0:0] enable;
   } front_type;
 
-  parameter front_type init_front = '{
-      wid : 0,
-      did : 0,
-      data : 0,
-      strb : 0,
-      wren : 0,
-      rden : 0,
-      enable : 0
-  };
+  parameter front_type init_reg = '{wid : 0, did : 0, data : 0, wren : 0, enable : 0};
 
-  typedef struct packed {
-    logic [depth-1:0] did;
-    logic [width-1:0] wid;
-    logic [7:0] strb;
-    logic [63:0] data;
-    logic [63:0] rdata;
-    logic [0:0] enable;
-    logic [0:0] wren;
-    logic [0:0] rden;
-  } back_type;
-
-  parameter back_type init_back = '{
-      did : 0,
-      wid : 0,
-      strb : 0,
-      data : 0,
-      rdata : 0,
-      enable : 0,
-      wren : 0,
-      rden : 0
-  };
-
-  integer i;
-
-  front_type r_f, rin_f;
-  front_type v_f;
-
-  back_type r_b, rin_b;
-  back_type v_b;
+  front_type r, rin;
+  front_type v;
 
   always_comb begin
 
-    v_f = r_f;
+    v = r;
 
-    v_f.enable = 0;
-    v_f.rden = 0;
-    v_f.wren = 0;
+    v.enable = 0;
+    v.wren = 0;
 
     if (tim_in.mem_valid == 1) begin
-      v_f.enable = tim_in.mem_valid;
-      v_f.wren = |tim_in.mem_wstrb;
-      v_f.rden = ~(|tim_in.mem_wstrb);
-      v_f.data = tim_in.mem_wdata;
-      v_f.strb = tim_in.mem_wstrb;
-      v_f.did = tim_in.mem_addr[(depth+width+2):(width+3)];
-      v_f.wid = tim_in.mem_addr[(width+2):3];
+      v.enable = tim_in.mem_valid;
+      v.wren = tim_in.mem_store;
+      v.data = tim_in.mem_wdata;
+      v.did = tim_in.mem_addr[(depth+width+2):(width+3)];
+      v.wid = tim_in.mem_addr[(width+2):3];
     end
 
-    rin_f = v_f;
-
-  end
-
-  always_comb begin
-
-    v_b = r_b;
-
-    v_b.enable = r_f.enable;
-    v_b.wren = r_f.wren;
-    v_b.rden = r_f.rden;
-    v_b.data = r_f.data;
-    v_b.strb = r_f.strb;
-    v_b.did = r_f.did;
-    v_b.wid = r_f.wid;
-
-    if (v_b.enable == 1) begin
-      if (r_b.enable == v_b.enable && r_b.did == v_b.did && r_b.wid == v_b.wid) begin
-        v_b.rdata = r_b.data;
-      end else begin
-        v_b.rdata = dvec_out[v_b.wid].rdata;
-      end
-      if (v_b.strb[0] == 0) begin
-        v_b.data[7:0] = v_b.rdata[7:0];
-      end
-      if (v_b.strb[1] == 0) begin
-        v_b.data[15:8] = v_b.rdata[15:8];
-      end
-      if (v_b.strb[2] == 0) begin
-        v_b.data[23:16] = v_b.rdata[23:16];
-      end
-      if (v_b.strb[3] == 0) begin
-        v_b.data[31:24] = v_b.rdata[31:24];
-      end
-      if (v_b.strb[4] == 0) begin
-        v_b.data[39:32] = v_b.rdata[39:32];
-      end
-      if (v_b.strb[5] == 0) begin
-        v_b.data[47:40] = v_b.rdata[47:40];
-      end
-      if (v_b.strb[6] == 0) begin
-        v_b.data[55:48] = v_b.rdata[55:48];
-      end
-      if (v_b.strb[7] == 0) begin
-        v_b.data[63:56] = v_b.rdata[63:56];
-      end
-    end
-
-    // Read data
-
-    for (int i = 0; i < tim_width; i = i + 1) begin
-      dvec_in[i].raddr = 0;
-    end
-
-    dvec_in[rin_f.wid].raddr = rin_f.did;
+    dvec_in = init_tim_vec_in;
 
     // Write data
+    dvec_in[v.wid].en0 = v.wren;
+    dvec_in[v.wid].addr0 = v.did;
+    dvec_in[v.wid].data0 = v.data;
 
-    for (int i = 0; i < tim_width; i = i + 1) begin
-      dvec_in[i].wen   = 0;
-      dvec_in[i].waddr = 0;
-      dvec_in[i].wdata = 0;
-    end
+    rin = v;
 
-    dvec_in[v_b.wid].wen = v_b.wren;
-    dvec_in[v_b.wid].waddr = v_b.did;
-    dvec_in[v_b.wid].wdata = v_b.data;
-
-    // Output
-
-    tim_out.mem_rdata = v_b.rden ? v_b.rdata : 0;
-    tim_out.mem_ready = v_b.rden | v_b.wren;
-
-    rin_b = v_b;
+    tim_out.mem_rdata = dvec_out[r.wid].data0;
+    tim_out.mem_ready = r.enable;
 
   end
 
   always_ff @(posedge clock) begin
     if (reset == 0) begin
-      r_f <= init_front;
-      r_b <= init_back;
+      r <= init_reg;
     end else begin
-      r_f <= rin_f;
-      r_b <= rin_b;
+      r <= rin;
     end
   end
 
@@ -220,9 +127,9 @@ module tim (
     input logic clock,
     input logic [0 : 0] tim_valid,
     input logic [0 : 0] tim_instr,
+    input logic [0 : 0] tim_store,
     input logic [31 : 0] tim_addr,
     input logic [63 : 0] tim_wdata,
-    input logic [7 : 0] tim_wstrb,
     output logic [63 : 0] tim_rdata,
     output logic [0 : 0] tim_ready
 );
@@ -260,9 +167,9 @@ module tim (
   assign tim_in.mem_fence = 0;
   assign tim_in.mem_spec = 0;
   assign tim_in.mem_instr = tim_instr;
+  assign tim_in.mem_store = tim_store;
   assign tim_in.mem_addr = tim_addr;
   assign tim_in.mem_wdata = tim_wdata;
-  assign tim_in.mem_wstrb = tim_wstrb;
 
   assign tim_rdata = tim_out.mem_rdata;
   assign tim_ready = tim_out.mem_ready;

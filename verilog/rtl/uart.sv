@@ -6,9 +6,9 @@ module uart (
     input logic clock,
     input logic [0 : 0] uart_valid,
     input logic [0 : 0] uart_instr,
+    input logic [0 : 0] uart_store,
     input logic [31 : 0] uart_addr,
     input logic [63 : 0] uart_wdata,
-    input logic [7 : 0] uart_wstrb,
     output logic [63 : 0] uart_rdata,
     output logic [0 : 0] uart_ready,
     input logic uart_rx,
@@ -87,7 +87,7 @@ module uart (
 
         v_tx.ready_tx = 0;
 
-        if (uart_valid == 1 && |uart_wstrb == 1 && v_tx.state_tx == 0) begin
+        if (uart_valid == 1 && uart_store == 1 && v_tx.state_tx == 0) begin
           v_tx.data_tx  = {1'b1, uart_wdata[7:0], 1'b0};
           v_tx.state_tx = 1;
         end
@@ -128,7 +128,7 @@ module uart (
         v_rx.ready_re = 0;
         v_rx.ready_rx = 0;
 
-        if (uart_valid == 1 && |uart_wstrb == 0 && v_rx.state_rx == 0) begin
+        if (uart_valid == 1 && uart_store == 0 && v_rx.state_rx == 0) begin
           v_rx.state_re = 1;
         end
 

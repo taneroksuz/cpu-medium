@@ -8,9 +8,9 @@ module clint #(
     input logic clock,
     input logic [0 : 0] clint_valid,
     input logic [0 : 0] clint_instr,
+    input logic [0 : 0] clint_store,
     input logic [31 : 0] clint_addr,
     input logic [63 : 0] clint_wdata,
-    input logic [7 : 0] clint_wstrb,
     output logic [63 : 0] clint_rdata,
     output logic [0 : 0] clint_ready,
     output logic [63 : 0] clint_mtime,
@@ -57,7 +57,7 @@ module clint #(
       ready_ms <= 0;
       if (clint_valid == 1) begin
         if (clint_addr < clint_msip_end) begin
-          if (|clint_wstrb == 0) begin
+          if (clint_store == 0) begin
             rdata_ms[0] <= msip;
             ready_ms <= 1;
           end else begin
@@ -82,7 +82,7 @@ module clint #(
       end
       if (clint_valid == 1) begin
         if (clint_addr >= clint_mtime_start && clint_addr < clint_mtime_end) begin
-          if (|clint_wstrb == 0) begin
+          if (clint_store == 0) begin
             rdata_mt <= mtime;
             ready_mt <= 1;
           end else begin
@@ -104,7 +104,7 @@ module clint #(
       ready_mtc <= 0;
       if (clint_valid == 1) begin
         if (clint_addr >= clint_mtimecmp_start && clint_addr < clint_mtimecmp_end) begin
-          if (|clint_wstrb == 0) begin
+          if (clint_store == 0) begin
             rdata_mtc <= mtimecmp;
             ready_mtc <= 1;
           end else begin

@@ -154,7 +154,7 @@ module fetch_stage (
     imem_in.mem_instr = 1;
     imem_in.mem_addr = v.pc;
     imem_in.mem_wdata = 0;
-    imem_in.mem_wstrb = 0;
+    imem_in.mem_store = 0;
 
     btac_in.get_pc0 = v.pc0;
     btac_in.get_pc1 = v.pc1;
