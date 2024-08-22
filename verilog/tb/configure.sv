@@ -4,6 +4,7 @@ package configure;
   parameter simulation = 1;
 
   parameter fetchbuffer_depth = 8;
+  parameter storebuffer_depth = 32;
 
   parameter hazard_depth = 4;
 

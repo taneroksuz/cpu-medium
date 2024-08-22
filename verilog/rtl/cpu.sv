@@ -55,6 +55,10 @@ module cpu (
   bit_clmul_out_type bit_clmul_out;
   fetchbuffer_in_type fetchbuffer_in;
   fetchbuffer_out_type fetchbuffer_out;
+  mem_in_type storebuffer0_in;
+  mem_in_type storebuffer1_in;
+  mem_out_type storebuffer0_out;
+  mem_out_type storebuffer1_out;
   btac_in_type btac_in;
   btac_out_type btac_out;
   hazard_in_type hazard_in;
@@ -130,8 +134,10 @@ module cpu (
   fp_forwarding_out_type fp_forwarding_out;
   mem_in_type imem_in;
   mem_out_type imem_out;
-  mem_in_type dmem_in;
-  mem_out_type dmem_out;
+  mem_in_type dmem0_in;
+  mem_in_type dmem1_in;
+  mem_out_type dmem0_out;
+  mem_out_type dmem1_out;
 
   assign fpu_in.fp_decode0_in = fp_decode0_in;
   assign fpu_in.fp_decode1_in = fp_decode1_in;
@@ -327,6 +333,19 @@ module cpu (
       .fetchbuffer_out(fetchbuffer_out)
   );
 
+  storebuffer storebuffer_comp (
+      .reset(reset),
+      .clock(clock),
+      .storebuffer0_in(storebuffer0_in),
+      .storebuffer1_in(storebuffer1_in),
+      .storebuffer0_out(storebuffer0_out),
+      .storebuffer1_out(storebuffer1_out),
+      .dmem0_out(dmem0_out),
+      .dmem1_out(dmem1_out),
+      .dmem0_in(dmem0_in),
+      .dmem1_in(dmem1_in)
+  );
+
   hazard hazard_comp (
       .reset(reset),
       .clock(clock),
@@ -492,8 +511,10 @@ module cpu (
       .lsu0_in(lsu0_in),
       .lsu1_out(lsu1_out),
       .lsu1_in(lsu1_in),
-      .dmem_out(dmem_out),
-      .dmem_in(dmem_in),
+      .storebuffer0_out(storebuffer0_out),
+      .storebuffer1_out(storebuffer1_out),
+      .storebuffer0_in(storebuffer0_in),
+      .storebuffer1_in(storebuffer1_in),
       .csr_out(csr_out),
       .csr_win(csr_win),
       .csr_ein(csr_ein),
@@ -539,13 +560,13 @@ module cpu (
   assign imem_out.mem_rdata = imemory_rdata;
   assign imem_out.mem_ready = imemory_ready;
 
-  assign dmemory_valid = dmem_in.mem_valid;
-  assign dmemory_instr = dmem_in.mem_instr;
-  assign dmemory_store = dmem_in.mem_store;
-  assign dmemory_addr = dmem_in.mem_addr;
-  assign dmemory_wdata = dmem_in.mem_wdata;
+  assign dmemory_valid = dmem0_in.mem_valid;
+  assign dmemory_instr = dmem0_in.mem_instr;
+  assign dmemory_store = dmem0_in.mem_store;
+  assign dmemory_addr = dmem0_in.mem_addr;
+  assign dmemory_wdata = dmem0_in.mem_wdata;
 
-  assign dmem_out.mem_rdata = dmemory_rdata;
-  assign dmem_out.mem_ready = dmemory_ready;
+  assign dmem0_out.mem_rdata = dmemory_rdata;
+  assign dmem0_out.mem_ready = dmemory_ready;
 
 endmodule

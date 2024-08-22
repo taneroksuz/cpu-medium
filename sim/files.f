@@ -37,6 +37,7 @@ $BASEDIR/verilog/rtl/decoder.sv
 $BASEDIR/verilog/rtl/register.sv
 $BASEDIR/verilog/rtl/csr.sv
 $BASEDIR/verilog/rtl/fetchbuffer.sv
+$BASEDIR/verilog/rtl/storebuffer.sv
 $BASEDIR/verilog/rtl/hazard.sv
 $BASEDIR/verilog/rtl/forwarding.sv
 $BASEDIR/verilog/rtl/fetch_stage.sv
