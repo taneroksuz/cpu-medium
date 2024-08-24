@@ -151,16 +151,12 @@ module fetch_stage (
     fetchbuffer_in.stall = a.i.halt;
 
     imem0_in.mem_valid = v.valid;
-    imem0_in.mem_fence = v.fence;
-    imem0_in.mem_spec = v.spec;
     imem0_in.mem_instr = 1;
     imem0_in.mem_addr = v.pc;
     imem0_in.mem_wdata = 0;
     imem0_in.mem_store = 0;
 
     imem1_in.mem_valid = 0;
-    imem1_in.mem_fence = 0;
-    imem1_in.mem_spec = 0;
     imem1_in.mem_instr = 0;
     imem1_in.mem_addr = 0;
     imem1_in.mem_wdata = 0;

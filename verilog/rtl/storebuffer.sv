@@ -92,72 +92,99 @@ module storebuffer_ctrl (
     logic [depth-1 : 0] raddr1;
     logic [depth-1 : 0] waddr0;
     logic [depth-1 : 0] waddr1;
+    logic [31 : 0] addr0;
+    logic [31 : 0] addr1;
     logic [97 : 0] wdata0;
     logic [97 : 0] wdata1;
     logic [97 : 0] rdata0;
     logic [97 : 0] rdata1;
-    logic [63 : 0] mem_rdata0;
-    logic [63 : 0] mem_rdata1;
-    logic [0 : 0] mem_ready0;
-    logic [0 : 0] mem_ready1;
     logic [0 : 0] wren0;
     logic [0 : 0] wren1;
     logic [0 : 0] clear;
     logic [0 : 0] stall;
-  } reg_type;
+  } front_type;
 
-  parameter reg_type init_reg = '{
-      waddr0 : 0,
-      waddr1 : 0,
-      raddr0 : 0,
-      raddr1 : 0,
-      wdata0 : 0,
-      wdata1 : 0,
-      rdata0 : 0,
-      rdata1 : 0,
-      mem_rdata0 : 0,
-      mem_rdata1 : 0,
-      mem_ready0 : 0,
-      mem_ready1 : 0,
-      wren0 : 0,
-      wren1 : 0,
-      clear : 0,
-      stall : 0
-  };
+  typedef struct packed {
+    logic [31 : 0] mem_addr0;
+    logic [31 : 0] mem_addr1;
+    logic [63 : 0] mem_rdata0;
+    logic [63 : 0] mem_rdata1;
+    logic [63 : 0] mem_wdata0;
+    logic [63 : 0] mem_wdata1;
+    logic [0 : 0] mem_valid0;
+    logic [0 : 0] mem_valid1;
+    logic [0 : 0] mem_store0;
+    logic [0 : 0] mem_store1;
+    logic [0 : 0] mem_ready0;
+    logic [0 : 0] mem_ready1;
+  } back_type;
 
-  reg_type r, rin, v;
+  localparam front_type init_front = 0;
+  localparam back_type init_back = 0;
+
+  front_type r_f, rin_f, v_f;
+  back_type r_b, rin_b, v_b;
 
   always_comb begin
 
-    v = r;
+    v_f = r_f;
 
-    storebuffer_reg_in.raddr0 = v.raddr0;
-    storebuffer_reg_in.raddr1 = v.raddr1;
+    if (storebuffer0_in.mem_valid == 1) begin
 
-    storebuffer_reg_in.wen0 = v.wren0;
-    storebuffer_reg_in.wen1 = v.wren1;
-    storebuffer_reg_in.waddr0 = v.waddr0;
-    storebuffer_reg_in.waddr1 = v.waddr1;
-    storebuffer_reg_in.wdata0 = v.wdata0;
-    storebuffer_reg_in.wdata1 = v.wdata1;
+    end
 
-    v.rdata0 = storebuffer_reg_out.rdata0;
-    v.rdata1 = storebuffer_reg_out.rdata1;
+    if (storebuffer1_in.mem_valid == 1) begin
 
-    storebuffer0_out.mem_rdata = v.mem_rdata0;
-    storebuffer0_out.mem_ready = v.mem_ready0;
-    storebuffer1_out.mem_rdata = v.mem_rdata1;
-    storebuffer1_out.mem_ready = v.mem_ready1;
+    end
 
-    rin = v;
+    storebuffer_reg_in.raddr0 = v_f.raddr0;
+    storebuffer_reg_in.raddr1 = v_f.raddr1;
+
+    storebuffer_reg_in.wen0 = v_f.wren0;
+    storebuffer_reg_in.wen1 = v_f.wren1;
+    storebuffer_reg_in.waddr0 = v_f.waddr0;
+    storebuffer_reg_in.waddr1 = v_f.waddr1;
+    storebuffer_reg_in.wdata0 = v_f.wdata0;
+    storebuffer_reg_in.wdata1 = v_f.wdata1;
+
+    v_f.rdata0 = storebuffer_reg_out.rdata0;
+    v_f.rdata1 = storebuffer_reg_out.rdata1;
+
+    rin_f = v_f;
+
+  end
+
+  always_comb begin
+
+    v_b = r_b;
+
+    v_b.mem_rdata0 = dmem0_out.mem_rdata;
+    v_b.mem_rdata1 = dmem1_out.mem_rdata;
+    v_b.mem_ready0 = dmem0_out.mem_ready;
+    v_b.mem_ready1 = dmem1_out.mem_ready;
+
+    rin_b = v_b;
+
+    dmem0_in.mem_valid = v_b.mem_valid0;
+    dmem1_in.mem_valid = v_b.mem_valid1;
+    dmem0_in.mem_instr = 0;
+    dmem1_in.mem_instr = 0;
+    dmem0_in.mem_store = v_b.mem_store0;
+    dmem1_in.mem_store = v_b.mem_store1;
+    dmem0_in.mem_addr = v_b.mem_addr0;
+    dmem1_in.mem_addr = v_b.mem_addr1;
+    dmem0_in.mem_wdata = v_b.mem_wdata0;
+    dmem1_in.mem_wdata = v_b.mem_wdata1;
 
   end
 
   always_ff @(posedge clock) begin
     if (reset == 0) begin
-      r <= init_reg;
+      r_f <= init_front;
+      r_b <= init_back;
     end else begin
-      r <= rin;
+      r_f <= rin_f;
+      r_b <= rin_b;
     end
   end
 
