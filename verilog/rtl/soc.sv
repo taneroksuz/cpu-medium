@@ -97,12 +97,12 @@ module soc (
 
   always_comb begin
 
-    iram_in   = init_mem_in;
-    itim0_in  = init_mem_in;
-    itim1_in  = init_mem_in;
+    iram_in = init_mem_in;
+    itim0_in = init_mem_in;
+    itim1_in = init_mem_in;
     iclint_in = init_mem_in;
-    iuart_in  = init_mem_in;
-    irom_in   = init_mem_in;
+    iuart_in = init_mem_in;
+    irom_in = init_mem_in;
 
     ibase_addr = 0;
 
