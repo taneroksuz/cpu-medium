@@ -188,14 +188,14 @@ module storebuffer_ctrl (
       v_f.wren0 = |v_f.strb0;
       v_f.rden0 = ~v_f.wren0;
       v_f.wdata0 = v_f.rdata0;
-      v_f.wdata0[96] = v_f.wren0;
+      v_f.wdata0[96] = v_f.wdata0[96] | v_f.wren0;
     end
 
     if (v_f.hit1 == 1) begin
       v_f.wren1 = |v_f.strb1;
       v_f.rden1 = ~v_f.wren1;
       v_f.wdata1 = v_f.rdata1;
-      v_f.wdata1[96] = v_f.wren1;
+      v_f.wdata1[96] = v_f.wdata1[96] | v_f.wren1;
     end
 
     if (v_f.wren0 == 1) begin
