@@ -9,10 +9,10 @@ module memory_stage (
     output lsu_in_type lsu0_in,
     input lsu_out_type lsu1_out,
     output lsu_in_type lsu1_in,
-    input mem_out_type storebuffer0_out,
-    input mem_out_type storebuffer1_out,
-    output mem_in_type storebuffer0_in,
-    output mem_in_type storebuffer1_in,
+    input storebuffer_out_type storebuffer0_out,
+    input storebuffer_out_type storebuffer1_out,
+    output storebuffer_in_type storebuffer0_in,
+    output storebuffer_in_type storebuffer1_in,
     input csr_out_type csr_out,
     output forwarding_memory_in_type forwarding0_min,
     output forwarding_memory_in_type forwarding1_min,
@@ -56,7 +56,6 @@ module memory_stage (
     storebuffer0_in.mem_fence = a.e.calc0.op.fence;
     storebuffer0_in.mem_spec = 0;
     storebuffer0_in.mem_instr = 0;
-    storebuffer0_in.mem_store = a.e.calc0.op.store | a.e.calc0.op.fstore;
     storebuffer0_in.mem_addr = a.e.calc0.address;
     storebuffer0_in.mem_wdata = store_data(
       a.e.calc0.sdata,
@@ -65,12 +64,12 @@ module memory_stage (
       a.e.calc0.lsu_op.lsu_sw,
       a.e.calc0.lsu_op.lsu_sd
     );
+    storebuffer0_in.mem_wstrb = (a.e.calc0.op.load | a.e.calc0.op.fload) == 1 ? 8'h00 : a.e.calc0.byteenable;
 
     storebuffer1_in.mem_valid = a.e.calc1.op.load | a.e.calc1.op.store | a.e.calc1.op.fload | a.e.calc1.op.fstore | a.e.calc1.op.fence;
     storebuffer1_in.mem_fence = a.e.calc1.op.fence;
     storebuffer1_in.mem_spec = 0;
     storebuffer1_in.mem_instr = 0;
-    storebuffer1_in.mem_store = a.e.calc1.op.store | a.e.calc1.op.fstore;
     storebuffer1_in.mem_addr = a.e.calc1.address;
     storebuffer1_in.mem_wdata = store_data(
       a.e.calc1.sdata,
@@ -79,6 +78,7 @@ module memory_stage (
       a.e.calc1.lsu_op.lsu_sw,
       a.e.calc1.lsu_op.lsu_sd
     );
+    storebuffer1_in.mem_wstrb = (a.e.calc1.op.load | a.e.calc1.op.fload) == 1 ? 8'h00 : a.e.calc1.byteenable;
 
     lsu0_in.ldata = storebuffer0_out.mem_rdata;
     lsu0_in.byteenable = v.calc0.byteenable;

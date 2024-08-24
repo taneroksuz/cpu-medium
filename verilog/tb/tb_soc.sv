@@ -176,7 +176,7 @@ module tb_soc ();
   always_ff @(posedge clock) begin
     if (tb_soc.soc_comp.cpu_comp.memory_stage_comp.storebuffer0_in.mem_valid == 1) begin
       if (tb_soc.soc_comp.cpu_comp.memory_stage_comp.storebuffer0_in.mem_addr[31:3] == host[0][31:3]) begin
-        if (tb_soc.soc_comp.cpu_comp.memory_stage_comp.storebuffer0_in.mem_store == 1) begin
+        if (|tb_soc.soc_comp.cpu_comp.memory_stage_comp.storebuffer0_in.mem_wstrb == 1) begin
           $display("%d",
                    tb_soc.soc_comp.cpu_comp.memory_stage_comp.storebuffer0_in.mem_wdata[31:0]);
           $finish;
@@ -185,7 +185,7 @@ module tb_soc ();
     end
     if (tb_soc.soc_comp.cpu_comp.memory_stage_comp.storebuffer1_in.mem_valid == 1) begin
       if (tb_soc.soc_comp.cpu_comp.memory_stage_comp.storebuffer1_in.mem_addr[31:3] == host[0][31:3]) begin
-        if (tb_soc.soc_comp.cpu_comp.memory_stage_comp.storebuffer1_in.mem_store == 1) begin
+        if (|tb_soc.soc_comp.cpu_comp.memory_stage_comp.storebuffer1_in.mem_wstrb == 1) begin
           $display("%d",
                    tb_soc.soc_comp.cpu_comp.memory_stage_comp.storebuffer1_in.mem_wdata[31:0]);
           $finish;

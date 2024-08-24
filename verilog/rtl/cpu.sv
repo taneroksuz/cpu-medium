@@ -49,10 +49,10 @@ module cpu (
   bit_clmul_out_type bit_clmul_out;
   fetchbuffer_in_type fetchbuffer_in;
   fetchbuffer_out_type fetchbuffer_out;
-  mem_in_type storebuffer0_in;
-  mem_in_type storebuffer1_in;
-  mem_out_type storebuffer0_out;
-  mem_out_type storebuffer1_out;
+  storebuffer_in_type storebuffer0_in;
+  storebuffer_in_type storebuffer1_in;
+  storebuffer_out_type storebuffer0_out;
+  storebuffer_out_type storebuffer1_out;
   btac_in_type btac_in;
   btac_out_type btac_out;
   hazard_in_type hazard_in;

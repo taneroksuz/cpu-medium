@@ -12,13 +12,13 @@ package storebuffer_wires;
     logic [0 : 0] wen1;
     logic [depth-1 : 0] waddr0;
     logic [depth-1 : 0] waddr1;
-    logic [95 : 0] wdata0;
-    logic [95 : 0] wdata1;
+    logic [97 : 0] wdata0;
+    logic [97 : 0] wdata1;
   } storebuffer_reg_in_type;
 
   typedef struct packed {
-    logic [95 : 0] rdata0;
-    logic [95 : 0] rdata1;
+    logic [97 : 0] rdata0;
+    logic [97 : 0] rdata1;
   } storebuffer_reg_out_type;
 
 endpackage
@@ -37,7 +37,7 @@ module storebuffer_reg (
 
   localparam depth = $clog2(storebuffer_depth - 1);
 
-  logic [95:0] storebuffer_reg_array[0:storebuffer_depth-1] = '{default: '0};
+  logic [97:0] storebuffer_reg_array[0:storebuffer_depth-1] = '{default: '0};
 
   always_ff @(posedge clock) begin
     if (storebuffer_reg_in.wen0 == 1) begin
@@ -70,16 +70,16 @@ endmodule
 module storebuffer_ctrl (
     input logic reset,
     input logic clock,
-    input mem_in_type storebuffer0_in,
-    input mem_in_type storebuffer1_in,
-    output mem_out_type storebuffer0_out,
-    output mem_out_type storebuffer1_out,
+    input storebuffer_in_type storebuffer0_in,
+    input storebuffer_in_type storebuffer1_in,
+    output storebuffer_out_type storebuffer0_out,
+    output storebuffer_out_type storebuffer1_out,
+    input storebuffer_reg_out_type storebuffer_reg_out,
+    output storebuffer_reg_in_type storebuffer_reg_in,
     input mem_out_type dmem0_out,
     input mem_out_type dmem1_out,
     output mem_in_type dmem0_in,
-    output mem_in_type dmem1_in,
-    input storebuffer_reg_out_type storebuffer_reg_out,
-    output storebuffer_reg_in_type storebuffer_reg_in
+    output mem_in_type dmem1_in
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -92,10 +92,10 @@ module storebuffer_ctrl (
     logic [depth-1 : 0] raddr1;
     logic [depth-1 : 0] waddr0;
     logic [depth-1 : 0] waddr1;
-    logic [95 : 0] wdata0;
-    logic [95 : 0] wdata1;
-    logic [95 : 0] rdata0;
-    logic [95 : 0] rdata1;
+    logic [97 : 0] wdata0;
+    logic [97 : 0] wdata1;
+    logic [97 : 0] rdata0;
+    logic [97 : 0] rdata1;
     logic [63 : 0] mem_rdata0;
     logic [63 : 0] mem_rdata1;
     logic [0 : 0] mem_ready0;
@@ -166,10 +166,10 @@ endmodule
 module storebuffer (
     input logic reset,
     input logic clock,
-    input mem_in_type storebuffer0_in,
-    input mem_in_type storebuffer1_in,
-    output mem_out_type storebuffer0_out,
-    output mem_out_type storebuffer1_out,
+    input storebuffer_in_type storebuffer0_in,
+    input storebuffer_in_type storebuffer1_in,
+    output storebuffer_out_type storebuffer0_out,
+    output storebuffer_out_type storebuffer1_out,
     input mem_out_type dmem0_out,
     input mem_out_type dmem1_out,
     output mem_in_type dmem0_in,
@@ -193,12 +193,12 @@ module storebuffer (
       .storebuffer1_in(storebuffer1_in),
       .storebuffer0_out(storebuffer0_out),
       .storebuffer1_out(storebuffer1_out),
+      .storebuffer_reg_in(storebuffer_reg_in),
+      .storebuffer_reg_out(storebuffer_reg_out),
       .dmem0_out(dmem0_out),
       .dmem1_out(dmem1_out),
       .dmem0_in(dmem0_in),
-      .dmem1_in(dmem1_in),
-      .storebuffer_reg_in(storebuffer_reg_in),
-      .storebuffer_reg_out(storebuffer_reg_out)
+      .dmem1_in(dmem1_in)
   );
 
 endmodule
