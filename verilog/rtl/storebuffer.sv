@@ -94,14 +94,24 @@ module storebuffer_ctrl (
     logic [depth-1 : 0] waddr1;
     logic [31 : 0] addr0;
     logic [31 : 0] addr1;
+    logic [63 : 0] data0;
+    logic [63 : 0] data1;
     logic [97 : 0] wdata0;
     logic [97 : 0] wdata1;
     logic [97 : 0] rdata0;
     logic [97 : 0] rdata1;
+    logic [7 : 0] strb0;
+    logic [7 : 0] strb1;
     logic [0 : 0] wren0;
     logic [0 : 0] wren1;
-    logic [0 : 0] clear;
-    logic [0 : 0] stall;
+    logic [0 : 0] valid0;
+    logic [0 : 0] valid1;
+    logic [0 : 0] hit0;
+    logic [0 : 0] hit1;
+    logic [0 : 0] miss0;
+    logic [0 : 0] miss1;
+    logic [0 : 0] back0;
+    logic [0 : 0] back1;
   } front_type;
 
   typedef struct packed {
@@ -130,15 +140,33 @@ module storebuffer_ctrl (
     v_f = r_f;
 
     if (storebuffer0_in.mem_valid == 1) begin
-
+      v_f.valid0 = storebuffer0_in.mem_valid;
+      v_f.addr0 = storebuffer0_in.mem_addr;
+      v_f.raddr0 = storebuffer0_in.mem_addr[depth+2:3];
+      v_f.data0 = storebuffer0_in.mem_wdata;
+      v_f.strb0 = storebuffer0_in.mem_wstrb;
     end
 
     if (storebuffer1_in.mem_valid == 1) begin
-
+      v_f.valid1 = storebuffer1_in.mem_valid;
+      v_f.addr1 = storebuffer1_in.mem_addr;
+      v_f.raddr1 = storebuffer1_in.mem_addr[depth+2:3];
+      v_f.data1 = storebuffer1_in.mem_wdata;
+      v_f.strb1 = storebuffer1_in.mem_wstrb;
     end
 
     storebuffer_reg_in.raddr0 = v_f.raddr0;
     storebuffer_reg_in.raddr1 = v_f.raddr1;
+
+    v_f.rdata0 = storebuffer_reg_out.rdata0;
+    v_f.rdata1 = storebuffer_reg_out.rdata1;
+
+    v_f.hit0 = (v_f.valid0 & v_f.rdata0[97]) & |(v_f.addr0 ^ v_f.rdata0[95:64]);
+    v_f.hit1 = (v_f.valid1 & v_f.rdata1[97]) & |(v_f.addr1 ^ v_f.rdata1[95:64]);
+    v_f.miss0 = ~v_f.hit0;
+    v_f.miss1 = ~v_f.hit1;
+    v_f.back0 = v_f.miss0 & v_f.rdata0[96];
+    v_f.back1 = v_f.miss1 & v_f.rdata1[96];
 
     storebuffer_reg_in.wen0 = v_f.wren0;
     storebuffer_reg_in.wen1 = v_f.wren1;
@@ -146,9 +174,6 @@ module storebuffer_ctrl (
     storebuffer_reg_in.waddr1 = v_f.waddr1;
     storebuffer_reg_in.wdata0 = v_f.wdata0;
     storebuffer_reg_in.wdata1 = v_f.wdata1;
-
-    v_f.rdata0 = storebuffer_reg_out.rdata0;
-    v_f.rdata1 = storebuffer_reg_out.rdata1;
 
     rin_f = v_f;
 
