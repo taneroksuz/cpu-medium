@@ -104,6 +104,8 @@ module storebuffer_ctrl (
     logic [7 : 0] strb1;
     logic [0 : 0] wren0;
     logic [0 : 0] wren1;
+    logic [0 : 0] rden0;
+    logic [0 : 0] rden1;
     logic [0 : 0] valid0;
     logic [0 : 0] valid1;
     logic [0 : 0] hit0;
@@ -139,6 +141,15 @@ module storebuffer_ctrl (
 
     v_f = r_f;
 
+    v_f.valid0 = 0;
+    v_f.valid1 = 0;
+
+    v_f.wren0 = 0;
+    v_f.wren1 = 0;
+
+    v_f.rden0 = 0;
+    v_f.rden1 = 0;
+
     if (storebuffer0_in.mem_valid == 1) begin
       v_f.valid0 = storebuffer0_in.mem_valid;
       v_f.addr0 = storebuffer0_in.mem_addr;
@@ -161,12 +172,53 @@ module storebuffer_ctrl (
     v_f.rdata0 = storebuffer_reg_out.rdata0;
     v_f.rdata1 = storebuffer_reg_out.rdata1;
 
-    v_f.hit0 = (v_f.valid0 & v_f.rdata0[97]) & |(v_f.addr0 ^ v_f.rdata0[95:64]);
-    v_f.hit1 = (v_f.valid1 & v_f.rdata1[97]) & |(v_f.addr1 ^ v_f.rdata1[95:64]);
-    v_f.miss0 = ~v_f.hit0;
-    v_f.miss1 = ~v_f.hit1;
-    v_f.back0 = v_f.miss0 & v_f.rdata0[96];
-    v_f.back1 = v_f.miss1 & v_f.rdata1[96];
+    if (v_f.valid0 == 1) begin
+      v_f.hit0 = v_f.rdata0[97] & |(v_f.addr0 ^ v_f.rdata0[95:64]);
+      v_f.miss0 = ~v_f.hit0;
+      v_f.back0 = v_f.miss0 & v_f.rdata0[96];
+    end
+
+    if (v_f.valid1 == 1) begin
+      v_f.hit1 = v_f.rdata1[97] & |(v_f.addr1 ^ v_f.rdata1[95:64]);
+      v_f.miss1 = ~v_f.hit1;
+      v_f.back1 = v_f.miss1 & v_f.rdata1[96];
+    end
+
+    if (v_f.hit0 == 1) begin
+      v_f.wren0 = |v_f.strb0;
+      v_f.rden0 = ~v_f.wren0;
+      v_f.wdata0 = v_f.rdata0;
+      v_f.wdata0[96] = v_f.wren0;
+    end
+
+    if (v_f.hit1 == 1) begin
+      v_f.wren1 = |v_f.strb1;
+      v_f.rden1 = ~v_f.wren1;
+      v_f.wdata1 = v_f.rdata1;
+      v_f.wdata1[96] = v_f.wren1;
+    end
+
+    if (v_f.wren0 == 1) begin
+      if (v_f.strb0[0] == 1) v_f.wdata0[7:0] = v_f.data0[7:0];
+      if (v_f.strb0[1] == 1) v_f.wdata0[15:8] = v_f.data0[15:8];
+      if (v_f.strb0[2] == 1) v_f.wdata0[23:16] = v_f.data0[23:16];
+      if (v_f.strb0[3] == 1) v_f.wdata0[31:24] = v_f.data0[31:24];
+      if (v_f.strb0[4] == 1) v_f.wdata0[39:32] = v_f.data0[39:32];
+      if (v_f.strb0[5] == 1) v_f.wdata0[47:40] = v_f.data0[47:40];
+      if (v_f.strb0[6] == 1) v_f.wdata0[55:48] = v_f.data0[55:48];
+      if (v_f.strb0[7] == 1) v_f.wdata0[63:56] = v_f.data0[63:56];
+    end
+
+    if (v_f.wren1 == 1) begin
+      if (v_f.strb1[0] == 1) v_f.wdata1[7:0] = v_f.data1[7:0];
+      if (v_f.strb1[1] == 1) v_f.wdata1[15:8] = v_f.data1[15:8];
+      if (v_f.strb1[2] == 1) v_f.wdata1[23:16] = v_f.data1[23:16];
+      if (v_f.strb1[3] == 1) v_f.wdata1[31:24] = v_f.data1[31:24];
+      if (v_f.strb1[4] == 1) v_f.wdata1[39:32] = v_f.data1[39:32];
+      if (v_f.strb1[5] == 1) v_f.wdata1[47:40] = v_f.data1[47:40];
+      if (v_f.strb1[6] == 1) v_f.wdata1[55:48] = v_f.data1[55:48];
+      if (v_f.strb1[7] == 1) v_f.wdata1[63:56] = v_f.data1[63:56];
+    end
 
     storebuffer_reg_in.wen0 = v_f.wren0;
     storebuffer_reg_in.wen1 = v_f.wren1;
@@ -176,6 +228,11 @@ module storebuffer_ctrl (
     storebuffer_reg_in.wdata1 = v_f.wdata1;
 
     rin_f = v_f;
+
+    storebuffer0_out.mem_rdata = r_f.rden0 ? r_f.rdata0[63:0] : 0;
+    storebuffer1_out.mem_rdata = r_f.rden1 ? r_f.rdata1[63:0] : 0;
+    storebuffer0_out.mem_ready = r_f.wren0 | r_f.rden0;
+    storebuffer1_out.mem_ready = r_f.wren1 | r_f.rden1;
 
   end
 
