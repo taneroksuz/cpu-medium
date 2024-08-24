@@ -4,20 +4,14 @@ import wires::*;
 module cpu (
     input logic reset,
     input logic clock,
-    output logic [0 : 0] imemory_valid,
-    output logic [0 : 0] imemory_instr,
-    output logic [0 : 0] imemory_store,
-    output logic [31 : 0] imemory_addr,
-    output logic [63 : 0] imemory_wdata,
-    input logic [63 : 0] imemory_rdata,
-    input logic [0 : 0] imemory_ready,
-    output logic [0 : 0] dmemory_valid,
-    output logic [0 : 0] dmemory_instr,
-    output logic [0 : 0] dmemory_store,
-    output logic [31 : 0] dmemory_addr,
-    output logic [63 : 0] dmemory_wdata,
-    input logic [63 : 0] dmemory_rdata,
-    input logic [0 : 0] dmemory_ready,
+    input mem_out_type imem0_out,
+    input mem_out_type imem1_out,
+    output mem_in_type imem0_in,
+    output mem_in_type imem1_in,
+    input mem_out_type dmem0_out,
+    input mem_out_type dmem1_out,
+    output mem_in_type dmem0_in,
+    output mem_in_type dmem1_in,
     input logic [0 : 0] meip,
     input logic [0 : 0] msip,
     input logic [0 : 0] mtip,
@@ -132,12 +126,6 @@ module cpu (
   fp_register_out_type fp_register_out;
   fp_csr_out_type fp_csr_out;
   fp_forwarding_out_type fp_forwarding_out;
-  mem_in_type imem_in;
-  mem_out_type imem_out;
-  mem_in_type dmem0_in;
-  mem_in_type dmem1_in;
-  mem_out_type dmem0_out;
-  mem_out_type dmem1_out;
 
   assign fpu_in.fp_decode0_in = fp_decode0_in;
   assign fpu_in.fp_decode1_in = fp_decode1_in;
@@ -405,8 +393,10 @@ module cpu (
       .csr_out(csr_out),
       .btac_out(btac_out),
       .btac_in(btac_in),
-      .imem_out(imem_out),
-      .imem_in(imem_in),
+      .imem0_out(imem0_out),
+      .imem1_out(imem1_out),
+      .imem0_in(imem0_in),
+      .imem1_in(imem1_in),
       .a(fetch_in_a),
       .d(fetch_in_d),
       .y(fetch_out_y),
@@ -550,23 +540,5 @@ module cpu (
       .fpu_in (fpu_in),
       .fpu_out(fpu_out)
   );
-
-  assign imemory_valid = imem_in.mem_valid;
-  assign imemory_instr = imem_in.mem_instr;
-  assign imemory_store = imem_in.mem_store;
-  assign imemory_addr = imem_in.mem_addr;
-  assign imemory_wdata = imem_in.mem_wdata;
-
-  assign imem_out.mem_rdata = imemory_rdata;
-  assign imem_out.mem_ready = imemory_ready;
-
-  assign dmemory_valid = dmem0_in.mem_valid;
-  assign dmemory_instr = dmem0_in.mem_instr;
-  assign dmemory_store = dmem0_in.mem_store;
-  assign dmemory_addr = dmem0_in.mem_addr;
-  assign dmemory_wdata = dmem0_in.mem_wdata;
-
-  assign dmem0_out.mem_rdata = dmemory_rdata;
-  assign dmem0_out.mem_ready = dmemory_ready;
 
 endmodule

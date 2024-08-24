@@ -10,8 +10,10 @@ module fetch_stage (
     input csr_out_type csr_out,
     input btac_out_type btac_out,
     output btac_in_type btac_in,
-    input mem_out_type imem_out,
-    output mem_in_type imem_in,
+    input mem_out_type imem0_out,
+    input mem_out_type imem1_out,
+    output mem_in_type imem0_in,
+    output mem_in_type imem1_in,
     input fetch_in_type a,
     input fetch_in_type d,
     output fetch_out_type y,
@@ -37,8 +39,8 @@ module fetch_stage (
     v.fence = 0;
     v.spec = 0;
 
-    v.rdata = imem_out.mem_rdata;
-    v.ready = imem_out.mem_ready;
+    v.rdata = imem0_out.mem_rdata;
+    v.ready = imem0_out.mem_ready;
 
     v.pc0 = fetchbuffer_out.pc0;
     v.pc1 = fetchbuffer_out.pc1;
@@ -148,13 +150,21 @@ module fetch_stage (
     fetchbuffer_in.clear = v.spec;
     fetchbuffer_in.stall = a.i.halt;
 
-    imem_in.mem_valid = v.valid;
-    imem_in.mem_fence = v.fence;
-    imem_in.mem_spec = v.spec;
-    imem_in.mem_instr = 1;
-    imem_in.mem_addr = v.pc;
-    imem_in.mem_wdata = 0;
-    imem_in.mem_store = 0;
+    imem0_in.mem_valid = v.valid;
+    imem0_in.mem_fence = v.fence;
+    imem0_in.mem_spec = v.spec;
+    imem0_in.mem_instr = 1;
+    imem0_in.mem_addr = v.pc;
+    imem0_in.mem_wdata = 0;
+    imem0_in.mem_store = 0;
+
+    imem1_in.mem_valid = 0;
+    imem1_in.mem_fence = 0;
+    imem1_in.mem_spec = 0;
+    imem1_in.mem_instr = 0;
+    imem1_in.mem_addr = 0;
+    imem1_in.mem_wdata = 0;
+    imem1_in.mem_store = 0;
 
     btac_in.get_pc0 = v.pc0;
     btac_in.get_pc1 = v.pc1;

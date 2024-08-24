@@ -4,13 +4,8 @@ import wires::*;
 module uart (
     input logic reset,
     input logic clock,
-    input logic [0 : 0] uart_valid,
-    input logic [0 : 0] uart_instr,
-    input logic [0 : 0] uart_store,
-    input logic [31 : 0] uart_addr,
-    input logic [63 : 0] uart_wdata,
-    output logic [63 : 0] uart_rdata,
-    output logic [0 : 0] uart_ready,
+    input mem_in_type uart_in,
+    output mem_out_type uart_out,
     input logic uart_rx,
     output logic uart_tx
 );
@@ -22,17 +17,17 @@ module uart (
 
       always_ff @(posedge clock) begin
 
-        if (uart_valid == 1) begin
+        if (uart_in.mem_valid == 1) begin
 
-          $write("%c", uart_wdata[7:0]);
+          $write("%c", uart_in.mem_wdata[7:0]);
 
-          uart_rdata <= 0;
-          uart_ready <= 1;
+          uart_out.mem_rdata <= 0;
+          uart_out.mem_ready <= 1;
 
         end else begin
 
-          uart_rdata <= 0;
-          uart_ready <= 0;
+          uart_out.mem_rdata <= 0;
+          uart_out.mem_ready <= 0;
 
         end
 
@@ -87,8 +82,8 @@ module uart (
 
         v_tx.ready_tx = 0;
 
-        if (uart_valid == 1 && uart_store == 1 && v_tx.state_tx == 0) begin
-          v_tx.data_tx  = {1'b1, uart_wdata[7:0], 1'b0};
+        if (uart_in.mem_valid == 1 && uart_in.mem_store == 1 && v_tx.state_tx == 0) begin
+          v_tx.data_tx  = {1'b1, uart_in.mem_wdata[7:0], 1'b0};
           v_tx.state_tx = 1;
         end
 
@@ -128,7 +123,7 @@ module uart (
         v_rx.ready_re = 0;
         v_rx.ready_rx = 0;
 
-        if (uart_valid == 1 && uart_store == 0 && v_rx.state_rx == 0) begin
+        if (uart_in.mem_valid == 1 && uart_in.mem_store == 0 && v_rx.state_rx == 0) begin
           v_rx.state_re = 1;
         end
 
@@ -166,8 +161,8 @@ module uart (
 
       end
 
-      assign uart_rdata = {56'b0, r_rx.data_re};
-      assign uart_ready = r_tx.ready_tx | r_rx.ready_re;
+      assign uart_out.mem_rdata = {56'b0, r_rx.data_re};
+      assign uart_out.mem_ready = r_tx.ready_tx | r_rx.ready_re;
 
       always_ff @(posedge clock) begin
         if (reset == 0) begin

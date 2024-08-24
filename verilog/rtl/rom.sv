@@ -3,20 +3,17 @@ import configure::*;
 module rom (
     input logic reset,
     input logic clock,
-    input logic [0 : 0] rom_valid,
-    input logic [0 : 0] rom_instr,
-    input logic [31 : 0] rom_addr,
-    output logic [63 : 0] rom_rdata,
-    output logic [0 : 0] rom_ready
+    input mem_in_type rom_in,
+    output mem_out_type rom_out
 );
   timeunit 1ns; timeprecision 1ps;
-
-  logic [ 3 : 0] raddr;
 
   logic [63 : 0] rdata;
   logic [ 0 : 0] ready;
 
-  assign raddr = rom_addr[6:3];
+  logic [ 3 : 0] raddr;
+
+  assign raddr = rom_in.mem_addr[6:3];
 
   always_ff @(posedge clock) begin
 
@@ -43,7 +40,7 @@ module rom (
 
   always_ff @(posedge clock) begin
 
-    if (rom_valid == 1) begin
+    if (rom_in.mem_valid == 1) begin
       ready <= 1;
     end else begin
       ready <= 0;
@@ -51,8 +48,8 @@ module rom (
 
   end
 
-  assign rom_rdata = rdata;
-  assign rom_ready = ready;
+  assign rom_out.mem_rdata = rdata;
+  assign rom_out.mem_ready = ready;
 
 
 endmodule

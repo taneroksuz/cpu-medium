@@ -1,4 +1,5 @@
 import configure::*;
+import wires::*;
 
 module soc (
     input  logic reset,
@@ -10,193 +11,81 @@ module soc (
 
   timeunit 1ns; timeprecision 1ps;
 
-  logic [ 0 : 0] imemory_valid;
-  logic [ 0 : 0] imemory_instr;
-  logic [ 0 : 0] imemory_store;
-  logic [31 : 0] imemory_addr;
-  logic [63 : 0] imemory_wdata;
-  logic [63 : 0] imemory_rdata;
-  logic [ 0 : 0] imemory_ready;
+  mem_in_type imem0_in;
+  mem_in_type imem1_in;
 
-  logic [ 0 : 0] dmemory_valid;
-  logic [ 0 : 0] dmemory_instr;
-  logic [ 0 : 0] dmemory_store;
-  logic [31 : 0] dmemory_addr;
-  logic [63 : 0] dmemory_wdata;
-  logic [63 : 0] dmemory_rdata;
-  logic [ 0 : 0] dmemory_ready;
+  mem_in_type dmem0_in;
+  mem_in_type dmem1_in;
 
-  logic [ 0 : 0] memory_valid;
-  logic [ 0 : 0] memory_instr;
-  logic [ 0 : 0] memory_store;
-  logic [31 : 0] memory_addr;
-  logic [63 : 0] memory_wdata;
-  logic [63 : 0] memory_rdata;
-  logic [ 0 : 0] memory_ready;
+  mem_in_type itim0_in;
+  mem_in_type itim1_in;
 
-  logic [ 0 : 0] irom_valid;
-  logic [ 0 : 0] irom_instr;
-  logic [ 0 : 0] irom_store;
-  logic [31 : 0] irom_addr;
-  logic [63 : 0] irom_wdata;
-  logic [63 : 0] irom_rdata;
-  logic [ 0 : 0] irom_ready;
+  mem_in_type dtim0_in;
+  mem_in_type dtim1_in;
 
-  logic [ 0 : 0] drom_valid;
-  logic [ 0 : 0] drom_instr;
-  logic [ 0 : 0] drom_store;
-  logic [31 : 0] drom_addr;
-  logic [63 : 0] drom_wdata;
-  logic [63 : 0] drom_rdata;
-  logic [ 0 : 0] drom_ready;
+  mem_in_type rom_in;
+  mem_in_type irom_in;
+  mem_in_type drom_in;
 
-  logic [ 0 : 0] rom_valid;
-  logic [ 0 : 0] rom_instr;
-  logic [ 0 : 0] rom_store;
-  logic [31 : 0] rom_addr;
-  logic [63 : 0] rom_wdata;
-  logic [63 : 0] rom_rdata;
-  logic [ 0 : 0] rom_ready;
+  mem_in_type ram_in;
+  mem_in_type iram_in;
+  mem_in_type dram_in;
 
-  logic [ 0 : 0] iuart_valid;
-  logic [ 0 : 0] iuart_instr;
-  logic [ 0 : 0] iuart_store;
-  logic [31 : 0] iuart_addr;
-  logic [63 : 0] iuart_wdata;
-  logic [63 : 0] iuart_rdata;
-  logic [ 0 : 0] iuart_ready;
+  mem_in_type uart_in;
+  mem_in_type iuart_in;
+  mem_in_type duart_in;
 
-  logic [ 0 : 0] duart_valid;
-  logic [ 0 : 0] duart_instr;
-  logic [ 0 : 0] duart_store;
-  logic [31 : 0] duart_addr;
-  logic [63 : 0] duart_wdata;
-  logic [63 : 0] duart_rdata;
-  logic [ 0 : 0] duart_ready;
+  mem_in_type clint_in;
+  mem_in_type iclint_in;
+  mem_in_type dclint_in;
 
-  logic [ 0 : 0] iclint_valid;
-  logic [ 0 : 0] iclint_instr;
-  logic [ 0 : 0] iclint_store;
-  logic [31 : 0] iclint_addr;
-  logic [63 : 0] iclint_wdata;
-  logic [63 : 0] iclint_rdata;
-  logic [ 0 : 0] iclint_ready;
+  mem_in_type tim00_in;
+  mem_in_type tim01_in;
+  mem_in_type tim10_in;
+  mem_in_type tim11_in;
 
-  logic [ 0 : 0] dclint_valid;
-  logic [ 0 : 0] dclint_instr;
-  logic [ 0 : 0] dclint_store;
-  logic [31 : 0] dclint_addr;
-  logic [63 : 0] dclint_wdata;
-  logic [63 : 0] dclint_rdata;
-  logic [ 0 : 0] dclint_ready;
+  mem_in_type ram_slow_in;
+  mem_in_type uart_slow_in;
 
-  logic [ 0 : 0] clint_valid;
-  logic [ 0 : 0] clint_instr;
-  logic [ 0 : 0] clint_store;
-  logic [31 : 0] clint_addr;
-  logic [63 : 0] clint_wdata;
-  logic [63 : 0] clint_rdata;
-  logic [ 0 : 0] clint_ready;
+  mem_out_type imem0_out;
+  mem_out_type imem1_out;
 
-  logic [ 0 : 0] itim0_valid;
-  logic [ 0 : 0] itim0_instr;
-  logic [ 0 : 0] itim0_store;
-  logic [31 : 0] itim0_addr;
-  logic [63 : 0] itim0_wdata;
-  logic [63 : 0] itim0_rdata;
-  logic [ 0 : 0] itim0_ready;
+  mem_out_type dmem0_out;
+  mem_out_type dmem1_out;
 
-  logic [ 0 : 0] dtim0_valid;
-  logic [ 0 : 0] dtim0_instr;
-  logic [ 0 : 0] dtim0_store;
-  logic [31 : 0] dtim0_addr;
-  logic [63 : 0] dtim0_wdata;
-  logic [63 : 0] dtim0_rdata;
-  logic [ 0 : 0] dtim0_ready;
+  mem_out_type itim0_out;
+  mem_out_type itim1_out;
 
-  logic [ 0 : 0] tim0_valid;
-  logic [ 0 : 0] tim0_instr;
-  logic [ 0 : 0] tim0_store;
-  logic [31 : 0] tim0_addr;
-  logic [63 : 0] tim0_wdata;
-  logic [63 : 0] tim0_rdata;
-  logic [ 0 : 0] tim0_ready;
+  mem_out_type dtim0_out;
+  mem_out_type dtim1_out;
 
-  logic [ 0 : 0] itim1_valid;
-  logic [ 0 : 0] itim1_instr;
-  logic [ 0 : 0] itim1_store;
-  logic [31 : 0] itim1_addr;
-  logic [63 : 0] itim1_wdata;
-  logic [63 : 0] itim1_rdata;
-  logic [ 0 : 0] itim1_ready;
+  mem_out_type rom_out;
+  mem_out_type irom_out;
+  mem_out_type drom_out;
 
-  logic [ 0 : 0] dtim1_valid;
-  logic [ 0 : 0] dtim1_instr;
-  logic [ 0 : 0] dtim1_store;
-  logic [31 : 0] dtim1_addr;
-  logic [63 : 0] dtim1_wdata;
-  logic [63 : 0] dtim1_rdata;
-  logic [ 0 : 0] dtim1_ready;
+  mem_out_type ram_out;
+  mem_out_type iram_out;
+  mem_out_type dram_out;
 
-  logic [ 0 : 0] tim1_valid;
-  logic [ 0 : 0] tim1_instr;
-  logic [ 0 : 0] tim1_store;
-  logic [31 : 0] tim1_addr;
-  logic [63 : 0] tim1_wdata;
-  logic [63 : 0] tim1_rdata;
-  logic [ 0 : 0] tim1_ready;
+  mem_out_type uart_out;
+  mem_out_type iuart_out;
+  mem_out_type duart_out;
 
-  logic [ 0 : 0] iram_valid;
-  logic [ 0 : 0] iram_instr;
-  logic [ 0 : 0] iram_store;
-  logic [31 : 0] iram_addr;
-  logic [63 : 0] iram_wdata;
-  logic [63 : 0] iram_rdata;
-  logic [ 0 : 0] iram_ready;
+  mem_out_type clint_out;
+  mem_out_type iclint_out;
+  mem_out_type dclint_out;
 
-  logic [ 0 : 0] dram_valid;
-  logic [ 0 : 0] dram_instr;
-  logic [ 0 : 0] dram_store;
-  logic [31 : 0] dram_addr;
-  logic [63 : 0] dram_wdata;
-  logic [63 : 0] dram_rdata;
-  logic [ 0 : 0] dram_ready;
+  mem_out_type ram_slow_out;
+  mem_out_type uart_slow_out;
 
-  logic [ 0 : 0] ram_valid;
-  logic [ 0 : 0] ram_instr;
-  logic [ 0 : 0] ram_store;
-  logic [31 : 0] ram_addr;
-  logic [63 : 0] ram_wdata;
-  logic [63 : 0] ram_rdata;
-  logic [ 0 : 0] ram_ready;
+  mem_out_type tim00_out;
+  mem_out_type tim01_out;
+  mem_out_type tim10_out;
+  mem_out_type tim11_out;
 
-  logic [ 0 : 0] ram_slow_valid;
-  logic [ 0 : 0] ram_slow_instr;
-  logic [ 0 : 0] ram_slow_store;
-  logic [31 : 0] ram_slow_addr;
-  logic [63 : 0] ram_slow_wdata;
-  logic [63 : 0] ram_slow_rdata;
-  logic [ 0 : 0] ram_slow_ready;
-
-  logic [ 0 : 0] uart_valid;
-  logic [ 0 : 0] uart_instr;
-  logic [ 0 : 0] uart_store;
-  logic [31 : 0] uart_addr;
-  logic [63 : 0] uart_wdata;
-  logic [63 : 0] uart_rdata;
-  logic [ 0 : 0] uart_ready;
-
-  logic [ 0 : 0] uart_slow_valid;
-  logic [ 0 : 0] uart_slow_instr;
-  logic [ 0 : 0] uart_slow_store;
-  logic [31 : 0] uart_slow_addr;
-  logic [63 : 0] uart_slow_wdata;
-  logic [63 : 0] uart_slow_rdata;
-  logic [ 0 : 0] uart_slow_ready;
-
-  logic [ 0 : 0] meip;
-  logic [ 0 : 0] msip;
-  logic [ 0 : 0] mtip;
+  logic [0 : 0] meip;
+  logic [0 : 0] msip;
+  logic [0 : 0] mtip;
 
   logic [63 : 0] mtime;
 
@@ -208,180 +97,120 @@ module soc (
 
   always_comb begin
 
-    irom_valid   = 0;
-    iuart_valid  = 0;
-    iclint_valid = 0;
-    itim0_valid  = 0;
-    itim1_valid  = 0;
-    iram_valid   = 0;
+    iram_in   = init_mem_in;
+    itim0_in  = init_mem_in;
+    itim1_in  = init_mem_in;
+    iclint_in = init_mem_in;
+    iuart_in  = init_mem_in;
+    irom_in   = init_mem_in;
 
-    ibase_addr   = 0;
+    ibase_addr = 0;
 
-    if (imemory_valid == 1) begin
-      if (imemory_addr >= ram_base_addr && imemory_addr < ram_top_addr) begin
-        iram_valid = imemory_valid;
+    if (imem0_in.mem_valid == 1) begin
+      if (imem0_in.mem_addr >= ram_base_addr && imem0_in.mem_addr < ram_top_addr) begin
+        iram_in = imem0_in;
         ibase_addr = ram_base_addr;
-      end else if (imemory_addr >= tim1_base_addr && imemory_addr < tim1_top_addr) begin
-        itim1_valid = imemory_valid;
-        ibase_addr  = tim1_base_addr;
-      end else if (imemory_addr >= tim0_base_addr && imemory_addr < tim0_top_addr) begin
-        itim0_valid = imemory_valid;
-        ibase_addr  = tim0_base_addr;
-      end else if (imemory_addr >= clint_base_addr && imemory_addr < clint_top_addr) begin
-        iclint_valid = imemory_valid;
-        ibase_addr   = clint_base_addr;
-      end else if (imemory_addr >= uart_base_addr && imemory_addr < uart_top_addr) begin
-        iuart_valid = imemory_valid;
-        ibase_addr  = uart_base_addr;
-      end else if (imemory_addr >= rom_base_addr && imemory_addr < rom_top_addr) begin
-        irom_valid = imemory_valid;
+      end else if (imem0_in.mem_addr >= tim1_base_addr && imem0_in.mem_addr < tim1_top_addr) begin
+        itim1_in   = imem0_in;
+        ibase_addr = tim1_base_addr;
+      end else if (imem0_in.mem_addr >= tim0_base_addr && imem0_in.mem_addr < tim0_top_addr) begin
+        itim0_in   = imem0_in;
+        ibase_addr = tim0_base_addr;
+      end else if (imem0_in.mem_addr >= clint_base_addr && imem0_in.mem_addr < clint_top_addr) begin
+        iclint_in  = imem0_in;
+        ibase_addr = clint_base_addr;
+      end else if (imem0_in.mem_addr >= uart_base_addr && imem0_in.mem_addr < uart_top_addr) begin
+        iuart_in   = imem0_in;
+        ibase_addr = uart_base_addr;
+      end else if (imem0_in.mem_addr >= rom_base_addr && imem0_in.mem_addr < rom_top_addr) begin
+        irom_in = imem0_in;
         ibase_addr = rom_base_addr;
       end
     end
 
-    imem_addr = imemory_addr - ibase_addr;
+    imem_addr = imem0_in.mem_addr - ibase_addr;
 
-    irom_instr = imemory_instr;
-    irom_store = imemory_store;
-    irom_addr = imem_addr;
-    irom_wdata = imemory_wdata;
+    irom_in.mem_addr = imem_addr;
+    iuart_in.mem_addr = imem_addr;
+    iclint_in.mem_addr = imem_addr;
+    itim0_in.mem_addr = imem_addr;
+    itim1_in.mem_addr = imem_addr;
+    iram_in.mem_addr = imem_addr;
 
-    iuart_instr = imemory_instr;
-    iuart_store = imemory_store;
-    iuart_addr = imem_addr;
-    iuart_wdata = imemory_wdata;
+    imem0_out = init_mem_out;
 
-    iclint_instr = imemory_instr;
-    iclint_store = imemory_store;
-    iclint_addr = imem_addr;
-    iclint_wdata = imemory_wdata;
-
-    itim0_instr = imemory_instr;
-    itim0_store = imemory_store;
-    itim0_addr = imem_addr;
-    itim0_wdata = imemory_wdata;
-
-    itim1_instr = imemory_instr;
-    itim1_store = imemory_store;
-    itim1_addr = imem_addr;
-    itim1_wdata = imemory_wdata;
-
-    iram_instr = imemory_instr;
-    iram_store = imemory_store;
-    iram_addr = imem_addr;
-    iram_wdata = imemory_wdata;
-
-    if (irom_ready == 1) begin
-      imemory_rdata = irom_rdata;
-      imemory_ready = irom_ready;
-    end else if (iuart_ready == 1) begin
-      imemory_rdata = iuart_rdata;
-      imemory_ready = iuart_ready;
-    end else if (iclint_ready == 1) begin
-      imemory_rdata = iclint_rdata;
-      imemory_ready = iclint_ready;
-    end else if (itim0_ready == 1) begin
-      imemory_rdata = itim0_rdata;
-      imemory_ready = itim0_ready;
-    end else if (itim1_ready == 1) begin
-      imemory_rdata = itim1_rdata;
-      imemory_ready = itim1_ready;
-    end else if (iram_ready == 1) begin
-      imemory_rdata = iram_rdata;
-      imemory_ready = iram_ready;
-    end else begin
-      imemory_rdata = 0;
-      imemory_ready = 0;
+    if (irom_out.mem_ready == 1) begin
+      imem0_out = irom_out;
+    end else if (iuart_out.mem_ready == 1) begin
+      imem0_out = iuart_out;
+    end else if (iclint_out.mem_ready == 1) begin
+      imem0_out = iclint_out;
+    end else if (itim0_out.mem_ready == 1) begin
+      imem0_out = itim0_out;
+    end else if (itim1_out.mem_ready == 1) begin
+      imem0_out = itim1_out;
+    end else if (iram_out.mem_ready == 1) begin
+      imem0_out = iram_out;
     end
 
   end
 
   always_comb begin
 
-    drom_valid   = 0;
-    duart_valid  = 0;
-    dclint_valid = 0;
-    dtim0_valid  = 0;
-    dtim1_valid  = 0;
-    dram_valid   = 0;
+    dram_in = init_mem_in;
+    dtim0_in = init_mem_in;
+    dtim1_in = init_mem_in;
+    dclint_in = init_mem_in;
+    duart_in = init_mem_in;
+    drom_in = init_mem_in;
 
-    dbase_addr   = 0;
+    dbase_addr = 0;
 
-    if (dmemory_valid == 1) begin
-      if (dmemory_addr >= ram_base_addr && dmemory_addr < ram_top_addr) begin
-        dram_valid = dmemory_valid;
+    if (dmem0_in.mem_valid == 1) begin
+      if (dmem0_in.mem_addr >= ram_base_addr && dmem0_in.mem_addr < ram_top_addr) begin
+        dram_in = dmem0_in;
         dbase_addr = ram_base_addr;
-      end else if (dmemory_addr >= tim1_base_addr && dmemory_addr < tim1_top_addr) begin
-        dtim1_valid = dmemory_valid;
-        dbase_addr  = tim1_base_addr;
-      end else if (dmemory_addr >= tim0_base_addr && dmemory_addr < tim0_top_addr) begin
-        dtim0_valid = dmemory_valid;
-        dbase_addr  = tim0_base_addr;
-      end else if (dmemory_addr >= clint_base_addr && dmemory_addr < clint_top_addr) begin
-        dclint_valid = dmemory_valid;
-        dbase_addr   = clint_base_addr;
-      end else if (dmemory_addr >= uart_base_addr && dmemory_addr < uart_top_addr) begin
-        duart_valid = dmemory_valid;
-        dbase_addr  = uart_base_addr;
-      end else if (dmemory_addr >= rom_base_addr && dmemory_addr < rom_top_addr) begin
-        drom_valid = dmemory_valid;
+      end else if (dmem0_in.mem_addr >= tim1_base_addr && dmem0_in.mem_addr < tim1_top_addr) begin
+        dtim1_in   = dmem0_in;
+        dbase_addr = tim1_base_addr;
+      end else if (dmem0_in.mem_addr >= tim0_base_addr && dmem0_in.mem_addr < tim0_top_addr) begin
+        dtim0_in   = dmem0_in;
+        dbase_addr = tim0_base_addr;
+      end else if (dmem0_in.mem_addr >= clint_base_addr && dmem0_in.mem_addr < clint_top_addr) begin
+        dclint_in  = dmem0_in;
+        dbase_addr = clint_base_addr;
+      end else if (dmem0_in.mem_addr >= uart_base_addr && dmem0_in.mem_addr < uart_top_addr) begin
+        duart_in   = dmem0_in;
+        dbase_addr = uart_base_addr;
+      end else if (dmem0_in.mem_addr >= rom_base_addr && dmem0_in.mem_addr < rom_top_addr) begin
+        drom_in = dmem0_in;
         dbase_addr = rom_base_addr;
       end
     end
 
-    dmem_addr = dmemory_addr - dbase_addr;
+    dmem_addr = dmem0_in.mem_addr - dbase_addr;
 
-    drom_instr = dmemory_instr;
-    drom_store = dmemory_store;
-    drom_addr = dmem_addr;
-    drom_wdata = dmemory_wdata;
+    drom_in.mem_addr = dmem_addr;
+    duart_in.mem_addr = dmem_addr;
+    dclint_in.mem_addr = dmem_addr;
+    dtim0_in.mem_addr = dmem_addr;
+    dtim1_in.mem_addr = dmem_addr;
+    dram_in.mem_addr = dmem_addr;
 
-    duart_instr = dmemory_instr;
-    duart_store = dmemory_store;
-    duart_addr = dmem_addr;
-    duart_wdata = dmemory_wdata;
+    dmem0_out = init_mem_out;
 
-    dclint_instr = dmemory_instr;
-    dclint_store = dmemory_store;
-    dclint_addr = dmem_addr;
-    dclint_wdata = dmemory_wdata;
-
-    dtim0_instr = dmemory_instr;
-    dtim0_store = dmemory_store;
-    dtim0_addr = dmem_addr;
-    dtim0_wdata = dmemory_wdata;
-
-    dtim1_instr = dmemory_instr;
-    dtim1_store = dmemory_store;
-    dtim1_addr = dmem_addr;
-    dtim1_wdata = dmemory_wdata;
-
-    dram_instr = dmemory_instr;
-    dram_store = dmemory_store;
-    dram_addr = dmem_addr;
-    dram_wdata = dmemory_wdata;
-
-    if (drom_ready == 1) begin
-      dmemory_rdata = drom_rdata;
-      dmemory_ready = drom_ready;
-    end else if (duart_ready == 1) begin
-      dmemory_rdata = duart_rdata;
-      dmemory_ready = duart_ready;
-    end else if (clint_ready == 1) begin
-      dmemory_rdata = dclint_rdata;
-      dmemory_ready = dclint_ready;
-    end else if (dtim0_ready == 1) begin
-      dmemory_rdata = dtim0_rdata;
-      dmemory_ready = dtim0_ready;
-    end else if (dtim1_ready == 1) begin
-      dmemory_rdata = dtim1_rdata;
-      dmemory_ready = dtim1_ready;
-    end else if (dram_ready == 1) begin
-      dmemory_rdata = dram_rdata;
-      dmemory_ready = dram_ready;
-    end else begin
-      dmemory_rdata = 0;
-      dmemory_ready = 0;
+    if (drom_out.mem_ready == 1) begin
+      dmem0_out = drom_out;
+    end else if (duart_out.mem_ready == 1) begin
+      dmem0_out = duart_out;
+    end else if (dclint_out.mem_ready == 1) begin
+      dmem0_out = dclint_out;
+    end else if (dtim0_out.mem_ready == 1) begin
+      dmem0_out = dtim0_out;
+    end else if (dtim1_out.mem_ready == 1) begin
+      dmem0_out = dtim1_out;
+    end else if (dram_out.mem_ready == 1) begin
+      dmem0_out = dram_out;
     end
 
   end
@@ -389,20 +218,14 @@ module soc (
   cpu cpu_comp (
       .reset(reset),
       .clock(clock),
-      .imemory_valid(imemory_valid),
-      .imemory_instr(imemory_instr),
-      .imemory_store(imemory_store),
-      .imemory_addr(imemory_addr),
-      .imemory_wdata(imemory_wdata),
-      .imemory_rdata(imemory_rdata),
-      .imemory_ready(imemory_ready),
-      .dmemory_valid(dmemory_valid),
-      .dmemory_instr(dmemory_instr),
-      .dmemory_store(dmemory_store),
-      .dmemory_addr(dmemory_addr),
-      .dmemory_wdata(dmemory_wdata),
-      .dmemory_rdata(dmemory_rdata),
-      .dmemory_ready(dmemory_ready),
+      .imem0_in(imem0_in),
+      .imem1_in(imem1_in),
+      .imem0_out(imem0_out),
+      .imem1_out(imem1_out),
+      .dmem0_in(dmem0_in),
+      .dmem1_in(dmem1_in),
+      .dmem0_out(dmem0_out),
+      .dmem1_out(dmem1_out),
       .meip(meip),
       .msip(msip),
       .mtip(mtip),
@@ -412,63 +235,145 @@ module soc (
   arbiter arbiter_rom_comp (
       .reset(reset),
       .clock(clock),
-      .imemory_valid(irom_valid),
-      .imemory_instr(irom_instr),
-      .imemory_store(irom_store),
-      .imemory_addr(irom_addr),
-      .imemory_wdata(irom_wdata),
-      .imemory_rdata(irom_rdata),
-      .imemory_ready(irom_ready),
-      .dmemory_valid(drom_valid),
-      .dmemory_instr(drom_instr),
-      .dmemory_store(drom_store),
-      .dmemory_addr(drom_addr),
-      .dmemory_wdata(drom_wdata),
-      .dmemory_rdata(drom_rdata),
-      .dmemory_ready(drom_ready),
-      .memory_valid(rom_valid),
-      .memory_instr(rom_instr),
-      .memory_store(rom_store),
-      .memory_addr(rom_addr),
-      .memory_wdata(rom_wdata),
-      .memory_rdata(rom_rdata),
-      .memory_ready(rom_ready)
+      .imem_in(irom_in),
+      .imem_out(irom_out),
+      .dmem_in(drom_in),
+      .dmem_out(drom_out),
+      .mem_in(rom_in),
+      .mem_out(rom_out)
   );
 
   rom rom_comp (
+      .reset  (reset),
+      .clock  (clock),
+      .rom_in (rom_in),
+      .rom_out(rom_out)
+  );
+
+  arbiter arbiter_clint_comp (
       .reset(reset),
       .clock(clock),
-      .rom_valid(rom_valid),
-      .rom_instr(rom_instr),
-      .rom_addr(rom_addr),
-      .rom_rdata(rom_rdata),
-      .rom_ready(rom_ready)
+      .imem_in(iclint_in),
+      .imem_out(iclint_out),
+      .dmem_in(dclint_in),
+      .dmem_out(dclint_out),
+      .mem_in(clint_in),
+      .mem_out(clint_out)
+  );
+
+  clint #(
+      .clock_rate(clk_divider_rtc)
+  ) clint_comp (
+      .reset(reset),
+      .clock(clock),
+      .clint_in(clint_in),
+      .clint_out(clint_out),
+      .clint_msip(msip),
+      .clint_mtip(mtip),
+      .clint_mtime(mtime)
+  );
+
+  arbiter arbiter_tim00_comp (
+      .reset(reset),
+      .clock(clock),
+      .imem_in(itim0_in),
+      .imem_out(itim0_out),
+      .dmem_in(dtim0_in),
+      .dmem_out(dtim0_out),
+      .mem_in(tim00_in),
+      .mem_out(tim00_out)
+  );
+
+  arbiter arbiter_tim01_comp (
+      .reset(reset),
+      .clock(clock),
+      .imem_in(itim1_in),
+      .imem_out(itim1_out),
+      .dmem_in(dtim1_in),
+      .dmem_out(dtim1_out),
+      .mem_in(tim01_in),
+      .mem_out(tim01_out)
+  );
+
+  tim tim0_comp (
+      .reset(reset),
+      .clock(clock),
+      .tim0_in(tim00_in),
+      .tim1_in(tim01_in),
+      .tim0_out(tim00_out),
+      .tim1_out(tim01_out)
+  );
+
+  arbiter arbiter_tim10_comp (
+      .reset(reset),
+      .clock(clock),
+      .imem_in(itim0_in),
+      .imem_out(itim0_out),
+      .dmem_in(dtim0_in),
+      .dmem_out(dtim0_out),
+      .mem_in(tim10_in),
+      .mem_out(tim10_out)
+  );
+
+  arbiter arbiter_tim11_comp (
+      .reset(reset),
+      .clock(clock),
+      .imem_in(itim1_in),
+      .imem_out(itim1_out),
+      .dmem_in(dtim1_in),
+      .dmem_out(dtim1_out),
+      .mem_in(tim11_in),
+      .mem_out(tim11_out)
+  );
+
+  tim tim1_comp (
+      .reset(reset),
+      .clock(clock),
+      .tim0_in(tim10_in),
+      .tim1_in(tim11_in),
+      .tim0_out(tim10_out),
+      .tim1_out(tim11_out)
+  );
+
+  arbiter arbiter_ram_comp (
+      .reset(reset),
+      .clock(clock),
+      .imem_in(iram_in),
+      .imem_out(iram_out),
+      .dmem_in(dram_in),
+      .dmem_out(dram_out),
+      .mem_in(ram_in),
+      .mem_out(ram_out)
+  );
+
+  ccd #(
+      .clock_rate(clk_divider_slow)
+  ) ccd_ram_comp (
+      .reset(reset),
+      .clock(clock),
+      .clock_slow(clock_slow),
+      .mem_in(ram_in),
+      .mem_out(ram_out),
+      .mem_slow_in(ram_slow_in),
+      .mem_slow_out(ram_slow_out)
+  );
+
+  ram ram_comp (
+      .reset  (reset),
+      .clock  (clock_slow),
+      .ram_in (ram_slow_in),
+      .ram_out(ram_slow_out)
   );
 
   arbiter arbiter_uart_comp (
       .reset(reset),
       .clock(clock),
-      .imemory_valid(iuart_valid),
-      .imemory_instr(iuart_instr),
-      .imemory_store(iuart_store),
-      .imemory_addr(iuart_addr),
-      .imemory_wdata(iuart_wdata),
-      .imemory_rdata(iuart_rdata),
-      .imemory_ready(iuart_ready),
-      .dmemory_valid(duart_valid),
-      .dmemory_instr(duart_instr),
-      .dmemory_store(duart_store),
-      .dmemory_addr(duart_addr),
-      .dmemory_wdata(duart_wdata),
-      .dmemory_rdata(duart_rdata),
-      .dmemory_ready(duart_ready),
-      .memory_valid(uart_valid),
-      .memory_instr(uart_instr),
-      .memory_store(uart_store),
-      .memory_addr(uart_addr),
-      .memory_wdata(uart_wdata),
-      .memory_rdata(uart_rdata),
-      .memory_ready(uart_ready)
+      .imem_in(iuart_in),
+      .imem_out(iuart_out),
+      .dmem_in(duart_in),
+      .dmem_out(duart_out),
+      .mem_in(uart_in),
+      .mem_out(uart_out)
   );
 
   ccd #(
@@ -477,213 +382,19 @@ module soc (
       .reset(reset),
       .clock(clock),
       .clock_slow(clock_slow),
-      .memory_valid(uart_valid),
-      .memory_instr(uart_instr),
-      .memory_store(uart_store),
-      .memory_addr(uart_addr),
-      .memory_wdata(uart_wdata),
-      .memory_rdata(uart_rdata),
-      .memory_ready(uart_ready),
-      .memory_slow_valid(uart_slow_valid),
-      .memory_slow_instr(uart_slow_instr),
-      .memory_slow_store(uart_slow_store),
-      .memory_slow_addr(uart_slow_addr),
-      .memory_slow_wdata(uart_slow_wdata),
-      .memory_slow_rdata(uart_slow_rdata),
-      .memory_slow_ready(uart_slow_ready)
+      .mem_in(uart_in),
+      .mem_out(uart_out),
+      .mem_slow_in(uart_slow_in),
+      .mem_slow_out(uart_slow_out)
   );
 
   uart uart_comp (
       .reset(reset),
       .clock(clock_slow),
-      .uart_valid(uart_slow_valid),
-      .uart_instr(uart_slow_instr),
-      .uart_store(uart_slow_store),
-      .uart_addr(uart_slow_addr),
-      .uart_wdata(uart_slow_wdata),
-      .uart_rdata(uart_slow_rdata),
-      .uart_ready(uart_slow_ready),
+      .uart_in(uart_slow_in),
+      .uart_out(uart_slow_out),
       .uart_rx(uart_rx),
       .uart_tx(uart_tx)
-  );
-
-  arbiter arbiter_clint_comp (
-      .reset(reset),
-      .clock(clock),
-      .imemory_valid(iclint_valid),
-      .imemory_instr(iclint_instr),
-      .imemory_store(iclint_store),
-      .imemory_addr(iclint_addr),
-      .imemory_wdata(iclint_wdata),
-      .imemory_rdata(iclint_rdata),
-      .imemory_ready(iclint_ready),
-      .dmemory_valid(dclint_valid),
-      .dmemory_instr(dclint_instr),
-      .dmemory_store(dclint_store),
-      .dmemory_addr(dclint_addr),
-      .dmemory_wdata(dclint_wdata),
-      .dmemory_rdata(dclint_rdata),
-      .dmemory_ready(dclint_ready),
-      .memory_valid(clint_valid),
-      .memory_instr(clint_instr),
-      .memory_store(clint_store),
-      .memory_addr(clint_addr),
-      .memory_wdata(clint_wdata),
-      .memory_rdata(clint_rdata),
-      .memory_ready(clint_ready)
-  );
-
-  clint #(
-      .clock_rate(clk_divider_rtc)
-  ) clint_comp (
-      .reset(reset),
-      .clock(clock),
-      .clint_valid(clint_valid),
-      .clint_instr(clint_instr),
-      .clint_store(clint_store),
-      .clint_addr(clint_addr),
-      .clint_wdata(clint_wdata),
-      .clint_rdata(clint_rdata),
-      .clint_ready(clint_ready),
-      .clint_msip(msip),
-      .clint_mtip(mtip),
-      .clint_mtime(mtime)
-  );
-
-  arbiter arbiter_tim0_comp (
-      .reset(reset),
-      .clock(clock),
-      .imemory_valid(itim0_valid),
-      .imemory_instr(itim0_instr),
-      .imemory_store(itim0_store),
-      .imemory_addr(itim0_addr),
-      .imemory_wdata(itim0_wdata),
-      .imemory_rdata(itim0_rdata),
-      .imemory_ready(itim0_ready),
-      .dmemory_valid(dtim0_valid),
-      .dmemory_instr(dtim0_instr),
-      .dmemory_store(dtim0_store),
-      .dmemory_addr(dtim0_addr),
-      .dmemory_wdata(dtim0_wdata),
-      .dmemory_rdata(dtim0_rdata),
-      .dmemory_ready(dtim0_ready),
-      .memory_valid(tim0_valid),
-      .memory_instr(tim0_instr),
-      .memory_store(tim0_store),
-      .memory_addr(tim0_addr),
-      .memory_wdata(tim0_wdata),
-      .memory_rdata(tim0_rdata),
-      .memory_ready(tim0_ready)
-  );
-
-  tim tim0_comp (
-      .reset(reset),
-      .clock(clock),
-      .tim_valid(tim0_valid),
-      .tim_instr(tim0_instr),
-      .tim_store(tim0_store),
-      .tim_addr(tim0_addr),
-      .tim_wdata(tim0_wdata),
-      .tim_rdata(tim0_rdata),
-      .tim_ready(tim0_ready)
-  );
-
-  arbiter arbiter_tim1_comp (
-      .reset(reset),
-      .clock(clock),
-      .imemory_valid(itim1_valid),
-      .imemory_instr(itim1_instr),
-      .imemory_store(itim1_store),
-      .imemory_addr(itim1_addr),
-      .imemory_wdata(itim1_wdata),
-      .imemory_rdata(itim1_rdata),
-      .imemory_ready(itim1_ready),
-      .dmemory_valid(dtim1_valid),
-      .dmemory_instr(dtim1_instr),
-      .dmemory_store(dtim1_store),
-      .dmemory_addr(dtim1_addr),
-      .dmemory_wdata(dtim1_wdata),
-      .dmemory_rdata(dtim1_rdata),
-      .dmemory_ready(dtim1_ready),
-      .memory_valid(tim1_valid),
-      .memory_instr(tim1_instr),
-      .memory_store(tim1_store),
-      .memory_addr(tim1_addr),
-      .memory_wdata(tim1_wdata),
-      .memory_rdata(tim1_rdata),
-      .memory_ready(tim1_ready)
-  );
-
-  tim tim1_comp (
-      .reset(reset),
-      .clock(clock),
-      .tim_valid(tim1_valid),
-      .tim_instr(tim1_instr),
-      .tim_store(tim1_store),
-      .tim_addr(tim1_addr),
-      .tim_wdata(tim1_wdata),
-      .tim_rdata(tim1_rdata),
-      .tim_ready(tim1_ready)
-  );
-
-  arbiter arbiter_ram_comp (
-      .reset(reset),
-      .clock(clock),
-      .imemory_valid(iram_valid),
-      .imemory_instr(iram_instr),
-      .imemory_store(iram_store),
-      .imemory_addr(iram_addr),
-      .imemory_wdata(iram_wdata),
-      .imemory_rdata(iram_rdata),
-      .imemory_ready(iram_ready),
-      .dmemory_valid(dram_valid),
-      .dmemory_instr(dram_instr),
-      .dmemory_store(dram_store),
-      .dmemory_addr(dram_addr),
-      .dmemory_wdata(dram_wdata),
-      .dmemory_rdata(dram_rdata),
-      .dmemory_ready(dram_ready),
-      .memory_valid(ram_valid),
-      .memory_instr(ram_instr),
-      .memory_store(ram_store),
-      .memory_addr(ram_addr),
-      .memory_wdata(ram_wdata),
-      .memory_rdata(ram_rdata),
-      .memory_ready(ram_ready)
-  );
-
-  ccd #(
-      .clock_rate(clk_divider_slow)
-  ) ccd_comp (
-      .reset(reset),
-      .clock(clock),
-      .clock_slow(clock_slow),
-      .memory_valid(ram_valid),
-      .memory_instr(ram_instr),
-      .memory_store(ram_store),
-      .memory_addr(ram_addr),
-      .memory_wdata(ram_wdata),
-      .memory_rdata(ram_rdata),
-      .memory_ready(ram_ready),
-      .memory_slow_valid(ram_slow_valid),
-      .memory_slow_instr(ram_slow_instr),
-      .memory_slow_store(ram_slow_store),
-      .memory_slow_addr(ram_slow_addr),
-      .memory_slow_wdata(ram_slow_wdata),
-      .memory_slow_rdata(ram_slow_rdata),
-      .memory_slow_ready(ram_slow_ready)
-  );
-
-  ram ram_comp (
-      .reset(reset),
-      .clock(clock_slow),
-      .ram_valid(ram_slow_valid),
-      .ram_instr(ram_slow_instr),
-      .ram_store(ram_slow_store),
-      .ram_addr(ram_slow_addr),
-      .ram_wdata(ram_slow_wdata),
-      .ram_rdata(ram_slow_rdata),
-      .ram_ready(ram_slow_ready)
   );
 
 endmodule

@@ -62,8 +62,10 @@ module tim_ctrl (
     input logic clock,
     input tim_vec_out_type dvec_out,
     output tim_vec_in_type dvec_in,
-    input mem_in_type tim_in,
-    output mem_out_type tim_out
+    input mem_in_type tim0_in,
+    input mem_in_type tim1_in,
+    output mem_out_type tim0_out,
+    output mem_out_type tim1_out
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -71,14 +73,19 @@ module tim_ctrl (
   localparam width = $clog2(tim_width - 1);
 
   typedef struct packed {
-    logic [width-1:0] wid;
-    logic [depth-1:0] did;
-    logic [63:0] data;
-    logic [0:0] wren;
-    logic [0:0] enable;
+    logic [width-1:0] wid0;
+    logic [width-1:0] wid1;
+    logic [depth-1:0] did0;
+    logic [depth-1:0] did1;
+    logic [63:0] data0;
+    logic [63:0] data1;
+    logic [0:0] store0;
+    logic [0:0] store1;
+    logic [0:0] valid0;
+    logic [0:0] valid1;
   } front_type;
 
-  parameter front_type init_reg = '{wid : 0, did : 0, data : 0, wren : 0, enable : 0};
+  parameter front_type init_reg = 0;
 
   front_type r, rin;
   front_type v;
@@ -87,28 +94,44 @@ module tim_ctrl (
 
     v = r;
 
-    v.enable = 0;
-    v.wren = 0;
+    v.valid0 = 0;
+    v.valid1 = 0;
+    v.store0 = 0;
+    v.store1 = 0;
 
-    if (tim_in.mem_valid == 1) begin
-      v.enable = tim_in.mem_valid;
-      v.wren = tim_in.mem_store;
-      v.data = tim_in.mem_wdata;
-      v.did = tim_in.mem_addr[(depth+width+2):(width+3)];
-      v.wid = tim_in.mem_addr[(width+2):3];
+    if (tim0_in.mem_valid == 1) begin
+      v.valid0 = tim0_in.mem_valid;
+      v.store0 = tim0_in.mem_store;
+      v.data0  = tim0_in.mem_wdata;
+      v.did0   = tim0_in.mem_addr[(depth+width+2):(width+3)];
+      v.wid0   = tim0_in.mem_addr[(width+2):3];
+    end
+
+    if (tim1_in.mem_valid == 1) begin
+      v.valid1 = tim1_in.mem_valid;
+      v.store1 = tim1_in.mem_store;
+      v.data1  = tim1_in.mem_wdata;
+      v.did1   = tim1_in.mem_addr[(depth+width+2):(width+3)];
+      v.wid1   = tim1_in.mem_addr[(width+2):3];
     end
 
     dvec_in = init_tim_vec_in;
 
     // Write data
-    dvec_in[v.wid].en0 = v.wren;
-    dvec_in[v.wid].addr0 = v.did;
-    dvec_in[v.wid].data0 = v.data;
+    dvec_in[v.wid0].en0 = v.store0;
+    dvec_in[v.wid1].en1 = v.store1;
+    dvec_in[v.wid0].addr0 = v.did0;
+    dvec_in[v.wid1].addr1 = v.did1;
+    dvec_in[v.wid0].data0 = v.data0;
+    dvec_in[v.wid1].data1 = v.data1;
 
     rin = v;
 
-    tim_out.mem_rdata = dvec_out[r.wid].data0;
-    tim_out.mem_ready = r.enable;
+    tim0_out.mem_rdata = dvec_out[r.wid0].data0;
+    tim0_out.mem_ready = r.valid0;
+
+    tim1_out.mem_rdata = dvec_out[r.wid1].data1;
+    tim1_out.mem_ready = r.valid1;
 
   end
 
@@ -125,20 +148,15 @@ endmodule
 module tim (
     input logic reset,
     input logic clock,
-    input logic [0 : 0] tim_valid,
-    input logic [0 : 0] tim_instr,
-    input logic [0 : 0] tim_store,
-    input logic [31 : 0] tim_addr,
-    input logic [63 : 0] tim_wdata,
-    output logic [63 : 0] tim_rdata,
-    output logic [0 : 0] tim_ready
+    input mem_in_type tim0_in,
+    input mem_in_type tim1_in,
+    output mem_out_type tim0_out,
+    output mem_out_type tim1_out
 );
   timeunit 1ns; timeprecision 1ps;
 
-  tim_vec_in_type dvec_in;
+  tim_vec_in_type  dvec_in;
   tim_vec_out_type dvec_out;
-  mem_in_type tim_in;
-  mem_out_type tim_out;
 
   generate
 
@@ -159,19 +177,10 @@ module tim (
       .clock(clock),
       .dvec_out(dvec_out),
       .dvec_in(dvec_in),
-      .tim_in(tim_in),
-      .tim_out(tim_out)
+      .tim0_in(tim0_in),
+      .tim1_in(tim1_in),
+      .tim0_out(tim0_out),
+      .tim1_out(tim1_out)
   );
-
-  assign tim_in.mem_valid = tim_valid;
-  assign tim_in.mem_fence = 0;
-  assign tim_in.mem_spec = 0;
-  assign tim_in.mem_instr = tim_instr;
-  assign tim_in.mem_store = tim_store;
-  assign tim_in.mem_addr = tim_addr;
-  assign tim_in.mem_wdata = tim_wdata;
-
-  assign tim_rdata = tim_out.mem_rdata;
-  assign tim_ready = tim_out.mem_ready;
 
 endmodule
