@@ -142,16 +142,24 @@ module soc (
     end
 
     if (imem0_in.mem_valid == 1) begin
-      iper0_in = imem0_in;
+      if ((imem0_in.mem_addr < itim_base_addr || imem0_in.mem_addr >= itim_top_addr) && (imem0_in.mem_addr < dtim_base_addr || imem0_in.mem_addr >= dtim_top_addr)) begin
+        iper0_in = imem0_in;
+      end
     end
     if (imem1_in.mem_valid == 1) begin
-      iper1_in = imem1_in;
+      if ((imem1_in.mem_addr < itim_base_addr || imem1_in.mem_addr >= itim_top_addr) && (imem1_in.mem_addr < dtim_base_addr || imem1_in.mem_addr >= dtim_top_addr)) begin
+        iper1_in = imem1_in;
+      end
     end
     if (dmem0_in.mem_valid == 1) begin
-      dper0_in = dmem0_in;
+      if ((dmem0_in.mem_addr < itim_base_addr || dmem0_in.mem_addr >= itim_top_addr) && (dmem0_in.mem_addr < dtim_base_addr || dmem0_in.mem_addr >= dtim_top_addr)) begin
+        dper0_in = dmem0_in;
+      end
     end
     if (dmem1_in.mem_valid == 1) begin
-      dper1_in = dmem1_in;
+      if ((dmem1_in.mem_addr < itim_base_addr || dmem1_in.mem_addr >= itim_top_addr) && (dmem1_in.mem_addr < dtim_base_addr || dmem1_in.mem_addr >= dtim_top_addr)) begin
+        dper1_in = dmem1_in;
+      end
     end
 
     imem0_out = init_mem_out;
