@@ -49,20 +49,8 @@ module storebuffer_reg (
   end
 
   always_comb begin
-    if (storebuffer_reg_in.raddr0 == storebuffer_reg_in.waddr0) begin
-      storebuffer_reg_out.rdata0 = storebuffer_reg_in.wdata0;
-    end else if (storebuffer_reg_in.raddr0 == storebuffer_reg_in.waddr1) begin
-      storebuffer_reg_out.rdata0 = storebuffer_reg_in.wdata1;
-    end else begin
-      storebuffer_reg_out.rdata0 = storebuffer_reg_array[storebuffer_reg_in.raddr0];
-    end
-    if (storebuffer_reg_in.raddr1 == storebuffer_reg_in.waddr0) begin
-      storebuffer_reg_out.rdata1 = storebuffer_reg_in.wdata0;
-    end else if (storebuffer_reg_in.raddr1 == storebuffer_reg_in.waddr1) begin
-      storebuffer_reg_out.rdata1 = storebuffer_reg_in.wdata1;
-    end else begin
-      storebuffer_reg_out.rdata1 = storebuffer_reg_array[storebuffer_reg_in.raddr1];
-    end
+    storebuffer_reg_out.rdata0 = storebuffer_reg_array[storebuffer_reg_in.raddr0];
+    storebuffer_reg_out.rdata1 = storebuffer_reg_array[storebuffer_reg_in.raddr1];
   end
 
 endmodule
@@ -240,13 +228,13 @@ module storebuffer_ctrl (
     v_f.rdata1 = storebuffer_reg_out.rdata1;
 
     if (v_f.valid0 == 1) begin
-      v_f.hit0  = v_f.rdata0[94] & |(v_f.addr0[31:3] ^ v_f.rdata0[92:64]);
+      v_f.hit0  = v_f.rdata0[94] & ~(|(v_f.addr0[31:3] ^ v_f.rdata0[92:64]));
       v_f.miss0 = ~v_f.hit0;
       v_f.back0 = v_f.miss0 & v_f.rdata0[93];
     end
 
     if (v_f.valid1 == 1) begin
-      v_f.hit1  = v_f.rdata1[94] & |(v_f.addr1[31:3] ^ v_f.rdata1[92:64]);
+      v_f.hit1  = v_f.rdata1[94] & ~(|(v_f.addr1[31:3] ^ v_f.rdata1[92:64]));
       v_f.miss1 = ~v_f.hit1;
       v_f.back1 = v_f.miss1 & v_f.rdata1[93];
     end
@@ -283,6 +271,7 @@ module storebuffer_ctrl (
       v_f.wren0 = |v_f.strb0;
       v_f.rden0 = ~v_f.wren0;
       v_f.waddr0 = v_f.raddr0;
+      v_f.rdata0 = rin_b.rdata0;
       v_f.wdata0 = rin_b.rdata0;
       v_f.wdata0[93] = v_f.wdata0[93] | v_f.wren0;
     end
@@ -291,6 +280,7 @@ module storebuffer_ctrl (
       v_f.wren1 = |v_f.strb1;
       v_f.rden1 = ~v_f.wren1;
       v_f.waddr1 = v_f.raddr1;
+      v_f.rdata1 = rin_b.rdata1;
       v_f.wdata1 = rin_b.rdata1;
       v_f.wdata1[93] = v_f.wdata1[93] | v_f.wren1;
     end
