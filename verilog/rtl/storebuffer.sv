@@ -123,12 +123,26 @@ module storebuffer_ctrl (
     logic [63 : 0] mem_rdata1;
     logic [63 : 0] mem_wdata0;
     logic [63 : 0] mem_wdata1;
-    logic [0 : 0] mem_valid0;
-    logic [0 : 0] mem_valid1;
-    logic [0 : 0] mem_store0;
-    logic [0 : 0] mem_store1;
-    logic [0 : 0] mem_ready0;
-    logic [0 : 0] mem_ready1;
+    logic [0 : 0]  mem_valid0;
+    logic [0 : 0]  mem_valid1;
+    logic [0 : 0]  mem_store0;
+    logic [0 : 0]  mem_store1;
+    logic [0 : 0]  mem_ready0;
+    logic [0 : 0]  mem_ready1;
+    logic [31 : 0] raddr0;
+    logic [31 : 0] raddr1;
+    logic [31 : 0] waddr0;
+    logic [31 : 0] waddr1;
+    logic [63 : 0] wdata0;
+    logic [63 : 0] wdata1;
+    logic [94 : 0] rdata0;
+    logic [94 : 0] rdata1;
+    logic [0 : 0]  miss0;
+    logic [0 : 0]  miss1;
+    logic [0 : 0]  back0;
+    logic [0 : 0]  back1;
+    logic [0 : 0]  ret0;
+    logic [0 : 0]  ret1;
   } back_type;
 
   localparam front_type init_front = 0;
@@ -146,24 +160,30 @@ module storebuffer_ctrl (
 
     v_f.wren0 = 0;
     v_f.wren1 = 0;
-
     v_f.rden0 = 0;
     v_f.rden1 = 0;
 
+    v_f.miss0 = 0;
+    v_f.miss1 = 0;
+    v_f.back0 = 0;
+    v_f.back1 = 0;
+    v_f.hit0 = 0;
+    v_f.hit1 = 0;
+
     if (storebuffer0_in.mem_valid == 1) begin
       v_f.valid0 = storebuffer0_in.mem_valid;
-      v_f.addr0 = storebuffer0_in.mem_addr;
+      v_f.addr0  = storebuffer0_in.mem_addr;
       v_f.raddr0 = storebuffer0_in.mem_addr[depth+2:3];
-      v_f.data0 = storebuffer0_in.mem_wdata;
-      v_f.strb0 = storebuffer0_in.mem_wstrb;
+      v_f.data0  = storebuffer0_in.mem_wdata;
+      v_f.strb0  = storebuffer0_in.mem_wstrb;
     end
 
     if (storebuffer1_in.mem_valid == 1) begin
       v_f.valid1 = storebuffer1_in.mem_valid;
-      v_f.addr1 = storebuffer1_in.mem_addr;
+      v_f.addr1  = storebuffer1_in.mem_addr;
       v_f.raddr1 = storebuffer1_in.mem_addr[depth+2:3];
-      v_f.data1 = storebuffer1_in.mem_wdata;
-      v_f.strb1 = storebuffer1_in.mem_wstrb;
+      v_f.data1  = storebuffer1_in.mem_wdata;
+      v_f.strb1  = storebuffer1_in.mem_wstrb;
     end
 
     storebuffer_reg_in.raddr0 = v_f.raddr0;
@@ -173,13 +193,13 @@ module storebuffer_ctrl (
     v_f.rdata1 = storebuffer_reg_out.rdata1;
 
     if (v_f.valid0 == 1) begin
-      v_f.hit0 = v_f.rdata0[94] & |(v_f.addr0[31:3] ^ v_f.rdata0[92:64]);
+      v_f.hit0  = v_f.rdata0[94] & |(v_f.addr0[31:3] ^ v_f.rdata0[92:64]);
       v_f.miss0 = ~v_f.hit0;
       v_f.back0 = v_f.miss0 & v_f.rdata0[93];
     end
 
     if (v_f.valid1 == 1) begin
-      v_f.hit1 = v_f.rdata1[94] & |(v_f.addr1[31:3] ^ v_f.rdata1[92:64]);
+      v_f.hit1  = v_f.rdata1[94] & |(v_f.addr1[31:3] ^ v_f.rdata1[92:64]);
       v_f.miss1 = ~v_f.hit1;
       v_f.back1 = v_f.miss1 & v_f.rdata1[93];
     end
@@ -197,6 +217,22 @@ module storebuffer_ctrl (
       v_f.rden1 = ~v_f.wren1;
       v_f.waddr1 = v_f.raddr1;
       v_f.wdata1 = v_f.rdata1;
+      v_f.wdata1[93] = v_f.wdata1[93] | v_f.wren1;
+    end
+
+    if (rin_b.ret0 == 1) begin
+      v_f.wren0 = |v_f.strb0;
+      v_f.rden0 = ~v_f.wren0;
+      v_f.waddr0 = v_f.raddr0;
+      v_f.wdata0 = rin_b.rdata0;
+      v_f.wdata0[93] = v_f.wdata0[93] | v_f.wren0;
+    end
+
+    if (rin_b.ret1 == 1) begin
+      v_f.wren1 = |v_f.strb1;
+      v_f.rden1 = ~v_f.wren1;
+      v_f.waddr1 = v_f.raddr1;
+      v_f.wdata1 = rin_b.rdata1;
       v_f.wdata1[93] = v_f.wdata1[93] | v_f.wren1;
     end
 
@@ -242,16 +278,78 @@ module storebuffer_ctrl (
 
     v_b = r_b;
 
+    v_b.mem_valid0 = 0;
+    v_b.mem_valid1 = 0;
+    v_b.mem_store0 = 0;
+    v_b.mem_store1 = 0;
+    v_b.mem_addr0 = 0;
+    v_b.mem_addr1 = 0;
+    v_b.mem_wdata0 = 0;
+    v_b.mem_wdata1 = 0;
+
+    v_b.ret0 = 0;
+    v_b.ret1 = 0;
+
     v_b.mem_rdata0 = dmem0_out.mem_rdata;
     v_b.mem_rdata1 = dmem1_out.mem_rdata;
     v_b.mem_ready0 = dmem0_out.mem_ready;
     v_b.mem_ready1 = dmem1_out.mem_ready;
 
-    v_b.mem_valid0 = 0;
-    v_b.mem_valid1 = 0;
+    if (v_b.mem_ready0 == 1) begin
+      if (v_b.back0 == 1) begin
+        v_b.back0 = 0;
+      end else if (v_b.miss0 == 1) begin
+        v_b.miss0  = 0;
+        v_b.ret0   = 1;
+        v_b.rdata0 = {2'b10, v_b.raddr0[31:3], v_b.mem_rdata0};
+      end
+    end
+
+    if (v_b.mem_ready1 == 1) begin
+      if (v_b.back1 == 1) begin
+        v_b.back1 = 0;
+      end else if (v_b.miss1 == 1) begin
+        v_b.miss1  = 0;
+        v_b.ret1   = 1;
+        v_b.rdata1 = {2'b10, v_b.raddr1[31:3], v_b.mem_rdata1};
+      end
+    end
 
     if ((rin_f.miss0 | rin_f.back0 | rin_f.miss1 | rin_f.back1) == 0) begin
-      
+      v_b.miss0  = rin_f.miss0;
+      v_b.miss1  = rin_f.miss1;
+      v_b.back0  = rin_f.back0;
+      v_b.back1  = rin_f.back1;
+      v_b.raddr0 = rin_f.addr0;
+      v_b.raddr1 = rin_f.addr1;
+      v_b.waddr0 = {rin_f.rdata0[92:64], 3'b0};
+      v_b.waddr1 = {rin_f.rdata1[92:64], 3'b0};
+      v_b.wdata0 = rin_f.rdata0[63:0];
+      v_b.wdata1 = rin_f.rdata1[63:0];
+    end
+
+    if (v_b.back0 == 1) begin
+      v_b.mem_valid0 = 1;
+      v_b.mem_store0 = 1;
+      v_b.mem_addr0  = v_b.waddr0;
+      v_b.mem_wdata0 = v_b.wdata0;
+    end else if (v_b.miss0 == 1) begin
+      v_b.mem_valid0 = 1;
+      v_b.mem_store0 = 0;
+      v_b.mem_addr0  = v_b.raddr0;
+      v_b.mem_wdata0 = 0;
+    end
+
+    if (v_b.back1 == 1) begin
+      v_b.mem_valid1 = 1;
+      v_b.mem_store1 = 1;
+      v_b.mem_addr1  = v_b.waddr1;
+      v_b.mem_wdata1 = v_b.wdata1;
+    end else if (v_b.miss1 == 1) begin
+      v_b.mem_valid1 = 1;
+      v_b.mem_store1 = 0;
+      v_b.mem_addr1  = v_b.raddr1;
+      v_b.mem_wdata1 = 0;
     end
 
     rin_b = v_b;
