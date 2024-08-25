@@ -24,9 +24,9 @@ module ram (
 
         if (ram_in.mem_valid == 1) begin
 
-          if (ram_in.mem_store == 1) ram_block[ram_in.mem_addr[(r_depth+5):6]] <= ram_in.mem_wdata;
+          if (ram_in.mem_store == 1) ram_block[ram_in.mem_addr[(r_depth+2):3]] <= ram_in.mem_wdata;
 
-          ram_out.mem_rdata <= ram_block[ram_in.mem_addr[(r_depth+5):6]];
+          ram_out.mem_rdata <= ram_block[ram_in.mem_addr[(r_depth+2):3]];
           ram_out.mem_ready <= 1;
 
         end else begin
@@ -50,9 +50,9 @@ module ram (
 
       always_ff @(posedge clock) begin
 
-        if (ram_in.mem_store == 1) ram_block[ram_in.mem_addr[(r_depth+5):6]] <= ram_in.mem_wdata;
+        if (ram_in.mem_store == 1) ram_block[ram_in.mem_addr[(r_depth+2):3]] <= ram_in.mem_wdata;
 
-        ram_out.mem_rdata <= ram_block[ram_in.mem_addr[(r_depth+5):6]];
+        ram_out.mem_rdata <= ram_block[ram_in.mem_addr[(r_depth+2):3]];
 
       end
 
