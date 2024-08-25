@@ -24,28 +24,36 @@ module soc (
   mem_in_type dtim1_in;
 
   mem_in_type rom_in;
-  mem_in_type irom_in;
-  mem_in_type drom_in;
+  mem_in_type rom0_in;
+  mem_in_type rom1_in;
+  mem_in_type irom0_in;
+  mem_in_type irom1_in;
+  mem_in_type drom0_in;
+  mem_in_type drom1_in;
 
   mem_in_type ram_in;
-  mem_in_type iram_in;
-  mem_in_type dram_in;
+  mem_in_type ram0_in;
+  mem_in_type ram1_in;
+  mem_in_type iram0_in;
+  mem_in_type iram1_in;
+  mem_in_type dram0_in;
+  mem_in_type dram1_in;
 
   mem_in_type uart_in;
-  mem_in_type iuart_in;
-  mem_in_type duart_in;
+  mem_in_type uart0_in;
+  mem_in_type uart1_in;
+  mem_in_type iuart0_in;
+  mem_in_type iuart1_in;
+  mem_in_type duart0_in;
+  mem_in_type duart1_in;
 
   mem_in_type clint_in;
-  mem_in_type iclint_in;
-  mem_in_type dclint_in;
-
-  mem_in_type tim00_in;
-  mem_in_type tim01_in;
-  mem_in_type tim10_in;
-  mem_in_type tim11_in;
-
-  mem_in_type ram_slow_in;
-  mem_in_type uart_slow_in;
+  mem_in_type clint0_in;
+  mem_in_type clint1_in;
+  mem_in_type iclint0_in;
+  mem_in_type iclint1_in;
+  mem_in_type dclint0_in;
+  mem_in_type dclint1_in;
 
   mem_out_type imem0_out;
   mem_out_type imem1_out;
@@ -60,28 +68,52 @@ module soc (
   mem_out_type dtim1_out;
 
   mem_out_type rom_out;
-  mem_out_type irom_out;
-  mem_out_type drom_out;
+  mem_out_type rom0_out;
+  mem_out_type rom1_out;
+  mem_out_type irom0_out;
+  mem_out_type irom1_out;
+  mem_out_type drom0_out;
+  mem_out_type drom1_out;
 
   mem_out_type ram_out;
-  mem_out_type iram_out;
-  mem_out_type dram_out;
+  mem_out_type ram0_out;
+  mem_out_type ram1_out;
+  mem_out_type iram0_out;
+  mem_out_type iram1_out;
+  mem_out_type dram0_out;
+  mem_out_type dram1_out;
 
   mem_out_type uart_out;
-  mem_out_type iuart_out;
-  mem_out_type duart_out;
+  mem_out_type uart0_out;
+  mem_out_type uart1_out;
+  mem_out_type iuart0_out;
+  mem_out_type iuart1_out;
+  mem_out_type duart0_out;
+  mem_out_type duart1_out;
 
   mem_out_type clint_out;
-  mem_out_type iclint_out;
-  mem_out_type dclint_out;
+  mem_out_type clint0_out;
+  mem_out_type clint1_out;
+  mem_out_type iclint0_out;
+  mem_out_type iclint1_out;
+  mem_out_type dclint0_out;
+  mem_out_type dclint1_out;
 
-  mem_out_type ram_slow_out;
-  mem_out_type uart_slow_out;
+  mem_in_type tim00_in;
+  mem_in_type tim01_in;
+  mem_in_type tim10_in;
+  mem_in_type tim11_in;
 
   mem_out_type tim00_out;
   mem_out_type tim01_out;
   mem_out_type tim10_out;
   mem_out_type tim11_out;
+
+  mem_in_type ram_slow_in;
+  mem_in_type uart_slow_in;
+
+  mem_out_type ram_slow_out;
+  mem_out_type uart_slow_out;
 
   logic [0 : 0] meip;
   logic [0 : 0] msip;
@@ -89,128 +121,222 @@ module soc (
 
   logic [63 : 0] mtime;
 
-  logic [31 : 0] imem_addr;
-  logic [31 : 0] dmem_addr;
+  logic [31 : 0] imem0_addr;
+  logic [31 : 0] imem1_addr;
+  logic [31 : 0] dmem0_addr;
+  logic [31 : 0] dmem1_addr;
 
-  logic [31 : 0] ibase_addr;
-  logic [31 : 0] dbase_addr;
+  logic [31 : 0] ibase0_addr;
+  logic [31 : 0] ibase1_addr;
+  logic [31 : 0] dbase0_addr;
+  logic [31 : 0] dbase1_addr;
 
   always_comb begin
 
-    iram_in = init_mem_in;
+    irom0_in = init_mem_in;
+    iram0_in = init_mem_in;
     itim0_in = init_mem_in;
-    itim1_in = init_mem_in;
-    iclint_in = init_mem_in;
-    iuart_in = init_mem_in;
-    irom_in = init_mem_in;
+    iuart0_in = init_mem_in;
+    iclint0_in = init_mem_in;
 
-    ibase_addr = 0;
+    irom1_in = init_mem_in;
+    iram1_in = init_mem_in;
+    itim1_in = init_mem_in;
+    iuart1_in = init_mem_in;
+    iclint1_in = init_mem_in;
+
+    ibase0_addr = 0;
+    ibase1_addr = 0;
 
     if (imem0_in.mem_valid == 1) begin
-      if (imem0_in.mem_addr >= ram_base_addr && imem0_in.mem_addr < ram_top_addr) begin
-        iram_in = imem0_in;
-        ibase_addr = ram_base_addr;
-      end else if (imem0_in.mem_addr >= tim1_base_addr && imem0_in.mem_addr < tim1_top_addr) begin
-        itim1_in   = imem0_in;
-        ibase_addr = tim1_base_addr;
-      end else if (imem0_in.mem_addr >= tim0_base_addr && imem0_in.mem_addr < tim0_top_addr) begin
-        itim0_in   = imem0_in;
-        ibase_addr = tim0_base_addr;
-      end else if (imem0_in.mem_addr >= clint_base_addr && imem0_in.mem_addr < clint_top_addr) begin
-        iclint_in  = imem0_in;
-        ibase_addr = clint_base_addr;
+      if (imem0_in.mem_addr >= rom_base_addr && imem0_in.mem_addr < rom_top_addr) begin
+        irom0_in = imem0_in;
+        ibase0_addr = rom_base_addr;
+      end else if (imem0_in.mem_addr >= ram_base_addr && imem0_in.mem_addr < ram_top_addr) begin
+        iram0_in = imem0_in;
+        ibase0_addr = ram_base_addr;
+      end else if (imem0_in.mem_addr >= itim_base_addr && imem0_in.mem_addr < itim_top_addr) begin
+        itim0_in = imem0_in;
+        ibase0_addr = itim_base_addr;
+      end else if (imem0_in.mem_addr >= dtim_base_addr && imem0_in.mem_addr < dtim_top_addr) begin
+        itim0_in = imem0_in;
+        ibase0_addr = dtim_base_addr;
       end else if (imem0_in.mem_addr >= uart_base_addr && imem0_in.mem_addr < uart_top_addr) begin
-        iuart_in   = imem0_in;
-        ibase_addr = uart_base_addr;
-      end else if (imem0_in.mem_addr >= rom_base_addr && imem0_in.mem_addr < rom_top_addr) begin
-        irom_in = imem0_in;
-        ibase_addr = rom_base_addr;
+        iuart0_in   = imem0_in;
+        ibase0_addr = uart_base_addr;
+      end else if (imem0_in.mem_addr >= clint_base_addr && imem0_in.mem_addr < clint_top_addr) begin
+        iclint0_in  = imem0_in;
+        ibase0_addr = clint_base_addr;
       end
     end
 
-    imem_addr = imem0_in.mem_addr - ibase_addr;
+    if (imem1_in.mem_valid == 1) begin
+      if (imem1_in.mem_addr >= rom_base_addr && imem1_in.mem_addr < rom_top_addr) begin
+        irom1_in = imem1_in;
+        ibase1_addr = rom_base_addr;
+      end else if (imem1_in.mem_addr >= ram_base_addr && imem1_in.mem_addr < ram_top_addr) begin
+        iram1_in = imem1_in;
+        ibase1_addr = ram_base_addr;
+      end else if (imem1_in.mem_addr >= itim_base_addr && imem1_in.mem_addr < itim_top_addr) begin
+        itim1_in = imem1_in;
+        ibase1_addr = itim_base_addr;
+      end else if (imem1_in.mem_addr >= dtim_base_addr && imem1_in.mem_addr < dtim_top_addr) begin
+        itim1_in = imem1_in;
+        ibase1_addr = dtim_base_addr;
+      end else if (imem1_in.mem_addr >= uart_base_addr && imem1_in.mem_addr < uart_top_addr) begin
+        iuart1_in   = imem1_in;
+        ibase1_addr = uart_base_addr;
+      end else if (imem1_in.mem_addr >= clint_base_addr && imem1_in.mem_addr < clint_top_addr) begin
+        iclint1_in  = imem1_in;
+        ibase1_addr = clint_base_addr;
+      end
+    end
 
-    irom_in.mem_addr = imem_addr;
-    iuart_in.mem_addr = imem_addr;
-    iclint_in.mem_addr = imem_addr;
-    itim0_in.mem_addr = imem_addr;
-    itim1_in.mem_addr = imem_addr;
-    iram_in.mem_addr = imem_addr;
+    imem0_addr = imem0_in.mem_addr - ibase0_addr;
+    imem1_addr = imem1_in.mem_addr - ibase1_addr;
+
+    irom0_in.mem_addr = imem0_addr;
+    itim0_in.mem_addr = imem0_addr;
+    iram0_in.mem_addr = imem0_addr;
+    iuart0_in.mem_addr = imem0_addr;
+    iclint0_in.mem_addr = imem0_addr;
+
+    irom1_in.mem_addr = imem1_addr;
+    itim1_in.mem_addr = imem1_addr;
+    iram1_in.mem_addr = imem1_addr;
+    iuart1_in.mem_addr = imem1_addr;
+    iclint1_in.mem_addr = imem1_addr;
 
     imem0_out = init_mem_out;
+    imem1_out = init_mem_out;
 
-    if (irom_out.mem_ready == 1) begin
-      imem0_out = irom_out;
-    end else if (iuart_out.mem_ready == 1) begin
-      imem0_out = iuart_out;
-    end else if (iclint_out.mem_ready == 1) begin
-      imem0_out = iclint_out;
+    if (irom0_out.mem_ready == 1) begin
+      imem0_out = irom0_out;
+    end else if (iram0_out.mem_ready == 1) begin
+      imem0_out = iram0_out;
     end else if (itim0_out.mem_ready == 1) begin
       imem0_out = itim0_out;
+    end else if (iuart0_out.mem_ready == 1) begin
+      imem0_out = iuart0_out;
+    end else if (iclint0_out.mem_ready == 1) begin
+      imem0_out = iclint0_out;
+    end
+
+    if (irom1_out.mem_ready == 1) begin
+      imem1_out = irom1_out;
+    end else if (iram1_out.mem_ready == 1) begin
+      imem1_out = iram1_out;
     end else if (itim1_out.mem_ready == 1) begin
-      imem0_out = itim1_out;
-    end else if (iram_out.mem_ready == 1) begin
-      imem0_out = iram_out;
+      imem1_out = itim1_out;
+    end else if (iuart1_out.mem_ready == 1) begin
+      imem1_out = iuart1_out;
+    end else if (iclint1_out.mem_ready == 1) begin
+      imem1_out = iclint1_out;
     end
 
   end
 
   always_comb begin
 
-    dram_in = init_mem_in;
+    drom0_in = init_mem_in;
+    dram0_in = init_mem_in;
     dtim0_in = init_mem_in;
-    dtim1_in = init_mem_in;
-    dclint_in = init_mem_in;
-    duart_in = init_mem_in;
-    drom_in = init_mem_in;
+    duart0_in = init_mem_in;
+    dclint0_in = init_mem_in;
 
-    dbase_addr = 0;
+    drom1_in = init_mem_in;
+    dram1_in = init_mem_in;
+    dtim1_in = init_mem_in;
+    duart1_in = init_mem_in;
+    dclint1_in = init_mem_in;
+
+    dbase0_addr = 0;
+    dbase1_addr = 0;
 
     if (dmem0_in.mem_valid == 1) begin
-      if (dmem0_in.mem_addr >= ram_base_addr && dmem0_in.mem_addr < ram_top_addr) begin
-        dram_in = dmem0_in;
-        dbase_addr = ram_base_addr;
-      end else if (dmem0_in.mem_addr >= tim1_base_addr && dmem0_in.mem_addr < tim1_top_addr) begin
-        dtim1_in   = dmem0_in;
-        dbase_addr = tim1_base_addr;
-      end else if (dmem0_in.mem_addr >= tim0_base_addr && dmem0_in.mem_addr < tim0_top_addr) begin
-        dtim0_in   = dmem0_in;
-        dbase_addr = tim0_base_addr;
-      end else if (dmem0_in.mem_addr >= clint_base_addr && dmem0_in.mem_addr < clint_top_addr) begin
-        dclint_in  = dmem0_in;
-        dbase_addr = clint_base_addr;
+      if (dmem0_in.mem_addr >= rom_base_addr && dmem0_in.mem_addr < rom_top_addr) begin
+        drom0_in = dmem0_in;
+        dbase0_addr = rom_base_addr;
+      end else if (dmem0_in.mem_addr >= ram_base_addr && dmem0_in.mem_addr < ram_top_addr) begin
+        dram0_in = dmem0_in;
+        dbase0_addr = ram_base_addr;
+      end else if (dmem0_in.mem_addr >= itim_base_addr && dmem0_in.mem_addr < itim_top_addr) begin
+        dtim0_in = dmem0_in;
+        dbase0_addr = itim_base_addr;
+      end else if (dmem0_in.mem_addr >= dtim_base_addr && dmem0_in.mem_addr < dtim_top_addr) begin
+        dtim0_in = dmem0_in;
+        dbase0_addr = dtim_base_addr;
       end else if (dmem0_in.mem_addr >= uart_base_addr && dmem0_in.mem_addr < uart_top_addr) begin
-        duart_in   = dmem0_in;
-        dbase_addr = uart_base_addr;
-      end else if (dmem0_in.mem_addr >= rom_base_addr && dmem0_in.mem_addr < rom_top_addr) begin
-        drom_in = dmem0_in;
-        dbase_addr = rom_base_addr;
+        duart0_in   = dmem0_in;
+        dbase0_addr = uart_base_addr;
+      end else if (dmem0_in.mem_addr >= clint_base_addr && dmem0_in.mem_addr < clint_top_addr) begin
+        dclint0_in  = dmem0_in;
+        dbase0_addr = clint_base_addr;
       end
     end
 
-    dmem_addr = dmem0_in.mem_addr - dbase_addr;
+    if (dmem1_in.mem_valid == 1) begin
+      if (dmem1_in.mem_addr >= rom_base_addr && dmem1_in.mem_addr < rom_top_addr) begin
+        drom1_in = dmem1_in;
+        dbase1_addr = rom_base_addr;
+      end else if (dmem1_in.mem_addr >= ram_base_addr && dmem1_in.mem_addr < ram_top_addr) begin
+        dram1_in = dmem1_in;
+        dbase1_addr = ram_base_addr;
+      end else if (dmem1_in.mem_addr >= itim_base_addr && dmem1_in.mem_addr < itim_top_addr) begin
+        dtim1_in = dmem1_in;
+        dbase1_addr = itim_base_addr;
+      end else if (dmem1_in.mem_addr >= dtim_base_addr && dmem1_in.mem_addr < dtim_top_addr) begin
+        dtim1_in = dmem1_in;
+        dbase1_addr = dtim_base_addr;
+      end else if (dmem1_in.mem_addr >= uart_base_addr && dmem1_in.mem_addr < uart_top_addr) begin
+        duart1_in   = dmem1_in;
+        dbase1_addr = uart_base_addr;
+      end else if (dmem1_in.mem_addr >= clint_base_addr && dmem1_in.mem_addr < clint_top_addr) begin
+        dclint1_in  = dmem1_in;
+        dbase1_addr = clint_base_addr;
+      end
+    end
 
-    drom_in.mem_addr = dmem_addr;
-    duart_in.mem_addr = dmem_addr;
-    dclint_in.mem_addr = dmem_addr;
-    dtim0_in.mem_addr = dmem_addr;
-    dtim1_in.mem_addr = dmem_addr;
-    dram_in.mem_addr = dmem_addr;
+    dmem0_addr = dmem0_in.mem_addr - dbase0_addr;
+    dmem1_addr = dmem1_in.mem_addr - dbase1_addr;
+
+    drom0_in.mem_addr = dmem0_addr;
+    dtim0_in.mem_addr = dmem0_addr;
+    dram0_in.mem_addr = dmem0_addr;
+    duart0_in.mem_addr = dmem0_addr;
+    dclint0_in.mem_addr = dmem0_addr;
+
+    drom1_in.mem_addr = dmem1_addr;
+    dtim1_in.mem_addr = dmem1_addr;
+    dram1_in.mem_addr = dmem1_addr;
+    duart1_in.mem_addr = dmem1_addr;
+    dclint1_in.mem_addr = dmem1_addr;
 
     dmem0_out = init_mem_out;
+    dmem1_out = init_mem_out;
 
-    if (drom_out.mem_ready == 1) begin
-      dmem0_out = drom_out;
-    end else if (duart_out.mem_ready == 1) begin
-      dmem0_out = duart_out;
-    end else if (dclint_out.mem_ready == 1) begin
-      dmem0_out = dclint_out;
+    if (drom0_out.mem_ready == 1) begin
+      dmem0_out = drom0_out;
+    end else if (dram0_out.mem_ready == 1) begin
+      dmem0_out = dram0_out;
     end else if (dtim0_out.mem_ready == 1) begin
       dmem0_out = dtim0_out;
+    end else if (duart0_out.mem_ready == 1) begin
+      dmem0_out = duart0_out;
+    end else if (dclint0_out.mem_ready == 1) begin
+      dmem0_out = dclint0_out;
+    end
+
+    if (drom1_out.mem_ready == 1) begin
+      dmem1_out = drom1_out;
+    end else if (dram1_out.mem_ready == 1) begin
+      dmem1_out = dram1_out;
     end else if (dtim1_out.mem_ready == 1) begin
-      dmem0_out = dtim1_out;
-    end else if (dram_out.mem_ready == 1) begin
-      dmem0_out = dram_out;
+      dmem1_out = dtim1_out;
+    end else if (duart1_out.mem_ready == 1) begin
+      dmem1_out = duart1_out;
+    end else if (dclint1_out.mem_ready == 1) begin
+      dmem1_out = dclint1_out;
     end
 
   end
@@ -232,13 +358,35 @@ module soc (
       .mtime(mtime)
   );
 
+  arbiter arbiter_rom0_comp (
+      .reset(reset),
+      .clock(clock),
+      .imem_in(irom0_in),
+      .imem_out(irom0_out),
+      .dmem_in(drom0_in),
+      .dmem_out(drom0_out),
+      .mem_in(rom0_in),
+      .mem_out(rom0_out)
+  );
+
+  arbiter arbiter_rom1_comp (
+      .reset(reset),
+      .clock(clock),
+      .imem_in(irom1_in),
+      .imem_out(irom1_out),
+      .dmem_in(drom1_in),
+      .dmem_out(drom1_out),
+      .mem_in(rom1_in),
+      .mem_out(rom1_out)
+  );
+
   arbiter arbiter_rom_comp (
       .reset(reset),
       .clock(clock),
-      .imem_in(irom_in),
-      .imem_out(irom_out),
-      .dmem_in(drom_in),
-      .dmem_out(drom_out),
+      .imem_in(rom0_in),
+      .imem_out(rom0_out),
+      .dmem_in(rom1_in),
+      .dmem_out(rom1_out),
       .mem_in(rom_in),
       .mem_out(rom_out)
   );
@@ -250,13 +398,35 @@ module soc (
       .rom_out(rom_out)
   );
 
+  arbiter arbiter_clint0_comp (
+      .reset(reset),
+      .clock(clock),
+      .imem_in(iclint0_in),
+      .imem_out(iclint0_out),
+      .dmem_in(dclint0_in),
+      .dmem_out(dclint0_out),
+      .mem_in(clint0_in),
+      .mem_out(clint0_out)
+  );
+
+  arbiter arbiter_clint1_comp (
+      .reset(reset),
+      .clock(clock),
+      .imem_in(iclint1_in),
+      .imem_out(iclint1_out),
+      .dmem_in(dclint1_in),
+      .dmem_out(dclint1_out),
+      .mem_in(clint1_in),
+      .mem_out(clint1_out)
+  );
+
   arbiter arbiter_clint_comp (
       .reset(reset),
       .clock(clock),
-      .imem_in(iclint_in),
-      .imem_out(iclint_out),
-      .dmem_in(dclint_in),
-      .dmem_out(dclint_out),
+      .imem_in(clint0_in),
+      .imem_out(clint0_out),
+      .dmem_in(clint1_in),
+      .dmem_out(clint1_out),
       .mem_in(clint_in),
       .mem_out(clint_out)
   );
@@ -335,13 +505,35 @@ module soc (
       .tim1_out(tim11_out)
   );
 
+  arbiter arbiter_ram0_comp (
+      .reset(reset),
+      .clock(clock),
+      .imem_in(iram0_in),
+      .imem_out(iram0_out),
+      .dmem_in(dram0_in),
+      .dmem_out(dram0_out),
+      .mem_in(ram0_in),
+      .mem_out(ram0_out)
+  );
+
+  arbiter arbiter_ram1_comp (
+      .reset(reset),
+      .clock(clock),
+      .imem_in(iram1_in),
+      .imem_out(iram1_out),
+      .dmem_in(dram1_in),
+      .dmem_out(dram1_out),
+      .mem_in(ram1_in),
+      .mem_out(ram1_out)
+  );
+
   arbiter arbiter_ram_comp (
       .reset(reset),
       .clock(clock),
-      .imem_in(iram_in),
-      .imem_out(iram_out),
-      .dmem_in(dram_in),
-      .dmem_out(dram_out),
+      .imem_in(ram0_in),
+      .imem_out(ram0_out),
+      .dmem_in(ram1_in),
+      .dmem_out(ram1_out),
       .mem_in(ram_in),
       .mem_out(ram_out)
   );
@@ -365,13 +557,35 @@ module soc (
       .ram_out(ram_slow_out)
   );
 
+  arbiter arbiter_uart0_comp (
+      .reset(reset),
+      .clock(clock),
+      .imem_in(iuart0_in),
+      .imem_out(iuart0_out),
+      .dmem_in(duart0_in),
+      .dmem_out(duart0_out),
+      .mem_in(uart0_in),
+      .mem_out(uart0_out)
+  );
+
+  arbiter arbiter_uart1_comp (
+      .reset(reset),
+      .clock(clock),
+      .imem_in(iuart1_in),
+      .imem_out(iuart1_out),
+      .dmem_in(duart1_in),
+      .dmem_out(duart1_out),
+      .mem_in(uart1_in),
+      .mem_out(uart1_out)
+  );
+
   arbiter arbiter_uart_comp (
       .reset(reset),
       .clock(clock),
-      .imem_in(iuart_in),
-      .imem_out(iuart_out),
-      .dmem_in(duart_in),
-      .dmem_out(duart_out),
+      .imem_in(uart0_in),
+      .imem_out(uart0_out),
+      .dmem_in(uart1_in),
+      .dmem_out(uart1_out),
       .mem_in(uart_in),
       .mem_out(uart_out)
   );

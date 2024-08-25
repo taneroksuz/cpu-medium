@@ -199,20 +199,20 @@ module storebuffer_ctrl (
 
     if (v_f.fence0 == 1) begin
       v_f.raddr0 = 1;
-      v_f.inv0 = 1;
+      v_f.inv0   = 1;
     end
 
     if (v_f.fence1 == 1) begin
       v_f.raddr1 = 0;
-      v_f.inv1 = 1;
+      v_f.inv1   = 1;
     end
 
     if (v_f.inv0 == 1) begin
       if (v_f.ret0 == 1 || rin_b.ret0 == 1) begin
         if (v_f.raddr0 == full) begin
           v_f.rdata0 = 0;
-          v_f.rden0 = 1;
-          v_f.inv0 = 0;
+          v_f.rden0  = 1;
+          v_f.inv0   = 0;
         end else begin
           v_f.raddr0 = v_f.raddr0 + one;
         end
@@ -224,8 +224,8 @@ module storebuffer_ctrl (
       if (v_f.ret1 == 1 || rin_b.ret1 == 1) begin
         if (v_f.raddr1 == full) begin
           v_f.rdata1 = 0;
-          v_f.rden1 = 1;
-          v_f.inv1 = 0;
+          v_f.rden1  = 1;
+          v_f.inv1   = 0;
         end else begin
           v_f.raddr1 = v_f.raddr1 + one;
         end
@@ -254,13 +254,13 @@ module storebuffer_ctrl (
     if (v_f.inv0 == 1) begin
       v_f.miss0 = 0;
       v_f.back0 = v_f.rdata0[94] & v_f.rdata0[93];
-      v_f.ret0 = ~v_f.back0;
+      v_f.ret0  = ~v_f.back0;
     end
 
     if (v_f.inv1 == 1) begin
       v_f.miss1 = 0;
       v_f.back1 = v_f.rdata1[94] & v_f.rdata1[93];
-      v_f.ret1 = ~v_f.back1;
+      v_f.ret1  = ~v_f.back1;
     end
 
     if (v_f.hit0 == 1) begin
@@ -376,7 +376,7 @@ module storebuffer_ctrl (
       end
     end
 
-    if ((rin_f.miss0 | rin_f.back0 | rin_f.miss1 | rin_f.back1) == 0) begin
+    if ((rin_f.miss0 | rin_f.back0 | rin_f.miss1 | rin_f.back1) == 1) begin
       v_b.miss0  = rin_f.miss0;
       v_b.miss1  = rin_f.miss1;
       v_b.back0  = rin_f.back0;

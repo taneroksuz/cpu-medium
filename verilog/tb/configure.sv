@@ -29,11 +29,11 @@ package configure;
   parameter clint_base_addr = 32'h2000000;
   parameter clint_top_addr = 32'h200C000;
 
-  parameter tim0_base_addr = 32'h10000000;
-  parameter tim0_top_addr = 32'h10080000;
+  parameter itim_base_addr = 32'h10000000;
+  parameter itim_top_addr = 32'h10080000;
 
-  parameter tim1_base_addr = 32'h20000000;
-  parameter tim1_top_addr = 32'h20080000;
+  parameter dtim_base_addr = 32'h20000000;
+  parameter dtim_top_addr = 32'h20080000;
 
   parameter ram_base_addr = 32'h80000000;
   parameter ram_top_addr = 32'h80100000;

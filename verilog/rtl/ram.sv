@@ -10,68 +10,32 @@ module ram (
 
   localparam r_depth = $clog2(ram_depth);
 
-  generate
+  if (ram_type == 0) begin
 
-    if (ram_type == 0) begin
+    logic [63 : 0] ram_block[0:ram_depth-1];
 
-      logic [63 : 0] ram_block[0:ram_depth-1];
-
-      initial begin
-        $readmemh("ram.dat", ram_block);
-      end
-
-      always_ff @(posedge clock) begin
-
-        if (ram_in.mem_valid == 1) begin
-
-          if (ram_in.mem_store == 1) ram_block[ram_in.mem_addr[(r_depth+2):3]] <= ram_in.mem_wdata;
-
-          ram_out.mem_rdata <= ram_block[ram_in.mem_addr[(r_depth+2):3]];
-          ram_out.mem_ready <= 1;
-
-        end else begin
-
-          ram_out.mem_rdata <= 0;
-          ram_out.mem_ready <= 0;
-
-        end
-
-      end
-
+    initial begin
+      $readmemh("ram.dat", ram_block);
     end
 
-    if (ram_type == 1) begin
+    always_ff @(posedge clock) begin
 
-      logic [63 : 0] ram_block[0:ram_depth-1];
-
-      initial begin
-        $readmemh("ram.dat", ram_block);
-      end
-
-      always_ff @(posedge clock) begin
+      if (ram_in.mem_valid == 1) begin
 
         if (ram_in.mem_store == 1) ram_block[ram_in.mem_addr[(r_depth+2):3]] <= ram_in.mem_wdata;
 
         ram_out.mem_rdata <= ram_block[ram_in.mem_addr[(r_depth+2):3]];
+        ram_out.mem_ready <= 1;
 
-      end
+      end else begin
 
-      always_ff @(posedge clock) begin
-
-        if (ram_in.mem_valid == 1) begin
-
-          ram_out.mem_ready <= 1;
-
-        end else begin
-
-          ram_out.mem_ready <= 0;
-
-        end
+        ram_out.mem_rdata <= 0;
+        ram_out.mem_ready <= 0;
 
       end
 
     end
 
-  endgenerate
+  end
 
 endmodule
