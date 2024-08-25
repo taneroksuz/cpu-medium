@@ -85,6 +85,7 @@ module storebuffer_ctrl (
 
   localparam depth = $clog2(storebuffer_depth - 1);
 
+  localparam [depth-1:0] full = {depth{1'b1}};
   localparam [depth-1:0] one = 1;
 
   typedef struct packed {
@@ -106,6 +107,8 @@ module storebuffer_ctrl (
     logic [0 : 0] wren1;
     logic [0 : 0] rden0;
     logic [0 : 0] rden1;
+    logic [0 : 0] fence0;
+    logic [0 : 0] fence1;
     logic [0 : 0] valid0;
     logic [0 : 0] valid1;
     logic [0 : 0] hit0;
@@ -114,6 +117,10 @@ module storebuffer_ctrl (
     logic [0 : 0] miss1;
     logic [0 : 0] back0;
     logic [0 : 0] back1;
+    logic [0 : 0] inv0;
+    logic [0 : 0] inv1;
+    logic [0 : 0] ret0;
+    logic [0 : 0] ret1;
   } front_type;
 
   typedef struct packed {
@@ -157,6 +164,8 @@ module storebuffer_ctrl (
 
     v_f.valid0 = 0;
     v_f.valid1 = 0;
+    v_f.fence0 = 0;
+    v_f.fence1 = 0;
 
     v_f.wren0 = 0;
     v_f.wren1 = 0;
@@ -172,6 +181,7 @@ module storebuffer_ctrl (
 
     if (storebuffer0_in.mem_valid == 1) begin
       v_f.valid0 = storebuffer0_in.mem_valid;
+      v_f.fence0 = storebuffer0_in.mem_fence;
       v_f.addr0  = storebuffer0_in.mem_addr;
       v_f.raddr0 = storebuffer0_in.mem_addr[depth+2:3];
       v_f.data0  = storebuffer0_in.mem_wdata;
@@ -180,10 +190,47 @@ module storebuffer_ctrl (
 
     if (storebuffer1_in.mem_valid == 1) begin
       v_f.valid1 = storebuffer1_in.mem_valid;
+      v_f.fence1 = storebuffer1_in.mem_fence;
       v_f.addr1  = storebuffer1_in.mem_addr;
       v_f.raddr1 = storebuffer1_in.mem_addr[depth+2:3];
       v_f.data1  = storebuffer1_in.mem_wdata;
       v_f.strb1  = storebuffer1_in.mem_wstrb;
+    end
+
+    if (v_f.fence0 == 1) begin
+      v_f.raddr0 = 1;
+      v_f.inv0 = 1;
+    end
+
+    if (v_f.fence1 == 1) begin
+      v_f.raddr1 = 0;
+      v_f.inv1 = 1;
+    end
+
+    if (v_f.inv0 == 1) begin
+      if (v_f.ret0 == 1 || rin_b.ret0 == 1) begin
+        if (v_f.raddr0 == full) begin
+          v_f.rdata0 = 0;
+          v_f.rden0 = 1;
+          v_f.inv0 = 0;
+        end else begin
+          v_f.raddr0 = v_f.raddr0 + one;
+        end
+        v_f.ret0 = 0;
+      end
+    end
+
+    if (v_f.inv1 == 1) begin
+      if (v_f.ret1 == 1 || rin_b.ret1 == 1) begin
+        if (v_f.raddr1 == full) begin
+          v_f.rdata1 = 0;
+          v_f.rden1 = 1;
+          v_f.inv1 = 0;
+        end else begin
+          v_f.raddr1 = v_f.raddr1 + one;
+        end
+        v_f.ret1 = 0;
+      end
     end
 
     storebuffer_reg_in.raddr0 = v_f.raddr0;
@@ -202,6 +249,18 @@ module storebuffer_ctrl (
       v_f.hit1  = v_f.rdata1[94] & |(v_f.addr1[31:3] ^ v_f.rdata1[92:64]);
       v_f.miss1 = ~v_f.hit1;
       v_f.back1 = v_f.miss1 & v_f.rdata1[93];
+    end
+
+    if (v_f.inv0 == 1) begin
+      v_f.miss0 = 0;
+      v_f.back0 = v_f.rdata0[94] & v_f.rdata0[93];
+      v_f.ret0 = ~v_f.back0;
+    end
+
+    if (v_f.inv1 == 1) begin
+      v_f.miss1 = 0;
+      v_f.back1 = v_f.rdata1[94] & v_f.rdata1[93];
+      v_f.ret1 = ~v_f.back1;
     end
 
     if (v_f.hit0 == 1) begin
@@ -298,6 +357,7 @@ module storebuffer_ctrl (
     if (v_b.mem_ready0 == 1) begin
       if (v_b.back0 == 1) begin
         v_b.back0 = 0;
+        v_b.ret0  = ~v_b.miss0;
       end else if (v_b.miss0 == 1) begin
         v_b.miss0  = 0;
         v_b.ret0   = 1;
@@ -308,6 +368,7 @@ module storebuffer_ctrl (
     if (v_b.mem_ready1 == 1) begin
       if (v_b.back1 == 1) begin
         v_b.back1 = 0;
+        v_b.ret1  = ~v_b.miss1;
       end else if (v_b.miss1 == 1) begin
         v_b.miss1  = 0;
         v_b.ret1   = 1;
