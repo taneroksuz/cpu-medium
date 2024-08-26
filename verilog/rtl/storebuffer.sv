@@ -227,16 +227,24 @@ module storebuffer_ctrl (
     v_f.rdata0 = storebuffer_reg_out.rdata0;
     v_f.rdata1 = storebuffer_reg_out.rdata1;
 
-    if (v_f.valid0 == 1) begin
+    if (v_f.valid0 == 1 && |v_f.addr0[31:28] == 1) begin
       v_f.hit0  = v_f.rdata0[94] & ~(|(v_f.addr0[31:3] ^ v_f.rdata0[92:64]));
       v_f.miss0 = ~v_f.hit0;
       v_f.back0 = v_f.miss0 & v_f.rdata0[93];
+    end else if (v_f.valid0 == 1 && |v_f.addr0[31:28] == 0) begin
+      v_f.rdata0 = {2'b10, v_f.addr0[31:3], v_f.data0};
+      v_f.back0  = |v_f.strb0;
+      v_f.miss0  = ~v_f.back0;
     end
 
-    if (v_f.valid1 == 1) begin
+    if (v_f.valid1 == 1 && |v_f.addr1[31:28] == 1) begin
       v_f.hit1  = v_f.rdata1[94] & ~(|(v_f.addr1[31:3] ^ v_f.rdata1[92:64]));
       v_f.miss1 = ~v_f.hit1;
       v_f.back1 = v_f.miss1 & v_f.rdata1[93];
+    end else if (v_f.valid1 == 1 && |v_f.addr1[31:28] == 0) begin
+      v_f.rdata1 = {2'b10, v_f.addr1[31:3], v_f.data1};
+      v_f.back1  = |v_f.strb1;
+      v_f.miss1  = ~v_f.back1;
     end
 
     if (v_f.inv0 == 1) begin
