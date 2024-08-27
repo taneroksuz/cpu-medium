@@ -4,57 +4,37 @@ import constants::*;
 module arbiter (
     input logic reset,
     input logic clock,
-    input mem_in_type imem_in,
-    output mem_out_type imem_out,
-    input mem_in_type dmem_in,
-    output mem_out_type dmem_out,
+    input mem_in_type imem0_in,
+    input mem_in_type imem1_in,
+    output mem_out_type imem0_out,
+    output mem_out_type imem1_out,
+    input mem_in_type dmem0_in,
+    input mem_in_type dmem1_in,
+    output mem_out_type dmem0_out,
+    output mem_out_type dmem1_out,
     output mem_in_type mem_in,
     input mem_out_type mem_out
 );
   timeunit 1ns; timeprecision 1ps;
 
-  parameter [1:0] no_access = 0;
-  parameter [1:0] instr_access = 1;
-  parameter [1:0] data_access = 2;
+  localparam [2:0] no_access = 0;
+  localparam [2:0] instr0_access = 1;
+  localparam [2:0] instr1_access = 2;
+  localparam [2:0] data0_access = 3;
+  localparam [2:0] data1_access = 4;
 
   typedef struct packed {
-    logic [1:0]  access_type;
-    logic [0:0]  mem_valid;
-    logic [0:0]  mem_instr;
-    logic [31:0] mem_addr;
-    logic [63:0] mem_wdata;
-    logic [7:0]  mem_wstrb;
-    logic [0:0]  mem_error;
-    logic [0:0]  dmem_valid;
-    logic [0:0]  dmem_instr;
-    logic [31:0] dmem_addr;
-    logic [63:0] dmem_wdata;
-    logic [7:0]  dmem_wstrb;
-    logic [0:0]  imem_valid;
-    logic [0:0]  imem_instr;
-    logic [31:0] imem_addr;
-    logic [63:0] imem_wdata;
-    logic [7:0]  imem_wstrb;
+    logic [2:0] access_type;
+    mem_in_type mem_in;
+    mem_in_type imem0_in;
+    mem_in_type imem1_in;
+    mem_in_type dmem0_in;
+    mem_in_type dmem1_in;
   } reg_type;
 
-  parameter reg_type init_reg = '{
-      access_type : no_access,
-      mem_valid : 1,
-      mem_instr : 1,
-      mem_addr : 0,
-      mem_wdata : 0,
-      mem_wstrb : 0,
-      mem_error : 0,
-      dmem_valid : 0,
-      dmem_instr : 0,
-      dmem_addr : 0,
-      dmem_wdata : 0,
-      dmem_wstrb : 0,
-      imem_valid : 0,
-      imem_instr : 0,
-      imem_addr : 0,
-      imem_wdata : 0,
-      imem_wstrb : 0
+  localparam reg_type init_reg = '{
+      mem_in : '{mem_valid: 1, mem_instr: 1, default: 0},
+      default: 0
   };
 
   reg_type r, rin;
@@ -68,80 +48,68 @@ module arbiter (
       v.access_type = no_access;
     end
 
-    if (dmem_in.mem_valid == 1) begin
-      v.dmem_valid = dmem_in.mem_valid;
-      v.dmem_instr = dmem_in.mem_instr;
-      v.dmem_addr  = dmem_in.mem_addr;
-      v.dmem_wdata = dmem_in.mem_wdata;
-      v.dmem_wstrb = dmem_in.mem_wstrb;
+    if (dmem0_in.mem_valid == 1) begin
+      v.dmem0_in = dmem0_in;
+    end
+    if (dmem1_in.mem_valid == 1) begin
+      v.dmem1_in = dmem1_in;
     end
 
-    if (imem_in.mem_valid == 1) begin
-      v.imem_valid = imem_in.mem_valid;
-      v.imem_instr = imem_in.mem_instr;
-      v.imem_addr  = imem_in.mem_addr;
-      v.imem_wdata = imem_in.mem_wdata;
-      v.imem_wstrb = imem_in.mem_wstrb;
+    if (imem0_in.mem_valid == 1) begin
+      v.imem0_in = imem0_in;
+    end
+    if (imem1_in.mem_valid == 1) begin
+      v.imem1_in = imem1_in;
     end
 
     if (v.access_type == no_access) begin
-      if (v.dmem_valid == 1) begin
-        v.access_type = data_access;
-        v.mem_valid = v.dmem_valid;
-        v.mem_instr = v.dmem_instr;
-        v.mem_addr = v.dmem_addr;
-        v.mem_wdata = v.dmem_wdata;
-        v.mem_wstrb = v.dmem_wstrb;
-        v.dmem_valid = 0;
-        v.dmem_instr = 0;
-        v.dmem_addr = 0;
-        v.dmem_wdata = 0;
-        v.dmem_wstrb = 0;
-      end else if (v.imem_valid == 1) begin
-        v.access_type = instr_access;
-        v.mem_valid = v.imem_valid;
-        v.mem_instr = v.imem_instr;
-        v.mem_addr = v.imem_addr;
-        v.mem_wdata = v.imem_wdata;
-        v.mem_wstrb = v.imem_wstrb;
-        v.imem_valid = 0;
-        v.imem_instr = 0;
-        v.imem_addr = 0;
-        v.imem_wdata = 0;
-        v.imem_wstrb = 0;
+      if (v.dmem0_in.mem_valid == 1) begin
+        v.access_type = data0_access;
+        v.mem_in = v.dmem0_in;
+        v.dmem0_in = init_mem_in;
+      end else if (v.dmem1_in.mem_valid == 1) begin
+        v.access_type = data1_access;
+        v.mem_in = v.dmem1_in;
+        v.dmem1_in = init_mem_in;
+      end else if (v.imem0_in.mem_valid == 1) begin
+        v.access_type = instr0_access;
+        v.mem_in = v.imem0_in;
+        v.imem0_in = init_mem_in;
+      end else if (v.imem1_in.mem_valid == 1) begin
+        v.access_type = instr1_access;
+        v.mem_in = v.imem1_in;
+        v.imem1_in = init_mem_in;
       end
     end
 
     if (v.access_type != no_access) begin
-      mem_in.mem_valid = v.mem_valid;
-      mem_in.mem_instr = v.mem_instr;
-      mem_in.mem_addr  = v.mem_addr;
-      mem_in.mem_wdata = v.mem_wdata;
-      mem_in.mem_wstrb = v.mem_wstrb;
+      mem_in = v.mem_in;
     end else begin
-      mem_in.mem_valid = 0;
-      mem_in.mem_instr = 0;
-      mem_in.mem_addr  = 0;
-      mem_in.mem_wdata = 0;
-      mem_in.mem_wstrb = 0;
+      mem_in = init_mem_in;
     end
 
     rin = v;
 
-    if (r.access_type == instr_access) begin
-      imem_out.mem_ready = mem_out.mem_ready;
-      imem_out.mem_rdata = mem_out.mem_rdata;
+    if (r.access_type == data0_access) begin
+      dmem0_out = mem_out;
     end else begin
-      imem_out.mem_ready = 0;
-      imem_out.mem_rdata = 0;
+      dmem0_out = init_mem_out;
+    end
+    if (r.access_type == data1_access) begin
+      dmem1_out = mem_out;
+    end else begin
+      dmem1_out = init_mem_out;
     end
 
-    if (r.access_type == data_access) begin
-      dmem_out.mem_ready = mem_out.mem_ready;
-      dmem_out.mem_rdata = mem_out.mem_rdata;
+    if (r.access_type == instr0_access) begin
+      imem0_out = mem_out;
     end else begin
-      dmem_out.mem_ready = 0;
-      dmem_out.mem_rdata = 0;
+      imem0_out = init_mem_out;
+    end
+    if (r.access_type == instr1_access) begin
+      imem1_out = mem_out;
+    end else begin
+      imem1_out = init_mem_out;
     end
 
   end

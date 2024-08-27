@@ -41,12 +41,6 @@ module soc (
   mem_out_type dper0_out;
   mem_out_type dper1_out;
 
-  mem_in_type per0_in;
-  mem_in_type per1_in;
-
-  mem_out_type per0_out;
-  mem_out_type per1_out;
-
   mem_in_type per_in;
   mem_in_type rom_in;
   mem_in_type ram_in;
@@ -303,35 +297,17 @@ module soc (
       .tim1_out(dtim1_out)
   );
 
-  arbiter arbiter_cpu0_comp (
+  arbiter arbiter_comp (
       .reset(reset),
       .clock(clock),
-      .imem_in(iper0_in),
-      .imem_out(iper0_out),
-      .dmem_in(dper0_in),
-      .dmem_out(dper0_out),
-      .mem_in(per0_in),
-      .mem_out(per0_out)
-  );
-
-  arbiter arbiter_cpu1_comp (
-      .reset(reset),
-      .clock(clock),
-      .imem_in(iper1_in),
-      .imem_out(iper1_out),
-      .dmem_in(dper1_in),
-      .dmem_out(dper1_out),
-      .mem_in(per1_in),
-      .mem_out(per1_out)
-  );
-
-  arbiter arbiter_cpu_comp (
-      .reset(reset),
-      .clock(clock),
-      .imem_in(per0_in),
-      .imem_out(per0_out),
-      .dmem_in(per1_in),
-      .dmem_out(per1_out),
+      .imem0_in(iper0_in),
+      .imem0_out(iper0_out),
+      .imem1_in(iper1_in),
+      .imem1_out(iper1_out),
+      .dmem0_in(dper0_in),
+      .dmem0_out(dper0_out),
+      .dmem1_in(dper1_in),
+      .dmem1_out(dper1_out),
       .mem_in(per_in),
       .mem_out(per_out)
   );

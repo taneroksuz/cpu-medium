@@ -208,6 +208,7 @@ module hazard_ctrl (
     v.calc1.pred = v.instr1.pred;
 
     v.single = v.calc0.op.fence | v.calc0.op.mret | v.calc0.op.wfi | v.calc1.op.fence | v.calc1.op.mret | v.calc1.op.wfi;
+    v.single = v.single | ((v.calc0.op.load | v.calc0.op.store | v.calc0.op.fload | v.calc0.op.fstore) & (v.calc1.op.load | v.calc1.op.store | v.calc1.op.fload | v.calc1.op.fstore));
     v.single = v.single | (v.calc0.op.fpunit & v.calc1.op.fpunit);
     v.single = v.single | (v.calc0.op.division & v.calc1.op.division);
     v.single = v.single | (v.calc0.op.mult & v.calc1.op.mult);
