@@ -88,28 +88,30 @@ module memory_stage (
 
     v.calc1.ldata = lsu1_out.result;
 
-    if (v.calc0.op.load == 1) begin
-      v.calc0.wdata = v.calc0.ldata[31:0];
-      v.stall = ~(dmem0_out.mem_ready);
-    end else if (v.calc0.op.store == 1) begin
-      v.stall = ~(dmem0_out.mem_ready);
-    end else if (v.calc0.op.fload == 1) begin
-      v.calc0.fdata = nan_box(v.calc0.ldata, v.calc0.lsu_op.lsu_lw);
-      v.stall = ~(dmem0_out.mem_ready);
-    end else if (v.calc0.op.fstore == 1) begin
-      v.stall = ~(dmem0_out.mem_ready);
+    if (dmem0_out.mem_ready == 1) begin
+      if (v.calc0.op.load == 1) begin
+        v.calc0.wdata = v.calc0.ldata[31:0];
+      end else if (v.calc0.op.fload == 1) begin
+        v.calc0.fdata = nan_box(v.calc0.ldata, v.calc0.lsu_op.lsu_lw);
+      end
+      v.ready0 = 1;
     end
 
-    if (v.calc1.op.load == 1) begin
-      v.calc1.wdata = v.calc1.ldata[31:0];
-      v.stall = v.stall | ~(dmem1_out.mem_ready);
-    end else if (v.calc1.op.store == 1) begin
-      v.stall = v.stall | ~(dmem1_out.mem_ready);
-    end else if (v.calc1.op.fload == 1) begin
-      v.calc1.fdata = nan_box(v.calc1.ldata, v.calc1.lsu_op.lsu_lw);
-      v.stall = v.stall | ~(dmem1_out.mem_ready);
-    end else if (v.calc1.op.fstore == 1) begin
-      v.stall = v.stall | ~(dmem1_out.mem_ready);
+    if (dmem1_out.mem_ready == 1) begin
+      if (v.calc1.op.load == 1) begin
+        v.calc1.wdata = v.calc1.ldata[31:0];
+      end else if (v.calc1.op.fload == 1) begin
+        v.calc1.fdata = nan_box(v.calc1.ldata, v.calc1.lsu_op.lsu_lw);
+      end
+      v.ready1 = 1;
+    end
+
+    if ((v.calc0.op.load | v.calc0.op.store | v.calc0.op.fload | v.calc0.op.fstore) == 1) begin
+      v.stall = ~v.ready0;
+    end
+
+    if ((v.calc1.op.load | v.calc1.op.store | v.calc1.op.fload | v.calc1.op.fstore) == 1) begin
+      v.stall = v.stall | ~v.ready1;
     end
 
     v.calc0.op_b = v.calc0.op;
@@ -122,6 +124,9 @@ module memory_stage (
     if (v.stall == 1) begin
       v.calc0.op = init_operation;
       v.calc1.op = init_operation;
+    end else begin
+      v.ready0 = 0;
+      v.ready1 = 0;
     end
 
     if (v.clear == 1) begin

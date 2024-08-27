@@ -922,6 +922,8 @@ package wires;
   typedef struct packed {
     calculation_type calc0;
     calculation_type calc1;
+    logic [0 : 0] ready0;
+    logic [0 : 0] ready1;
     logic [0 : 0] stall;
     logic [0 : 0] clear;
   } memory_reg_type;
@@ -929,6 +931,8 @@ package wires;
   parameter memory_reg_type init_memory_reg = '{
       calc0 : init_calculation,
       calc1 : init_calculation,
+      ready0 : 0,
+      ready1 : 0,
       stall : 0,
       clear : 0
   };
