@@ -33,15 +33,15 @@ module ccd #(
     if (mem_in.mem_valid == 1) begin
       mem_slow_in.mem_valid = mem_in.mem_valid;
       mem_slow_in.mem_instr = mem_in.mem_instr;
-      mem_slow_in.mem_store = mem_in.mem_store;
       mem_slow_in.mem_addr  = mem_in.mem_addr;
       mem_slow_in.mem_wdata = mem_in.mem_wdata;
+      mem_slow_in.mem_wstrb = mem_in.mem_wstrb;
     end else begin
       mem_slow_in.mem_valid = 0;
       mem_slow_in.mem_instr = 0;
-      mem_slow_in.mem_store = 0;
       mem_slow_in.mem_addr  = 0;
       mem_slow_in.mem_wdata = 0;
+      mem_slow_in.mem_wstrb = 0;
     end
 
     mem_out.mem_rdata = memory_fast_rdata;

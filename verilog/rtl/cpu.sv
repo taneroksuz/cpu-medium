@@ -49,10 +49,6 @@ module cpu (
   bit_clmul_out_type bit_clmul_out;
   fetchbuffer_in_type fetchbuffer_in;
   fetchbuffer_out_type fetchbuffer_out;
-  storebuffer_in_type storebuffer0_in;
-  storebuffer_in_type storebuffer1_in;
-  storebuffer_out_type storebuffer0_out;
-  storebuffer_out_type storebuffer1_out;
   btac_in_type btac_in;
   btac_out_type btac_out;
   hazard_in_type hazard_in;
@@ -321,19 +317,6 @@ module cpu (
       .fetchbuffer_out(fetchbuffer_out)
   );
 
-  storebuffer storebuffer_comp (
-      .reset(reset),
-      .clock(clock),
-      .storebuffer0_in(storebuffer0_in),
-      .storebuffer1_in(storebuffer1_in),
-      .storebuffer0_out(storebuffer0_out),
-      .storebuffer1_out(storebuffer1_out),
-      .dmem0_out(dmem0_out),
-      .dmem1_out(dmem1_out),
-      .dmem0_in(dmem0_in),
-      .dmem1_in(dmem1_in)
-  );
-
   hazard hazard_comp (
       .reset(reset),
       .clock(clock),
@@ -501,10 +484,10 @@ module cpu (
       .lsu0_in(lsu0_in),
       .lsu1_out(lsu1_out),
       .lsu1_in(lsu1_in),
-      .storebuffer0_out(storebuffer0_out),
-      .storebuffer1_out(storebuffer1_out),
-      .storebuffer0_in(storebuffer0_in),
-      .storebuffer1_in(storebuffer1_in),
+      .dmem0_out(dmem0_out),
+      .dmem1_out(dmem1_out),
+      .dmem0_in(dmem0_in),
+      .dmem1_in(dmem1_in),
       .csr_out(csr_out),
       .csr_win(csr_win),
       .csr_ein(csr_ein),

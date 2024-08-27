@@ -82,7 +82,7 @@ module uart (
 
         v_tx.ready_tx = 0;
 
-        if (uart_in.mem_valid == 1 && uart_in.mem_store == 1 && v_tx.state_tx == 0) begin
+        if (uart_in.mem_valid == 1 && |uart_in.mem_wstrb == 1 && v_tx.state_tx == 0) begin
           v_tx.data_tx  = {1'b1, uart_in.mem_wdata[7:0], 1'b0};
           v_tx.state_tx = 1;
         end
@@ -123,7 +123,7 @@ module uart (
         v_rx.ready_re = 0;
         v_rx.ready_rx = 0;
 
-        if (uart_in.mem_valid == 1 && uart_in.mem_store == 0 && v_rx.state_rx == 0) begin
+        if (uart_in.mem_valid == 1 && |uart_in.mem_wstrb == 0 && v_rx.state_rx == 0) begin
           v_rx.state_re = 1;
         end
 

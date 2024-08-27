@@ -79,8 +79,8 @@ module tim_ctrl (
     logic [depth-1:0] did1;
     logic [63:0] data0;
     logic [63:0] data1;
-    logic [0:0] store0;
-    logic [0:0] store1;
+    logic [7:0] strb0;
+    logic [7:0] strb1;
     logic [0:0] valid0;
     logic [0:0] valid1;
   } front_type;
@@ -96,12 +96,12 @@ module tim_ctrl (
 
     v.valid0 = 0;
     v.valid1 = 0;
-    v.store0 = 0;
-    v.store1 = 0;
+    v.strb0 = 0;
+    v.strb1 = 0;
 
     if (tim0_in.mem_valid == 1) begin
       v.valid0 = tim0_in.mem_valid;
-      v.store0 = tim0_in.mem_store;
+      v.strb0 = tim0_in.mem_wstrb;
       v.data0  = tim0_in.mem_wdata;
       v.did0   = tim0_in.mem_addr[(depth+width+2):(width+3)];
       v.wid0   = tim0_in.mem_addr[(width+2):3];
@@ -109,7 +109,7 @@ module tim_ctrl (
 
     if (tim1_in.mem_valid == 1) begin
       v.valid1 = tim1_in.mem_valid;
-      v.store1 = tim1_in.mem_store;
+      v.strb1 = tim1_in.mem_wstrb;
       v.data1  = tim1_in.mem_wdata;
       v.did1   = tim1_in.mem_addr[(depth+width+2):(width+3)];
       v.wid1   = tim1_in.mem_addr[(width+2):3];
@@ -118,8 +118,8 @@ module tim_ctrl (
     dvec_in = init_tim_vec_in;
 
     // Write data
-    dvec_in[v.wid0].en0 = v.store0;
-    dvec_in[v.wid1].en1 = v.store1;
+    dvec_in[v.wid0].en0 = |v.strb0;
+    dvec_in[v.wid1].en1 = |v.strb1;
     dvec_in[v.wid0].addr0 = v.did0;
     dvec_in[v.wid1].addr1 = v.did1;
     dvec_in[v.wid0].data0 = v.data0;

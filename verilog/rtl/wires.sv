@@ -1254,25 +1254,10 @@ package wires;
 
   typedef struct packed {
     logic [0 : 0]  mem_valid;
-    logic [0 : 0]  mem_fence;
-    logic [0 : 0]  mem_spec;
     logic [0 : 0]  mem_instr;
     logic [31 : 0] mem_addr;
     logic [63 : 0] mem_wdata;
     logic [7 : 0]  mem_wstrb;
-  } storebuffer_in_type;
-
-  typedef struct packed {
-    logic [0 : 0]  mem_ready;
-    logic [63 : 0] mem_rdata;
-  } storebuffer_out_type;
-
-  typedef struct packed {
-    logic [0 : 0]  mem_valid;
-    logic [0 : 0]  mem_instr;
-    logic [0 : 0]  mem_store;
-    logic [31 : 0] mem_addr;
-    logic [63 : 0] mem_wdata;
   } mem_in_type;
 
   localparam mem_in_type init_mem_in = 0;

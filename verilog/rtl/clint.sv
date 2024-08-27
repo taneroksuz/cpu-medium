@@ -52,7 +52,7 @@ module clint #(
       ready_ms <= 0;
       if (clint_in.mem_valid == 1) begin
         if (clint_in.mem_addr < clint_msip_end) begin
-          if (clint_in.mem_store == 0) begin
+          if (|clint_in.mem_wstrb == 0) begin
             rdata_ms[0] <= msip;
             ready_ms <= 1;
           end else begin
@@ -77,7 +77,7 @@ module clint #(
       end
       if (clint_in.mem_valid == 1) begin
         if (clint_in.mem_addr >= clint_mtime_start && clint_in.mem_addr < clint_mtime_end) begin
-          if (clint_in.mem_store == 0) begin
+          if (|clint_in.mem_wstrb == 0) begin
             rdata_mt <= mtime;
             ready_mt <= 1;
           end else begin
@@ -99,7 +99,7 @@ module clint #(
       ready_mtc <= 0;
       if (clint_in.mem_valid == 1) begin
         if (clint_in.mem_addr >= clint_mtimecmp_start && clint_in.mem_addr < clint_mtimecmp_end) begin
-          if (clint_in.mem_store == 0) begin
+          if (|clint_in.mem_wstrb == 0) begin
             rdata_mtc <= mtimecmp;
             ready_mtc <= 1;
           end else begin
