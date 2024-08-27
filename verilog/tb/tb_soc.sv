@@ -177,8 +177,7 @@ module tb_soc ();
     if (tb_soc.soc_comp.cpu_comp.memory_stage_comp.dmem0_in.mem_valid == 1) begin
       if (tb_soc.soc_comp.cpu_comp.memory_stage_comp.dmem0_in.mem_addr[31:3] == host[0][31:3]) begin
         if (|tb_soc.soc_comp.cpu_comp.memory_stage_comp.dmem0_in.mem_wstrb == 1) begin
-          $display("%d",
-                   tb_soc.soc_comp.cpu_comp.memory_stage_comp.dmem0_in.mem_wdata[31:0]);
+          $display("%d", tb_soc.soc_comp.cpu_comp.memory_stage_comp.dmem0_in.mem_wdata[31:0]);
           $finish;
         end
       end
@@ -186,8 +185,7 @@ module tb_soc ();
     if (tb_soc.soc_comp.cpu_comp.memory_stage_comp.dmem1_in.mem_valid == 1) begin
       if (tb_soc.soc_comp.cpu_comp.memory_stage_comp.dmem1_in.mem_addr[31:3] == host[0][31:3]) begin
         if (|tb_soc.soc_comp.cpu_comp.memory_stage_comp.dmem1_in.mem_wstrb == 1) begin
-          $display("%d",
-                   tb_soc.soc_comp.cpu_comp.memory_stage_comp.dmem1_in.mem_wdata[31:0]);
+          $display("%d", tb_soc.soc_comp.cpu_comp.memory_stage_comp.dmem1_in.mem_wdata[31:0]);
           $finish;
         end
       end

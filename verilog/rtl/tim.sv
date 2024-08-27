@@ -101,7 +101,7 @@ module tim_ctrl (
 
     if (tim0_in.mem_valid == 1) begin
       v.valid0 = tim0_in.mem_valid;
-      v.strb0 = tim0_in.mem_wstrb;
+      v.strb0  = tim0_in.mem_wstrb;
       v.data0  = tim0_in.mem_wdata;
       v.did0   = tim0_in.mem_addr[(depth+width+2):(width+3)];
       v.wid0   = tim0_in.mem_addr[(width+2):3];
@@ -109,7 +109,7 @@ module tim_ctrl (
 
     if (tim1_in.mem_valid == 1) begin
       v.valid1 = tim1_in.mem_valid;
-      v.strb1 = tim1_in.mem_wstrb;
+      v.strb1  = tim1_in.mem_wstrb;
       v.data1  = tim1_in.mem_wdata;
       v.did1   = tim1_in.mem_addr[(depth+width+2):(width+3)];
       v.wid1   = tim1_in.mem_addr[(width+2):3];
