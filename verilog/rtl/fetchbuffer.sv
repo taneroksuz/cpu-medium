@@ -168,7 +168,7 @@ module fetchbuffer_ctrl (
   timeunit 1ns; timeprecision 1ps;
 
   localparam depth = $clog2(fetchbuffer_depth - 1);
-  localparam total = fetchbuffer_depth - 4;
+  localparam total = 8 * (fetchbuffer_depth - 2);
 
   localparam [depth-1:0] one = 1;
 
