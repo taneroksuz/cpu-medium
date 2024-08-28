@@ -127,8 +127,8 @@ module issue_stage (
     fp_csr_rin.crden = v.calc0.op.crden | v.calc1.op.crden;
     fp_csr_rin.craddr = v.calc0.op.crden ? v.calc0.caddr : v.calc1.caddr;
 
-    v.calc0.cdata = (fp_csr_out.ready == 1) ? fp_csr_out.cdata : csr_out.cdata;
-    v.calc1.cdata = (fp_csr_out.ready == 1) ? fp_csr_out.cdata : csr_out.cdata;
+    v.calc0.crdata = (fp_csr_out.ready == 1) ? fp_csr_out.cdata : csr_out.cdata;
+    v.calc1.crdata = (fp_csr_out.ready == 1) ? fp_csr_out.cdata : csr_out.cdata;
 
     forwarding0_rin.rden1 = v.calc0.op.rden1;
     forwarding0_rin.rden2 = v.calc0.op.rden2;

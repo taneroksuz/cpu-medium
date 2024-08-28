@@ -543,7 +543,8 @@ package wires;
     logic [63 : 0] frdata1;
     logic [63 : 0] frdata2;
     logic [63 : 0] frdata3;
-    logic [31 : 0] cdata;
+    logic [31 : 0] crdata;
+    logic [31 : 0] cwdata;
     logic [31 : 0] bdata;
     logic [31 : 0] mdata;
     logic [31 : 0] wdata;
@@ -590,7 +591,8 @@ package wires;
       frdata1 : 0,
       frdata2 : 0,
       frdata3 : 0,
-      cdata : 0,
+      crdata : 0,
+      cwdata : 0,
       bdata : 0,
       mdata : 0,
       wdata : 0,

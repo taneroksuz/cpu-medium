@@ -89,14 +89,14 @@ module tb_soc ();
           $fwrite(csr_file, "WADDR = %x\t",
                   tb_soc.soc_comp.cpu_comp.execute_stage_comp.a.m.calc0.caddr);
           $fwrite(csr_file, "WDATA = %x\n",
-                  tb_soc.soc_comp.cpu_comp.execute_stage_comp.a.m.calc0.cdata);
+                  tb_soc.soc_comp.cpu_comp.execute_stage_comp.a.m.calc0.cwdata);
         end else if (tb_soc.soc_comp.cpu_comp.execute_stage_comp.a.m.calc1.op.cwren == 1) begin
           $fwrite(csr_file, "PERIOD = %t\t", $time);
           $fwrite(csr_file, "PC = %x\t", tb_soc.soc_comp.cpu_comp.execute_stage_comp.a.m.calc1.pc);
           $fwrite(csr_file, "WADDR = %x\t",
                   tb_soc.soc_comp.cpu_comp.execute_stage_comp.a.m.calc1.caddr);
           $fwrite(csr_file, "WDATA = %x\n",
-                  tb_soc.soc_comp.cpu_comp.execute_stage_comp.a.m.calc1.cdata);
+                  tb_soc.soc_comp.cpu_comp.execute_stage_comp.a.m.calc1.cwdata);
         end
       end
       $fclose(csr_file);
