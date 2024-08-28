@@ -32,10 +32,7 @@ module arbiter (
     mem_in_type dmem1_in;
   } reg_type;
 
-  localparam reg_type init_reg = '{
-      mem_in : '{mem_valid: 1, mem_instr: 1, default: 0},
-      default: 0
-  };
+  localparam reg_type init_reg = '{default: 0};
 
   reg_type r, rin;
   reg_type v;
