@@ -57,6 +57,8 @@ module ram (
 
     if (ram_type == 1) begin
 
+      /* synthesis syn_ramstyle = "MLAB, no_rw_check"*/
+
       logic [7 : 0][7 : 0] ram_block[0:ram_depth-1];
 
       initial begin
