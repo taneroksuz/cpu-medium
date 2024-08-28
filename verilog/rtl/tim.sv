@@ -86,32 +86,25 @@ module tim_ram (
       logic [7 : 0][7 : 0] tim_ram[0:tim_depth-1] = '{default: '0};
 
       always_ff @(posedge clock) begin
-        if (tim_ram_in.en0 == 1) begin
-          if (tim_ram_in.strb0[0]) tim_ram[tim_ram_in.addr0][0] <= tim_ram_in.data0[7:0];
-          if (tim_ram_in.strb0[1]) tim_ram[tim_ram_in.addr0][1] <= tim_ram_in.data0[15:8];
-          if (tim_ram_in.strb0[2]) tim_ram[tim_ram_in.addr0][2] <= tim_ram_in.data0[23:16];
-          if (tim_ram_in.strb0[3]) tim_ram[tim_ram_in.addr0][3] <= tim_ram_in.data0[31:24];
-          if (tim_ram_in.strb0[4]) tim_ram[tim_ram_in.addr0][4] <= tim_ram_in.data0[39:32];
-          if (tim_ram_in.strb0[5]) tim_ram[tim_ram_in.addr0][5] <= tim_ram_in.data0[47:40];
-          if (tim_ram_in.strb0[6]) tim_ram[tim_ram_in.addr0][6] <= tim_ram_in.data0[55:48];
-          if (tim_ram_in.strb0[7]) tim_ram[tim_ram_in.addr0][7] <= tim_ram_in.data0[63:56];
-          tim_ram_out.data0 <= tim_ram[tim_ram_in.addr0];
-        end else begin
-          tim_ram_out.data0 <= 0;
-        end
-        if (tim_ram_in.en1 == 1) begin
-          if (tim_ram_in.strb1[0]) tim_ram[tim_ram_in.addr1][0] <= tim_ram_in.data1[7:0];
-          if (tim_ram_in.strb1[1]) tim_ram[tim_ram_in.addr1][1] <= tim_ram_in.data1[15:8];
-          if (tim_ram_in.strb1[2]) tim_ram[tim_ram_in.addr1][2] <= tim_ram_in.data1[23:16];
-          if (tim_ram_in.strb1[3]) tim_ram[tim_ram_in.addr1][3] <= tim_ram_in.data1[31:24];
-          if (tim_ram_in.strb1[4]) tim_ram[tim_ram_in.addr1][4] <= tim_ram_in.data1[39:32];
-          if (tim_ram_in.strb1[5]) tim_ram[tim_ram_in.addr1][5] <= tim_ram_in.data1[47:40];
-          if (tim_ram_in.strb1[6]) tim_ram[tim_ram_in.addr1][6] <= tim_ram_in.data1[55:48];
-          if (tim_ram_in.strb1[7]) tim_ram[tim_ram_in.addr1][7] <= tim_ram_in.data1[63:56];
-          tim_ram_out.data1 <= tim_ram[tim_ram_in.addr1];
-        end else begin
-          tim_ram_out.data1 <= 0;
-        end
+        if (tim_ram_in.strb0[0]) tim_ram[tim_ram_in.addr0][0] <= tim_ram_in.data0[7:0];
+        if (tim_ram_in.strb0[1]) tim_ram[tim_ram_in.addr0][1] <= tim_ram_in.data0[15:8];
+        if (tim_ram_in.strb0[2]) tim_ram[tim_ram_in.addr0][2] <= tim_ram_in.data0[23:16];
+        if (tim_ram_in.strb0[3]) tim_ram[tim_ram_in.addr0][3] <= tim_ram_in.data0[31:24];
+        if (tim_ram_in.strb0[4]) tim_ram[tim_ram_in.addr0][4] <= tim_ram_in.data0[39:32];
+        if (tim_ram_in.strb0[5]) tim_ram[tim_ram_in.addr0][5] <= tim_ram_in.data0[47:40];
+        if (tim_ram_in.strb0[6]) tim_ram[tim_ram_in.addr0][6] <= tim_ram_in.data0[55:48];
+        if (tim_ram_in.strb0[7]) tim_ram[tim_ram_in.addr0][7] <= tim_ram_in.data0[63:56];
+        tim_ram_out.data0 <= tim_ram[tim_ram_in.addr0];
+        /////////////////////////////////////////////////////////////////////////////////
+        if (tim_ram_in.strb1[0]) tim_ram[tim_ram_in.addr1][0] <= tim_ram_in.data1[7:0];
+        if (tim_ram_in.strb1[1]) tim_ram[tim_ram_in.addr1][1] <= tim_ram_in.data1[15:8];
+        if (tim_ram_in.strb1[2]) tim_ram[tim_ram_in.addr1][2] <= tim_ram_in.data1[23:16];
+        if (tim_ram_in.strb1[3]) tim_ram[tim_ram_in.addr1][3] <= tim_ram_in.data1[31:24];
+        if (tim_ram_in.strb1[4]) tim_ram[tim_ram_in.addr1][4] <= tim_ram_in.data1[39:32];
+        if (tim_ram_in.strb1[5]) tim_ram[tim_ram_in.addr1][5] <= tim_ram_in.data1[47:40];
+        if (tim_ram_in.strb1[6]) tim_ram[tim_ram_in.addr1][6] <= tim_ram_in.data1[55:48];
+        if (tim_ram_in.strb1[7]) tim_ram[tim_ram_in.addr1][7] <= tim_ram_in.data1[63:56];
+        tim_ram_out.data1 <= tim_ram[tim_ram_in.addr1];
       end
 
     end
