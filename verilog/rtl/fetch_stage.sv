@@ -39,8 +39,25 @@ module fetch_stage (
     v.fence = 0;
     v.spec = 0;
 
-    v.rdata = imem0_out.mem_rdata;
-    v.ready = imem0_out.mem_ready;
+    if (imem0_out.mem_ready == 1) begin
+      v.irdata0 = imem0_out.mem_rdata;
+      v.iready0 = imem0_out.mem_ready;
+    end
+
+    if (imem1_out.mem_ready == 1) begin
+      v.irdata1 = imem1_out.mem_rdata;
+      v.iready1 = imem1_out.mem_ready;
+    end
+
+    if ((v.iready0 & v.iready1) == 1) begin
+      v.rdata   = {v.irdata1, v.irdata0};
+      v.ready   = 1;
+      v.iready0 = 0;
+      v.iready1 = 0;
+    end else begin
+      v.rdata = 0;
+      v.ready = 0;
+    end
 
     v.pc0 = fetchbuffer_out.pc0;
     v.pc1 = fetchbuffer_out.pc1;
@@ -70,33 +87,35 @@ module fetch_stage (
 
     if (csr_out.trap == 1) begin
       v.fence = 0;
-      v.spec = 1;
-      v.pc = csr_out.mtvec;
+      v.spec  = 1;
+      v.ipc0  = csr_out.mtvec;
     end else if (csr_out.mret == 1) begin
       v.fence = 0;
-      v.spec = 1;
-      v.pc = csr_out.mepc;
+      v.spec  = 1;
+      v.ipc0  = csr_out.mepc;
     end else if (btac_out.pred_miss == 1) begin
       v.fence = 0;
-      v.spec = 1;
-      v.pc = btac_out.pred_maddr;
+      v.spec  = 1;
+      v.ipc0  = btac_out.pred_maddr;
     end else if (d.m.calc0.op.fence == 1) begin
       v.fence = 1;
-      v.spec = 1;
-      v.pc = d.m.calc0.npc;
+      v.spec  = 1;
+      v.ipc0  = d.m.calc0.npc;
     end else if (btac_out.pred0.taken == 1) begin
       v.fence = 0;
-      v.spec = 1;
-      v.pc = btac_out.pred0.taddr;
+      v.spec  = 1;
+      v.ipc0  = btac_out.pred0.taddr;
     end else if (btac_out.pred1.taken == 1) begin
       v.fence = 0;
-      v.spec = 1;
-      v.pc = btac_out.pred1.taddr;
+      v.spec  = 1;
+      v.ipc0  = btac_out.pred1.taddr;
     end else if (v.stall == 0) begin
       v.fence = 0;
-      v.spec = 0;
-      v.pc = v.pc + 8;
+      v.spec  = 0;
+      v.ipc0  = v.ipc0 + 16;
     end
+
+    v.ipc1 = v.ipc0 + 8;
 
     case (v.state)
       idle: begin
@@ -144,7 +163,8 @@ module fetch_stage (
       end
     endcase
 
-    fetchbuffer_in.pc = r.pc;
+    fetchbuffer_in.pc0 = r.ipc0;
+    fetchbuffer_in.pc1 = r.ipc1;
     fetchbuffer_in.rdata = v.rdata;
     fetchbuffer_in.ready = v.ready;
     fetchbuffer_in.clear = v.spec;
@@ -152,13 +172,13 @@ module fetch_stage (
 
     imem0_in.mem_valid = v.valid;
     imem0_in.mem_instr = 1;
-    imem0_in.mem_addr = v.pc;
+    imem0_in.mem_addr = v.ipc0;
     imem0_in.mem_wdata = 0;
     imem0_in.mem_wstrb = 0;
 
-    imem1_in.mem_valid = 0;
-    imem1_in.mem_instr = 0;
-    imem1_in.mem_addr = 0;
+    imem1_in.mem_valid = v.valid;
+    imem1_in.mem_instr = 1;
+    imem1_in.mem_addr = v.ipc1;
     imem1_in.mem_wdata = 0;
     imem1_in.mem_wstrb = 0;
 
