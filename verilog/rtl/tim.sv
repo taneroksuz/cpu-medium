@@ -139,64 +139,118 @@ module tim_ctrl (
     logic [0:0] valid1;
   } front_type;
 
-  parameter front_type init_reg = 0;
+  typedef struct packed {
+    logic [width-1:0] wid0;
+    logic [width-1:0] wid1;
+    logic [depth-1:0] did0;
+    logic [depth-1:0] did1;
+    logic [63:0] rdata0;
+    logic [63:0] rdata1;
+    logic [63:0] data0;
+    logic [63:0] data1;
+    logic [7:0] strb0;
+    logic [7:0] strb1;
+    logic [0:0] valid0;
+    logic [0:0] valid1;
+  } back_type;
 
-  front_type r, rin;
-  front_type v;
+  parameter front_type init_front = 0;
+  parameter back_type init_back = 0;
+
+  front_type r_f, rin_f;
+  front_type v_f;
+
+  back_type r_b, rin_b;
+  back_type v_b;
 
   always_comb begin
 
-    v = r;
+    v_f = r_f;
 
-    v.valid0 = 0;
-    v.valid1 = 0;
-    v.strb0 = 0;
-    v.strb1 = 0;
+    v_f.valid0 = 0;
+    v_f.valid1 = 0;
+    v_f.strb0 = 0;
+    v_f.strb1 = 0;
 
     if (tim0_in.mem_valid == 1) begin
-      v.valid0 = tim0_in.mem_valid;
-      v.strb0  = tim0_in.mem_wstrb;
-      v.data0  = tim0_in.mem_wdata;
-      v.did0   = tim0_in.mem_addr[(depth+width+2):(width+3)];
-      v.wid0   = tim0_in.mem_addr[(width+2):3];
+      v_f.valid0 = tim0_in.mem_valid;
+      v_f.strb0  = tim0_in.mem_wstrb;
+      v_f.data0  = tim0_in.mem_wdata;
+      v_f.did0   = tim0_in.mem_addr[(depth+width+2):(width+3)];
+      v_f.wid0   = tim0_in.mem_addr[(width+2):3];
     end
 
     if (tim1_in.mem_valid == 1) begin
-      v.valid1 = tim1_in.mem_valid;
-      v.strb1  = tim1_in.mem_wstrb;
-      v.data1  = tim1_in.mem_wdata;
-      v.did1   = tim1_in.mem_addr[(depth+width+2):(width+3)];
-      v.wid1   = tim1_in.mem_addr[(width+2):3];
+      v_f.valid1 = tim1_in.mem_valid;
+      v_f.strb1  = tim1_in.mem_wstrb;
+      v_f.data1  = tim1_in.mem_wdata;
+      v_f.did1   = tim1_in.mem_addr[(depth+width+2):(width+3)];
+      v_f.wid1   = tim1_in.mem_addr[(width+2):3];
     end
 
     dvec0_in = init_tim_vec_in;
     dvec1_in = init_tim_vec_in;
 
     // Write data
-    dvec0_in[v.wid0].en = v.valid0;
-    dvec1_in[v.wid1].en = v.valid1;
-    dvec0_in[v.wid0].strb = v.strb0;
-    dvec1_in[v.wid1].strb = v.strb1;
-    dvec0_in[v.wid0].addr = v.did0;
-    dvec1_in[v.wid1].addr = v.did1;
-    dvec0_in[v.wid0].data = v.data0;
-    dvec1_in[v.wid1].data = v.data1;
+    dvec0_in[v_f.wid0].en = v_f.valid0;
+    dvec1_in[v_f.wid1].en = v_f.valid1;
+    dvec0_in[v_f.wid0].strb = v_f.strb0;
+    dvec1_in[v_f.wid1].strb = v_f.strb1;
+    dvec0_in[v_f.wid0].addr = v_f.did0;
+    dvec1_in[v_f.wid1].addr = v_f.did1;
+    dvec0_in[v_f.wid0].data = v_f.data0;
+    dvec1_in[v_f.wid1].data = v_f.data1;
 
-    rin = v;
+    rin_f = v_f;
 
-    tim0_out.mem_rdata = dvec0_out[r.wid0].data;
-    tim0_out.mem_ready = r.valid0;
+  end
 
-    tim1_out.mem_rdata = dvec1_out[r.wid1].data;
-    tim1_out.mem_ready = r.valid1;
+  always_comb begin
+
+    v_b = r_b;
+
+    v_b.valid0 = r_f.valid0;
+    v_b.valid1 = r_f.valid1;
+    v_b.data0 = r_f.data0;
+    v_b.data1 = r_f.data1;
+    v_b.strb0 = r_f.strb0;
+    v_b.strb1 = r_f.strb1;
+    v_b.wid0 = r_f.wid0;
+    v_b.wid1 = r_f.wid1;
+    v_b.did0 = r_f.did0;
+    v_b.did1 = r_f.did1;
+
+    v_b.rdata0 = dvec0_out[v_b.wid0].data;
+    v_b.rdata1 = dvec1_out[v_b.wid1].data;
+
+    if (|v_b.strb0 == 1 && |v_b.strb1 == 0 && v_b.did0 == v_b.did1 && v_b.wid0 == v_b.wid1) begin
+      if (v_b.strb0[0] == 1) v_b.rdata1[7:0] = v_b.data0[7:0];
+      if (v_b.strb0[1] == 1) v_b.rdata1[15:8] = v_b.data0[15:8];
+      if (v_b.strb0[2] == 1) v_b.rdata1[23:16] = v_b.data0[23:16];
+      if (v_b.strb0[3] == 1) v_b.rdata1[31:24] = v_b.data0[31:24];
+      if (v_b.strb0[4] == 1) v_b.rdata1[39:32] = v_b.data0[39:32];
+      if (v_b.strb0[5] == 1) v_b.rdata1[47:40] = v_b.data0[47:40];
+      if (v_b.strb0[6] == 1) v_b.rdata1[55:48] = v_b.data0[55:48];
+      if (v_b.strb0[7] == 1) v_b.rdata1[63:56] = v_b.data0[63:56];
+    end
+
+    tim0_out.mem_rdata = v_b.rdata0;
+    tim0_out.mem_ready = v_b.valid0;
+
+    tim1_out.mem_rdata = v_b.rdata1;
+    tim1_out.mem_ready = v_b.valid1;
+
+    rin_b = v_b;
 
   end
 
   always_ff @(posedge clock) begin
     if (reset == 0) begin
-      r <= init_reg;
+      r_f <= init_front;
+      r_b <= init_back;
     end else begin
-      r <= rin;
+      r_f <= rin_f;
+      r_b <= rin_b;
     end
   end
 
