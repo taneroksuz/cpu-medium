@@ -16,7 +16,7 @@ package configure;
   parameter fpu_enable = 1;
 
   parameter btac_enable = 1;
-  parameter branchtarget_depth = 64;
+  parameter branchtarget_depth = 512;
   parameter branchhistory_depth = 1024;
 
   parameter rom_base_addr = 32'h0;
