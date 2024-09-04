@@ -72,4 +72,4 @@ make simulate MAXTIME=1000
 ### Coremark Benchmark
 | Cycles | Iteration/s/MHz | Iteration |
 | ------ | --------------- | --------- |
-| 192443 |             5.2 |        10 |
+| 192443 |            5.20 |        10 |
