@@ -1,6 +1,6 @@
-# WOLV Z7 CPU
+# CPU-RV32IMFDCB
 
-Wolv Z7 CPU is 6-stage in-order dual issue superscalar processor with floating point unit.
+This cpu is 6-stage in-order dual issue superscalar processor with floating point unit.
 
 ## SPECIFICATIONS
 
@@ -30,7 +30,7 @@ The installation scripts of necessary tools are located in directory **tools**. 
 
 1. Cloning the repository:
 ```console
-git clone --recurse-submodules https://github.com/taneroksuz/wolv-z7.git
+git clone --recurse-submodules https://github.com/taneroksuz/cpu-rv32imfdcb.git
 ```
 
 2. Execute scripts in directory **tools** to install necessary tools for compilation and simulation:

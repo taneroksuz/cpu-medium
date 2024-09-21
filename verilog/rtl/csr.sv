@@ -11,6 +11,7 @@ module csr (
     input logic [0:0] meip,
     input logic [0:0] msip,
     input logic [0:0] mtip,
+    input logic [0:0] irpt,
     input logic [63:0] mtime
 );
   timeunit 1ns; timeprecision 1ps;
@@ -195,20 +196,30 @@ module csr (
 
       if (meip == 1) begin
         csr_machine_reg.mip.meip <= 1;
+        csr_machine_reg.mcause   <= {1'b1, 23'b0, interrupt_mach_extern};
       end else begin
         csr_machine_reg.mip.meip <= 0;
       end
 
       if (mtip == 1) begin
         csr_machine_reg.mip.mtip <= 1;
+        csr_machine_reg.mcause   <= {1'b1, 23'b0, interrupt_mach_timer};
       end else begin
         csr_machine_reg.mip.mtip <= 0;
       end
 
       if (msip == 1) begin
         csr_machine_reg.mip.msip <= 1;
+        csr_machine_reg.mcause   <= {1'b1, 23'b0, interrupt_mach_soft};
       end else begin
         csr_machine_reg.mip.msip <= 0;
+      end
+
+      if (irpt == 1) begin
+        csr_machine_reg.mip.meip <= 1;
+        csr_machine_reg.mcause   <= {1'b1, 23'b0, interrupt_uart_extern};
+      end else begin
+        csr_machine_reg.mip.meip <= 0;
       end
 
       exception <= 0;
@@ -219,7 +230,7 @@ module csr (
         csr_machine_reg.mstatus.mie <= 0;
         csr_machine_reg.mepc <= csr_ein.epc;
         csr_machine_reg.mtval <= csr_ein.etval;
-        csr_machine_reg.mcause <= {28'b0, csr_ein.ecause};
+        csr_machine_reg.mcause <= {24'b0, csr_ein.ecause};
         exception <= 1;
       end else if (csr_machine_reg.mstatus.mie == 1 &&
                    csr_machine_reg.mie.meie == 1 &&
@@ -229,7 +240,6 @@ module csr (
         csr_machine_reg.mstatus.mie <= 0;
         csr_machine_reg.mepc <= csr_ein.pc;
         csr_machine_reg.mtval <= 0;
-        csr_machine_reg.mcause <= {1'b1, 27'b0, interrupt_mach_extern};
         interrupt <= 1;
       end else if (csr_machine_reg.mstatus.mie == 1 &&
                    csr_machine_reg.mie.mtie == 1 &&
@@ -239,7 +249,6 @@ module csr (
         csr_machine_reg.mstatus.mie <= 0;
         csr_machine_reg.mepc <= csr_ein.pc;
         csr_machine_reg.mtval <= 0;
-        csr_machine_reg.mcause <= {1'b1, 27'b0, interrupt_mach_timer};
         interrupt <= 1;
       end else if (csr_machine_reg.mstatus.mie == 1 &&
                    csr_machine_reg.mie.msie == 1 &&
@@ -249,7 +258,6 @@ module csr (
         csr_machine_reg.mstatus.mie <= 0;
         csr_machine_reg.mepc <= csr_ein.pc;
         csr_machine_reg.mtval <= 0;
-        csr_machine_reg.mcause <= {1'b1, 27'b0, interrupt_mach_soft};
         interrupt <= 1;
       end
 

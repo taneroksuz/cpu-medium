@@ -6,7 +6,7 @@ module clk_div #(
 ) (
     input  logic reset,
     input  logic clock,
-    output logic clock_slow
+    output logic clock_per
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -19,13 +19,13 @@ module clk_div #(
 
   initial begin
     count = 0;
-    clock_slow = 1;
+    clock_per = 1;
   end
 
   always_ff @(posedge clock) begin
     if (count == half[depth-1:0]) begin
       count <= 0;
-      clock_slow <= ~clock_slow;
+      clock_per <= ~clock_per;
     end else begin
       count <= count + one;
     end

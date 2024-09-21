@@ -227,29 +227,31 @@ package constants;
   parameter [0 : 0] interrupt = 1'b1;
   parameter [0 : 0] exception = 1'b0;
 
-  parameter [3 : 0] interrupt_user_soft = 4'h0;
-  parameter [3 : 0] interrupt_super_soft = 4'h1;
-  parameter [3 : 0] interrupt_mach_soft = 4'h3;
-  parameter [3 : 0] interrupt_user_timer = 4'h4;
-  parameter [3 : 0] interrupt_super_timer = 4'h5;
-  parameter [3 : 0] interrupt_mach_timer = 4'h7;
-  parameter [3 : 0] interrupt_user_extern = 4'h8;
-  parameter [3 : 0] interrupt_super_extern = 4'h9;
-  parameter [3 : 0] interrupt_mach_extern = 4'hB;
+  parameter [7 : 0] interrupt_user_soft = 8'h00;
+  parameter [7 : 0] interrupt_super_soft = 8'h01;
+  parameter [7 : 0] interrupt_mach_soft = 8'h03;
+  parameter [7 : 0] interrupt_user_timer = 8'h04;
+  parameter [7 : 0] interrupt_super_timer = 8'h05;
+  parameter [7 : 0] interrupt_mach_timer = 8'h07;
+  parameter [7 : 0] interrupt_user_extern = 8'h08;
+  parameter [7 : 0] interrupt_super_extern = 8'h09;
+  parameter [7 : 0] interrupt_mach_extern = 8'h0B;
 
-  parameter [3 : 0] except_instr_addr_misalign = 4'h0;
-  parameter [3 : 0] except_instr_access_fault = 4'h1;
-  parameter [3 : 0] except_illegal_instruction = 4'h2;
-  parameter [3 : 0] except_breakpoint = 4'h3;
-  parameter [3 : 0] except_load_addr_misalign = 4'h4;
-  parameter [3 : 0] except_load_access_fault = 4'h5;
-  parameter [3 : 0] except_store_addr_misalign = 4'h6;
-  parameter [3 : 0] except_store_access_fault = 4'h7;
-  parameter [3 : 0] except_env_call_user = 4'h8;
-  parameter [3 : 0] except_env_call_super = 4'h9;
-  parameter [3 : 0] except_env_call_mach = 4'hB;
-  parameter [3 : 0] except_instr_page_fault = 4'hC;
-  parameter [3 : 0] except_load_page_fault = 4'hD;
-  parameter [3 : 0] except_store_page_fault = 4'hF;
+  parameter [7 : 0] interrupt_uart_extern = 8'h18;
+
+  parameter [7 : 0] except_instr_addr_misalign = 8'h00;
+  parameter [7 : 0] except_instr_access_fault = 8'h01;
+  parameter [7 : 0] except_illegal_instruction = 8'h02;
+  parameter [7 : 0] except_breakpoint = 8'h03;
+  parameter [7 : 0] except_load_addr_misalign = 8'h04;
+  parameter [7 : 0] except_load_access_fault = 8'h05;
+  parameter [7 : 0] except_store_addr_misalign = 8'h06;
+  parameter [7 : 0] except_store_access_fault = 8'h07;
+  parameter [7 : 0] except_env_call_user = 8'h08;
+  parameter [7 : 0] except_env_call_super = 8'h09;
+  parameter [7 : 0] except_env_call_mach = 8'h0B;
+  parameter [7 : 0] except_instr_page_fault = 8'h0C;
+  parameter [7 : 0] except_load_page_fault = 8'h0D;
+  parameter [7 : 0] except_store_page_fault = 8'h0F;
 
 endpackage

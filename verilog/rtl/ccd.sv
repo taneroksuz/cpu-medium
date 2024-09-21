@@ -6,11 +6,11 @@ module ccd #(
 ) (
     input logic reset,
     input logic clock,
-    input logic clock_slow,
+    input logic clock_per,
     input mem_in_type mem_in,
     output mem_out_type mem_out,
-    output mem_in_type mem_slow_in,
-    input mem_out_type mem_slow_out
+    output mem_in_type mem_per_in,
+    input mem_out_type mem_per_out
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -31,17 +31,17 @@ module ccd #(
   always_comb begin
 
     if (mem_in.mem_valid == 1) begin
-      mem_slow_in.mem_valid = mem_in.mem_valid;
-      mem_slow_in.mem_instr = mem_in.mem_instr;
-      mem_slow_in.mem_addr  = mem_in.mem_addr;
-      mem_slow_in.mem_wdata = mem_in.mem_wdata;
-      mem_slow_in.mem_wstrb = mem_in.mem_wstrb;
+      mem_per_in.mem_valid = mem_in.mem_valid;
+      mem_per_in.mem_instr = mem_in.mem_instr;
+      mem_per_in.mem_addr  = mem_in.mem_addr;
+      mem_per_in.mem_wdata = mem_in.mem_wdata;
+      mem_per_in.mem_wstrb = mem_in.mem_wstrb;
     end else begin
-      mem_slow_in.mem_valid = 0;
-      mem_slow_in.mem_instr = 0;
-      mem_slow_in.mem_addr  = 0;
-      mem_slow_in.mem_wdata = 0;
-      mem_slow_in.mem_wstrb = 0;
+      mem_per_in.mem_valid = 0;
+      mem_per_in.mem_instr = 0;
+      mem_per_in.mem_addr  = 0;
+      mem_per_in.mem_wdata = 0;
+      mem_per_in.mem_wstrb = 0;
     end
 
     mem_out.mem_rdata = memory_fast_rdata;
@@ -58,9 +58,9 @@ module ccd #(
   end
 
   always_ff @(posedge clock) begin
-    if (count == full[depth-1:0] && mem_slow_out.mem_ready == 1) begin
-      memory_fast_rdata <= mem_slow_out.mem_rdata;
-      memory_fast_ready <= mem_slow_out.mem_ready;
+    if (count == full[depth-1:0] && mem_per_out.mem_ready == 1) begin
+      memory_fast_rdata <= mem_per_out.mem_rdata;
+      memory_fast_ready <= mem_per_out.mem_ready;
     end else begin
       memory_fast_rdata <= 0;
       memory_fast_ready <= 0;

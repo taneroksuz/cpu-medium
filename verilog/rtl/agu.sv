@@ -11,7 +11,7 @@ module agu (
   logic [ 0 : 0] misalign;
 
   logic [ 0 : 0] exception;
-  logic [ 3 : 0] ecause;
+  logic [ 7 : 0] ecause;
   logic [31 : 0] etval;
 
   logic [ 0 : 0] imem_access;

@@ -6,9 +6,9 @@ module tb_soc ();
 
   logic reset;
   logic clock;
-  logic clock_slow;
-  logic uart_rx;
-  logic uart_tx;
+  logic clock_per;
+  logic rx;
+  logic tx;
 
   logic [31 : 0] host[0:0];
 
@@ -193,19 +193,19 @@ module tb_soc ();
   end
 
   clk_div #(
-      .clock_rate(clk_divider_slow)
+      .clock_rate(clk_divider_per)
   ) clk_div_comp (
       .reset(reset),
       .clock(clock),
-      .clock_slow(clock_slow)
+      .clock_per(clock_per)
   );
 
   soc soc_comp (
       .reset(reset),
       .clock(clock),
-      .clock_slow(clock_slow),
-      .uart_rx(uart_rx),
-      .uart_tx(uart_tx)
+      .clock_per(clock_per),
+      .rx(rx),
+      .tx(tx)
   );
 
 endmodule
