@@ -47,8 +47,8 @@ module cpu (
   bit_alu_out_type bit_alu1_out;
   bit_clmul_in_type bit_clmul_in;
   bit_clmul_out_type bit_clmul_out;
-  fetchbuffer_in_type fetchbuffer_in;
-  fetchbuffer_out_type fetchbuffer_out;
+  buffer_in_type buffer_in;
+  buffer_out_type buffer_out;
   btac_in_type btac_in;
   btac_out_type btac_out;
   hazard_in_type hazard_in;
@@ -310,11 +310,11 @@ module cpu (
       .btac_out(btac_out)
   );
 
-  fetchbuffer fetchbuffer_comp (
+  buffer buffer_comp (
       .reset(reset),
       .clock(clock),
-      .fetchbuffer_in(fetchbuffer_in),
-      .fetchbuffer_out(fetchbuffer_out)
+      .buffer_in(buffer_in),
+      .buffer_out(buffer_out)
   );
 
   hazard hazard_comp (
@@ -371,8 +371,8 @@ module cpu (
   fetch_stage fetch_stage_comp (
       .reset(reset),
       .clock(clock),
-      .fetchbuffer_out(fetchbuffer_out),
-      .fetchbuffer_in(fetchbuffer_in),
+      .buffer_out(buffer_out),
+      .buffer_in(buffer_in),
       .csr_out(csr_out),
       .btac_out(btac_out),
       .btac_in(btac_in),

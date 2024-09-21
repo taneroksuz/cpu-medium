@@ -3,8 +3,8 @@ package tim_wires;
 
   import configure::*;
 
-  localparam depth = $clog2(tim_depth - 1);
-  localparam width = $clog2(tim_width - 1);
+  localparam depth = $clog2(tim_depth);
+  localparam width = $clog2(tim_width);
 
   typedef struct packed {
     logic [0 : 0] en;
@@ -36,8 +36,8 @@ module tim_ram (
 );
   timeunit 1ns; timeprecision 1ps;
 
-  localparam depth = $clog2(tim_depth - 1);
-  localparam width = $clog2(tim_width - 1);
+  localparam depth = $clog2(tim_depth);
+  localparam width = $clog2(tim_width);
 
   generate
 
@@ -123,8 +123,8 @@ module tim_ctrl (
 );
   timeunit 1ns; timeprecision 1ps;
 
-  localparam depth = $clog2(tim_depth - 1);
-  localparam width = $clog2(tim_width - 1);
+  localparam depth = $clog2(tim_depth);
+  localparam width = $clog2(tim_width);
 
   typedef struct packed {
     logic [width-1:0] wid0;

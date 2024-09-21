@@ -45,24 +45,31 @@ module soc (
   mem_in_type rom_in;
   mem_in_type ram_in;
   mem_in_type uart_in;
+  mem_in_type clic_in;
   mem_in_type clint_in;
 
   mem_out_type per_out;
   mem_out_type rom_out;
   mem_out_type ram_out;
   mem_out_type uart_out;
+  mem_out_type clic_out;
   mem_out_type clint_out;
 
   mem_in_type ram_slow_in;
   mem_in_type uart_slow_in;
+  mem_in_type clic_slow_in;
 
   mem_out_type ram_slow_out;
   mem_out_type uart_slow_out;
+  mem_out_type clic_slow_out;
 
   logic [0 : 0] meip;
   logic [0 : 0] msip;
   logic [0 : 0] mtip;
 
+  logic [31:0] irpt;
+
+  logic [11 : 0] meid;
   logic [63 : 0] mtime;
 
   logic [0 : 0] itim0_rev;
@@ -221,6 +228,7 @@ module soc (
     rom_in = init_mem_in;
     ram_in = init_mem_in;
     uart_in = init_mem_in;
+    clic_in = init_mem_in;
     clint_in = init_mem_in;
 
     base_addr = 0;
@@ -233,10 +241,13 @@ module soc (
         ram_in = per_in;
         base_addr = ram_base_addr;
       end else if (per_in.mem_addr >= uart_base_addr && per_in.mem_addr < uart_top_addr) begin
-        uart_in   = per_in;
+        uart_in = per_in;
         base_addr = uart_base_addr;
+      end else if (per_in.mem_addr >= clic_base_addr && per_in.mem_addr < clic_top_addr) begin
+        clic_in = per_in;
+        base_addr = clic_base_addr;
       end else if (per_in.mem_addr >= clint_base_addr && per_in.mem_addr < clint_top_addr) begin
-        clint_in  = per_in;
+        clint_in = per_in;
         base_addr = clint_base_addr;
       end
     end
@@ -246,6 +257,7 @@ module soc (
     rom_in.mem_addr = mem_addr;
     ram_in.mem_addr = mem_addr;
     uart_in.mem_addr = mem_addr;
+    clic_in.mem_addr = mem_addr;
     clint_in.mem_addr = mem_addr;
 
     per_out = init_mem_out;
@@ -256,6 +268,8 @@ module soc (
       per_out = ram_out;
     end else if (uart_out.mem_ready == 1) begin
       per_out = uart_out;
+    end else if (clic_out.mem_ready == 1) begin
+      per_out = clic_out;
     end else if (clint_out.mem_ready == 1) begin
       per_out = clint_out;
     end
@@ -348,6 +362,28 @@ module soc (
       .clock  (clock_slow),
       .ram_in (ram_slow_in),
       .ram_out(ram_slow_out)
+  );
+
+  ccd #(
+      .clock_rate(clk_divider_slow)
+  ) ccd_clic_comp (
+      .reset(reset),
+      .clock(clock),
+      .clock_slow(clock_slow),
+      .mem_in(clic_in),
+      .mem_out(clic_out),
+      .mem_slow_in(clic_slow_in),
+      .mem_slow_out(clic_slow_out)
+  );
+
+  clic clic_comp (
+      .reset(reset),
+      .clock(clock_slow),
+      .clic_in(clic_slow_in),
+      .clic_out(clic_slow_out),
+      .clic_meip(meip),
+      .clic_meid(meid),
+      .clic_irpt(irpt)
   );
 
   ccd #(

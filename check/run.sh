@@ -21,7 +21,7 @@ ${VERIBLE}-verilog-format --inplace ${BASEDIR}/verilog/tb/configure.sv \
                                     ${BASEDIR}/verilog/rtl/decoder.sv \
                                     ${BASEDIR}/verilog/rtl/register.sv \
                                     ${BASEDIR}/verilog/rtl/csr.sv \
-                                    ${BASEDIR}/verilog/rtl/fetchbuffer.sv \
+                                    ${BASEDIR}/verilog/rtl/buffer.sv \
                                     ${BASEDIR}/verilog/rtl/hazard.sv \
                                     ${BASEDIR}/verilog/rtl/forwarding.sv \
                                     ${BASEDIR}/verilog/rtl/fetch_stage.sv \
@@ -36,6 +36,8 @@ ${VERIBLE}-verilog-format --inplace ${BASEDIR}/verilog/tb/configure.sv \
                                     ${BASEDIR}/verilog/rtl/ccd.sv \
                                     ${BASEDIR}/verilog/rtl/clint.sv \
                                     ${BASEDIR}/verilog/rtl/tim.sv \
+                                    ${BASEDIR}/verilog/rtl/pmp.sv \
+                                    ${BASEDIR}/verilog/rtl/clic.sv \
                                     ${BASEDIR}/verilog/rtl/cpu.sv \
                                     ${BASEDIR}/verilog/rtl/rom.sv \
                                     ${BASEDIR}/verilog/rtl/ram.sv \

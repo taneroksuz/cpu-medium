@@ -3,7 +3,7 @@ package configure;
 
   parameter simulation = 1;
 
-  parameter fetchbuffer_depth = 4;
+  parameter buffer_depth = 4;
 
   parameter hazard_depth = 4;
 
@@ -27,6 +27,9 @@ package configure;
 
   parameter clint_base_addr = 32'h2000000;
   parameter clint_top_addr = 32'h200C000;
+
+  parameter clic_base_addr = 32'h3000000;
+  parameter clic_top_addr = 32'h3005000;
 
   parameter itim_base_addr = 32'h10000000;
   parameter itim_top_addr = 32'h10080000;

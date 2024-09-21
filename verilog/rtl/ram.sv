@@ -8,7 +8,7 @@ module ram (
 );
   timeunit 1ns; timeprecision 1ps;
 
-  localparam depth = $clog2(ram_depth - 1);
+  localparam depth = $clog2(ram_depth);
 
   generate
 
