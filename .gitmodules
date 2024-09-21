@@ -2,7 +2,6 @@
 	path = fpu
 	url = https://github.com/taneroksuz/fpu.git
 	branch = main
-[submodule "wolv-benchmark"]
+[submodule "benchmark"]
 	path = benchmark
-	url = https://github.com/taneroksuz/wolv-benchmark.git
-	branch = main
+	url = https://github.com/taneroksuz/cpu-benchmark.git
