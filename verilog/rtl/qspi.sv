@@ -91,10 +91,10 @@ module qspi #(
 
   assign sclk = r.sclk;
   assign cs = r.cs;
-  assign d0 = r.write == 1 ? r.data[0] : 1'bz;
-  assign d1 = r.write == 1 ? r.data[1] : 1'bz;
-  assign d2 = r.write == 1 ? r.data[2] : 1'bz;
-  assign d3 = r.write == 1 ? r.data[3] : 1'bz;
+  assign d0 = r.write == 1 ? r.data[4] : 1'bz;
+  assign d1 = r.write == 1 ? r.data[5] : 1'bz;
+  assign d2 = r.write == 1 ? r.data[6] : 1'bz;
+  assign d3 = r.write == 1 ? r.data[7] : 1'bz;
 
   always_ff @(posedge clock) begin
     if (reset == 0) begin
