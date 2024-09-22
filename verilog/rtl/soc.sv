@@ -5,6 +5,12 @@ module soc (
     input  logic reset,
     input  logic clock,
     input  logic clock_per,
+    output logic sclk,
+    output logic cs,
+    inout  logic d0,
+    inout  logic d1,
+    inout  logic d2,
+    inout  logic d3,
     input  logic rx,
     output logic tx
 );
@@ -44,6 +50,7 @@ module soc (
   mem_in_type per_in;
   mem_in_type rom_in;
   mem_in_type ram_in;
+  mem_in_type qspi_in;
   mem_in_type clint_in;
   mem_in_type uart_rx_in;
   mem_in_type uart_tx_in;
@@ -51,6 +58,7 @@ module soc (
   mem_out_type per_out;
   mem_out_type rom_out;
   mem_out_type ram_out;
+  mem_out_type qspi_out;
   mem_out_type clint_out;
   mem_out_type uart_rx_out;
   mem_out_type uart_tx_out;
@@ -96,65 +104,57 @@ module soc (
     dtim0_rev = dtim0_rev_reg;
     dtim1_rev = dtim1_rev_reg;
 
-    if (imem0_in.mem_valid == 1 && imem0_in.mem_addr >= itim_base_addr && imem0_in.mem_addr < itim_top_addr) begin
+    if (imem0_in.mem_valid & ~|(itim_base_addr ^ (imem0_in.mem_addr & ~itim_mask_addr))) begin
       itim0_in = imem0_in;
       itim0_in.mem_addr = imem0_in.mem_addr - itim_base_addr;
       itim0_rev = 0;
-    end else if (dmem0_in.mem_valid == 1 && dmem0_in.mem_addr >= itim_base_addr && dmem0_in.mem_addr < itim_top_addr) begin
+    end else if (dmem0_in.mem_valid & ~|(itim_base_addr ^ (dmem0_in.mem_addr & ~itim_mask_addr))) begin
       itim0_in = dmem0_in;
       itim0_in.mem_addr = dmem0_in.mem_addr - itim_base_addr;
       itim0_rev = 1;
     end
 
-    if (imem1_in.mem_valid == 1 && imem1_in.mem_addr >= itim_base_addr && imem1_in.mem_addr < itim_top_addr) begin
+    if (imem1_in.mem_valid & ~|(itim_base_addr ^ (imem1_in.mem_addr & ~itim_mask_addr))) begin
       itim1_in = imem1_in;
       itim1_in.mem_addr = imem1_in.mem_addr - itim_base_addr;
       itim1_rev = 0;
-    end else if (dmem1_in.mem_valid == 1 && dmem1_in.mem_addr >= itim_base_addr && dmem1_in.mem_addr < itim_top_addr) begin
+    end else if (dmem1_in.mem_valid & ~|(itim_base_addr ^ (dmem1_in.mem_addr & ~itim_mask_addr))) begin
       itim1_in = dmem1_in;
       itim1_in.mem_addr = dmem1_in.mem_addr - itim_base_addr;
       itim1_rev = 1;
     end
 
-    if (imem0_in.mem_valid == 1 && imem0_in.mem_addr >= dtim_base_addr && imem0_in.mem_addr < dtim_top_addr) begin
+    if (imem0_in.mem_valid & ~|(dtim_base_addr ^ (imem0_in.mem_addr & ~dtim_mask_addr))) begin
       dtim0_in = imem0_in;
       dtim0_in.mem_addr = imem0_in.mem_addr - dtim_base_addr;
       dtim0_rev = 1;
-    end else if (dmem0_in.mem_valid == 1 && dmem0_in.mem_addr >= dtim_base_addr && dmem0_in.mem_addr < dtim_top_addr) begin
+    end else if (dmem0_in.mem_valid & ~|(dtim_base_addr ^ (dmem0_in.mem_addr & ~dtim_mask_addr))) begin
       dtim0_in = dmem0_in;
       dtim0_in.mem_addr = dmem0_in.mem_addr - dtim_base_addr;
       dtim0_rev = 0;
     end
 
-    if (imem1_in.mem_valid == 1 && imem1_in.mem_addr >= dtim_base_addr && imem1_in.mem_addr < dtim_top_addr) begin
+    if (imem1_in.mem_valid & ~|(dtim_base_addr ^ (imem1_in.mem_addr & ~dtim_mask_addr))) begin
       dtim1_in = imem1_in;
       dtim1_in.mem_addr = imem1_in.mem_addr - dtim_base_addr;
       dtim1_rev = 1;
-    end else if (dmem1_in.mem_valid == 1 && dmem1_in.mem_addr >= dtim_base_addr && dmem1_in.mem_addr < dtim_top_addr) begin
+    end else if (dmem1_in.mem_valid & ~|(dtim_base_addr ^ (dmem1_in.mem_addr & ~dtim_mask_addr))) begin
       dtim1_in = dmem1_in;
       dtim1_in.mem_addr = dmem1_in.mem_addr - dtim_base_addr;
       dtim1_rev = 0;
     end
 
-    if (imem0_in.mem_valid == 1) begin
-      if ((imem0_in.mem_addr < itim_base_addr || imem0_in.mem_addr >= itim_top_addr) && (imem0_in.mem_addr < dtim_base_addr || imem0_in.mem_addr >= dtim_top_addr)) begin
-        iper0_in = imem0_in;
-      end
+    if (imem0_in.mem_valid & |(itim_base_addr ^ (imem0_in.mem_addr & ~itim_mask_addr)) & |(dtim_base_addr ^ (imem0_in.mem_addr & ~dtim_mask_addr))) begin
+      iper0_in = imem0_in;
     end
-    if (imem1_in.mem_valid == 1) begin
-      if ((imem1_in.mem_addr < itim_base_addr || imem1_in.mem_addr >= itim_top_addr) && (imem1_in.mem_addr < dtim_base_addr || imem1_in.mem_addr >= dtim_top_addr)) begin
-        iper1_in = imem1_in;
-      end
+    if (imem1_in.mem_valid & |(itim_base_addr ^ (imem1_in.mem_addr & ~itim_mask_addr)) & |(dtim_base_addr ^ (imem1_in.mem_addr & ~dtim_mask_addr))) begin
+      iper1_in = imem1_in;
     end
-    if (dmem0_in.mem_valid == 1) begin
-      if ((dmem0_in.mem_addr < itim_base_addr || dmem0_in.mem_addr >= itim_top_addr) && (dmem0_in.mem_addr < dtim_base_addr || dmem0_in.mem_addr >= dtim_top_addr)) begin
-        dper0_in = dmem0_in;
-      end
+    if (dmem0_in.mem_valid & |(itim_base_addr ^ (dmem0_in.mem_addr & ~itim_mask_addr)) & |(dtim_base_addr ^ (dmem0_in.mem_addr & ~dtim_mask_addr))) begin
+      dper0_in = dmem0_in;
     end
-    if (dmem1_in.mem_valid == 1) begin
-      if ((dmem1_in.mem_addr < itim_base_addr || dmem1_in.mem_addr >= itim_top_addr) && (dmem1_in.mem_addr < dtim_base_addr || dmem1_in.mem_addr >= dtim_top_addr)) begin
-        dper1_in = dmem1_in;
-      end
+    if (dmem1_in.mem_valid & |(itim_base_addr ^ (dmem1_in.mem_addr & ~itim_mask_addr)) & |(dtim_base_addr ^ (dmem1_in.mem_addr & ~dtim_mask_addr))) begin
+      dper1_in = dmem1_in;
     end
 
     imem0_out = init_mem_out;
@@ -221,35 +221,43 @@ module soc (
 
     rom_in = init_mem_in;
     ram_in = init_mem_in;
+    qspi_in = init_mem_in;
     clint_in = init_mem_in;
     uart_rx_in = init_mem_in;
     uart_tx_in = init_mem_in;
 
     base_addr = 0;
 
-    if (per_in.mem_valid == 1) begin
-      if (per_in.mem_addr >= rom_base_addr && per_in.mem_addr < rom_top_addr) begin
-        rom_in = per_in;
-        base_addr = rom_base_addr;
-      end else if (per_in.mem_addr >= ram_base_addr && per_in.mem_addr < ram_top_addr) begin
-        ram_in = per_in;
-        base_addr = ram_base_addr;
-      end else if (per_in.mem_addr >= clint_base_addr && per_in.mem_addr < clint_top_addr) begin
-        clint_in  = per_in;
-        base_addr = clint_base_addr;
-      end else if (per_in.mem_addr >= uart_rx_base_addr && per_in.mem_addr < uart_rx_top_addr) begin
-        uart_rx_in = per_in;
-        base_addr  = uart_rx_base_addr;
-      end else if (per_in.mem_addr >= uart_tx_base_addr && per_in.mem_addr < uart_tx_top_addr) begin
-        uart_tx_in = per_in;
-        base_addr  = uart_tx_base_addr;
-      end
+    if (per_in.mem_valid & ~|(rom_base_addr ^ (per_in.mem_addr & ~rom_mask_addr))) begin
+      rom_in = per_in;
+      base_addr = rom_base_addr;
+    end
+    if (per_in.mem_valid & ~|(ram_base_addr ^ (per_in.mem_addr & ~ram_mask_addr))) begin
+      ram_in = per_in;
+      base_addr = ram_base_addr;
+    end
+    if (per_in.mem_valid & ~|(qspi_base_addr ^ (per_in.mem_addr & ~qspi_mask_addr))) begin
+      qspi_in   = per_in;
+      base_addr = qspi_base_addr;
+    end
+    if (per_in.mem_valid & ~|(clint_base_addr ^ (per_in.mem_addr & ~clint_mask_addr))) begin
+      clint_in  = per_in;
+      base_addr = clint_base_addr;
+    end
+    if (per_in.mem_valid & ~|(uart_rx_base_addr ^ (per_in.mem_addr & ~uart_rx_mask_addr))) begin
+      uart_rx_in = per_in;
+      base_addr  = uart_rx_base_addr;
+    end
+    if (per_in.mem_valid & ~|(uart_tx_base_addr ^ (per_in.mem_addr & ~uart_tx_mask_addr))) begin
+      uart_tx_in = per_in;
+      base_addr  = uart_tx_base_addr;
     end
 
     mem_addr = per_in.mem_addr - base_addr;
 
     rom_in.mem_addr = mem_addr;
     ram_in.mem_addr = mem_addr;
+    qspi_in.mem_addr = mem_addr;
     clint_in.mem_addr = mem_addr;
     uart_rx_in.mem_addr = mem_addr;
     uart_tx_in.mem_addr = mem_addr;
@@ -258,13 +266,20 @@ module soc (
 
     if (rom_out.mem_ready == 1) begin
       per_out = rom_out;
-    end else if (ram_out.mem_ready == 1) begin
+    end
+    if (ram_out.mem_ready == 1) begin
       per_out = ram_out;
-    end else if (clint_out.mem_ready == 1) begin
+    end
+    if (qspi_out.mem_ready == 1) begin
+      per_out = qspi_out;
+    end
+    if (clint_out.mem_ready == 1) begin
       per_out = clint_out;
-    end else if (uart_rx_out.mem_ready == 1) begin
+    end
+    if (uart_rx_out.mem_ready == 1) begin
       per_out = uart_rx_out;
-    end else if (uart_tx_out.mem_ready == 1) begin
+    end
+    if (uart_tx_out.mem_ready == 1) begin
       per_out = uart_tx_out;
     end
 
@@ -357,6 +372,21 @@ module soc (
       .clock  (clock_per),
       .ram_in (ram_per_in),
       .ram_out(ram_per_out)
+  );
+
+  qspi #(
+      .clock_rate(clk_divider_per)
+  ) qspi_comp (
+      .reset(reset),
+      .clock(clock),
+      .qspi_in(qspi_in),
+      .qspi_out(qspi_out),
+      .sclk(sclk),
+      .cs(cs),
+      .d0(d0),
+      .d1(d1),
+      .d2(d2),
+      .d3(d3)
   );
 
   uart_rx #(

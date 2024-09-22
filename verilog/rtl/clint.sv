@@ -19,11 +19,11 @@ module clint #(
 
   logic [depth-1 : 0] count = 0;
 
-  localparam clint_msip_start = 0;
+  localparam clint_msip_start = 32'h0000;
   localparam clint_msip_end = clint_msip_start + 4;
-  localparam clint_mtimecmp_start = 16384;
+  localparam clint_mtimecmp_start = 32'h4000;
   localparam clint_mtimecmp_end = clint_mtimecmp_start + 8;
-  localparam clint_mtime_start = 49144;
+  localparam clint_mtime_start = 32'hBFF8;
   localparam clint_mtime_end = clint_mtime_start + 8;
 
   logic [63 : 0] mtimecmp = 0;

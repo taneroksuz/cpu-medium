@@ -9,6 +9,12 @@ module tb_soc ();
   logic clock_per;
   logic rx;
   logic tx;
+  logic sclk;
+  logic cs;
+  logic d0;
+  logic d1;
+  logic d2;
+  logic d3;
 
   logic [31 : 0] host[0:0];
 
@@ -205,7 +211,13 @@ module tb_soc ();
       .clock(clock),
       .clock_per(clock_per),
       .rx(rx),
-      .tx(tx)
+      .tx(tx),
+      .sclk(sclk),
+      .cs(cs),
+      .d0(d0),
+      .d1(d1),
+      .d2(d2),
+      .d3(d3)
   );
 
 endmodule
