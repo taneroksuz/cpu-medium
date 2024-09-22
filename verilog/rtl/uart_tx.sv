@@ -88,13 +88,13 @@ module uart_tx #(
 
         rin = v;
 
-        tx  = r.data[0];
-
       end
 
       assign uart_out.mem_rdata = 0;
       assign uart_out.mem_error = 0;
       assign uart_out.mem_ready = r.ready;
+
+      assign tx = r.data[0];
 
       always_ff @(posedge clock) begin
         if (reset == 0) begin
