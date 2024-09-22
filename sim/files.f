@@ -60,4 +60,4 @@ $BASEDIR/verilog/rtl/qspi.sv
 $BASEDIR/verilog/rtl/uart_rx.sv
 $BASEDIR/verilog/rtl/uart_tx.sv
 $BASEDIR/verilog/rtl/soc.sv
-$BASEDIR/verilog/tb/tb_soc.sv
+$BASEDIR/verilog/tb/testbench.sv

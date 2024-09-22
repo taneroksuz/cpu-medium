@@ -45,7 +45,7 @@ ${VERIBLE}-verilog-format --inplace ${BASEDIR}/verilog/tb/configure.sv \
                                     ${BASEDIR}/verilog/rtl/uart_rx.sv \
                                     ${BASEDIR}/verilog/rtl/uart_tx.sv \
                                     ${BASEDIR}/verilog/rtl/soc.sv \
-                                    ${BASEDIR}/verilog/tb/tb_soc.sv
+                                    ${BASEDIR}/verilog/tb/testbench.sv
 
 end=`date +%s`
 echo Execution time was `expr $end - $start` seconds.
