@@ -47,22 +47,6 @@ package configure;
   parameter ram_base_addr = 32'h80000000;
   parameter ram_mask_addr = 32'h000FFFFF;
 
-  parameter rom_top_addr = 32'h80;
-
-  parameter uart_tx_top_addr = 32'h1000004;
-
-  parameter uart_rx_top_addr = 32'h1000008;
-
-  parameter clint_top_addr = 32'h200C000;
-
-  parameter clic_top_addr = 32'h3005000;
-
-  parameter itim_top_addr = 32'h10080000;
-
-  parameter dtim_top_addr = 32'h20080000;
-
-  parameter ram_top_addr = 32'h80100000;
-
   parameter clk_freq = 100000000;  // 100MHz
   parameter per_freq = 10000000;  // 10MHz
   parameter rtc_freq = 1000000;  // 1MHz
