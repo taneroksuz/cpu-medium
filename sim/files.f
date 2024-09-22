@@ -1,4 +1,4 @@
-$BASEDIR/verilog/tb/configure.sv
+$BASEDIR/verilog/conf/configure.sv
 $BASEDIR/verilog/rtl/constants.sv
 $BASEDIR/verilog/rtl/functions.sv
 $BASEDIR/fpu/verilog/src/lzc/lzc_wire.sv

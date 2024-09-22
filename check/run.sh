@@ -3,7 +3,7 @@ set -e
 
 start=`date +%s`
 
-${VERIBLE}-verilog-format --inplace ${BASEDIR}/verilog/tb/configure.sv \
+${VERIBLE}-verilog-format --inplace ${BASEDIR}/verilog/conf/configure.sv \
                                     ${BASEDIR}/verilog/rtl/constants.sv \
                                     ${BASEDIR}/verilog/rtl/functions.sv \
                                     ${BASEDIR}/verilog/rtl/wires.sv \
