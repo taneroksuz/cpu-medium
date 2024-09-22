@@ -18,12 +18,11 @@ module qspi #(
   timeunit 1ns; timeprecision 1ps;
 
   localparam half = (clock_rate / 2 - 1);
-  localparam bits = 64;
 
   typedef struct packed {
     logic [31 : 0] counter;
-    logic [63 : 0] data;
-    logic [6 : 0]  state;
+    logic [7 : 0]  data;
+    logic [1 : 0]  state;
     logic [0 : 0]  write;
     logic [0 : 0]  read;
     logic [5 : 0]  incr;
@@ -50,28 +49,19 @@ module qspi #(
       v.sclk = ~v.sclk;
     end
 
-    if (v.sclk == 0 && v.read == 1) begin
-      if (v.state == bits) begin
-        v.ready = 1;
-        v.read  = 0;
-      end else begin
-        v.data  = {v.data[59:0], 4'b0};
-        v.state = v.state + 1;
-      end
-    end
-
-    if (v.sclk == 0 && v.write == 1) begin
-      if (v.state == bits) begin
+    if (v.sclk == 0 && (v.write == 1 || v.read == 1)) begin
+      if (v.state == 1) begin
         v.ready = 1;
         v.write = 0;
+        v.read  = 0;
       end else begin
-        v.data  = {4'b0, v.data[63:4]};
+        v.data  = {v.data[3:0], 4'b0};
         v.state = v.state + 1;
       end
     end
 
     if (qspi_in.mem_valid == 1 && |qspi_in.mem_wstrb == 1 && qspi_in.mem_addr == 0) begin
-      v.data  = qspi_in.mem_wdata;
+      v.data  = qspi_in.mem_wdata[7:0];
       v.write = 1;
       v.state = 0;
     end
@@ -83,10 +73,10 @@ module qspi #(
 
     if (v.write == 1) begin
       v.cs = 0;
-      d0   = v.data[0];
-      d1   = v.data[1];
-      d2   = v.data[2];
-      d3   = v.data[3];
+      d0   = v.data[4];
+      d1   = v.data[5];
+      d2   = v.data[6];
+      d3   = v.data[7];
     end else if (v.read == 1) begin
       v.cs = 0;
       v.data[0] = d0;
@@ -102,7 +92,7 @@ module qspi #(
 
   end
 
-  assign qspi_out.mem_rdata = 0;
+  assign qspi_out.mem_rdata = {56'h0, r.data};
   assign qspi_out.mem_ready = r.ready;
 
   always_ff @(posedge clock) begin
