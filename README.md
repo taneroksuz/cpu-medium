@@ -1,4 +1,4 @@
-# CPU-RV32IMFDCB
+# CPU-MEDIUM
 
 This cpu is 6-stage in-order dual issue superscalar processor with floating point unit.
 
@@ -8,11 +8,13 @@ This cpu is 6-stage in-order dual issue superscalar processor with floating poin
 - RV32-IMFDCB
 - Fast multiplication unit
 - Slow division unit
+- Physical Memory Protection
+- Core Local Interrupt Controller
 - FPU with single and double precision
 - Fast and slow option for FDIV and FSQRT instruction
 - Branch target cache with bimodal branch predictor
 ### Memory
-- Harvard architecture
+- Harvard bus architecture
 - Instruction and Data Tightly Integrated Memory
 ### Peripheral
 - UART
@@ -30,7 +32,7 @@ The installation scripts of necessary tools are located in directory **tools**. 
 
 1. Cloning the repository:
 ```console
-git clone --recurse-submodules https://github.com/taneroksuz/cpu-rv32imfdcb.git
+git clone --recurse-submodules https://github.com/taneroksuz/cpu-medium.git
 ```
 
 2. Execute scripts in directory **tools** to install necessary tools for compilation and simulation:
