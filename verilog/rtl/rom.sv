@@ -49,6 +49,7 @@ module rom (
   end
 
   assign rom_out.mem_rdata = rdata;
+  assign rom_out.mem_error = 0;
   assign rom_out.mem_ready = ready;
 
 

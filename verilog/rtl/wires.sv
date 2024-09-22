@@ -1137,6 +1137,20 @@ package wires;
   } csr_out_type;
 
   typedef struct packed {
+    logic [0 : 0]  cwren;
+    logic [0 : 0]  crden;
+    logic [11 : 0] cwaddr;
+    logic [11 : 0] craddr;
+    logic [31 : 0] cwdata;
+    logic [1 : 0]  mode;
+  } csr_pmp_in_type;
+
+  typedef struct packed {
+    logic [31 : 0] crdata;
+    logic [0 : 0]  cready;
+  } csr_pmp_out_type;
+
+  typedef struct packed {
     logic [0 : 0]  rden1;
     logic [0 : 0]  rden2;
     logic [0 : 0]  rden3;
@@ -1272,6 +1286,7 @@ package wires;
   typedef struct packed {
     logic [0 : 0]  mem_valid;
     logic [0 : 0]  mem_instr;
+    logic [1 : 0]  mem_mode;
     logic [31 : 0] mem_addr;
     logic [63 : 0] mem_wdata;
     logic [7 : 0]  mem_wstrb;
@@ -1281,6 +1296,7 @@ package wires;
 
   typedef struct packed {
     logic [0 : 0]  mem_ready;
+    logic [0 : 0]  mem_error;
     logic [63 : 0] mem_rdata;
   } mem_out_type;
 

@@ -8,8 +8,8 @@ module uart_rx #(
     input logic clock,
     input mem_in_type uart_in,
     output mem_out_type uart_out,
-    output logic irpt,
-    input logic rx
+    output logic uart_irpt,
+    input rx
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -100,7 +100,9 @@ module uart_rx #(
   end
 
   assign uart_out.mem_rdata = {56'b0, r.data_re};
+  assign uart_out.mem_error = 0;
   assign uart_out.mem_ready = r.ready_re;
+  assign uart_irpt = r.irpt_re;
 
   always_ff @(posedge clock) begin
     if (reset == 0) begin

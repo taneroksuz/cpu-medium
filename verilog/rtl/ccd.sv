@@ -32,12 +32,14 @@ module ccd #(
 
     if (mem_in.mem_valid == 1) begin
       mem_per_in.mem_valid = mem_in.mem_valid;
+      mem_per_in.mem_mode  = mem_in.mem_mode;
       mem_per_in.mem_instr = mem_in.mem_instr;
       mem_per_in.mem_addr  = mem_in.mem_addr;
       mem_per_in.mem_wdata = mem_in.mem_wdata;
       mem_per_in.mem_wstrb = mem_in.mem_wstrb;
     end else begin
       mem_per_in.mem_valid = 0;
+      mem_per_in.mem_mode  = 0;
       mem_per_in.mem_instr = 0;
       mem_per_in.mem_addr  = 0;
       mem_per_in.mem_wdata = 0;
@@ -45,6 +47,7 @@ module ccd #(
     end
 
     mem_out.mem_rdata = memory_fast_rdata;
+    mem_out.mem_error = 0;
     mem_out.mem_ready = memory_fast_ready;
 
   end

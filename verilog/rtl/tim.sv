@@ -235,9 +235,11 @@ module tim_ctrl (
     end
 
     tim0_out.mem_rdata = v_b.rdata0;
+    tim0_out.mem_error = 0;
     tim0_out.mem_ready = v_b.valid0;
 
     tim1_out.mem_rdata = v_b.rdata1;
+    tim1_out.mem_error = 0;
     tim1_out.mem_ready = v_b.valid1;
 
     rin_b = v_b;

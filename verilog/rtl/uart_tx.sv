@@ -8,7 +8,7 @@ module uart_tx #(
     input logic clock,
     input mem_in_type uart_in,
     output mem_out_type uart_out,
-    output logic tx
+    output tx
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -23,11 +23,13 @@ module uart_tx #(
           $write("%c", uart_in.mem_wdata[7:0]);
 
           uart_out.mem_rdata <= 0;
+          uart_out.mem_error <= 0;
           uart_out.mem_ready <= 1;
 
         end else begin
 
           uart_out.mem_rdata <= 0;
+          uart_out.mem_error <= 0;
           uart_out.mem_ready <= 0;
 
         end
@@ -91,6 +93,7 @@ module uart_tx #(
       end
 
       assign uart_out.mem_rdata = 0;
+      assign uart_out.mem_error = 0;
       assign uart_out.mem_ready = r.ready;
 
       always_ff @(posedge clock) begin

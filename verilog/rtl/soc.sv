@@ -2,17 +2,17 @@ import configure::*;
 import wires::*;
 
 module soc (
-    input  logic reset,
-    input  logic clock,
-    input  logic clock_per,
-    output logic sclk,
-    output logic cs,
-    inout  logic d0,
-    inout  logic d1,
-    inout  logic d2,
-    inout  logic d3,
-    input  logic rx,
-    output logic tx
+    input  reset,
+    input  clock,
+    input  clock_per,
+    output sclk,
+    output cs,
+    inout  d0,
+    inout  d1,
+    inout  d2,
+    inout  d3,
+    input  rx,
+    output tx
 );
 
   timeunit 1ns; timeprecision 1ps;
@@ -52,6 +52,7 @@ module soc (
   mem_in_type ram_in;
   mem_in_type qspi_in;
   mem_in_type clint_in;
+  mem_in_type error_in;
   mem_in_type uart_rx_in;
   mem_in_type uart_tx_in;
 
@@ -60,6 +61,7 @@ module soc (
   mem_out_type ram_out;
   mem_out_type qspi_out;
   mem_out_type clint_out;
+  mem_out_type error_out;
   mem_out_type uart_rx_out;
   mem_out_type uart_tx_out;
 
@@ -223,34 +225,43 @@ module soc (
     ram_in = init_mem_in;
     qspi_in = init_mem_in;
     clint_in = init_mem_in;
+    error_in = init_mem_in;
     uart_rx_in = init_mem_in;
     uart_tx_in = init_mem_in;
 
     base_addr = 0;
 
+    error_in.mem_valid = per_in.mem_valid;
+
     if (per_in.mem_valid & ~|(rom_base_addr ^ (per_in.mem_addr & ~rom_mask_addr))) begin
       rom_in = per_in;
       base_addr = rom_base_addr;
+      error_in.mem_valid = 0;
     end
     if (per_in.mem_valid & ~|(ram_base_addr ^ (per_in.mem_addr & ~ram_mask_addr))) begin
       ram_in = per_in;
       base_addr = ram_base_addr;
+      error_in.mem_valid = 0;
     end
     if (per_in.mem_valid & ~|(qspi_base_addr ^ (per_in.mem_addr & ~qspi_mask_addr))) begin
-      qspi_in   = per_in;
+      qspi_in = per_in;
       base_addr = qspi_base_addr;
+      error_in.mem_valid = 0;
     end
     if (per_in.mem_valid & ~|(clint_base_addr ^ (per_in.mem_addr & ~clint_mask_addr))) begin
-      clint_in  = per_in;
+      clint_in = per_in;
       base_addr = clint_base_addr;
+      error_in.mem_valid = 0;
     end
     if (per_in.mem_valid & ~|(uart_rx_base_addr ^ (per_in.mem_addr & ~uart_rx_mask_addr))) begin
       uart_rx_in = per_in;
-      base_addr  = uart_rx_base_addr;
+      base_addr = uart_rx_base_addr;
+      error_in.mem_valid = 0;
     end
     if (per_in.mem_valid & ~|(uart_tx_base_addr ^ (per_in.mem_addr & ~uart_tx_mask_addr))) begin
       uart_tx_in = per_in;
-      base_addr  = uart_tx_base_addr;
+      base_addr = uart_tx_base_addr;
+      error_in.mem_valid = 0;
     end
 
     mem_addr = per_in.mem_addr - base_addr;
@@ -276,6 +287,9 @@ module soc (
     if (clint_out.mem_ready == 1) begin
       per_out = clint_out;
     end
+    if (error_out.mem_ready == 1) begin
+      per_out = error_out;
+    end
     if (uart_rx_out.mem_ready == 1) begin
       per_out = uart_rx_out;
     end
@@ -283,6 +297,20 @@ module soc (
       per_out = uart_tx_out;
     end
 
+  end
+
+  always_ff @(posedge clock) begin
+    if (reset == 0) begin
+      error_out <= init_mem_out;
+    end else begin
+      if (error_in.mem_valid == 1) begin
+        error_out.mem_rdata <= 0;
+        error_out.mem_error <= 1;
+        error_out.mem_ready <= 1;
+      end else begin
+        error_out <= init_mem_out;
+      end
+    end
   end
 
   cpu cpu_comp (
@@ -396,7 +424,7 @@ module soc (
       .clock(clock),
       .uart_in(uart_rx_in),
       .uart_out(uart_rx_out),
-      .irpt(irpt),
+      .uart_irpt(irpt),
       .rx(rx)
   );
 

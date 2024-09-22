@@ -330,6 +330,7 @@ module clic (
                               (ready_info == 1) ? rdata_info :
                               (ready_trig == 1) ? rdata_trig :
                               (ready_irpt == 1) ? rdata_irpt : 0;
+  assign clic_out.mem_error = 0;
   assign clic_out.mem_ready = ready_cfg | ready_info | ready_trig | ready_irpt;
 
   assign clic_meip = meip;

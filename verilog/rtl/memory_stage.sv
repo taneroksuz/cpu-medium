@@ -54,6 +54,7 @@ module memory_stage (
 
     dmem0_in.mem_valid = a.e.calc0.op.load | a.e.calc0.op.store | a.e.calc0.op.fload | a.e.calc0.op.fstore;
     dmem0_in.mem_instr = 0;
+    dmem0_in.mem_mode = 0;
     dmem0_in.mem_addr = a.e.calc0.address;
     dmem0_in.mem_wdata = store_data(
       a.e.calc0.sdata,
@@ -66,6 +67,7 @@ module memory_stage (
 
     dmem1_in.mem_valid = a.e.calc1.op.load | a.e.calc1.op.store | a.e.calc1.op.fload | a.e.calc1.op.fstore;
     dmem1_in.mem_instr = 0;
+    dmem1_in.mem_mode = 0;
     dmem1_in.mem_addr = a.e.calc1.address;
     dmem1_in.mem_wdata = store_data(
       a.e.calc1.sdata,

@@ -8,12 +8,12 @@ module qspi #(
     input logic clock,
     input mem_in_type qspi_in,
     output mem_out_type qspi_out,
-    output logic sclk,
-    output logic cs,
-    inout logic d0,
-    inout logic d1,
-    inout logic d2,
-    inout logic d3
+    output sclk,
+    output cs,
+    inout d0,
+    inout d1,
+    inout d2,
+    inout d3
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -73,10 +73,6 @@ module qspi #(
 
     if (v.write == 1) begin
       v.cs = 0;
-      d0   = v.data[4];
-      d1   = v.data[5];
-      d2   = v.data[6];
-      d3   = v.data[7];
     end else if (v.read == 1) begin
       v.cs = 0;
       v.data[0] = d0;
@@ -85,15 +81,20 @@ module qspi #(
       v.data[3] = d3;
     end
 
-    sclk = v.sclk;
-    cs   = v.cs;
-
-    rin  = v;
+    rin = v;
 
   end
 
   assign qspi_out.mem_rdata = {56'h0, r.data};
+  assign qspi_out.mem_error = 0;
   assign qspi_out.mem_ready = r.ready;
+
+  assign sclk = r.sclk;
+  assign cs = r.cs;
+  assign d0 = r.write == 1 ? r.data[0] : 1'bz;
+  assign d1 = r.write == 1 ? r.data[1] : 1'bz;
+  assign d2 = r.write == 1 ? r.data[2] : 1'bz;
+  assign d3 = r.write == 1 ? r.data[3] : 1'bz;
 
   always_ff @(posedge clock) begin
     if (reset == 0) begin

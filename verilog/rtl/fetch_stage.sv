@@ -172,12 +172,14 @@ module fetch_stage (
 
     imem0_in.mem_valid = v.valid;
     imem0_in.mem_instr = 1;
+    imem0_in.mem_mode = 0;
     imem0_in.mem_addr = v.ipc0;
     imem0_in.mem_wdata = 0;
     imem0_in.mem_wstrb = 0;
 
     imem1_in.mem_valid = v.valid;
     imem1_in.mem_instr = 1;
+    imem1_in.mem_mode = 0;
     imem1_in.mem_addr = v.ipc1;
     imem1_in.mem_wdata = 0;
     imem1_in.mem_wstrb = 0;

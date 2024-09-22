@@ -141,6 +141,7 @@ module clint #(
   assign clint_out.mem_rdata = (ready_ms == 1) ? rdata_ms :
                                (ready_mt == 1) ? rdata_mt :
                                (ready_mtc == 1) ? rdata_mtc : 0;
+  assign clint_out.mem_error = 0;
   assign clint_out.mem_ready = ready_ms | ready_mt | ready_mtc;
 
   assign clint_msip = msip;

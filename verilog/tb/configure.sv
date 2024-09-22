@@ -10,8 +10,11 @@ package configure;
   parameter tim_width = 32;
   parameter tim_depth = 2048;
 
+  // vivado -> 0 altera -> 1
   parameter ram_type = 0;
   parameter ram_depth = 131072;
+
+  parameter pmp_region = 8;
 
   parameter fpu_enable = 1;
 
