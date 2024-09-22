@@ -26,8 +26,8 @@ package configure;
   parameter rom_base_addr = 32'h00;
   parameter rom_mask_addr = 32'h7F;
 
-  parameter qspi_base_addr = 32'h100000;
-  parameter qspi_mask_addr = 32'h0FFFFF;
+  parameter spi_base_addr = 32'h100000;
+  parameter spi_mask_addr = 32'h0FFFFF;
 
   parameter uart_tx_base_addr = 32'h1000000;
   parameter uart_tx_mask_addr = 32'h0000003;

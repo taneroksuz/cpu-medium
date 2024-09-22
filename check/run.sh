@@ -41,7 +41,7 @@ ${VERIBLE}-verilog-format --inplace ${BASEDIR}/verilog/conf/configure.sv \
                                     ${BASEDIR}/verilog/rtl/cpu.sv \
                                     ${BASEDIR}/verilog/rtl/rom.sv \
                                     ${BASEDIR}/verilog/rtl/ram.sv \
-                                    ${BASEDIR}/verilog/rtl/qspi.sv \
+                                    ${BASEDIR}/verilog/rtl/spi.sv \
                                     ${BASEDIR}/verilog/rtl/uart_rx.sv \
                                     ${BASEDIR}/verilog/rtl/uart_tx.sv \
                                     ${BASEDIR}/verilog/rtl/soc.sv \
