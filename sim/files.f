@@ -55,7 +55,6 @@ $BASEDIR/verilog/rtl/pmp.sv
 $BASEDIR/verilog/rtl/clic.sv
 $BASEDIR/verilog/rtl/cpu.sv
 $BASEDIR/verilog/rtl/rom.sv
-$BASEDIR/verilog/rtl/ram.sv
 $BASEDIR/verilog/rtl/sram.sv
 $BASEDIR/verilog/rtl/spi.sv
 $BASEDIR/verilog/rtl/uart_rx.sv

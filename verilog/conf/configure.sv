@@ -13,7 +13,6 @@ package configure;
 
   // xilinx -> 0 altera -> 1
   parameter ram_type = 0;
-  parameter ram_depth = 131072;
 
   parameter pmp_region = 8;
 
