@@ -1,5 +1,6 @@
 riscv/
 dump/
+hex/
 riscv-tests/
 coremark/
 dhrystone/
