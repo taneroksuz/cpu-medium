@@ -13,6 +13,13 @@ module testbench ();
   logic ss;
   logic rx;
   logic tx;
+  logic sram_ce_n;
+  logic sram_we_n;
+  logic sram_oe_n;
+  logic sram_ub_n;
+  logic sram_lb_n;
+  logic [15:0] sram_dq;
+  logic [17:0] sram_addr;
 
   logic [31 : 0] host[0:0];
 
@@ -219,7 +226,14 @@ module testbench ();
       .miso(miso),
       .ss(ss),
       .rx(rx),
-      .tx(tx)
+      .tx(tx),
+      .sram_ce_n(sram_ce_n),
+      .sram_we_n(sram_we_n),
+      .sram_oe_n(sram_oe_n),
+      .sram_ub_n(sram_ub_n),
+      .sram_lb_n(sram_lb_n),
+      .sram_dq(sram_dq),
+      .sram_addr(sram_addr)
   );
 
 endmodule
