@@ -102,7 +102,7 @@ module uart_rx #(
   assign uart_out.mem_rdata = {56'b0, r.data_re};
   assign uart_out.mem_error = 0;
   assign uart_out.mem_ready = r.ready_re;
-  assign uart_irpt = r.irpt_re;
+  assign uart_irpt = r.irpt;
 
   always_ff @(posedge clock) begin
     if (reset == 0) begin

@@ -66,7 +66,7 @@ loop:
 trap_entry:
 
   # uart irpt
-  li t0, 0x18 
+  la t0, 0x80000018
 
   csrr t1, mcause
   bne t0, t1, loop
