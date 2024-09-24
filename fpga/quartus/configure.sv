@@ -16,7 +16,7 @@ package configure;
 
   parameter pmp_region = 8;
 
-  parameter fpu_enable = 1;
+  parameter fpu_enable = 0;
 
   parameter btac_enable = 1;
   parameter branchtarget_depth = 512;
@@ -48,7 +48,7 @@ package configure;
 
   parameter sys_freq = 50000000;  // 50MHz
 
-  parameter cpu_freq = 25000000;  // 25MHz
+  parameter cpu_freq = 10000000;  // 10MHz
   parameter per_freq = 5000000;   // 5MHz
   parameter rtc_freq = 1000000;   // 1MHz
   parameter baudrate = 115200;
