@@ -22,8 +22,8 @@ package configure;
   parameter branchtarget_depth = 512;
   parameter branchhistory_depth = 1024;
 
-  parameter rom_base_addr = 32'h000;
-  parameter rom_mask_addr = 32'h1FF;
+  parameter rom_base_addr = 32'h00;
+  parameter rom_mask_addr = 32'hFF;
 
   parameter spi_base_addr = 32'h100000;
   parameter spi_mask_addr = 32'h0FFFFF;

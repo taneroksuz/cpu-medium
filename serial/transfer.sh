@@ -3,8 +3,10 @@ set -e
 
 start=`date +%s`
 
-${RISCV}/bin/riscv32-unknown-elf-objcopy -O binary $BASEDIR/serial/input/program.elf $BASEDIR/serial/input/program.bin
-$PYTHON $BASEDIR/serial/transfer.py $SERIAL $BASEDIR/serial/input/program.bin
+WORDS=131072
+
+${RISCV}/bin/riscv32-unknown-elf-objcopy -O binary $BASEDIR/serial/input/program.riscv $BASEDIR/serial/input/program.bin
+$PYTHON $BASEDIR/serial/transfer.py $SERIAL $BASEDIR/serial/input/program.bin $WORDS
 rm $BASEDIR/serial/input/program.bin
 
 end=`date +%s`

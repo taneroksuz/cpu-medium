@@ -23,6 +23,9 @@ cat ${BASEDIR}/fpga/quartus/output_files/${PROJECT}.fit.summary
 cat ${BASEDIR}/fpga/quartus/output_files/${PROJECT}.sta.summary
 printf "${NC}"
 
-sudo killall jtagd
+if pgrep -x "jtagd" > /dev/null
+then
+  sudo killall jtagd
+fi
 sudo ${QUARTUS_BIN}/jtagconfig
 ${QUARTUS_BIN}/quartus_pgm -m jtag -o "p;${BASEDIR}/fpga/quartus/output_files/${PROJECT}.sof"
