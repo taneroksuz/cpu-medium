@@ -8,7 +8,7 @@ package configure;
   parameter hazard_depth = 4;
 
   parameter tim_width = 32;
-  parameter tim_depth = 2048;
+  parameter tim_depth = 256;
 
   parameter ram_type = 1;
 
