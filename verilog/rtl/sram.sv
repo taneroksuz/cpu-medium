@@ -153,7 +153,7 @@ module sram #(
         end
 
         if (sram_in.mem_valid == 1 && sram_in.mem_addr == 0) begin
-          v.addr  = {sram_in.mem_addr[17:3],3'b000};
+          v.addr  = {sram_in.mem_addr[17:3], 3'b000};
           v.data  = sram_in.mem_wdata;
           v.strb  = sram_in.mem_wstrb;
           v.write = |v.strb;

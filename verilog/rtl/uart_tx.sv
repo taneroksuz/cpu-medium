@@ -40,6 +40,8 @@ module uart_tx #(
 
     if (hardware == 1) begin : uart_hardware
 
+
+
       localparam full = clock_rate - 1;
 
       typedef struct packed {
@@ -61,7 +63,7 @@ module uart_tx #(
 
         v.ready = 0;
 
-        if (uart_in.mem_valid == 1 && |uart_in.mem_wstrb == 1 && v.state == 0) begin
+        if (uart_in.mem_valid == 1 && |uart_in.mem_wstrb == 1 && uart_in.mem_addr == 0 && v.state == 0) begin
           v.data  = {1'b1, uart_in.mem_wdata[7:0], 1'b0};
           v.state = 1;
         end
@@ -72,8 +74,8 @@ module uart_tx #(
           end
           10: begin
             if (r.counter > full) begin
-              v.state   = 0;
               v.counter = 0;
+              v.state   = 0;
               v.ready   = 1;
             end
           end

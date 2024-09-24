@@ -16,27 +16,21 @@ module uart_rx #(
   localparam full = clock_rate - 1;
 
   typedef struct packed {
-    logic [0 : 0]  state_re;
-    logic [3 : 0]  state;
-    logic [7 : 0]  data_re;
-    logic [8 : 0]  data;
     logic [31 : 0] counter;
+    logic [7 : 0]  rdata_re;
     logic [0 : 0]  ready_re;
+    logic [3 : 0]  state;
+    logic [8 : 0]  data;
     logic [0 : 0]  ready;
-    logic [0 : 0]  irpt_re;
-    logic [0 : 0]  irpt;
   } register_type;
 
   register_type init_register = '{
-      state_re : 0,
-      state : 0,
-      data_re : 0,
-      data : 0,
       counter : 0,
+      rdata_re : 0,
       ready_re : 0,
-      ready : 0,
-      irpt_re : 0,
-      irpt : 0
+      state : 0,
+      data : 0,
+      ready : 0
   };
 
   register_type r, rin, v;
@@ -48,14 +42,10 @@ module uart_rx #(
     v.counter = v.counter + 1;
 
     v.ready_re = 0;
-    v.ready = 0;
 
-    if (uart_in.mem_valid == 1 && |uart_in.mem_wstrb == 0 && v.state == 0) begin
-      v.state_re = 1;
-    end
-
-    if (uart_in.mem_valid == 1 && |uart_in.mem_wstrb == 0 && v.irpt == 1) begin
-      v.irpt_re = 1;
+    if (uart_in.mem_valid == 1 && |uart_in.mem_wstrb == 0 && uart_in.mem_addr == 0 && v.ready == 1) begin
+      v.ready_re = 1;
+      v.ready = 0;
     end
 
     case (r.state)
@@ -67,10 +57,10 @@ module uart_rx #(
       end
       9: begin
         if (r.counter > full) begin
-          v.state   = 0;
-          v.counter = 0;
-          v.ready   = 1;
-          v.irpt    = 1;
+          v.rdata_re = v.data[8:1];
+          v.counter  = 0;
+          v.state    = 0;
+          v.ready    = 1;
         end
       end
       default: begin
@@ -82,27 +72,14 @@ module uart_rx #(
       end
     endcase
 
-    if (r.state_re == 1 && r.ready == 1) begin
-      v.ready_re = 1;
-      v.state_re = 0;
-      v.data_re  = r.data[8:1];
-    end
-
-    if (r.irpt_re == 1 && r.irpt == 1) begin
-      v.ready_re = 1;
-      v.irpt_re = 0;
-      v.irpt = 0;
-      v.data_re = r.data[8:1];
-    end
-
     rin = v;
 
   end
 
-  assign uart_out.mem_rdata = {56'b0, r.data_re};
+  assign uart_out.mem_rdata = {56'b0, r.rdata_re};
   assign uart_out.mem_error = 0;
   assign uart_out.mem_ready = r.ready_re;
-  assign uart_irpt = r.irpt;
+  assign uart_irpt = r.ready;
 
   always_ff @(posedge clock) begin
     if (reset == 0) begin

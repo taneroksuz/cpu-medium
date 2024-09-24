@@ -1,7 +1,7 @@
 #include "encoding.h"
 
-#define UART_RX 0x1000000
-#define UART_TX 0x1000004
+#define UART_TX 0x1000000
+#define UART_RX 0x1000004
 #define SRAM_BASE 0x80000000
 #define SRAM_SIZE 0x80000
 
@@ -62,6 +62,8 @@ _start:
 loop:
 
   j loop
+
+  .align 2
 
 trap_entry:
 

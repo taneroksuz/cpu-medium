@@ -47,8 +47,8 @@ package configure;
   parameter sram_mask_addr = 32'h000FFFFF;
 
   parameter cpu_freq = 1000000000;  // 1GHz
-  parameter per_freq = 200000000;   // 200MHz
-  parameter rtc_freq = 1000000;     // 1MHz
+  parameter per_freq = 200000000;  // 200MHz
+  parameter rtc_freq = 1000000;  // 1MHz
   parameter baudrate = 115200;
 
   parameter clk_divider_per = cpu_freq / per_freq;
