@@ -14,7 +14,7 @@ module uart_tx #(
 
   generate
 
-    if (simulation == 1) begin : uart_simulation
+    if (hardware == 0) begin : uart_simulation
 
       always_ff @(posedge clock) begin
 
@@ -38,7 +38,7 @@ module uart_tx #(
 
     end
 
-    if (simulation == 0) begin : uart_hardware
+    if (hardware == 1) begin : uart_hardware
 
       localparam full = clock_rate - 1;
 

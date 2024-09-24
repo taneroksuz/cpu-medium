@@ -28,5 +28,11 @@ compile:
 parse:
 	check/run.sh
 
+quartus:
+	fpga/quartus/run.sh
+
+xilinx:
+	fpga/xilinx/run.sh
+
 program:
 	serial/transfer.sh

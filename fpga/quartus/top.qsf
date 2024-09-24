@@ -1,10 +1,73 @@
-#============================================================
-# Build by Terasic V1.0.0
-#============================================================
-
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name TOP_LEVEL_ENTITY top
+set_global_assignment -name SYSTEMVERILOG_FILE ../top.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../configure.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/constants.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/functions.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/lzc/lzc_wire.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/lzc/lzc_4.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/lzc/lzc_8.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/lzc/lzc_16.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/lzc/lzc_32.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/lzc/lzc_64.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/lzc/lzc_128.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/lzc/lzc_256.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/float/fp_wire.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/float/fp_ext.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/float/fp_cmp.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/float/fp_max.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/float/fp_sgnj.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/float/fp_cvt.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/float/fp_fma.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/float/fp_mac.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/float/fp_fdiv.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/float/fp_rnd.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/float/fp_exe.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../fpu/verilog/src/float/fp_unit.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/wires.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/bit_alu.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/bit_clmul.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/btac.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/alu.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/agu.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/bcu.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/lsu.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/csr_alu.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/mul.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/div.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/compress.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/decoder.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/register.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/csr.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/buffer.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/hazard.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/forwarding.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/fetch_stage.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/decode_stage.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/issue_stage.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/execute_stage.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/memory_stage.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/writeback_stage.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/fpu.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/clk_div.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/arbiter.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/ccd.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/clint.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/tim.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/pmp.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/clic.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/cpu.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/rom.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/sram.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/spi.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/uart_rx.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/uart_tx.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../../verilog/rtl/soc.sv
+set_global_assignment -name SDC_FILE ../top.sdc
 
 set_global_assignment -name FAMILY "Cyclone V"
 set_global_assignment -name DEVICE 5CGXFC5C6F27C7
+set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
 set_global_assignment -name DEVICE_FILTER_PACKAGE FBGA
 
 

@@ -1,0 +1,6 @@
+*
+!.gitignore
+!*.sv
+!*.sh
+!*.qsf
+!*.sdc

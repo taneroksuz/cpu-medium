@@ -60,12 +60,15 @@ module sram #(
           v.write = 0;
         end
         if (v.state == 2) begin
+          v.addr[2:0] = 3'b110;
           v.state = 3;
         end
         if (v.state == 1) begin
+          v.addr[2:0] = 3'b100;
           v.state = 2;
         end
         if (v.state == 0) begin
+          v.addr[2:0] = 3'b010;
           v.state = 1;
         end
       end
@@ -81,14 +84,17 @@ module sram #(
         end
         if (v.state == 2) begin
           v.data[47:32] = sram_dq;
+          v.addr[2:0] = 3'b110;
           v.state = 3;
         end
         if (v.state == 1) begin
           v.data[31:16] = sram_dq;
+          v.addr[2:0] = 3'b100;
           v.state = 2;
         end
         if (v.state == 0) begin
           v.data[15:0] = sram_dq;
+          v.addr[2:0] = 3'b010;
           v.state = 1;
         end
       end
@@ -96,7 +102,7 @@ module sram #(
     end
 
     if (sram_in.mem_valid == 1 && sram_in.mem_addr == 0) begin
-      v.addr  = sram_in.mem_addr[17:0];
+      v.addr  = {sram_in.mem_addr[17:3],3'b000};
       v.data  = sram_in.mem_wdata;
       v.strb  = sram_in.mem_wstrb;
       v.write = |v.strb;

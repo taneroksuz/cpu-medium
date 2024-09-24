@@ -5,7 +5,7 @@ module top
   input           CLOCK_50_B5B,
   input  [ 3 : 0] KEY,
   input           UART_RX,
-  input           UART_TX,
+  output          UART_TX,
   output          SRAM_CE_n,
   output          SRAM_WE_n,
   output          SRAM_OE_n,
@@ -17,6 +17,7 @@ module top
 
   timeunit 1ns; timeprecision 1ps;
 
+  logic CLOCK_CPU;
   logic CLOCK_PER;
 
   logic SCLK;
@@ -33,8 +34,16 @@ module top
   end
 
   clk_div #(
+      .clock_rate(clk_divider_cpu)
+  ) clk_div_cpu_comp (
+      .reset(KEY[0]),
+      .clock(CLOCK_50_B5B),
+      .clock_per(CLOCK_CPU)
+  );
+
+  clk_div #(
       .clock_rate(clk_divider_per)
-  ) clk_div_comp (
+  ) clk_div_per_comp (
       .reset(KEY[0]),
       .clock(CLOCK_50_B5B),
       .clock_per(CLOCK_PER)
@@ -42,7 +51,7 @@ module top
 
   soc soc_comp (
       .reset(KEY[0]),
-      .clock(CLOCK_50_B5B),
+      .clock(CLOCK_CPU),
       .clock_per(CLOCK_PER),
       .sclk(SCLK),
       .mosi(MOSI),

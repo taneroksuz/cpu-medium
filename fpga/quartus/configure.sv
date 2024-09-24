@@ -1,7 +1,7 @@
 package configure;
   timeunit 1ns; timeprecision 1ps;
 
-  parameter hardware = 0;
+  parameter hardware = 1;
 
   parameter buffer_depth = 4;
 
@@ -10,7 +10,7 @@ package configure;
   parameter tim_width = 32;
   parameter tim_depth = 2048;
 
-  parameter ram_type = 0;
+  parameter ram_type = 1;
 
   parameter pmp_region = 8;
 
@@ -44,12 +44,15 @@ package configure;
   parameter sram_base_addr = 32'h80000000;
   parameter sram_mask_addr = 32'h000FFFFF;
 
-  parameter cpu_freq = 1000000000;  // 1GHz
-  parameter per_freq = 200000000;   // 200MHz
-  parameter rtc_freq = 1000000;     // 1MHz
+  parameter sys_freq = 50000000;  // 50MHz
+
+  parameter cpu_freq = 25000000;  // 25MHz
+  parameter per_freq = 5000000;   // 5MHz
+  parameter rtc_freq = 1000000;   // 1MHz
   parameter baudrate = 115200;
 
-  parameter clk_divider_per = cpu_freq / per_freq;
+  parameter clk_divider_cpu = sys_freq / cpu_freq;
+  parameter clk_divider_per = sys_freq / per_freq;
   parameter clk_divider_rtc = cpu_freq / rtc_freq;
   parameter clk_divider_bit = cpu_freq / baudrate;
 
