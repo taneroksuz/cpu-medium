@@ -35,7 +35,7 @@ for FILE in $BASEDIR/sim/input/*; do
   ${RISCV}/bin/riscv32-unknown-elf-nm -A $FILE | grep -sw 'tohost' | sed -e 's/.*:\(.*\) D.*/\1/' > ${FILE%.*}.host
   ${RISCV}/bin/riscv32-unknown-elf-objcopy -O binary $FILE ${FILE%.*}.bin
   $PYTHON $BASEDIR/py/bin2dat.py --input $FILE --address 0x0 --offset 0x100000
-  cp ${FILE%.*}.dat ram.dat
+  cp ${FILE%.*}.dat sram.dat
   cp ${FILE%.*}.host host.dat
   if [ "$DUMP" = "1" ]
   then
