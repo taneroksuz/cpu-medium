@@ -19,6 +19,8 @@ module top
 
   logic CLOCK_CPU;
   logic CLOCK_PER;
+  logic LOCKED;
+  logic RESET;
 
   logic SCLK;
   logic MOSI;
@@ -35,13 +37,16 @@ module top
 
   pll pll_cpu_comp (
     .refclk(CLOCK_50_B5B),
-    .rst(KEY[0]),
+    .rst(~KEY[0]),
     .outclk_0(CLOCK_CPU),
     .outclk_1(CLOCK_PER),
+    .locked(LOCKED)
   );
 
+  assign RESET = LOCKED & KEY[0];
+
   soc soc_comp (
-      .reset(KEY[0]),
+      .reset(RESET),
       .clock(CLOCK_CPU),
       .clock_per(CLOCK_PER),
       .sclk(SCLK),
