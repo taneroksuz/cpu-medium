@@ -43,7 +43,7 @@ module uart_rx #(
 
     v.ready_re = 0;
 
-    if (uart_in.mem_valid == 1 && |uart_in.mem_wstrb == 0 && uart_in.mem_addr == 0 && v.ready == 1) begin
+    if (uart_in.mem_valid == 1 && |uart_in.mem_wstrb == 0 && v.ready == 1) begin
       v.ready_re = 1;
       v.ready = 0;
     end

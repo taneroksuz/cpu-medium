@@ -32,7 +32,7 @@ package configure;
   parameter uart_tx_mask_addr = 32'h0000003;
 
   parameter uart_rx_base_addr = 32'h1000004;
-  parameter uart_rx_mask_addr = 32'h0000007;
+  parameter uart_rx_mask_addr = 32'h0000003;
 
   parameter clint_base_addr = 32'h2000000;
   parameter clint_mask_addr = 32'h000FFFF;

@@ -68,10 +68,10 @@ loop:
 trap_entry:
 
   # uart irpt
-  la t0, 0x80000018
+  la t5, 0x80000018
 
-  csrr t1, mcause
-  bne t0, t1, loop
+  csrr t6, mcause
+  bne t5, t6, loop
 
 copy_firmware:
 

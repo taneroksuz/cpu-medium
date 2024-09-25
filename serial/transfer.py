@@ -8,12 +8,12 @@ import serial
 if __name__ == '__main__':
 
     if len(sys.argv) < 4:
-        print('Expected usage: {0} <port> <filename> <words>'.format(sys.argv[0]))
+        print('Expected usage: {0} <port> <filename> <size>'.format(sys.argv[0]))
         sys.exit(1)
 
     fb = open(sys.argv[2], 'rb')
     ba = bytearray(fb.read())
-    words = int(sys.argv[3])
+    size = int(sys.argv[3], 16)
 
     ser = serial.Serial(
         port=sys.argv[1],
@@ -32,8 +32,7 @@ if __name__ == '__main__':
     ser.open()
     ser.isOpen()
 
-    for i in range(words*4):
-        ser.write(ba[i])
+    ser.write(ba[0:size])
 
     while(1):
         line = ser.readline()
