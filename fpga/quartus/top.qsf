@@ -56,7 +56,6 @@ set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/ccd.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/clint.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/tim.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/pmp.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/clic.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/cpu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/sram.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/spi.sv
