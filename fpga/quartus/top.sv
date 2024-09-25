@@ -33,20 +33,11 @@ module top
     SS = 0;
   end
 
-  clk_div #(
-      .clock_rate(clk_divider_cpu)
-  ) clk_div_cpu_comp (
-      .reset(KEY[0]),
-      .clock(CLOCK_50_B5B),
-      .clock_per(CLOCK_CPU)
-  );
-
-  clk_div #(
-      .clock_rate(clk_divider_per)
-  ) clk_div_per_comp (
-      .reset(KEY[0]),
-      .clock(CLOCK_50_B5B),
-      .clock_per(CLOCK_PER)
+  pll pll_cpu_comp (
+    .refclk(CLOCK_50_B5B),
+    .rst(KEY[0]),
+    .outclk_0(CLOCK_CPU),
+    .outclk_1(CLOCK_PER),
   );
 
   soc soc_comp (

@@ -12,9 +12,6 @@ create_clock -period 20 [get_ports CLOCK_50_B6A]
 create_clock -period 20 [get_ports CLOCK_50_B7A]
 create_clock -period 20 [get_ports CLOCK_50_B8A]
 
-create_generated_clock -divide_by 10 -source [get_ports CLOCK_50_B5B] -name clock [get_registers clk_div:clk_div_cpu_comp|clock_per]
-create_generated_clock -divide_by 10 -source [get_ports CLOCK_50_B5B] -name clock_per [get_registers clk_div:clk_div_per_comp|clock_per]
-
 #**************************************************************
 # Create Generated Clock
 #**************************************************************
