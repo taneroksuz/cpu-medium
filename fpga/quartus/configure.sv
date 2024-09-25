@@ -48,9 +48,9 @@ package configure;
 
   parameter sys_freq = 50000000;  // 50MHz
 
-  parameter cpu_freq = 10000000;  // 10MHz
-  parameter per_freq = 5000000;   // 5MHz
-  parameter rtc_freq = 1000000;   // 1MHz
+  parameter cpu_freq = 5000000;  // 5MHz
+  parameter per_freq = 5000000;  // 5MHz
+  parameter rtc_freq = 1000000;  // 1MHz
   parameter baudrate = 115200;
 
   parameter clk_divider_cpu = sys_freq / cpu_freq;
