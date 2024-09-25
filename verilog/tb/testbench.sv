@@ -53,6 +53,7 @@ module testbench ();
   initial begin
     reset = 0;
     clock = 1;
+    clock_per = 1;
   end
 
   initial begin
@@ -60,6 +61,7 @@ module testbench ();
   end
 
   always #0.5 clock = ~clock;
+  always #5.0 clock_per = ~clock_per;
 
   initial begin
     string filename;
@@ -208,14 +210,6 @@ module testbench ();
       end
     end
   end
-
-  clk_div #(
-      .clock_rate(clk_divider_per)
-  ) clk_div_comp (
-      .reset(reset),
-      .clock(clock),
-      .clock_per(clock_per)
-  );
 
   soc soc_comp (
       .reset(reset),
