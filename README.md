@@ -8,8 +8,6 @@ This cpu is 6-stage in-order dual issue superscalar processor with floating poin
 - RV32-IMFDCB
 - Fast multiplication unit
 - Slow division unit
-- Physical Memory Protection
-- Core Local Interrupt Controller
 - FPU with single and double precision
 - Fast and slow option for FDIV and FSQRT instruction
 - Branch target cache with bimodal branch predictor

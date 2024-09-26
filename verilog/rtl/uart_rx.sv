@@ -76,7 +76,14 @@ module uart_rx #(
 
   end
 
-  assign uart_out.mem_rdata = {56'b0, r.rdata_re};
+  assign uart_out.mem_rdata = {r.rdata_re,
+                               r.rdata_re,
+                               r.rdata_re,
+                               r.rdata_re,
+                               r.rdata_re,
+                               r.rdata_re,
+                               r.rdata_re,
+                               r.rdata_re};
   assign uart_out.mem_error = 0;
   assign uart_out.mem_ready = r.ready_re;
   assign uart_irpt = r.ready;
