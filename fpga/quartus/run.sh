@@ -18,11 +18,6 @@ ${QUARTUS_BIN}quartus_fit --read_settings_files=off --write_settings_files=off $
 ${QUARTUS_BIN}quartus_sta ${PROJECT}
 ${QUARTUS_BIN}quartus_asm ${PROJECT}
 
-printf "${BLUE}"
-cat ${BASEDIR}/fpga/quartus/output_files/${PROJECT}.fit.summary
-cat ${BASEDIR}/fpga/quartus/output_files/${PROJECT}.sta.summary
-printf "${NC}"
-
 if pgrep -x "jtagd" > /dev/null
 then
   sudo killall jtagd
