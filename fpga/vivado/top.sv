@@ -10,6 +10,11 @@ module top
 
   timeunit 1ns; timeprecision 1ps;
 
+  logic CLOCK_CPU;
+  logic CLOCK_PER;
+  logic LOCKED;
+  logic RESET;
+
   logic SCLK;
   logic MOSI;
   logic MISO;
@@ -30,10 +35,20 @@ module top
     SS = 0;
   end
 
+  pll pll_cpu_comp (
+    .clk_in1(CLK100MHZ),
+    .reset(CPU_RESETN),
+    .clk_out1(CLOCK_CPU),
+    .clk_out2(CLOCK_PER),
+    .locked(LOCKED)
+  );
+
+  assign RESET = LOCKED & CPU_RESETN;
+
   soc soc_comp (
-      .reset(CPU_RESETN),
-      .clock(CLK100MHZ),
-      .clock_per(CLK100MHZ),
+      .reset(RESET),
+      .clock(CLOCK_CPU),
+      .clock_per(CLOCK_PER),
       .sclk(SCLK),
       .mosi(MOSI),
       .miso(MISO),
