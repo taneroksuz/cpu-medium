@@ -37,7 +37,7 @@ module top
 
   pll pll_cpu_comp (
     .clk_in1(CLK100MHZ),
-    .reset(CPU_RESETN),
+    .reset(~CPU_RESETN),
     .clk_out1(CLOCK_CPU),
     .clk_out2(CLOCK_PER),
     .locked(LOCKED)
