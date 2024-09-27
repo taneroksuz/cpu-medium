@@ -5,9 +5,7 @@ MEMORY
 {
   tim0 (rwx) : ORIGIN = 0x10000000, LENGTH = 0x80000
   tim1 (rwx) : ORIGIN = 0x20000000, LENGTH = 0x80000
-  boot (rwx) : ORIGIN = 0x80000000, LENGTH = 0x1000
-  iram (rwx) : ORIGIN = 0x80001000, LENGTH = 0x7F000
-  dram (rwx) : ORIGIN = 0x80080000, LENGTH = 0x80000
+  ram  (rwx) : ORIGIN = 0x80000000, LENGTH = 0x100000
   host (rwx) : ORIGIN = 0x90000000, LENGTH = 0x100
 }
 
@@ -22,20 +20,22 @@ SECTIONS
       _start = .;
       *(.text.init)
     }
-  } >boot AT>boot
+  } >ram AT>ram
 
   OVERLAY :
   {
     .text
     {
+      . = ALIGN(8);
       *(.text*)
     }
-  } >tim0 AT>iram
+  } >tim0 AT>ram
 
   OVERLAY :
   {
     .data
     {
+      . = ALIGN(8);
       *(.rodata*)
       *(.srodata*)
       *(.data*)
@@ -44,7 +44,7 @@ SECTIONS
       *(.sbss*)
       _end = .;
     }
-  } >tim1 AT>dram
+  } >tim1 AT>ram
 
   .tohost :
   {
