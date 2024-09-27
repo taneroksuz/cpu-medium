@@ -12,7 +12,7 @@ module sram_memory (
 );
   timeunit 1ns; timeprecision 1ps;
 
-  localparam sram_depth = 32'h40000;
+  localparam sram_depth = 32'h20000;
 
   logic [15 : 0] sram_block[0:sram_depth-1];
 
@@ -25,13 +25,13 @@ module sram_memory (
       if (SRAM_WE_n == 0) begin
 
         if (SRAM_LB_n == 0)
-          sram_block[SRAM_A][7:0] <= SRAM_D[7:0];
+          sram_block[SRAM_A[16:0]][7:0] <= SRAM_D[7:0];
         if (SRAM_UB_n == 0)
-          sram_block[SRAM_A][15:8] <= SRAM_D[15:8];
+          sram_block[SRAM_A[16:0]][15:8] <= SRAM_D[15:8];
 
       end else if (SRAM_OE_n == 0) begin
 
-        sram_rdata <= sram_block[SRAM_A];
+        sram_rdata <= sram_block[SRAM_A[16:0]];
 
       end
 
