@@ -43,6 +43,17 @@ module top
     .locked(LOCKED)
   );
 
+  sram_memory sram_memory_comp (
+      .CLOCK(CLOCK_CPU),
+      .SRAM_CE_n(SRAM_CE_n),
+      .SRAM_WE_n(SRAM_WE_n),
+      .SRAM_OE_n(SRAM_OE_n),
+      .SRAM_UB_n(SRAM_UB_n),
+      .SRAM_LB_n(SRAM_LB_n),
+      .SRAM_D(SRAM_D),
+      .SRAM_A(SRAM_A)
+  );
+
   assign RESET = LOCKED & CPU_RESETN;
 
   soc soc_comp (
