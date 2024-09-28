@@ -17,14 +17,14 @@ sudo apt-get -y install autoconf automake autotools-dev curl python3 python3-pip
                         libtool patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake \
                         libglib2.0-dev libslirp-dev
 
-if [ -d "riscv-gnu-toolchain" ]; then
-  rm -rf riscv-gnu-toolchain
+if [ -d "$BASEDIR/tools/riscv-gnu-toolchain" ]; then
+  rm -rf $BASEDIR/tools/riscv-gnu-toolchain
 fi
 
-git clone https://github.com/riscv-collab/riscv-gnu-toolchain.git
+git clone https://github.com/riscv-collab/riscv-gnu-toolchain.git $BASEDIR/tools/riscv-gnu-toolchain
 
-mkdir -p riscv-gnu-toolchain/build
-cd riscv-gnu-toolchain/build
+mkdir -p $BASEDIR/tools/riscv-gnu-toolchain/build
+cd $BASEDIR/tools/riscv-gnu-toolchain/build
 
 ../configure --enable-llvm --disable-linux --with-arch=$ARCH --with-abi=$ABI --prefix=$RISCV
 

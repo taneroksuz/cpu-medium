@@ -44,3 +44,8 @@ vivado:
 
 program:
 	serial/transfer.sh
+
+tool:
+	tools/riscv.sh
+	tools/verible.sh
+	tools/verilator.sh

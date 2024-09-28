@@ -24,20 +24,18 @@ This cpu is 6-stage in-order dual issue superscalar processor with floating poin
 
 ## TOOLS
 
-The installation scripts of necessary tools are located in directory **tools**. These scripts need **root** permission in order to install packages and tools for simulation and testcase generation. Please run these scripts in directory **tools** locally.
+The installation scripts of necessary tools are located in directory **tools**. These scripts need **root** permission in order to install packages and tools for simulation and testcase generation.
 
 ## USAGE
 
-1. Cloning the repository:
+1. Clone the repository:
 ```console
 git clone --recurse-submodules https://github.com/taneroksuz/cpu-medium.git
 ```
 
-2. Execute scripts in directory **tools** to install necessary tools for compilation and simulation:
+2. Install necessary tools for compilation and simulation:
 ```console
-cd tools
-./riscv.sh
-./verilator.sh
+make tool
 ```
 
 3. Compile some benchmarks:
