@@ -16,7 +16,7 @@ package configure;
 
   parameter pmp_region = 8;
 
-  parameter fpu_enable = 0;
+  parameter fpu_enable = 1;
 
   parameter btac_enable = 1;
   parameter branchtarget_depth = 512;
