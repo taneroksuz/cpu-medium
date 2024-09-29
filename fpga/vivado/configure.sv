@@ -46,11 +46,11 @@ package configure;
   parameter sram_base_addr = 32'h80000000;
   parameter sram_mask_addr = 32'h000FFFFF;
 
-  parameter sys_freq = 50000000;  // 50MHz
+  parameter sys_freq = 100000000; // 100MHz
 
-  parameter cpu_freq = 5000000;  // 5MHz
-  parameter per_freq = 5000000;  // 5MHz
-  parameter rtc_freq = 1000000;  // 1MHz
+  parameter cpu_freq = 20000000;  // 20MHz
+  parameter per_freq = 5000000;   // 5MHz
+  parameter rtc_freq = 1000000;   // 1MHz
   parameter baudrate = 115200;
 
   parameter clk_divider_cpu = sys_freq / cpu_freq;
