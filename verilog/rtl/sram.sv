@@ -111,7 +111,7 @@ module sram #(
           v.write = |v.strb;
           v.read = ~v.write;
           v.counter = 0;
-          v.state = {1'b0,v.addr[1:0]}+3'b001;
+          v.state = {1'b0, v.addr[1:0]} + 3'b001;
         end
 
         if (v.counter > full) begin
