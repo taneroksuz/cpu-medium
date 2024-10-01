@@ -19,6 +19,7 @@ SECTIONS
       _text_start = .;
       _start = .;
       *(.text.init)
+      . = ALIGN(8);
     }
   } >ram AT>ram
 
@@ -26,8 +27,8 @@ SECTIONS
   {
     .text
     {
-      . = ALIGN(8);
       *(.text*)
+      . = ALIGN(8);
     }
   } >tim0 AT>ram
 
@@ -35,7 +36,6 @@ SECTIONS
   {
     .data
     {
-      . = ALIGN(8);
       *(.rodata*)
       *(.srodata*)
       *(.data*)
