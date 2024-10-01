@@ -21,7 +21,7 @@ if __name__ == '__main__':
         parity='N',
         stopbits=1,
         bytesize=8,
-        timeout=10,
+        timeout=120,
         xonxoff=0,
         rtscts=0
     )
