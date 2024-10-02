@@ -9,6 +9,7 @@ export BENCHMARK ?= benchmark
 
 export QUARTUS_VER ?= 23.1
 export QUARTUS_BIN ?= $(HOME)/intelFPGA_lite/$(QUARTUS_VER)std/quartus/bin/
+export QUESTA_BIN ?= $(HOME)/intelFPGA_lite/$(QUARTUS_VER)std/questa_fse/bin/
 
 export VIVADO_VER ?=2023.2
 export VIVADO_BIN ?= $(HOME)/Xilinx/Vivado/$(VIVADO_VER)/bin
@@ -22,9 +23,6 @@ export ABI ?= ilp32d
 export MAXTIME ?= 10000000
 export DUMP ?= 0# "1" on, "0" off
 
-simulate:
-	sim/run.sh
-
 compile:
 	benchmark/riscv-tests.sh
 	benchmark/coremark.sh
@@ -35,6 +33,12 @@ compile:
 
 parse:
 	check/run.sh
+
+questa:
+	sim/questa/run.sh
+
+xsim:
+	sim/xsim/run.sh
 
 quartus:
 	fpga/quartus/run.sh
