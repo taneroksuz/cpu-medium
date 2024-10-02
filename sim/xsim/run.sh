@@ -15,6 +15,7 @@ rm -f $BASEDIR/sim/xsim/input/*.reg
 rm -f $BASEDIR/sim/xsim/input/*.csr
 rm -f $BASEDIR/sim/xsim/input/*.mem
 rm -f $BASEDIR/sim/xsim/input/*.vcd
+rm -f $BASEDIR/sim/xsim/input/*.wdb
 rm -f $BASEDIR/sim/xsim/input/*.freg
 
 rm -rf $BASEDIR/sim/xsim/output/*
@@ -100,11 +101,12 @@ for FILE in $BASEDIR/sim/xsim/input/*; do
   if [ "$DUMP" = "1" ]
   then
     $VIVADO_BIN/xelab -top testbench -snapshot testbench_snapshot
-    $VIVADO_BIN/xsim testbench_snapshot -R -testplusarg "MAXTIME=$MAXTIME" -testplusarg "REGFILE=${FILE%.*}.reg" -testplusarg "CSRFILE=${FILE%.*}.csr" -testplusarg "MEMFILE=${FILE%.*}.mem" -testplusarg "FREGFILE=${FILE%.*}.freg" -testplusarg "FILENAME=${FILE%.*}.vcd"
+    $VIVADO_BIN/xsim testbench_snapshot -testplusarg "MAXTIME=$MAXTIME" -testplusarg "REGFILE=${FILE%.*}.reg" -testplusarg "CSRFILE=${FILE%.*}.csr" -testplusarg "MEMFILE=${FILE%.*}.mem" -testplusarg "FREGFILE=${FILE%.*}.freg" -testplusarg "FILENAME=${FILE%.*}.vcd" -tclbatch $BASEDIR/sim/xsim/run.tcl --wdb ${FILE%.*}.wdb
     cp ${FILE%.*}.reg $BASEDIR/sim/xsim/output/.
     cp ${FILE%.*}.csr $BASEDIR/sim/xsim/output/.
     cp ${FILE%.*}.mem $BASEDIR/sim/xsim/output/.
     cp ${FILE%.*}.vcd $BASEDIR/sim/xsim/output/.
+    cp ${FILE%.*}.wdb $BASEDIR/sim/xsim/output/.
     cp ${FILE%.*}.freg $BASEDIR/sim/xsim/output/.
   else
     $VIVADO_BIN/xelab -top testbench -snapshot testbench_snapshot

@@ -4,5 +4,4 @@
 !output/
 !output/*
 !*.sh
-!*.f
 !.gitignore
