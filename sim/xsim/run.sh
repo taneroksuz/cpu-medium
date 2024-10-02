@@ -91,8 +91,6 @@ $VIVADO_BIN/xvlog --sv $BASEDIR/verilog/conf/configure.sv \
                        $BASEDIR/verilog/rtl/soc.sv \
                        $BASEDIR/verilog/tb/testbench.sv
 
-$VIVADO_BIN/xelab -top testbench -snapshot $BASEDIR/sim/xsim/work/testbench_snapshot
-
 for FILE in $BASEDIR/sim/xsim/input/*; do
   ${RISCV}/bin/riscv32-unknown-elf-nm -A $FILE | grep -sw 'tohost' | sed -e 's/.*:\(.*\) D.*/\1/' > ${FILE%.*}.host
   ${RISCV}/bin/riscv32-unknown-elf-objcopy -O binary $FILE ${FILE%.*}.bin
@@ -101,14 +99,16 @@ for FILE in $BASEDIR/sim/xsim/input/*; do
   cp ${FILE%.*}.host host.dat
   if [ "$DUMP" = "1" ]
   then
-    $VIVADO_BIN/xsim $BASEDIR/sim/xsim/work/testbench_snapshot -R +MAXTIME=$MAXTIME +REGFILE=${FILE%.*}.reg +CSRFILE=${FILE%.*}.csr +MEMFILE=${FILE%.*}.mem +FREGFILE=${FILE%.*}.freg +FILENAME=${FILE%.*}.vcd
+    $VIVADO_BIN/xelab -top testbench -snapshot testbench_snapshot -L MAXTIME=$MAXTIME -L REGFILE=${FILE%.*}.reg -L CSRFILE=${FILE%.*}.csr -L MEMFILE=${FILE%.*}.mem -L FREGFILE=${FILE%.*}.freg -L FILENAME=${FILE%.*}.vcd
+    $VIVADO_BIN/xsim testbench_snapshot -R
     cp ${FILE%.*}.reg $BASEDIR/sim/xsim/output/.
     cp ${FILE%.*}.csr $BASEDIR/sim/xsim/output/.
     cp ${FILE%.*}.mem $BASEDIR/sim/xsim/output/.
     cp ${FILE%.*}.vcd $BASEDIR/sim/xsim/output/.
     cp ${FILE%.*}.freg $BASEDIR/sim/xsim/output/.
   else
-    $VIVADO_BIN/xsim $BASEDIR/sim/xsim/work/testbench_snapshot -R +MAXTIME=$MAXTIME
+    $VIVADO_BIN/xelab -top testbench -snapshot testbench_snapshot -L MAXTIME=$MAXTIME
+    $VIVADO_BIN/xsim testbench_snapshot -R
   fi
 done
 

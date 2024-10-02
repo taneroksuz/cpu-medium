@@ -34,8 +34,8 @@ compile:
 parse:
 	check/run.sh
 
-questa:
-	sim/questa/run.sh
+vsim:
+	sim/vsim/run.sh
 
 xsim:
 	sim/xsim/run.sh
