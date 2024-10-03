@@ -9,14 +9,14 @@ NC="\033[0m"
 
 cd ${BASEDIR}/fpga/quartus
 
-${QUARTUS_BIN}quartus_map top.qsf
-${QUARTUS_BIN}quartus_fit --read_settings_files=off --write_settings_files=off top
-${QUARTUS_BIN}quartus_sta top
-${QUARTUS_BIN}quartus_asm top
+${QUARTUS}_map top.qsf
+${QUARTUS}_fit --read_settings_files=off --write_settings_files=off top
+${QUARTUS}_sta top
+${QUARTUS}_asm top
 
 if pgrep -x "jtagd" > /dev/null
 then
   sudo killall jtagd
 fi
-sudo ${QUARTUS_BIN}/jtagconfig
-${QUARTUS_BIN}/quartus_pgm -m jtag -o "p;${BASEDIR}/fpga/quartus/output_files/top.sof"
+sudo $JTAGCONFIG
+${QUARTUS}_pgm -m jtag -o "p;${BASEDIR}/fpga/quartus/output_files/top.sof"

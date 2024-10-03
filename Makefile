@@ -7,12 +7,17 @@ export SERIAL ?= /dev/ttyUSB0
 export BASEDIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 export BENCHMARK ?= benchmark
 
-export QUARTUS_VER ?= 23.1
-export QUARTUS_BIN ?= $(HOME)/intelFPGA_lite/$(QUARTUS_VER)std/quartus/bin/
-export QUESTA_BIN ?= $(HOME)/intelFPGA_lite/$(QUARTUS_VER)std/questa_fse/bin/
+export QUARTUS ?= quartus
+export VIVADO ?= vivado
 
-export VIVADO_VER ?=2023.2
-export VIVADO_BIN ?= $(HOME)/Xilinx/Vivado/$(VIVADO_VER)/bin
+export JTAGCONFIG ?= jtagconfig
+
+export XVLOG ?= xvlog
+export XELAB ?= xelab
+export XSIM ?= xsim
+export VLIB ?= vlib
+export VLOG ?= vlog
+export VSIM ?= vsim
 
 export SRAM_SIZE ?= 0x80000# Altera -> 0x80000, Xilinx -> 0x40000
 
