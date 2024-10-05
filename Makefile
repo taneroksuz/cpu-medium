@@ -59,4 +59,3 @@ program:
 tool:
 	tools/riscv.sh
 	tools/verible.sh
-	tools/verilator.sh

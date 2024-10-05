@@ -26,7 +26,7 @@ git clone https://github.com/riscv-collab/riscv-gnu-toolchain.git $BASEDIR/tools
 mkdir -p $BASEDIR/tools/riscv-gnu-toolchain/build
 cd $BASEDIR/tools/riscv-gnu-toolchain/build
 
-../configure --enable-llvm --disable-linux --with-arch=$ARCH --with-abi=$ABI --prefix=$RISCV
+../configure --disable-linux --with-arch=$ARCH --with-abi=$ABI --prefix=$RISCV
 
 make -j$(nproc)
 make install
