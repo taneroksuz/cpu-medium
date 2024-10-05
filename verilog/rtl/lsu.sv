@@ -72,7 +72,7 @@ module lsu (
       ldata = {{48{data_h[15]}}, data_h};
     end
     if (lsu_in.lsu_op.lsu_lw == 1) begin
-      ldata = {{32{data_h[15]}}, data_w};
+      ldata = {{32{data_w[31]}}, data_w};
     end
     if (lsu_in.lsu_op.lsu_ld == 1) begin
       ldata = data_d;
