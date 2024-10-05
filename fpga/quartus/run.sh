@@ -9,10 +9,13 @@ NC="\033[0m"
 
 cd ${BASEDIR}/fpga/quartus
 
-${QUARTUS}_map top.qsf
-${QUARTUS}_fit --read_settings_files=off --write_settings_files=off top
-${QUARTUS}_sta top
-${QUARTUS}_asm top
+if [ "$SYNTHESIS" = "1" ]
+then
+  ${QUARTUS}_map top.qsf
+  ${QUARTUS}_fit --read_settings_files=off --write_settings_files=off top
+  ${QUARTUS}_sta top
+  ${QUARTUS}_asm top
+fi
 
 if pgrep -x "jtagd" > /dev/null
 then

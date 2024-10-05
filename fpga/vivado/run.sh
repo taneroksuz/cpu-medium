@@ -9,6 +9,9 @@ NC="\033[0m"
 
 cd ${BASEDIR}/fpga/vivado
 
-$VIVADO -nojournal -mode batch -source synthesis.tcl
+if [ "$SYNTHESIS" = "1" ]
+then
+  $VIVADO -nojournal -mode batch -source synthesis.tcl
+fi
 
 $VIVADO -nojournal -mode batch -source program.tcl
