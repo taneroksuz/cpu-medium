@@ -85,7 +85,11 @@ module fetch_stage (
       end
     endcase
 
-    if (csr_out.trap == 1) begin
+    if (d.w.clear == 1) begin
+      v.fence = 0;
+      v.spec  = 1;
+      v.ipc0  = 0;
+    end else if (csr_out.trap == 1) begin
       v.fence = 0;
       v.spec  = 1;
       v.ipc0  = csr_out.mtvec;
