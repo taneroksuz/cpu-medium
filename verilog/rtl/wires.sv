@@ -867,14 +867,12 @@ package wires;
     instruction_type instr0;
     instruction_type instr1;
     logic [0 : 0] stall;
-    logic [0 : 0] clear;
   } decode_reg_type;
 
   parameter decode_reg_type init_decode_reg = '{
       instr0 : init_instruction,
       instr1 : init_instruction,
-      stall : 0,
-      clear : 0
+      stall : 0
   };
 
   typedef struct packed {
@@ -891,7 +889,6 @@ package wires;
     calculation_type calc1;
     logic [0 : 0] halt;
     logic [0 : 0] stall;
-    logic [0 : 0] clear;
   } issue_reg_type;
 
   parameter issue_reg_type init_issue_reg = '{
@@ -900,8 +897,7 @@ package wires;
       calc0 : init_calculation,
       calc1 : init_calculation,
       halt : 0,
-      stall : 0,
-      clear : 0
+      stall : 0
   };
 
   typedef struct packed {
@@ -915,15 +911,13 @@ package wires;
     calculation_type calc1;
     logic [0 : 0] enable;
     logic [0 : 0] stall;
-    logic [0 : 0] clear;
   } execute_reg_type;
 
   parameter execute_reg_type init_execute_reg = '{
       calc0 : init_calculation,
       calc1 : init_calculation,
       enable : 0,
-      stall : 0,
-      clear : 0
+      stall : 0
   };
 
   typedef struct packed {
@@ -938,7 +932,6 @@ package wires;
     logic [0 : 0] ready0;
     logic [0 : 0] ready1;
     logic [0 : 0] stall;
-    logic [0 : 0] clear;
   } memory_reg_type;
 
   parameter memory_reg_type init_memory_reg = '{
@@ -946,27 +939,21 @@ package wires;
       calc1 : init_calculation,
       ready0 : 0,
       ready1 : 0,
-      stall : 0,
-      clear : 0
+      stall : 0
   };
 
-  typedef struct packed {
-    logic [0 : 0] stall;
-    logic [0 : 0] clear;
-  } writeback_out_type;
+  typedef struct packed {logic [0 : 0] stall;} writeback_out_type;
 
   typedef struct packed {
     calculation_type calc0;
     calculation_type calc1;
     logic [0 : 0] stall;
-    logic [0 : 0] clear;
   } writeback_reg_type;
 
   parameter writeback_reg_type init_writeback_reg = '{
       calc0 : init_calculation,
       calc1 : init_calculation,
-      stall : 0,
-      clear : 1
+      stall : 0
   };
 
   typedef struct packed {

@@ -28,7 +28,8 @@ module memory_stage (
     input memory_in_type a,
     input memory_in_type d,
     output memory_out_type y,
-    output memory_out_type q
+    output memory_out_type q,
+    input logic [1:0] clear
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -49,8 +50,6 @@ module memory_stage (
     end
 
     v.stall = 0;
-
-    v.clear = csr_out.trap | csr_out.mret | d.w.clear;
 
     dmem0_in.mem_valid = a.e.calc0.op.load | a.e.calc0.op.store | a.e.calc0.op.fload | a.e.calc0.op.fstore;
     dmem0_in.mem_instr = 0;
@@ -131,17 +130,13 @@ module memory_stage (
       v.ready1 = 0;
     end
 
-    if (v.clear == 1) begin
+    if ((csr_out.trap | csr_out.mret | clear[0]) == 1) begin
       v.calc0 = init_calculation;
       v.calc1 = init_calculation;
     end
 
     if (v.calc0.op_b.fence == 1) begin
       v.calc0.op.fence = 1;
-    end
-
-    if (v.clear == 1) begin
-      v.stall = 0;
     end
 
     forwarding0_min.wren = v.calc0.op.wren;

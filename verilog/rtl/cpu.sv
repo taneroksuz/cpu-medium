@@ -124,6 +124,8 @@ module cpu (
   fp_csr_out_type fp_csr_out;
   fp_forwarding_out_type fp_forwarding_out;
 
+  logic [1:0] clear;
+
   assign fpu_in.fp_decode0_in = fp_decode0_in;
   assign fpu_in.fp_decode1_in = fp_decode1_in;
   assign fpu_in.fp_execute_in = fp_execute_in;
@@ -385,7 +387,8 @@ module cpu (
       .a(fetch_in_a),
       .d(fetch_in_d),
       .y(fetch_out_y),
-      .q(fetch_out_q)
+      .q(fetch_out_q),
+      .clear(clear)
   );
 
   decode_stage decode_stage_comp (
@@ -408,7 +411,8 @@ module cpu (
       .a(decode_in_a),
       .d(decode_in_d),
       .y(decode_out_y),
-      .q(decode_out_q)
+      .q(decode_out_q),
+      .clear(clear)
   );
 
   issue_stage issue_stage_comp (
@@ -436,7 +440,8 @@ module cpu (
       .a(issue_in_a),
       .d(issue_in_d),
       .y(issue_out_y),
-      .q(issue_out_q)
+      .q(issue_out_q),
+      .clear(clear)
   );
 
   execute_stage execute_stage_comp (
@@ -476,7 +481,8 @@ module cpu (
       .a(execute_in_a),
       .d(execute_in_d),
       .y(execute_out_y),
-      .q(execute_out_q)
+      .q(execute_out_q),
+      .clear(clear)
   );
 
   memory_stage memory_stage_comp (
@@ -505,7 +511,8 @@ module cpu (
       .a(memory_in_a),
       .d(memory_in_d),
       .y(memory_out_y),
-      .q(memory_out_q)
+      .q(memory_out_q),
+      .clear(clear)
   );
 
   writeback_stage writeback_stage_comp (
@@ -514,7 +521,8 @@ module cpu (
       .a(writeback_in_a),
       .d(writeback_in_d),
       .y(writeback_out_y),
-      .q(writeback_out_q)
+      .q(writeback_out_q),
+      .clear(clear)
   );
 
   fpu #(
