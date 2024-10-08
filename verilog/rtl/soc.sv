@@ -304,13 +304,9 @@ module soc (
     if (reset == 0) begin
       error_out <= init_mem_out;
     end else begin
-      if (error_in.mem_valid == 1) begin
-        error_out.mem_rdata <= 0;
-        error_out.mem_error <= 1;
-        error_out.mem_ready <= 1;
-      end else begin
-        error_out <= init_mem_out;
-      end
+      error_out.mem_rdata <= 0;
+      error_out.mem_error <= error_in.mem_valid;
+      error_out.mem_ready <= error_in.mem_valid;
     end
   end
 

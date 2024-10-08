@@ -2,7 +2,7 @@ import wires::*;
 import constants::*;
 
 module ccd #(
-    parameter clock_rate = 10
+    parameter clock_rate
 ) (
     input logic reset,
     input logic clock,

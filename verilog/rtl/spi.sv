@@ -15,7 +15,7 @@ module spi #(
 );
   timeunit 1ns; timeprecision 1ps;
 
-  localparam half = (clock_rate / 2 - 1);
+  localparam full = clock_rate - 1;
 
   typedef struct packed {
     logic [31 : 0] counter;
@@ -42,7 +42,7 @@ module spi #(
     v.ready = 0;
     v.ss = 1;
 
-    if (v.counter > half) begin
+    if (v.counter > full) begin
       v.counter = 0;
       v.sclk = ~v.sclk;
     end

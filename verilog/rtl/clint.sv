@@ -2,7 +2,7 @@ import configure::*;
 import wires::*;
 
 module clint #(
-    parameter clock_rate = 10
+    parameter clock_rate
 ) (
     input logic reset,
     input logic clock,
@@ -15,7 +15,7 @@ module clint #(
   timeunit 1ns; timeprecision 1ps;
 
   localparam depth = $clog2(clock_rate);
-  localparam half = clock_rate / 2 - 1;
+  localparam full = clock_rate - 1;
 
   logic [depth-1 : 0] count = 0;
 
@@ -128,7 +128,7 @@ module clint #(
       count  <= 0;
       enable <= 0;
     end else begin
-      if (count == half[depth-1:0]) begin
+      if (count == full[depth-1:0]) begin
         count  <= 0;
         enable <= 1;
       end else begin
