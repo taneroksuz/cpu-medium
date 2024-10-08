@@ -7,17 +7,6 @@ BLUE="\033[0;34m"
 YELLOW="\033[1;33m"
 NC="\033[0m"
 
-rm -f $BASEDIR/sim/vsim/input/*.bin
-rm -f $BASEDIR/sim/vsim/input/*.dat
-rm -f $BASEDIR/sim/vsim/input/*.host
-
-rm -f $BASEDIR/sim/vsim/input/*.reg
-rm -f $BASEDIR/sim/vsim/input/*.csr
-rm -f $BASEDIR/sim/vsim/input/*.mem
-rm -f $BASEDIR/sim/vsim/input/*.vcd
-rm -f $BASEDIR/sim/vsim/input/*.wlf
-rm -f $BASEDIR/sim/vsim/input/*.freg
-
 rm -rf $BASEDIR/sim/vsim/output/*
 
 if [ ! -d "$BASEDIR/sim/vsim/work" ]; then
@@ -94,25 +83,21 @@ $VLOG -sv -svinputport=relaxed $BASEDIR/verilog/conf/configure.sv \
                     $BASEDIR/verilog/rtl/soc.sv \
                     $BASEDIR/verilog/tb/testbench.sv
 
-for FILE in $BASEDIR/sim/vsim/input/*; do
-  ${RISCV}/bin/riscv32-unknown-elf-nm -A $FILE | grep -sw 'tohost' | sed -e 's/.*:\(.*\) D.*/\1/' > ${FILE%.*}.host
-  ${RISCV}/bin/riscv32-unknown-elf-objcopy -O binary $FILE ${FILE%.*}.bin
-  $PYTHON $BASEDIR/py/bin2dat.py --input $FILE --address 0x0 --offset 0x100000
-  cp ${FILE%.*}.dat sram.dat
-  cp ${FILE%.*}.host host.dat
-  if [ "$DUMP" = "1" ]
-  then
-    $VSIM -c testbench -do "add wave -recursive *; run -all" +MAXTIME=$MAXTIME +REGFILE=${FILE%.*}.reg +CSRFILE=${FILE%.*}.csr +MEMFILE=${FILE%.*}.mem +FREGFILE=${FILE%.*}.freg +FILENAME=${FILE%.*}.vcd -wlf ${FILE%.*}.wlf
-    cp ${FILE%.*}.reg $BASEDIR/sim/vsim/output/.
-    cp ${FILE%.*}.csr $BASEDIR/sim/vsim/output/.
-    cp ${FILE%.*}.mem $BASEDIR/sim/vsim/output/.
-    cp ${FILE%.*}.vcd $BASEDIR/sim/vsim/output/.
-    cp ${FILE%.*}.wlf $BASEDIR/sim/vsim/output/.
-    cp ${FILE%.*}.freg $BASEDIR/sim/vsim/output/.
-  else
-    $VSIM -c testbench -do "run -all" +MAXTIME=$MAXTIME
-  fi
-done
+cp $BASEDIR/riscv/$PROGRAM.riscv $BASEDIR/sim/vsim/output/$PROGRAM.riscv
+
+FILE=$BASEDIR/sim/vsim/output/$PROGRAM
+
+${RISCV}/bin/riscv32-unknown-elf-nm -A ${FILE}.riscv | grep -sw 'tohost' | sed -e 's/.*:\(.*\) D.*/\1/' > ${FILE}.host
+${RISCV}/bin/riscv32-unknown-elf-objcopy -O binary ${FILE}.riscv ${FILE}.bin
+$PYTHON $BASEDIR/py/bin2dat.py --input ${FILE}.riscv --address 0x0 --offset 0x100000
+cp ${FILE}.dat sram.dat
+cp ${FILE}.host host.dat
+if [ "$DUMP" = "1" ]
+then
+  $VSIM -c testbench -do "add wave -recursive *; run -all" +MAXTIME=$MAXTIME +REGFILE=${FILE}.reg +CSRFILE=${FILE}.csr +MEMFILE=${FILE}.mem +FREGFILE=${FILE}.freg +FILENAME=${FILE}.vcd -wlf ${FILE}.wlf
+else
+  $VSIM -c testbench -do "run -all" +MAXTIME=$MAXTIME
+fi
 
 end=`date +%s`
 echo Execution time was `expr $end - $start` seconds.

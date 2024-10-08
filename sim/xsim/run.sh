@@ -7,17 +7,6 @@ BLUE="\033[0;34m"
 YELLOW="\033[1;33m"
 NC="\033[0m"
 
-rm -f $BASEDIR/sim/xsim/input/*.bin
-rm -f $BASEDIR/sim/xsim/input/*.dat
-rm -f $BASEDIR/sim/xsim/input/*.host
-
-rm -f $BASEDIR/sim/xsim/input/*.reg
-rm -f $BASEDIR/sim/xsim/input/*.csr
-rm -f $BASEDIR/sim/xsim/input/*.mem
-rm -f $BASEDIR/sim/xsim/input/*.vcd
-rm -f $BASEDIR/sim/xsim/input/*.wdb
-rm -f $BASEDIR/sim/xsim/input/*.freg
-
 rm -rf $BASEDIR/sim/xsim/output/*
 
 if [ ! -d "$BASEDIR/sim/xsim/work" ]; then
@@ -94,25 +83,21 @@ $XVLOG --sv $BASEDIR/verilog/conf/configure.sv \
 
 $XELAB -top testbench -snapshot testbench_snapshot
 
-for FILE in $BASEDIR/sim/xsim/input/*; do
-  ${RISCV}/bin/riscv32-unknown-elf-nm -A $FILE | grep -sw 'tohost' | sed -e 's/.*:\(.*\) D.*/\1/' > ${FILE%.*}.host
-  ${RISCV}/bin/riscv32-unknown-elf-objcopy -O binary $FILE ${FILE%.*}.bin
-  $PYTHON $BASEDIR/py/bin2dat.py --input $FILE --address 0x0 --offset 0x100000
-  cp ${FILE%.*}.dat sram.dat
-  cp ${FILE%.*}.host host.dat
-  if [ "$DUMP" = "1" ]
-  then
-    $XSIM testbench_snapshot -testplusarg "MAXTIME=$MAXTIME" -testplusarg "REGFILE=${FILE%.*}.reg" -testplusarg "CSRFILE=${FILE%.*}.csr" -testplusarg "MEMFILE=${FILE%.*}.mem" -testplusarg "FREGFILE=${FILE%.*}.freg" -testplusarg "FILENAME=${FILE%.*}.vcd" -tclbatch $BASEDIR/sim/xsim/run.tcl --wdb ${FILE%.*}.wdb
-    cp ${FILE%.*}.reg $BASEDIR/sim/xsim/output/.
-    cp ${FILE%.*}.csr $BASEDIR/sim/xsim/output/.
-    cp ${FILE%.*}.mem $BASEDIR/sim/xsim/output/.
-    cp ${FILE%.*}.vcd $BASEDIR/sim/xsim/output/.
-    cp ${FILE%.*}.wdb $BASEDIR/sim/xsim/output/.
-    cp ${FILE%.*}.freg $BASEDIR/sim/xsim/output/.
-  else
-    $XSIM testbench_snapshot -R -testplusarg "MAXTIME=$MAXTIME"
-  fi
-done
+cp $BASEDIR/riscv/$PROGRAM.riscv $BASEDIR/sim/xsim/output/$PROGRAM.riscv
+
+FILE=$BASEDIR/sim/xsim/output/$PROGRAM
+
+${RISCV}/bin/riscv32-unknown-elf-nm -A ${FILE}.riscv | grep -sw 'tohost' | sed -e 's/.*:\(.*\) D.*/\1/' > ${FILE}.host
+${RISCV}/bin/riscv32-unknown-elf-objcopy -O binary ${FILE}.riscv ${FILE}.bin
+$PYTHON $BASEDIR/py/bin2dat.py --input ${FILE}.riscv --address 0x0 --offset 0x100000
+cp ${FILE}.dat sram.dat
+cp ${FILE}.host host.dat
+if [ "$DUMP" = "1" ]
+then
+  $XSIM testbench_snapshot -testplusarg "MAXTIME=$MAXTIME" -testplusarg "REGFILE=${FILE}.reg" -testplusarg "CSRFILE=${FILE}.csr" -testplusarg "MEMFILE=${FILE}.mem" -testplusarg "FREGFILE=${FILE}.freg" -testplusarg "FILENAME=${FILE}.vcd" -tclbatch $BASEDIR/sim/xsim/run.tcl --wdb ${FILE}.wdb
+else
+  $XSIM testbench_snapshot -R -testplusarg "MAXTIME=$MAXTIME"
+fi
 
 end=`date +%s`
 echo Execution time was `expr $end - $start` seconds.

@@ -43,27 +43,22 @@ make tool
 make compile
 ```
 
-4. Compiled executable files are located in **riscv** and dumped files are located in **dump**. Select some executable from the directory **riscv** and copy them into this directory **sim/xsim/input**:
+4. Compiled executable files are located in **riscv** and dumped files are located in **dump**. Select an executable and run simulation:
 ```console
-cp riscv/coremark.riscv sim/xsim/input/
+make xsim PROGRAM=coremark
 ```
 
-5. Run simulation:
-```console
-make xsim
-```
-
-6. Run simulation with <u>debug</u> feature:
+5. Run simulation with <u>debug</u> feature:
 ```console
 make xsim DUMP=1
 ```
 
-7. Run simulation with <u>short period of time</u> (e.g 1us, default 10ms):
+6. Run simulation with <u>short period of time</u> (e.g 1us, default 10ms):
 ```console
 make xsim MAXTIME=1000
 ```
 
-8. The simulation results together with <u>debug</u> informations are located in **sim/xsim/output**.
+7. The simulation results together with <u>debug</u> informations are located in **sim/xsim/output**.
 
 ## BENCHMARKS
 

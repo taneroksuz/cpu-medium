@@ -1,6 +1,6 @@
 *
-!input/
-!input/*
+!output/
+!output/*
 !*.sh
 !*.py
 !.gitignore
