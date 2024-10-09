@@ -453,7 +453,8 @@ module fpu_execute (
     input logic reset,
     input logic clock,
     input fp_execute_in_type fp_execute_in,
-    output fp_execute_out_type fp_execute_out
+    output fp_execute_out_type fp_execute_out,
+    input clear
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -584,7 +585,8 @@ module fpu_execute (
       .fp_fma_i(fp_fma_i),
       .fp_fma_o(fp_fma_o),
       .lzc_o(lzc_256_o),
-      .lzc_i(lzc_256_i)
+      .lzc_i(lzc_256_i),
+      .clear(clear)
   );
 
   fp_mac fp_mac_comp (
@@ -600,7 +602,8 @@ module fpu_execute (
       .fp_fdiv_i(fp_fdiv_i),
       .fp_fdiv_o(fp_fdiv_o),
       .fp_mac_o(fp_mac_o),
-      .fp_mac_i(fp_mac_i)
+      .fp_mac_i(fp_mac_i),
+      .clear(clear)
   );
 
   fp_rnd fp_rnd_comp (
@@ -634,7 +637,8 @@ module fpu_execute (
       .fp_fdiv_o(fp_fdiv_o),
       .fp_fdiv_i(fp_fdiv_i),
       .fp_rnd_o(fp_rnd_o),
-      .fp_rnd_i(fp_rnd_i)
+      .fp_rnd_i(fp_rnd_i),
+      .clear(clear)
   );
 
 endmodule
@@ -645,7 +649,8 @@ module fpu #(
     input logic reset,
     input logic clock,
     input fpu_in_type fpu_in,
-    output fpu_out_type fpu_out
+    output fpu_out_type fpu_out,
+    input clear
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -667,7 +672,8 @@ module fpu #(
           .reset(reset),
           .clock(clock),
           .fp_execute_in(fpu_in.fp_execute_in),
-          .fp_execute_out(fpu_out.fp_execute_out)
+          .fp_execute_out(fpu_out.fp_execute_out),
+          .clear(clear)
       );
 
       fpu_register fpu_register_comp (

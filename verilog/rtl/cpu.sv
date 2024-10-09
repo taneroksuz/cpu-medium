@@ -531,7 +531,8 @@ module cpu (
       .reset  (reset),
       .clock  (clock),
       .fpu_in (fpu_in),
-      .fpu_out(fpu_out)
+      .fpu_out(fpu_out),
+      .clear  (clear[0])
   );
 
 endmodule
