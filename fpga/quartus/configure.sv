@@ -7,7 +7,7 @@ package configure;
 
   parameter hazard_depth = 4;
 
-  parameter tim_width = 8;
+  parameter tim_width = 16;
   parameter tim_depth = 1024;
 
   parameter sram_depth = 1;
