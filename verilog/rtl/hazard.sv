@@ -173,7 +173,6 @@ module hazard_ctrl (
     v.calc0.fmt = v.instr0.fmt;
     v.calc0.rm = v.instr0.rm;
     v.calc0.op = v.instr0.op;
-    v.calc0.op_b = v.instr0.op_b;
     v.calc0.alu_op = v.instr0.alu_op;
     v.calc0.bcu_op = v.instr0.bcu_op;
     v.calc0.lsu_op = v.instr0.lsu_op;
@@ -196,7 +195,6 @@ module hazard_ctrl (
     v.calc1.fmt = v.instr1.fmt;
     v.calc1.rm = v.instr1.rm;
     v.calc1.op = v.instr1.op;
-    v.calc1.op_b = v.instr1.op_b;
     v.calc1.alu_op = v.instr1.alu_op;
     v.calc1.bcu_op = v.instr1.bcu_op;
     v.calc1.lsu_op = v.instr1.lsu_op;

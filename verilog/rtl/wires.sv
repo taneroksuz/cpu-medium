@@ -488,7 +488,6 @@ package wires;
     logic [1 : 0] fmt;
     logic [2 : 0] rm;
     operation_type op;
-    operation_type op_b;
     alu_op_type alu_op;
     bcu_op_type bcu_op;
     lsu_op_type lsu_op;
@@ -514,7 +513,6 @@ package wires;
       fmt : 0,
       rm : 0,
       op : init_operation,
-      op_b : init_operation,
       alu_op : init_alu_op,
       bcu_op : init_bcu_op,
       lsu_op : init_lsu_op,
@@ -572,6 +570,7 @@ package wires;
     bit_op_type bit_op;
     fp_operation_type fpu_op;
     prediction_type pred;
+    prediction_type pred_b;
   } calculation_type;
 
   parameter calculation_type init_calculation = '{
@@ -619,7 +618,8 @@ package wires;
       mul_op : init_mul_op,
       bit_op : init_bit_op,
       fpu_op : init_fp_operation,
-      pred : init_prediction
+      pred : init_prediction,
+      pred_b : init_prediction
   };
 
   typedef struct packed {

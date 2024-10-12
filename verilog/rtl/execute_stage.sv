@@ -65,6 +65,8 @@ module execute_stage (
       v = r;
       v.calc0.op = r.calc0.op_b;
       v.calc1.op = r.calc1.op_b;
+      v.calc0.pred = r.calc0.pred_b;
+      v.calc1.pred = r.calc1.pred_b;
     end
 
     v.stall = 0;
@@ -333,8 +335,10 @@ module execute_stage (
       end
     end
 
-    v.calc0.op_b = v.calc0.op;
-    v.calc1.op_b = v.calc1.op;
+    v.calc0.op_b   = v.calc0.op;
+    v.calc1.op_b   = v.calc1.op;
+    v.calc0.pred_b = v.calc0.pred;
+    v.calc1.pred_b = v.calc1.pred;
 
     if ((v.calc0.op.fence | v.calc0.op.exception | v.calc0.op.mret) == 1) begin
       v.calc1 = init_calculation;
@@ -349,8 +353,10 @@ module execute_stage (
     end
 
     if ((v.stall | a.m.stall) == 1) begin
-      v.calc0.op = init_operation;
-      v.calc1.op = init_operation;
+      v.calc0.op   = init_operation;
+      v.calc1.op   = init_operation;
+      v.calc0.pred = init_prediction;
+      v.calc1.pred = init_prediction;
     end
 
     if ((d.e.calc0.op.exception | d.e.calc0.op.mret | csr_out.trap | csr_out.mret | btac_out.pred_miss | clear[0]) == 1) begin
