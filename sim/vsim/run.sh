@@ -94,7 +94,7 @@ cp ${FILE}.dat sram.dat
 cp ${FILE}.host host.dat
 if [ "$DUMP" = "1" ]
 then
-  $VSIM -c testbench -do "add wave -recursive *; run -all" +MAXTIME=$MAXTIME +REGFILE=${FILE}.reg +CSRFILE=${FILE}.csr +MEMFILE=${FILE}.mem +FREGFILE=${FILE}.freg +FILENAME=${FILE}.vcd -wlf ${FILE}.wlf
+  $VSIM -c testbench -do "add wave -recursive *; run -all" +MAXTIME=$MAXTIME +REGFILE=${FILE}.reg +CSRFILE=${FILE}.csr +MEMFILE=${FILE}.mem +FREGFILE=${FILE}.freg -wlf ${FILE}.wlf
 else
   $VSIM -c testbench -do "run -all" +MAXTIME=$MAXTIME
 fi

@@ -94,7 +94,7 @@ cp ${FILE}.dat sram.dat
 cp ${FILE}.host host.dat
 if [ "$DUMP" = "1" ]
 then
-  $XSIM testbench_snapshot -testplusarg "MAXTIME=$MAXTIME" -testplusarg "REGFILE=${FILE}.reg" -testplusarg "CSRFILE=${FILE}.csr" -testplusarg "MEMFILE=${FILE}.mem" -testplusarg "FREGFILE=${FILE}.freg" -testplusarg "FILENAME=${FILE}.vcd" -tclbatch $BASEDIR/sim/xsim/run.tcl --wdb ${FILE}.wdb
+  $XSIM testbench_snapshot -testplusarg "MAXTIME=$MAXTIME" -testplusarg "REGFILE=${FILE}.reg" -testplusarg "CSRFILE=${FILE}.csr" -testplusarg "MEMFILE=${FILE}.mem" -testplusarg "FREGFILE=${FILE}.freg" -tclbatch $BASEDIR/sim/xsim/run.tcl --wdb ${FILE}.wdb
 else
   $XSIM testbench_snapshot -R -testplusarg "MAXTIME=$MAXTIME"
 fi
