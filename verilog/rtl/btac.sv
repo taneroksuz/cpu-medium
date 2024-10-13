@@ -117,6 +117,8 @@ module btac_ctrl (
     logic [0 : 0] wen;
     logic [31 : 0] pc0;
     logic [31 : 0] pc1;
+    logic [31 : 0] uaddr0;
+    logic [31 : 0] uaddr1;
     logic [31 : 0] maddr0;
     logic [31 : 0] maddr1;
     logic [0 : 0] miss0;
@@ -133,6 +135,8 @@ module btac_ctrl (
       wen : 0,
       pc0 : 0,
       pc1 : 0,
+      uaddr0 : 0,
+      uaddr1 : 0,
       maddr0 : 0,
       maddr1 : 0,
       miss0 : 0,
@@ -204,6 +208,8 @@ module btac_ctrl (
       btac_out.pred1.tsat  = 0;
     end
 
+    v_btb.uaddr0 = 0;
+    v_btb.uaddr1 = 0;
     v_btb.maddr0 = 0;
     v_btb.maddr1 = 0;
     v_btb.miss0  = 0;
@@ -213,28 +219,34 @@ module btac_ctrl (
 
     if (btac_in.clear == 0) begin
       if (btac_in.upd_pred0.taken == 1 && btac_in.upd_jump0 == 1) begin
+        v_btb.uaddr0 = btac_in.upd_addr0;
         v_btb.maddr0 = btac_in.upd_addr0;
         v_btb.miss0  = |(btac_in.upd_addr0 ^ btac_in.upd_pred0.taddr);
         v_btb.hit0   = ~v_btb.miss0;
       end
       if (btac_in.upd_pred0.taken == 1 && btac_in.upd_jump0 == 0) begin
+        v_btb.uaddr0 = (btac_in.upd_branch0 == 1) ? btac_in.upd_addr0 : btac_in.upd_npc0;
         v_btb.maddr0 = btac_in.upd_npc0;
         v_btb.miss0  = 1;
       end
       if (btac_in.upd_pred0.taken == 0 && btac_in.upd_jump0 == 1) begin
+        v_btb.uaddr0 = btac_in.upd_addr0;
         v_btb.maddr0 = btac_in.upd_addr0;
         v_btb.miss0  = 1;
       end
       if (btac_in.upd_pred1.taken == 1 && btac_in.upd_jump1 == 1) begin
+        v_btb.uaddr1 = btac_in.upd_addr1;
         v_btb.maddr1 = btac_in.upd_addr1;
         v_btb.miss1  = |(btac_in.upd_addr1 ^ btac_in.upd_pred1.taddr);
         v_btb.hit1   = ~v_btb.miss1;
       end
       if (btac_in.upd_pred1.taken == 1 && btac_in.upd_jump1 == 0) begin
+        v_btb.uaddr1 = (btac_in.upd_branch1 == 1) ? btac_in.upd_addr1 : btac_in.upd_npc1;
         v_btb.maddr1 = btac_in.upd_npc1;
         v_btb.miss1  = 1;
       end
       if (btac_in.upd_pred1.taken == 0 && btac_in.upd_jump1 == 1) begin
+        v_btb.uaddr1 = btac_in.upd_addr1;
         v_btb.maddr1 = btac_in.upd_addr1;
         v_btb.miss1  = 1;
       end
@@ -243,20 +255,15 @@ module btac_ctrl (
     v_btb.wen   = 0;
     v_btb.waddr = 0;
     v_btb.wdata = 0;
+    v_bht.wen   = 0;
+    v_bht.waddr = 0;
+    v_bht.wdata = 0;
 
     if (btac_in.clear == 0) begin
       v_btb.wen = (v_btb.hit0 | v_btb.miss0) | (v_btb.hit1 | v_btb.miss1);
       v_btb.waddr = (v_btb.hit0 | v_btb.miss0) ? btac_in.upd_pc0[btb_depth:1] : btac_in.upd_pc1[btb_depth:1];
-      v_btb.wdata = (v_btb.hit0 | v_btb.miss0) ? {btac_in.upd_pc0[31:btb_depth+1],btac_in.upd_addr0} : {btac_in.upd_pc1[31:btb_depth+1],btac_in.upd_addr1};
+      v_btb.wdata = (v_btb.hit0 | v_btb.miss0) ? {btac_in.upd_pc0[31:btb_depth+1],v_btb.uaddr0} : {btac_in.upd_pc1[31:btb_depth+1],v_btb.uaddr1};
     end
-
-    btb_in.wen = v_btb.wen;
-    btb_in.waddr = v_btb.waddr;
-    btb_in.wdata = v_btb.wdata;
-
-    v_bht.wen = 0;
-    v_bht.waddr = 0;
-    v_bht.wdata = 0;
 
     if (btac_in.clear == 0) begin
       v_bht.wen = (v_btb.hit0 | v_btb.miss0) | (v_btb.hit1 | v_btb.miss1);
@@ -266,6 +273,9 @@ module btac_ctrl (
       v_bht.wdata = (v_btb.hit0 | v_btb.miss0) ? v_bht.sat0 : v_bht.sat1;
     end
 
+    btb_in.wen = v_btb.wen;
+    btb_in.waddr = v_btb.waddr;
+    btb_in.wdata = v_btb.wdata;
     bht_in.wen = v_bht.wen;
     bht_in.waddr = v_bht.waddr;
     bht_in.wdata = v_bht.wdata;
