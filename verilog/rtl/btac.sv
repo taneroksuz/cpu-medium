@@ -101,16 +101,11 @@ module btac_ctrl (
 
   function [1:0] saturation;
     input logic [1:0] sat;
-    input logic [0:0] jal;
     input logic [0:0] jump;
     begin
-      if (jal == 0) begin
-        if (jump == 0 && |sat == 1) saturation = sat - 1;
-        else if (jump == 1 && &sat == 0) saturation = sat + 1;
-        else saturation = sat;
-      end else begin
-        saturation = 3;
-      end
+      if (jump == 0 && |sat == 1) saturation = sat - 1;
+      else if (jump == 1 && &sat == 0) saturation = sat + 1;
+      else saturation = sat;
     end
   endfunction
 
@@ -255,21 +250,21 @@ module btac_ctrl (
       v_btb.wdata = (v_btb.hit0 | v_btb.miss0) ? {btac_in.upd_pc0[31:btb_depth+1],btac_in.upd_addr0} : {btac_in.upd_pc1[31:btb_depth+1],btac_in.upd_addr1};
     end
 
-    v_bht.wen   = 0;
+    btb_in.wen = v_btb.wen;
+    btb_in.waddr = v_btb.waddr;
+    btb_in.wdata = v_btb.wdata;
+
+    v_bht.wen = 0;
     v_bht.waddr = 0;
     v_bht.wdata = 0;
 
     if (btac_in.clear == 0) begin
       v_bht.wen = (v_btb.hit0 | v_btb.miss0) | (v_btb.hit1 | v_btb.miss1);
       v_bht.waddr = (v_btb.hit0 | v_btb.miss0) ? btac_in.upd_pc0[bht_depth:1] : btac_in.upd_pc1[bht_depth:1];
-      v_bht.sat0 = saturation(btac_in.upd_pred0.tsat, btac_in.upd_jal0, btac_in.upd_jump0);
-      v_bht.sat1 = saturation(btac_in.upd_pred1.tsat, btac_in.upd_jal1, btac_in.upd_jump1);
+      v_bht.sat0 = saturation(btac_in.upd_pred0.tsat, btac_in.upd_jump0);
+      v_bht.sat1 = saturation(btac_in.upd_pred1.tsat, btac_in.upd_jump1);
       v_bht.wdata = (v_btb.hit0 | v_btb.miss0) ? v_bht.sat0 : v_bht.sat1;
     end
-
-    btb_in.wen = v_btb.wen;
-    btb_in.waddr = v_btb.waddr;
-    btb_in.wdata = v_btb.wdata;
 
     bht_in.wen = v_bht.wen;
     bht_in.waddr = v_bht.waddr;
@@ -280,8 +275,7 @@ module btac_ctrl (
 
     btac_out.pred_maddr = r_btb.miss0 ? r_btb.maddr0 : r_btb.maddr1;
     btac_out.pred_miss = r_btb.miss0 | r_btb.miss1;
-    btac_out.pred_hazard0 = v_btb.miss0;
-    btac_out.pred_hazard1 = v_btb.miss1;
+    btac_out.pred_hazard = v_btb.miss0;
 
   end
 
@@ -367,8 +361,7 @@ module btac (
         btac_out.pred1.tsat = 0;
         btac_out.pred_maddr = r.maddr;
         btac_out.pred_miss = r.miss0 | r.miss1;
-        btac_out.pred_hazard0 = v.miss0;
-        btac_out.pred_hazard1 = v.miss1;
+        btac_out.pred_hazard = v.miss0;
 
       end
 
