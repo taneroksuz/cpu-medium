@@ -31,6 +31,6 @@ git clone https://github.com/chipsalliance/verible.git $BASEDIR/tools/verible
 
 cd $BASEDIR/tools/verible
 
-bazel build --noenable_bzlmod -c opt //...
+bazel build -c opt :install-binaries
 
-bazel run --noenable_bzlmod -c opt :install -- -s /usr/local/bin
+sudo .github/bin/simple-install.sh /usr/local/bin
