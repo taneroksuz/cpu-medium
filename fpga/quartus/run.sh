@@ -19,7 +19,7 @@ fi
 
 if pgrep -x "jtagd" > /dev/null
 then
-  sudo killall jtagd
+  killall jtagd
 fi
-sudo $JTAGCONFIG
+$JTAGCONFIG
 ${QUARTUS}_pgm -m jtag -o "p;${BASEDIR}/fpga/quartus/output_files/top.sof"
