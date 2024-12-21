@@ -58,5 +58,5 @@ program:
 	serial/transfer.sh
 
 tool:
-	tools/riscv.sh
-	tools/verible.sh
+	tools/install-riscv.sh
+	tools/install-verible.sh
