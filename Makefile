@@ -42,6 +42,9 @@ compile:
 parse:
 	check/run.sh
 
+verilator:
+	sim/verilator/run.sh
+
 vsim:
 	sim/vsim/run.sh
 
@@ -60,3 +63,4 @@ program:
 tool:
 	tools/install-riscv.sh
 	tools/install-verible.sh
+	tools/install-verilator.sh

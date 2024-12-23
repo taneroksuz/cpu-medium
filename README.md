@@ -45,20 +45,20 @@ make compile
 
 4. Compiled executable files are located in **riscv** and dumped files are located in **dump**. Select an executable and run simulation:
 ```console
-make xsim PROGRAM=coremark
+make verilator PROGRAM=coremark
 ```
 
 5. Run simulation with <u>debug</u> feature:
 ```console
-make xsim DUMP=1
+make verilator DUMP=1
 ```
 
 6. Run simulation with <u>short period of time</u> (e.g 1us, default 10ms):
 ```console
-make xsim MAXTIME=1000
+make verilator MAXTIME=1000
 ```
 
-7. The simulation results together with <u>debug</u> informations are located in **sim/xsim/output**.
+7. The simulation results together with <u>debug</u> informations are located in **sim/verilator/output**.
 
 ## BENCHMARKS
 

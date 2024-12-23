@@ -1,0 +1,5 @@
+*
+!output/
+!output/*
+!*.sh
+!.gitignore
