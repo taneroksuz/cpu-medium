@@ -50,7 +50,6 @@ read_verilog -sv ../../verilog/rtl/arbiter.sv
 read_verilog -sv ../../verilog/rtl/ccd.sv
 read_verilog -sv ../../verilog/rtl/clint.sv
 read_verilog -sv ../../verilog/rtl/tim.sv
-read_verilog -sv ../../verilog/rtl/pmp.sv
 read_verilog -sv ../../verilog/rtl/cpu.sv
 read_verilog -sv ../../verilog/rtl/sram.sv
 read_verilog -sv ../../verilog/rtl/spi.sv
