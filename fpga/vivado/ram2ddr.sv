@@ -3,8 +3,8 @@ import configure::*;
 module ram2ddr
 (
     // Common
-    input           clock_200mhz,
     input           reset,
+    input           clock,
     input  [11 : 0] device_temp_i,
     // RAM interface
     input           ram_cen,
@@ -50,10 +50,11 @@ module ram2ddr
   logic          mem_ui_rst;
   logic          rst;
   logic          rstn;
-  logic [ 1 : 0] rstn;
+  logic [ 1 : 0] sreg;
 
   logic [17 : 0] ram_a_int;
-  logic [15 : 0] ram_dq_int;
+  logic [15 : 0] ram_dq_i_int;
+  logic [15 : 0] ram_dq_o_int;
   logic          ram_cen_int;
   logic          ram_oen_int;
   logic          ram_wen_int;
@@ -66,6 +67,7 @@ module ram2ddr
   logic           mem_rdy;
   logic           mem_wdf_rdy;
   logic [127 : 0] mem_wdf_data;
+  logic           mem_wdf_end;
   logic [ 15 : 0] mem_wdf_mask;
   logic           mem_wdf_wren;
   logic [127 : 0] mem_rd_data;
@@ -73,12 +75,12 @@ module ram2ddr
   logic           mem_rd_data_valid;
   logic           calib_complete;
 
-  always_ff @(posedge clock_200mhz) begin : RSTSYNC
+  always_ff @(posedge clock) begin : RSTSYNC
     sreg <= {sreg[0],reset};
     rstn <= ~sreg[1];
   end
 
-  mig_7series_0 : ddr_comp (
+  mig_7series_0 ddr_comp (
       .ddr2_dq              (ddr2_dq),
       .ddr2_dqs_p           (ddr2_dqs_p),
       .ddr2_dqs_n           (ddr2_dqs_n),
@@ -93,7 +95,7 @@ module ram2ddr
       .ddr2_cs_n            (ddr2_cs_n),
       .ddr2_dm              (ddr2_dm),
       .ddr2_odt             (ddr2_odt),
-      .sys_clk_i            (clock_200mhz),
+      .sys_clk_i            (clock),
       .sys_rst              (rstn),
       .app_addr             (mem_addr),
       .app_cmd              (mem_cmd),
@@ -107,21 +109,21 @@ module ram2ddr
       .app_rd_data_valid    (mem_rd_data_valid),
       .app_rdy              (mem_rdy),
       .app_wdf_rdy          (mem_wdf_rdy),
-      .app_sr_req           ('0'),
+      .app_sr_req           (0),
       .app_sr_active        (),
-      .app_ref_req          ('0'),
+      .app_ref_req          (0),
       .app_ref_ack          (),
-      .app_zq_req           ('0'),
+      .app_zq_req           (0),
       .app_zq_ack           (),
       .ui_clk               (mem_ui_clk),
       .ui_clk_sync_rst      (mem_ui_rst),
       .device_temp_i        (device_temp_i),
       .init_calib_complete  (calib_complete)
-  )
+  );
 
   always_ff @(posedge mem_ui_clk) begin : REG_IN
     ram_a_int <= ram_a;
-    ram_dq_int <= ram_wen ? ram_dq_int : 'bz;
+    ram_dq_i_int <= ram_wen == 0 ? ram_dq : 'bz;
     ram_cen_int <= ram_cen;
     ram_oen_int <= ram_oen;
     ram_wen_int <= ram_wen;
@@ -173,7 +175,7 @@ module ram2ddr
         end
       end
       default : begin
-        nState = stIdle
+        nState = stIdle;
       end
     endcase
   end
@@ -282,9 +284,16 @@ module ram2ddr
     end
   end
 
+  always_ff @(posedge mem_ui_clk) begin : WR_DATA_ADDR
+    if (cState == stPreset) begin
+      mem_wdf_data <= {ram_dq_i_int,ram_dq_i_int,ram_dq_i_int,ram_dq_i_int,
+                        ram_dq_i_int,ram_dq_i_int,ram_dq_i_int,ram_dq_i_int};
+    end
+  end
+
   always_ff @(posedge mem_ui_clk) begin : WR_ADDR
     if (cState == stPreset) begin
-      mem_addr <= {9'b000000000,ram_a_int[17:3],3'b000}
+      mem_addr <= {9'b000000000,ram_a_int[17:3],3'b000};
     end
   end
 
@@ -293,74 +302,74 @@ module ram2ddr
       case(ram_a_int[2:0])
         0 : begin
           if (ram_ub_int == 0 && ram_lb_int == 1) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[15:8],mem_rd_data[15:8]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[15:8],mem_rd_data[15:8]};
           end else if (ram_ub_int == 1 && ram_lb_int == 0) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[7:0],mem_rd_data[7:0]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[7:0],mem_rd_data[7:0]};
           end else begin
-            ram_dq <= ram_oen_int ? mem_rd_data[15:0] : 'bz;
+            ram_dq_o_int <= mem_rd_data[15:0];
           end
         end
         1 : begin
           if (ram_ub_int == 0 && ram_lb_int == 1) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[31:24],mem_rd_data[31:24]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[31:24],mem_rd_data[31:24]};
           end else if (ram_ub_int == 1 && ram_lb_int == 0) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[23:16],mem_rd_data[23:16]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[23:16],mem_rd_data[23:16]};
           end else begin
-            ram_dq <= ram_oen_int ? mem_rd_data[31:16] : 'bz;
+            ram_dq_o_int <= mem_rd_data[31:16];
           end
         end
         2 : begin
           if (ram_ub_int == 0 && ram_lb_int == 1) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[47:40],mem_rd_data[47:40]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[47:40],mem_rd_data[47:40]};
           end else if (ram_ub_int == 1 && ram_lb_int == 0) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[39:32],mem_rd_data[39:32]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[39:32],mem_rd_data[39:32]};
           end else begin
-            ram_dq <= ram_oen_int ? mem_rd_data[47:32] : 'bz;
+            ram_dq_o_int <= mem_rd_data[47:32];
           end
         end
         3 : begin
           if (ram_ub_int == 0 && ram_lb_int == 1) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[63:56],mem_rd_data[63:56]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[63:56],mem_rd_data[63:56]};
           end else if (ram_ub_int == 1 && ram_lb_int == 0) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[55:48],mem_rd_data[55:48]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[55:48],mem_rd_data[55:48]};
           end else begin
-            ram_dq <= ram_oen_int ? mem_rd_data[63:48] : 'bz;
+            ram_dq_o_int <= mem_rd_data[63:48];
           end
         end
         4 : begin
           if (ram_ub_int == 0 && ram_lb_int == 1) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[79:72],mem_rd_data[79:72]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[79:72],mem_rd_data[79:72]};
           end else if (ram_ub_int == 1 && ram_lb_int == 0) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[71:64],mem_rd_data[71:64]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[71:64],mem_rd_data[71:64]};
           end else begin
-            ram_dq <= ram_oen_int ? mem_rd_data[79:64] : 'bz;
+            ram_dq_o_int <= mem_rd_data[79:64];
           end
         end
         5 : begin
           if (ram_ub_int == 0 && ram_lb_int == 1) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[95:88],mem_rd_data[95:88]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[95:88],mem_rd_data[95:88]};
           end else if (ram_ub_int == 1 && ram_lb_int == 0) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[87:80],mem_rd_data[87:80]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[87:80],mem_rd_data[87:80]};
           end else begin
-            ram_dq <= ram_oen_int ? mem_rd_data[95:80] : 'bz;
+            ram_dq_o_int <= mem_rd_data[95:80];
           end
         end
         6 : begin
           if (ram_ub_int == 0 && ram_lb_int == 1) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[111:104],mem_rd_data[111:104]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[111:104],mem_rd_data[111:104]};
           end else if (ram_ub_int == 1 && ram_lb_int == 0) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[103:96],mem_rd_data[103:96]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[103:96],mem_rd_data[103:96]};
           end else begin
-            ram_dq <= ram_oen_int ? mem_rd_data[111:96] : 'bz;
+            ram_dq_o_int <= mem_rd_data[111:96];
           end
         end
         7 : begin
           if (ram_ub_int == 0 && ram_lb_int == 1) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[127:120],mem_rd_data[127:120]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[127:120],mem_rd_data[127:120]};
           end else if (ram_ub_int == 1 && ram_lb_int == 0) begin
-            ram_dq <= ram_oen_int ? {mem_rd_data[119:112],mem_rd_data[119:112]} : 'bz;
+            ram_dq_o_int <= {mem_rd_data[119:112],mem_rd_data[119:112]};
           end else begin
-            ram_dq <= ram_oen_int ? mem_rd_data[127:112] : 'bz;
+            ram_dq_o_int <= mem_rd_data[127:112];
           end
         end
         default : begin
@@ -368,5 +377,7 @@ module ram2ddr
       endcase
     end
   end
+
+  assign ram_dq = ram_oen == 0 ? ram_dq_o_int : 'bz;
 
 endmodule

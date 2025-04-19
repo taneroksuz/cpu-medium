@@ -57,7 +57,6 @@ read_verilog -sv ../../verilog/rtl/uart_rx.sv
 read_verilog -sv ../../verilog/rtl/uart_tx.sv
 read_verilog -sv rom.sv
 read_verilog -sv ../../verilog/rtl/soc.sv
-read_verilog -sv sram_memory.sv
 read_verilog -sv ram2ddr.sv
 read_verilog pll_clk_wiz.v
 read_verilog pll.v
