@@ -5,3 +5,7 @@
 !*.sh
 !*.tcl
 !*.xdc
+mig_7series_0/*
+!mig_7series_0/
+!mig_7series_0/*.xci
+!mig_7series_0/*.prj

@@ -27,6 +27,7 @@ module top
 
   logic CLOCK_CPU;
   logic CLOCK_PER;
+  logic CLOCK_DDR;
   logic LOCKED;
   logic RESET;
 

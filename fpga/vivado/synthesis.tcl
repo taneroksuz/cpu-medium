@@ -64,6 +64,13 @@ read_verilog -sv top.sv
 
 read_xdc top.xdc
 
+set_part xc7a100tcsg324-1
+
+read_ip mig_7series_0/mig_7series_0.xci
+upgrade_ip -quiet [get_ips mig_7series_0]
+generate_target all [get_ips mig_7series_0]
+synth_ip [get_ips mig_7series_0]
+
 set Cmd "synth_design -part xc7a100tcsg324-1 -top top "
 append Cmd [join $argv]
 eval $Cmd
