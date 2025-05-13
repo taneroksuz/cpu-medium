@@ -12,6 +12,8 @@ export VIVADO ?= vivado
 
 export JTAGCONFIG ?= jtagconfig
 
+export SYNLIG ?= synlig
+
 export XVLOG ?= xvlog
 export XELAB ?= xelab
 export XSIM ?= xsim
