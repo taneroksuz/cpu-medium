@@ -18,7 +18,6 @@ module top
   timeunit 1ns; timeprecision 1ps;
 
   logic CLOCK_CPU;
-  logic CLOCK_PER;
   logic LOCKED;
   logic RESET;
 
@@ -28,7 +27,6 @@ module top
   logic SS;
 
   initial begin
-    CLOCK_PER = 0;
     SCLK = 0;
     MOSI = 0;
     MISO = 0;
@@ -39,7 +37,6 @@ module top
     .refclk(CLOCK_50_B5B),
     .rst(~KEY[0]),
     .outclk_0(CLOCK_CPU),
-    .outclk_1(CLOCK_PER),
     .locked(LOCKED)
   );
 
@@ -48,7 +45,6 @@ module top
   soc soc_comp (
       .reset(RESET),
       .clock(CLOCK_CPU),
-      .clock_per(CLOCK_PER),
       .sclk(SCLK),
       .mosi(MOSI),
       .miso(MISO),

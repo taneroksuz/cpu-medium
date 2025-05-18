@@ -11,7 +11,6 @@ module top
   timeunit 1ns; timeprecision 1ps;
 
   logic CLOCK_CPU;
-  logic CLOCK_PER;
   logic LOCKED;
   logic RESET;
 
@@ -39,7 +38,6 @@ module top
     .clk_in1(CLK100MHZ),
     .reset(~CPU_RESETN),
     .clk_out1(CLOCK_CPU),
-    .clk_out2(CLOCK_PER),
     .locked(LOCKED)
   );
 
@@ -59,7 +57,6 @@ module top
   soc soc_comp (
       .reset(RESET),
       .clock(CLOCK_CPU),
-      .clock_per(CLOCK_PER),
       .sclk(SCLK),
       .mosi(MOSI),
       .miso(MISO),

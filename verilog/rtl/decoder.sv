@@ -71,11 +71,6 @@ module decoder (
   logic [0 : 0] nonzero_raddr1;
 
   logic [0 : 0] nonzero_imm_c;
-  logic [0 : 0] nonzero_imm_i;
-  logic [0 : 0] nonzero_imm_s;
-  logic [0 : 0] nonzero_imm_b;
-  logic [0 : 0] nonzero_imm_u;
-  logic [0 : 0] nonzero_imm_j;
 
   always_comb begin
 
@@ -144,11 +139,6 @@ module decoder (
     nonzero_raddr1 = |raddr1;
 
     nonzero_imm_c = |imm_c;
-    nonzero_imm_i = |imm_i;
-    nonzero_imm_s = |imm_s;
-    nonzero_imm_b = |imm_b;
-    nonzero_imm_u = |imm_u;
-    nonzero_imm_j = |imm_j;
 
     case (opcode)
       opcode_lui: begin

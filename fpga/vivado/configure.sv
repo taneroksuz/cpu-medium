@@ -52,7 +52,7 @@ package configure;
   parameter baudrate = 115200;
 
   parameter clk_divider_cpu = sys_freq / cpu_freq;
-  parameter clk_divider_per = sys_freq / per_freq;
+  parameter clk_divider_per = cpu_freq / per_freq;
   parameter clk_divider_rtc = cpu_freq / rtc_freq;
   parameter clk_divider_bit = cpu_freq / baudrate;
 

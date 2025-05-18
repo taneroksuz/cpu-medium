@@ -4,7 +4,6 @@ import wires::*;
 module soc (
     input reset,
     input clock,
-    input clock_per,
     output sclk,
     output mosi,
     input miso,
@@ -70,7 +69,7 @@ module soc (
   mem_out_type uart_rx_out;
   mem_out_type uart_tx_out;
 
-  logic [0 : 0] meip;
+  logic [0 : 0] meip = 0;
   logic [0 : 0] msip;
   logic [0 : 0] mtip;
   logic [0 : 0] irpt;

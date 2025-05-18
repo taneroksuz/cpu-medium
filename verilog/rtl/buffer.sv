@@ -171,6 +171,7 @@ module buffer_ctrl (
   localparam total = 8 * (buffer_depth - 2);
 
   localparam [depth-1:0] one = 1;
+  localparam [depth+2:0] eight = 8;
 
   typedef struct packed {
     logic [depth+2 : 0] wid;
@@ -467,8 +468,8 @@ module buffer_ctrl (
     end
 
     if (v.wen == 1) begin
-      v.wid   = v.wid + 8;
-      v.count = v.count + 8;
+      v.wid   = v.wid + eight;
+      v.count = v.count + eight;
     end
 
     v.diff = 0;

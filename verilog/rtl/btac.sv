@@ -103,8 +103,8 @@ module btac_ctrl (
     input logic [1:0] sat;
     input logic [0:0] jump;
     begin
-      if (jump == 0 && |sat == 1) saturation = sat - 1;
-      else if (jump == 1 && &sat == 0) saturation = sat + 1;
+      if (jump == 0 && |sat == 1) saturation = sat - 2'b01;
+      else if (jump == 1 && &sat == 0) saturation = sat + 2'b01;
       else saturation = sat;
     end
   endfunction

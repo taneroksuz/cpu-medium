@@ -72,6 +72,7 @@ module hazard_ctrl (
   localparam total = hazard_depth - 2;
 
   localparam [depth-1:0] one = 1;
+  localparam [depth:0] two = 2;
 
   typedef struct packed {
     instruction_type wdata0;
@@ -154,8 +155,8 @@ module hazard_ctrl (
     end
 
     if (v.wen == 1) begin
-      v.wid   = v.wid + 1;
-      v.count = v.count + 2;
+      v.wid   = v.wid + one;
+      v.count = v.count + two;
     end
 
     v.calc0 = init_calculation;

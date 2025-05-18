@@ -34,7 +34,6 @@ module compress (
   logic [2 : 0] funct3;
   logic [0 : 0] funct4;
   logic [1 : 0] funct6;
-  logic [1 : 0] funct8;
   logic [2 : 0] funct9;
 
   logic [4 : 0] waddr;
@@ -68,8 +67,6 @@ module compress (
   bcu_op_type bcu_op;
   lsu_op_type lsu_op;
 
-  logic [0 : 0] nonzero_imm_j;
-  logic [0 : 0] nonzero_imm_b;
   logic [0 : 0] nonzero_imm_w;
   logic [0 : 0] nonzero_imm_i;
   logic [0 : 0] nonzero_imm_u;
@@ -117,7 +114,6 @@ module compress (
     funct3 = instr[15:13];
     funct4 = instr[12];
     funct6 = instr[11:10];
-    funct8 = instr[6:5];
     funct9 = {instr[12], instr[6:5]};
 
     waddr = instr[11:7];
@@ -151,8 +147,6 @@ module compress (
     bcu_op = init_bcu_op;
     lsu_op = init_lsu_op;
 
-    nonzero_imm_j = |imm_j;
-    nonzero_imm_b = |imm_b;
     nonzero_imm_w = |imm_w;
     nonzero_imm_i = |imm_i;
     nonzero_imm_u = |imm_u;

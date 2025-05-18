@@ -54,7 +54,7 @@ module spi #(
         v.read  = 0;
       end else begin
         v.data  = {v.data[6:0], 1'b0};
-        v.state = v.state + 1;
+        v.state = v.state + 3'b001;
       end
     end
 
@@ -86,7 +86,7 @@ module spi #(
 
   assign sclk = r.sclk;
   assign ss = r.ss;
-  assign mosi = r.write == 1 ? r.data[7] : 0;
+  assign mosi = r.write == 1 ? r.data[7] : 1'b0;
 
   always_ff @(posedge clock) begin
     if (reset == 0) begin
