@@ -13,19 +13,19 @@ module avl
   output logic [63 : 0] avl_rdata,
   output logic [0  : 0] avl_ready,
   /////////////////////////////////
-  output logic [31 : 0] m_avl_address,
-  output logic [7  : 0] m_avl_byteenable,
-  output logic [0  : 0] m_avl_lock,
-  output logic [0  : 0] m_avl_read,
-  output logic [63 : 0] m_avl_writedata,
-  output logic [0  : 0] m_avl_write,
-  output logic [2  : 0] m_avl_burstcount,
+  output logic [31 : 0] avm_address,
+  output logic [7  : 0] avm_byteenable,
+  output logic [0  : 0] avm_lock,
+  output logic [0  : 0] avm_read,
+  output logic [63 : 0] avm_writedata,
+  output logic [0  : 0] avm_write,
+  output logic [2  : 0] avm_burstcount,
   /////////////////////////////////
-  input logic [31 : 0] m_avl_readdata,
-  input logic [1  : 0] m_avl_response,
-  input logic [0  : 0] m_avl_waitrequest,
-  input logic [0  : 0] m_avl_readdatavalid,
-  input logic [0  : 0] m_avl_writeresponsevalid
+  input logic [31 : 0] avm_readdata,
+  input logic [1  : 0] avm_response,
+  input logic [0  : 0] avm_waitrequest,
+  input logic [0  : 0] avm_readdatavalid,
+  input logic [0  : 0] avm_writeresponsevalid
   /////////////////////////////////
 );
   timeunit 1ns;
@@ -80,11 +80,11 @@ module avl
         end
       end
       load : begin
-        if (m_avl_readdatavalid == 1) begin
+        if (avm_readdatavalid == 1) begin
           state = idle;
-          rdata = m_avl_readdata;
+          rdata = avm_readdata;
           ready = 1;
-        end else if (m_avl_waitrequest == 1) begin
+        end else if (avm_waitrequest == 1) begin
           address = address_reg;
           byteenable = byteenable_reg;
           read = read_reg;
@@ -93,10 +93,10 @@ module avl
         end
       end
       store : begin
-        if (m_avl_waitrequest == 0) begin
+        if (avm_waitrequest == 0) begin
           state = idle;
           ready = 1;
-        end else if (m_avl_waitrequest == 1) begin
+        end else if (avm_waitrequest == 1) begin
           address = address_reg;
           byteenable = byteenable_reg;
           read = read_reg;
@@ -109,13 +109,13 @@ module avl
     endcase
   end
 
-  assign m_avl_address = address_reg;
-  assign m_avl_byteenable = byteenable_reg;
-  assign m_avl_lock = 1'b0;
-  assign m_avl_read = read_reg;
-  assign m_avl_writedata = writedata_reg;
-  assign m_avl_write = write_reg;
-  assign m_avl_burstcount = 3'b001;
+  assign avm_address = address_reg;
+  assign avm_byteenable = byteenable_reg;
+  assign avm_lock = 1'b0;
+  assign avm_read = read_reg;
+  assign avm_writedata = writedata_reg;
+  assign avm_write = write_reg;
+  assign avm_burstcount = 3'b001;
 
   assign avl_rdata = rdata_reg;
   assign avl_ready = ready_reg;
