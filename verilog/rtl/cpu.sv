@@ -4,6 +4,8 @@ import wires::*;
 module cpu (
     input logic reset,
     input logic clock,
+    output verify_out_type ver0_out,
+    output verify_out_type ver1_out,
     input mem_out_type imem0_out,
     input mem_out_type imem1_out,
     output mem_in_type imem0_in,
@@ -508,6 +510,8 @@ module cpu (
       .fp_csr_out(fp_csr_out),
       .fp_csr_win(fp_csr_win),
       .fp_csr_ein(fp_csr_ein),
+      .ver0_out(ver0_out),
+      .ver1_out(ver1_out),
       .a(memory_in_a),
       .d(memory_in_d),
       .y(memory_out_y),

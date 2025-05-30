@@ -25,6 +25,8 @@ module memory_stage (
     input fp_csr_out_type fp_csr_out,
     output fp_csr_write_in_type fp_csr_win,
     output fp_csr_exception_in_type fp_csr_ein,
+    output verify_out_type ver0_out,
+    output verify_out_type ver1_out,
     input memory_in_type a,
     input memory_in_type d,
     output memory_out_type y,
@@ -182,6 +184,36 @@ module memory_stage (
 
     fp_csr_ein.fpunit = v.calc0.op.fpuf | v.calc1.op.fpuf;
     fp_csr_ein.fflags = v.calc0.op.fpuf ? v.calc0.flags : v.calc1.flags;
+
+    ver0_out.wren = v.calc0.op.wren;
+    ver0_out.fwren = v.calc0.op.fwren;
+    ver0_out.cwren = v.calc0.op.cwren;
+    ver0_out.store = v.calc0.op.store;
+    ver0_out.fstore = v.calc0.op.fstore;
+    ver0_out.waddr = v.calc0.waddr;
+    ver0_out.caddr = v.calc0.caddr;
+    ver0_out.byteenable = v.calc0.byteenable;
+    ver0_out.address = v.calc0.address;
+    ver0_out.pc = v.calc0.pc;
+    ver0_out.wdata = v.calc0.wdata;
+    ver0_out.fdata = v.calc0.fdata;
+    ver0_out.sdata = v.calc0.sdata;
+    ver0_out.cwdata = v.calc0.cwdata;
+
+    ver1_out.wren = v.calc1.op.wren;
+    ver1_out.fwren = v.calc1.op.fwren;
+    ver1_out.cwren = v.calc1.op.cwren;
+    ver1_out.store = v.calc1.op.store;
+    ver1_out.fstore = v.calc1.op.fstore;
+    ver1_out.waddr = v.calc1.waddr;
+    ver1_out.caddr = v.calc1.caddr;
+    ver1_out.byteenable = v.calc1.byteenable;
+    ver1_out.address = v.calc1.address;
+    ver1_out.pc = v.calc1.pc;
+    ver1_out.wdata = v.calc1.wdata;
+    ver1_out.fdata = v.calc1.fdata;
+    ver1_out.sdata = v.calc1.sdata;
+    ver1_out.cwdata = v.calc1.cwdata;
 
     rin = v;
 

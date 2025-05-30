@@ -119,7 +119,7 @@ module sram #(
             if (v.state == 4) begin
               v.ready = 1;
               v.write = 0;
-              v.read = 0;
+              v.read  = 0;
               v.state = 0;
             end
             if (v.state == 3) begin
@@ -138,7 +138,7 @@ module sram #(
         if (v.write == 1) begin
           if (v.state == 4) begin
             v.addr[1:0] = 2'b11;
-            v.dq   = v.data[63:48];
+            v.dq = v.data[63:48];
             v.ce_n = ~(|v.strb[7:6]);
             v.we_n = ~(|v.strb[7:6]);
             v.ub_n = ~v.strb[7];
@@ -146,7 +146,7 @@ module sram #(
           end
           if (v.state == 3) begin
             v.addr[1:0] = 2'b10;
-            v.dq   = v.data[47:32];
+            v.dq = v.data[47:32];
             v.ce_n = ~(|v.strb[5:4]);
             v.we_n = ~(|v.strb[5:4]);
             v.ub_n = ~v.strb[5];
@@ -154,7 +154,7 @@ module sram #(
           end
           if (v.state == 2) begin
             v.addr[1:0] = 2'b01;
-            v.dq   = v.data[31:16];
+            v.dq = v.data[31:16];
             v.ce_n = ~(|v.strb[3:2]);
             v.we_n = ~(|v.strb[3:2]);
             v.ub_n = ~v.strb[3];
@@ -162,7 +162,7 @@ module sram #(
           end
           if (v.state == 1) begin
             v.addr[1:0] = 2'b00;
-            v.dq   = v.data[15:0];
+            v.dq = v.data[15:0];
             v.ce_n = ~(|v.strb[1:0]);
             v.we_n = ~(|v.strb[1:0]);
             v.ub_n = ~v.strb[1];
