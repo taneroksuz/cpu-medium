@@ -20,7 +20,7 @@ module register (
     end
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (register0_win.wren == 1) begin
       reg_file[register0_win.waddr] <= register0_win.wdata;
     end

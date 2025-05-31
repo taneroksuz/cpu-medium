@@ -18,7 +18,7 @@ module mul (
   logic [0:0] op1_signed;
   logic [0:0] op2_signed;
 
-  always_comb begin
+  always @(*) begin
 
     op1 = {1'b0, mul_in.rdata1};
     op2 = {1'b0, mul_in.rdata2};

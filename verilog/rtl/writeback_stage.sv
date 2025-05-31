@@ -15,7 +15,7 @@ module writeback_stage (
   writeback_reg_type r, rin;
   writeback_reg_type v;
 
-  always_comb begin
+  always @(*) begin
 
     v = r;
 
@@ -30,7 +30,7 @@ module writeback_stage (
 
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (reset == 0) begin
       r <= init_writeback_reg;
     end else begin
@@ -38,7 +38,7 @@ module writeback_stage (
     end
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (reset == 0) begin
       clear <= 2'b11;
     end else begin

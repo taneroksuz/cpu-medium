@@ -18,7 +18,7 @@ module sram_memory (
 
   logic [15 : 0] sram_rdata;
 
-  always_ff @(posedge CLOCK) begin
+  always @(posedge CLOCK) begin
 
     if (SRAM_CE_n == 0) begin
 

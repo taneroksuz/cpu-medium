@@ -35,7 +35,7 @@ module uart_rx #(
 
   register_type r, rin, v;
 
-  always_comb begin
+  always @(*) begin
 
     v = r;
 
@@ -83,7 +83,7 @@ module uart_rx #(
   assign uart_out.mem_ready = r.ready_re;
   assign uart_irpt = r.ready;
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (reset == 0) begin
       r <= init_register;
     end else begin

@@ -21,7 +21,7 @@ module agu (
   logic [ 7 : 0] byteenable;
   logic [ 0 : 0] sel;
 
-  always_comb begin
+  always @(*) begin
 
     misalign = 0;
 

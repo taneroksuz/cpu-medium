@@ -8,7 +8,7 @@ module bcu (
 
   logic [0:0] branch;
 
-  always_comb begin
+  always @(*) begin
 
     branch = 0;
 

@@ -1,8 +1,8 @@
 import configure::*;
 
 module rom (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input mem_in_type rom_in,
     output mem_out_type rom_out
 );
@@ -15,7 +15,7 @@ module rom (
 
   assign raddr = rom_in.mem_addr[7:3];
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
 
     case (raddr)
       5'b00000: rdata <= 64'h4201418141014081;
@@ -54,7 +54,7 @@ module rom (
 
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
 
     if (rom_in.mem_valid == 1) begin
       ready <= 1;

@@ -62,7 +62,7 @@ module compress (
 
   logic [0 : 0] nonzero_shamt;
 
-  always_comb begin
+  always @(*) begin
 
     instr = compress_in.instr;
 

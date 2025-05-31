@@ -12,7 +12,7 @@ module bit_clmul (
   bit_clmul_reg_type r, rin;
   bit_clmul_reg_type v;
 
-  always_comb begin
+  always @(*) begin
 
     v = r;
 
@@ -73,7 +73,7 @@ module bit_clmul (
 
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (reset == 0) begin
       r <= init_bit_clmul_reg;
     end else begin

@@ -29,7 +29,7 @@ module issue_stage (
   issue_reg_type r, rin;
   issue_reg_type v;
 
-  always_comb begin
+  always @(*) begin
 
     v = r;
 
@@ -145,7 +145,7 @@ module issue_stage (
 
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (reset == 0) begin
       r <= init_issue_reg;
     end else begin

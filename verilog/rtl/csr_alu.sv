@@ -10,7 +10,7 @@ module csr_alu (
   logic [31:0] rdata1;
   logic [31:0] cdata;
 
-  always_comb begin
+  always @(*) begin
 
     rdata1 = multiplexer(csr_alu_in.imm, csr_alu_in.rdata1, csr_alu_in.sel);
     cdata  = 0;

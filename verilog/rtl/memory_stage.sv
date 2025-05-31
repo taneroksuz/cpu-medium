@@ -33,7 +33,7 @@ module memory_stage (
   memory_reg_type r, rin;
   memory_reg_type v;
 
-  always_comb begin
+  always @(*) begin
 
     v = r;
 
@@ -197,7 +197,7 @@ module memory_stage (
 
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (reset == 0) begin
       r <= init_memory_reg;
     end else begin

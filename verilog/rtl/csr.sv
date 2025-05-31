@@ -28,7 +28,7 @@ module csr (
 
   assign valid = csr_ein.valid0 | csr_ein.valid1;
 
-  always_comb begin
+  always @(*) begin
     if ((csr_ein.valid0 & csr_ein.valid1) == 1) begin
       incr = 2;
     end else if ((csr_ein.valid0 | csr_ein.valid1) == 1) begin
@@ -38,7 +38,7 @@ module csr (
     end
   end
 
-  always_comb begin
+  always @(*) begin
     if (csr_rin.crden == 1) begin
       case (csr_rin.craddr)
         csr_misa: csr_out.cdata = 32'h40001124;
@@ -129,7 +129,7 @@ module csr (
 
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
 
     if (reset == 0) begin
       csr_machine_reg <= init_csr_machine_reg;

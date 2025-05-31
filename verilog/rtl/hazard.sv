@@ -48,13 +48,13 @@ module hazard_reg (
     end
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (hazard_reg_in.wen0 == 1) begin
       hazard_reg_array0[hazard_reg_in.waddr0] <= hazard_reg_in.wdata0;
     end
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (hazard_reg_in.wen1 == 1) begin
       hazard_reg_array1[hazard_reg_in.waddr1] <= hazard_reg_in.wdata1;
     end
@@ -115,7 +115,7 @@ module hazard_ctrl (
 
   reg_type r, rin, v;
 
-  always_comb begin
+  always @(*) begin
 
     v = r;
 
@@ -254,7 +254,7 @@ module hazard_ctrl (
 
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (reset == 0) begin
       r <= init_reg;
     end else begin

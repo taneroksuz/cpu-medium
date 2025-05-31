@@ -2,8 +2,8 @@ import configure::*;
 
 module avl
 (
-  input  logic reset,
-  input  logic clock,
+  input  wire reset,
+  input  wire clock,
   /////////////////////////////////
   input  logic [0  : 0] avl_valid,
   input  logic [0  : 0] avl_instr,
@@ -54,7 +54,7 @@ module avl
   logic [0 :0] ready;
   logic [0 :0] ready_reg;
 
-  always_comb begin
+  always @(*) begin
     state = state_reg;
     address = 0;
     byteenable = 0;
@@ -120,7 +120,7 @@ module avl
   assign avl_rdata = rdata_reg;
   assign avl_ready = ready_reg;
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
 
     if (reset == 0) begin
       state_reg <= 0;

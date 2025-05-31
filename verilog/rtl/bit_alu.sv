@@ -38,7 +38,7 @@ module bit_alu (
   zbb_op_type bit_zbb;
   zbs_op_type bit_zbs;
 
-  always_comb begin
+  always @(*) begin
 
     rdata1 = bit_alu_in.rdata1;
     rdata2 = multiplexer(bit_alu_in.imm, bit_alu_in.rdata2, bit_alu_in.sel);

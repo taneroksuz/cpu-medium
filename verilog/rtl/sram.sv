@@ -30,7 +30,7 @@ module sram #(
         $readmemh("sram.dat", sram_block);
       end
 
-      always_ff @(posedge clock) begin
+      always @(posedge clock) begin
 
         if (sram_in.mem_valid == 1) begin
 
@@ -92,7 +92,7 @@ module sram #(
 
       register_type r, rin, v;
 
-      always_comb begin
+      always @(*) begin
 
         v = r;
 
@@ -219,7 +219,7 @@ module sram #(
       assign sram_addr = r.addr;
       assign sram_dq = r.we_n == 0 ? r.dq : 16'bz;
 
-      always_ff @(posedge clock) begin
+      always @(posedge clock) begin
         if (reset == 0) begin
           r <= init_register;
         end else begin

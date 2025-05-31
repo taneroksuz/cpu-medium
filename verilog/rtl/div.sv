@@ -11,7 +11,7 @@ module div (
   div_reg_type r, rin;
   div_reg_type v;
 
-  always_comb begin
+  always @(*) begin
 
     v = r;
 
@@ -133,7 +133,7 @@ module div (
 
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (reset == 0) begin
       r <= init_div_reg;
     end else begin

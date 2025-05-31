@@ -72,7 +72,7 @@ module decoder (
 
   logic [0 : 0] nonzero_imm_c;
 
-  always_comb begin
+  always @(*) begin
 
     instr = decoder_in.instr;
 

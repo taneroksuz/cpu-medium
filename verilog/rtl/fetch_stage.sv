@@ -30,7 +30,7 @@ module fetch_stage (
   fetch_reg_type r, rin;
   fetch_reg_type v;
 
-  always_comb begin
+  always @(*) begin
 
     v = r;
 
@@ -228,7 +228,7 @@ module fetch_stage (
 
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (reset == 0) begin
       r <= init_fetch_reg;
     end else begin

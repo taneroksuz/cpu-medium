@@ -16,7 +16,7 @@ module uart_tx #(
 
     if (hardware == 0) begin : uart_simulation
 
-      always_ff @(posedge clock) begin
+      always @(posedge clock) begin
 
         if (uart_in.mem_valid == 1) begin
 
@@ -53,7 +53,7 @@ module uart_tx #(
 
       register_type r, rin, v;
 
-      always_comb begin
+      always @(*) begin
 
         v = r;
 
@@ -96,7 +96,7 @@ module uart_tx #(
 
       assign tx = r.data[0];
 
-      always_ff @(posedge clock) begin
+      always @(posedge clock) begin
         if (reset == 0) begin
           r <= init_register;
         end else begin

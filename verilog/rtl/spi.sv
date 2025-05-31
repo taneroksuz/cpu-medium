@@ -34,7 +34,7 @@ module spi #(
 
   register_type r, rin, v;
 
-  always_comb begin
+  always @(*) begin
 
     v = r;
 
@@ -88,7 +88,7 @@ module spi #(
   assign ss = r.ss;
   assign mosi = r.write == 1 ? r.data[7] : 1'b0;
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (reset == 0) begin
       r <= init_register;
     end else begin

@@ -51,7 +51,7 @@ module tim_ram (
         end
       end
 
-      always_ff @(posedge clock) begin
+      always @(posedge clock) begin
         if (tim0_ram_in.en == 1) begin
           if (tim0_ram_in.strb[0]) tim_ram[tim0_ram_in.addr][7:0] <= tim0_ram_in.data[7:0];
           if (tim0_ram_in.strb[1]) tim_ram[tim0_ram_in.addr][15:8] <= tim0_ram_in.data[15:8];
@@ -64,7 +64,7 @@ module tim_ram (
           tim0_ram_out.data <= tim_ram[tim0_ram_in.addr];
         end
       end
-      always_ff @(posedge clock) begin
+      always @(posedge clock) begin
         if (tim1_ram_in.en == 1) begin
           if (tim1_ram_in.strb[0]) tim_ram[tim1_ram_in.addr][7:0] <= tim1_ram_in.data[7:0];
           if (tim1_ram_in.strb[1]) tim_ram[tim1_ram_in.addr][15:8] <= tim1_ram_in.data[15:8];
@@ -92,7 +92,7 @@ module tim_ram (
         end
       end
 
-      always_ff @(posedge clock) begin
+      always @(posedge clock) begin
         if (tim0_ram_in.strb[0]) tim_ram[tim0_ram_in.addr][0] <= tim0_ram_in.data[7:0];
         if (tim0_ram_in.strb[1]) tim_ram[tim0_ram_in.addr][1] <= tim0_ram_in.data[15:8];
         if (tim0_ram_in.strb[2]) tim_ram[tim0_ram_in.addr][2] <= tim0_ram_in.data[23:16];
@@ -103,7 +103,7 @@ module tim_ram (
         if (tim0_ram_in.strb[7]) tim_ram[tim0_ram_in.addr][7] <= tim0_ram_in.data[63:56];
         tim0_ram_out.data <= tim_ram[tim0_ram_in.addr];
       end
-      always_ff @(posedge clock) begin
+      always @(posedge clock) begin
         if (tim1_ram_in.strb[0]) tim_ram[tim1_ram_in.addr][0] <= tim1_ram_in.data[7:0];
         if (tim1_ram_in.strb[1]) tim_ram[tim1_ram_in.addr][1] <= tim1_ram_in.data[15:8];
         if (tim1_ram_in.strb[2]) tim_ram[tim1_ram_in.addr][2] <= tim1_ram_in.data[23:16];
@@ -175,7 +175,7 @@ module tim_ctrl (
   back_type r_b, rin_b;
   back_type v_b;
 
-  always_comb begin
+  always @(*) begin
 
     v_f = r_f;
 
@@ -217,7 +217,7 @@ module tim_ctrl (
 
   end
 
-  always_comb begin
+  always @(*) begin
 
     v_b = r_b;
 
@@ -258,7 +258,7 @@ module tim_ctrl (
 
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (reset == 0) begin
       r_f <= init_front;
       r_b <= init_back;

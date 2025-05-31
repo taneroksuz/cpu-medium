@@ -137,7 +137,7 @@ module testbench ();
     end
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (counter == stoptime) begin
       $finish;
     end else begin
@@ -145,7 +145,7 @@ module testbench ();
     end
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (ver0_out.store == 1) begin
       if (ver0_out.address[31:3] == host[0][31:3]) begin
         if (|ver0_out.byteenable == 1) begin

@@ -55,7 +55,7 @@ module btb (
     end
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (btb_in.wen == 1) begin
       btb_array[btb_in.waddr] <= btb_in.wdata;
     end
@@ -86,7 +86,7 @@ module bht (
     end
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (bht_in.wen == 1) begin
       bht_array[bht_in.waddr] <= bht_in.wdata;
     end
@@ -180,7 +180,7 @@ module btac_ctrl (
   btb_reg_type r_btb, rin_btb, v_btb;
   bht_reg_type r_bht, rin_bht, v_bht;
 
-  always_comb begin
+  always @(*) begin
 
     v_btb = r_btb;
     v_bht = r_bht;
@@ -301,7 +301,7 @@ module btac_ctrl (
 
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (reset == 0) begin
       r_btb <= init_btb_reg;
       r_bht <= init_bht_reg;
@@ -365,7 +365,7 @@ module btac (
 
       reg_type r, rin, v;
 
-      always_comb begin
+      always @(*) begin
 
         v = r;
 
@@ -387,7 +387,7 @@ module btac (
 
       end
 
-      always_ff @(posedge clock) begin
+      always @(posedge clock) begin
         if (reset == 0) begin
           r <= init_reg;
         end else begin

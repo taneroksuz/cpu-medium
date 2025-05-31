@@ -2,8 +2,8 @@ import configure::*;
 
 module axi
 (
-  input  logic reset,
-  input  logic clock,
+  input  wire reset,
+  input  wire clock,
   /////////////////////////////////
   input  logic [0  : 0] axi_valid,
   input  logic [0  : 0] axi_instr,
@@ -93,7 +93,7 @@ module axi
   logic [0 :0] ready;
   logic [0 :0] ready_reg;
 
-  always_comb begin
+  always @(*) begin
     state = state_reg;
     arvalid = 0;
     awvalid = 0;
@@ -197,7 +197,7 @@ module axi
   assign axi_rdata = rdata_reg;
   assign axi_ready = ready_reg;
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
 
     if (reset == 0) begin
       state_reg <= 0;

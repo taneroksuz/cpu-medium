@@ -26,7 +26,7 @@ module decode_stage (
   decode_reg_type r, rin;
   decode_reg_type v;
 
-  always_comb begin
+  always @(*) begin
 
     v = r;
 
@@ -214,7 +214,7 @@ module decode_stage (
 
   end
 
-  always_ff @(posedge clock) begin
+  always @(posedge clock) begin
     if (reset == 0) begin
       r <= init_decode_reg;
     end else begin

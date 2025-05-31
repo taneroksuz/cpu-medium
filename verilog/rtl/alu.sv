@@ -10,7 +10,7 @@ module alu (
   logic [31 : 0] rdata2;
   logic [31 : 0] result;
 
-  always_comb begin
+  always @(*) begin
 
     rdata2 = multiplexer(alu_in.imm, alu_in.rdata2, alu_in.sel);
     result = 0;

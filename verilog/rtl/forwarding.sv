@@ -18,7 +18,7 @@ module forwarding (
   logic [31:0] res1_1;
   logic [31:0] res1_2;
 
-  always_comb begin
+  always @(*) begin
     res0_1 = 0;
     res0_2 = 0;
     if (forwarding0_rin.rden1 == 1) begin
@@ -55,7 +55,7 @@ module forwarding (
     forwarding0_out.data2 = res0_2;
   end
 
-  always_comb begin
+  always @(*) begin
     res1_1 = 0;
     res1_2 = 0;
     if (forwarding1_rin.rden1 == 1) begin
