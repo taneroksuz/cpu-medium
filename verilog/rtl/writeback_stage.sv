@@ -2,8 +2,8 @@ import constants::*;
 import wires::*;
 
 module writeback_stage (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input writeback_in_type a,
     input writeback_in_type d,
     output writeback_out_type y,

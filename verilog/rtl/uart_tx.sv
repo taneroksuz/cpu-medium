@@ -4,11 +4,11 @@ import wires::*;
 module uart_tx #(
     parameter clock_rate
 ) (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input mem_in_type uart_in,
     output mem_out_type uart_out,
-    output tx
+    output wire tx
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -39,8 +39,6 @@ module uart_tx #(
     end
 
     if (hardware == 1) begin : uart_hardware
-
-
 
       localparam full = clock_rate - 1;
 

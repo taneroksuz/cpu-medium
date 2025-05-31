@@ -4,14 +4,14 @@ import wires::*;
 module spi #(
     parameter clock_rate
 ) (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input mem_in_type spi_in,
     output mem_out_type spi_out,
-    output sclk,
-    output mosi,
-    input miso,
-    output ss
+    output wire sclk,
+    output wire mosi,
+    input wire miso,
+    output wire ss
 );
   timeunit 1ns; timeprecision 1ps;
 

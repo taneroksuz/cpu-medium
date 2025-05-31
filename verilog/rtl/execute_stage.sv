@@ -2,8 +2,8 @@ import constants::*;
 import wires::*;
 
 module execute_stage (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input alu_out_type alu0_out,
     output alu_in_type alu0_in,
     input alu_out_type alu1_out,

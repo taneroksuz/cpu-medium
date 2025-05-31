@@ -3,8 +3,8 @@ import wires::*;
 import functions::*;
 
 module decode_stage (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input decoder_out_type decoder0_out,
     output decoder_in_type decoder0_in,
     input decoder_out_type decoder1_out,

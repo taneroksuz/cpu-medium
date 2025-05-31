@@ -3,8 +3,8 @@ import wires::*;
 import functions::*;
 
 module issue_stage (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input hazard_out_type hazard_out,
     output hazard_in_type hazard_in,
     output register_read_in_type register0_rin,

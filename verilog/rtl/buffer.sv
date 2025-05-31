@@ -59,7 +59,7 @@ import wires::*;
 import buffer_wires::*;
 
 module buffer_reg (
-    input logic clock,
+    input wire clock,
     input buffer_reg_in_type buffer_reg_in,
     output buffer_reg_out_type buffer_reg_out
 );
@@ -67,14 +67,27 @@ module buffer_reg (
 
   localparam depth = $clog2(buffer_depth);
 
-  logic [47:0] buffer_reg_array0[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array1[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array2[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array3[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array4[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array5[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array6[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array7[0:buffer_depth-1] = '{default: '0};
+  logic [47:0] buffer_reg_array0[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array1[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array2[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array3[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array4[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array5[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array6[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array7[0:buffer_depth-1];
+
+  initial begin
+    for (int i = 0; i < buffer_depth; i = i + 1) begin
+      buffer_reg_array0[i] = 0;
+      buffer_reg_array1[i] = 0;
+      buffer_reg_array2[i] = 0;
+      buffer_reg_array3[i] = 0;
+      buffer_reg_array4[i] = 0;
+      buffer_reg_array5[i] = 0;
+      buffer_reg_array6[i] = 0;
+      buffer_reg_array7[i] = 0;
+    end
+  end
 
   logic [47:0] rdata0;
   logic [47:0] rdata1;
@@ -158,8 +171,8 @@ module buffer_reg (
 endmodule
 
 module buffer_ctrl (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input buffer_in_type buffer_in,
     output buffer_out_type buffer_out,
     input buffer_reg_out_type buffer_reg_out,
@@ -585,8 +598,8 @@ module buffer_ctrl (
 endmodule
 
 module buffer (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input buffer_in_type buffer_in,
     output buffer_out_type buffer_out
 );

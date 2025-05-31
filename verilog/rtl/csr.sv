@@ -2,8 +2,8 @@ import constants::*;
 import wires::*;
 
 module csr (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input csr_read_in_type csr_rin,
     input csr_write_in_type csr_win,
     input csr_exception_in_type csr_ein,

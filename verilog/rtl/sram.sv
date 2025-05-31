@@ -4,17 +4,17 @@ import wires::*;
 module sram #(
     parameter clock_rate
 ) (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input mem_in_type sram_in,
     output mem_out_type sram_out,
-    output sram_ce_n,
-    output sram_we_n,
-    output sram_oe_n,
-    output sram_ub_n,
-    output sram_lb_n,
-    inout [15:0] sram_dq,
-    output [17:0] sram_addr
+    output wire sram_ce_n,
+    output wire sram_we_n,
+    output wire sram_oe_n,
+    output wire sram_ub_n,
+    output wire sram_lb_n,
+    inout wire [15:0] sram_dq,
+    output wire [17:0] sram_addr
 );
   timeunit 1ns; timeprecision 1ps;
 

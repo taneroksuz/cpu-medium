@@ -2,8 +2,8 @@ import wires::*;
 import functions::*;
 
 module bit_clmul (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input bit_clmul_in_type bit_clmul_in,
     output bit_clmul_out_type bit_clmul_out
 );

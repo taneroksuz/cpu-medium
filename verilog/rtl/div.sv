@@ -1,8 +1,8 @@
 import wires::*;
 
 module div (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input div_in_type div_in,
     output div_out_type div_out
 );

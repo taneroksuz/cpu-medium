@@ -2,8 +2,8 @@ import wires::*;
 import constants::*;
 
 module arbiter (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input mem_in_type imem0_in,
     input mem_in_type imem1_in,
     output mem_out_type imem0_out,

@@ -4,8 +4,8 @@ import wires::*;
 module clint #(
     parameter clock_rate
 ) (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input mem_in_type clint_in,
     output mem_out_type clint_out,
     output logic [63 : 0] clint_mtime,

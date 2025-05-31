@@ -15,10 +15,6 @@ module compress (
   logic [31 : 0] imm_swsp;
   logic [31 : 0] imm_lswr;
 
-  logic [31 : 0] imm_ldsp;
-  logic [31 : 0] imm_sdsp;
-  logic [31 : 0] imm_lsdr;
-
   logic [31 : 0] imm_j;
   logic [31 : 0] imm_b;
   logic [31 : 0] imm_w;
@@ -75,10 +71,6 @@ module compress (
     imm_lwsp = {24'b0, instr[3:2], instr[12], instr[6:4], 2'b0};
     imm_swsp = {24'b0, instr[8:7], instr[12:9], 2'b0};
     imm_lswr = {25'b0, instr[5], instr[12:10], instr[6], 2'b0};
-
-    imm_ldsp = {23'b0, instr[4:2], instr[12], instr[6:5], 3'b0};
-    imm_sdsp = {23'b0, instr[9:7], instr[12:10], 3'b0};
-    imm_lsdr = {24'b0, instr[6:5], instr[12:10], 3'b0};
 
     imm_j = {
       {20{instr[12]}},

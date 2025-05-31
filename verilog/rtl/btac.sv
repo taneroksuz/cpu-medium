@@ -39,7 +39,7 @@ import wires::*;
 import btac_wires::*;
 
 module btb (
-    input logic clock,
+    input wire clock,
     input btb_in_type btb_in,
     output btb_out_type btb_out
 );
@@ -47,7 +47,13 @@ module btb (
 
   localparam btb_depth = $clog2(branchtarget_depth);
 
-  logic [62-btb_depth:0] btb_array[0:branchtarget_depth-1] = '{default: '0};
+  logic [62-btb_depth:0] btb_array[0:branchtarget_depth-1];
+
+  initial begin
+    for (int i = 0; i < branchtarget_depth; i = i + 1) begin
+      btb_array[i] = 0;
+    end
+  end
 
   always_ff @(posedge clock) begin
     if (btb_in.wen == 1) begin
@@ -64,7 +70,7 @@ import wires::*;
 import btac_wires::*;
 
 module bht (
-    input logic clock,
+    input wire clock,
     input bht_in_type bht_in,
     output bht_out_type bht_out
 );
@@ -72,7 +78,13 @@ module bht (
 
   localparam bht_depth = $clog2(branchhistory_depth);
 
-  logic [1:0] bht_array[0:branchhistory_depth-1] = '{default: '0};
+  logic [1:0] bht_array[0:branchhistory_depth-1];
+
+  initial begin
+    for (int i = 0; i < branchhistory_depth; i = i + 1) begin
+      bht_array[i] = 0;
+    end
+  end
 
   always_ff @(posedge clock) begin
     if (bht_in.wen == 1) begin
@@ -85,8 +97,8 @@ module bht (
 endmodule
 
 module btac_ctrl (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input btac_in_type btac_in,
     output btac_out_type btac_out,
     input btb_out_type btb_out,
@@ -302,8 +314,8 @@ module btac_ctrl (
 endmodule
 
 module btac (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input btac_in_type btac_in,
     output btac_out_type btac_out
 );

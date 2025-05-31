@@ -11,32 +11,25 @@ module top
 
   timeunit 1ns; timeprecision 1ps;
 
-  logic CLOCK_CPU;
-  logic LOCKED;
-  logic RESET;
+  wire CLOCK_CPU;
+  wire LOCKED;
+  wire RESET;
 
-  logic SCLK;
-  logic MOSI;
-  logic MISO;
-  logic SS;
+  wire SCLK;
+  wire MOSI;
+  wire MISO;
+  wire SS;
 
-  logic SRAM_CE_n;
-  logic SRAM_WE_n;
-  logic SRAM_OE_n;
-  logic SRAM_UB_n;
-  logic SRAM_LB_n;
-  logic [15 : 0] SRAM_D;
-  logic [17 : 0] SRAM_A;
+  wire SRAM_CE_n;
+  wire SRAM_WE_n;
+  wire SRAM_OE_n;
+  wire SRAM_UB_n;
+  wire SRAM_LB_n;
+  wire [15 : 0] SRAM_D;
+  wire [17 : 0] SRAM_A;
 
   (* keep = "true" *) verify_out_type VER0_OUT;
   (* keep = "true" *) verify_out_type VER1_OUT;
-
-  initial begin
-    SCLK = 0;
-    MOSI = 0;
-    MISO = 0;
-    SS = 0;
-  end
 
   pll pll_cpu_comp (
     .clk_in1(CLK100MHZ),

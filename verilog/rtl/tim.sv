@@ -28,7 +28,7 @@ import wires::*;
 import tim_wires::*;
 
 module tim_ram (
-    input logic clock,
+    input wire clock,
     input tim_ram_in_type tim0_ram_in,
     input tim_ram_in_type tim1_ram_in,
     output tim_ram_out_type tim0_ram_out,
@@ -43,7 +43,13 @@ module tim_ram (
 
     if (ram_type == 0) begin
 
-      logic [63 : 0] tim_ram[0:tim_depth-1] = '{default: '0};
+      logic [63 : 0] tim_ram[0:tim_depth-1];
+
+      initial begin
+        for (int i = 0; i < tim_depth; i = i + 1) begin
+          tim_ram[i] = 0;
+        end
+      end
 
       always_ff @(posedge clock) begin
         if (tim0_ram_in.en == 1) begin
@@ -78,7 +84,13 @@ module tim_ram (
 
       /* synthesis syn_ramstyle = "MLAB, no_rw_check"*/
 
-      logic [7 : 0][7 : 0] tim_ram[0:tim_depth-1] = '{default: '0};
+      logic [7 : 0][7 : 0] tim_ram[0:tim_depth-1];
+
+      initial begin
+        for (int i = 0; i < tim_depth; i = i + 1) begin
+          tim_ram[i] = 0;
+        end
+      end
 
       always_ff @(posedge clock) begin
         if (tim0_ram_in.strb[0]) tim_ram[tim0_ram_in.addr][0] <= tim0_ram_in.data[7:0];
@@ -110,8 +122,8 @@ module tim_ram (
 endmodule
 
 module tim_ctrl (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input tim_vec_out_type dvec0_out,
     input tim_vec_out_type dvec1_out,
     output tim_vec_in_type dvec0_in,
@@ -259,8 +271,8 @@ module tim_ctrl (
 endmodule
 
 module tim (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input mem_in_type tim0_in,
     input mem_in_type tim1_in,
     output mem_out_type tim0_out,

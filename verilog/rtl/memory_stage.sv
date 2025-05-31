@@ -3,8 +3,8 @@ import wires::*;
 import functions::*;
 
 module memory_stage (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input lsu_out_type lsu0_out,
     output lsu_in_type lsu0_in,
     input lsu_out_type lsu1_out,

@@ -30,7 +30,7 @@ import wires::*;
 import hazard_wires::*;
 
 module hazard_reg (
-    input logic clock,
+    input wire clock,
     input hazard_reg_in_type hazard_reg_in,
     output hazard_reg_out_type hazard_reg_out
 );
@@ -38,8 +38,15 @@ module hazard_reg (
 
   localparam depth = $clog2(hazard_depth);
 
-  instruction_type hazard_reg_array0[0:hazard_depth-1] = '{default: '0};
-  instruction_type hazard_reg_array1[0:hazard_depth-1] = '{default: '0};
+  instruction_type hazard_reg_array0[0:hazard_depth-1];
+  instruction_type hazard_reg_array1[0:hazard_depth-1];
+
+  initial begin
+    for (int i = 0; i < hazard_depth; i = i + 1) begin
+      hazard_reg_array0[i] = 0;
+      hazard_reg_array1[i] = 0;
+    end
+  end
 
   always_ff @(posedge clock) begin
     if (hazard_reg_in.wen0 == 1) begin
@@ -59,8 +66,8 @@ module hazard_reg (
 endmodule
 
 module hazard_ctrl (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input hazard_in_type hazard_in,
     output hazard_out_type hazard_out,
     input hazard_reg_out_type hazard_reg_out,
@@ -258,8 +265,8 @@ module hazard_ctrl (
 endmodule
 
 module hazard (
-    input logic reset,
-    input logic clock,
+    input wire reset,
+    input wire clock,
     input hazard_in_type hazard_in,
     output hazard_out_type hazard_out
 );
