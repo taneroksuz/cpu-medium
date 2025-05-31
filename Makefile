@@ -26,15 +26,14 @@ export SYNTHESIS ?= 0# "1" on, "0" off
 export PROGRAM ?= coremark
 export SRAM_SIZE ?= 0x80000# Altera -> 0x80000, Xilinx -> 0x40000
 
-export RISCV ?= /opt/rv32imfdcb
-export ARCH ?= rv32imfdc_zba_zbb_zbc_zbs_zicsr_zifencei
-export ABI ?= ilp32d
+export RISCV ?= /opt/rv32imcb
+export ARCH ?= rv32imc_zba_zbb_zbc_zbs_zicsr_zifencei
+export ABI ?= ilp32
 
 export MAXTIME ?= 10000000
 export DUMP ?= 0# "1" on, "0" off
 
 compile:
-	benchmark/riscv-tests.sh
 	benchmark/coremark.sh
 	benchmark/whetstone.sh
 	benchmark/free-rtos.sh

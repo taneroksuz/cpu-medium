@@ -1,7 +1,6 @@
 import constants::*;
 import wires::*;
 import functions::*;
-import fp_wire::*;
 
 module decode_stage (
     input logic reset,
@@ -14,10 +13,6 @@ module decode_stage (
     output compress_in_type compress0_in,
     input compress_out_type compress1_out,
     output compress_in_type compress1_in,
-    input fp_decode_out_type fp_decode0_out,
-    output fp_decode_in_type fp_decode0_in,
-    input fp_decode_out_type fp_decode1_out,
-    output fp_decode_in_type fp_decode1_in,
     input csr_out_type csr_out,
     input btac_out_type btac_out,
     input decode_in_type a,
@@ -56,32 +51,6 @@ module decode_stage (
     v.instr1.raddr2 = v.instr1.instr[24:20];
     v.instr1.raddr3 = v.instr1.instr[31:27];
     v.instr1.caddr = v.instr1.instr[31:20];
-
-    v.instr0.fmt = 0;
-    v.instr0.rm = 0;
-    v.instr0.op.fwren = 0;
-    v.instr0.op.frden1 = 0;
-    v.instr0.op.frden2 = 0;
-    v.instr0.op.frden3 = 0;
-    v.instr0.op.fload = 0;
-    v.instr0.op.fstore = 0;
-    v.instr0.op.fpunit = 0;
-    v.instr0.op.fpuc = 0;
-    v.instr0.op.fpuf = 0;
-    v.instr0.fpu_op = init_fp_operation;
-
-    v.instr1.fmt = 0;
-    v.instr1.rm = 0;
-    v.instr1.op.fwren = 0;
-    v.instr1.op.frden1 = 0;
-    v.instr1.op.frden2 = 0;
-    v.instr1.op.frden3 = 0;
-    v.instr1.op.fload = 0;
-    v.instr1.op.fstore = 0;
-    v.instr1.op.fpunit = 0;
-    v.instr1.op.fpuc = 0;
-    v.instr1.op.fpuf = 0;
-    v.instr1.fpu_op = init_fp_operation;
 
     decoder0_in.instr = v.instr0.instr;
 
@@ -168,10 +137,6 @@ module decode_stage (
       v.instr0.op.wren = compress0_out.wren;
       v.instr0.op.rden1 = compress0_out.rden1;
       v.instr0.op.rden2 = compress0_out.rden2;
-      v.instr0.op.fwren = compress0_out.fwren;
-      v.instr0.op.frden1 = compress0_out.frden1;
-      v.instr0.op.frden2 = compress0_out.frden2;
-      v.instr0.op.frden3 = compress0_out.frden3;
       v.instr0.op.alunit = compress0_out.alunit;
       v.instr0.op.lui = compress0_out.lui;
       v.instr0.op.jal = compress0_out.jal;
@@ -180,9 +145,6 @@ module decode_stage (
       v.instr0.op.load = compress0_out.load;
       v.instr0.op.store = compress0_out.store;
       v.instr0.op.nop = compress0_out.nop;
-      v.instr0.op.fload = compress0_out.fload;
-      v.instr0.op.fstore = compress0_out.fstore;
-      v.instr0.op.fpunit = compress0_out.fpunit;
       v.instr0.op.ebreak = compress0_out.ebreak;
       v.instr0.op.valid = compress0_out.valid;
       v.instr0.alu_op = compress0_out.alu_op;
@@ -201,10 +163,6 @@ module decode_stage (
       v.instr1.op.wren = compress1_out.wren;
       v.instr1.op.rden1 = compress1_out.rden1;
       v.instr1.op.rden2 = compress1_out.rden2;
-      v.instr1.op.fwren = compress1_out.fwren;
-      v.instr1.op.frden1 = compress1_out.frden1;
-      v.instr1.op.frden2 = compress1_out.frden2;
-      v.instr1.op.frden3 = compress1_out.frden3;
       v.instr1.op.alunit = compress1_out.alunit;
       v.instr1.op.lui = compress1_out.lui;
       v.instr1.op.jal = compress1_out.jal;
@@ -213,60 +171,11 @@ module decode_stage (
       v.instr1.op.load = compress1_out.load;
       v.instr1.op.store = compress1_out.store;
       v.instr1.op.nop = compress1_out.nop;
-      v.instr1.op.fload = compress1_out.fload;
-      v.instr1.op.fstore = compress1_out.fstore;
-      v.instr1.op.fpunit = compress1_out.fpunit;
       v.instr1.op.ebreak = compress1_out.ebreak;
       v.instr1.op.valid = compress1_out.valid;
       v.instr1.alu_op = compress1_out.alu_op;
       v.instr1.bcu_op = compress1_out.bcu_op;
       v.instr1.lsu_op = compress1_out.lsu_op;
-    end
-
-    fp_decode0_in.instr = v.instr0.instr;
-
-    if (fp_decode0_out.valid == 1) begin
-      v.instr0.instr_str = fp_decode0_out.instr_str;
-      v.instr0.imm = fp_decode0_out.imm;
-      v.instr0.fmt = fp_decode0_out.fmt;
-      v.instr0.rm = fp_decode0_out.rm;
-      v.instr0.op.wren = fp_decode0_out.wren;
-      v.instr0.op.rden1 = fp_decode0_out.rden1;
-      v.instr0.op.fwren = fp_decode0_out.fwren;
-      v.instr0.op.frden1 = fp_decode0_out.frden1;
-      v.instr0.op.frden2 = fp_decode0_out.frden2;
-      v.instr0.op.frden3 = fp_decode0_out.frden3;
-      v.instr0.op.fload = fp_decode0_out.fload;
-      v.instr0.op.fstore = fp_decode0_out.fstore;
-      v.instr0.op.fpunit = fp_decode0_out.fpunit;
-      v.instr0.op.fpuc = fp_decode0_out.fpuc;
-      v.instr0.op.fpuf = fp_decode0_out.fpuf;
-      v.instr0.op.valid = fp_decode0_out.valid;
-      v.instr0.lsu_op = fp_decode0_out.lsu_op;
-      v.instr0.fpu_op = fp_decode0_out.fpu_op;
-    end
-
-    fp_decode1_in.instr = v.instr1.instr;
-
-    if (fp_decode1_out.valid == 1) begin
-      v.instr1.instr_str = fp_decode1_out.instr_str;
-      v.instr1.imm = fp_decode1_out.imm;
-      v.instr1.fmt = fp_decode1_out.fmt;
-      v.instr1.rm = fp_decode1_out.rm;
-      v.instr1.op.wren = fp_decode1_out.wren;
-      v.instr1.op.rden1 = fp_decode1_out.rden1;
-      v.instr1.op.fwren = fp_decode1_out.fwren;
-      v.instr1.op.frden1 = fp_decode1_out.frden1;
-      v.instr1.op.frden2 = fp_decode1_out.frden2;
-      v.instr1.op.frden3 = fp_decode1_out.frden3;
-      v.instr1.op.fload = fp_decode1_out.fload;
-      v.instr1.op.fstore = fp_decode1_out.fstore;
-      v.instr1.op.fpunit = fp_decode1_out.fpunit;
-      v.instr1.op.fpuc = fp_decode1_out.fpuc;
-      v.instr1.op.fpuf = fp_decode1_out.fpuf;
-      v.instr1.op.valid = fp_decode1_out.valid;
-      v.instr1.lsu_op = fp_decode1_out.lsu_op;
-      v.instr1.fpu_op = fp_decode1_out.fpu_op;
     end
 
     if (a.f.ready0 == 1) begin

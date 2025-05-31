@@ -1,7 +1,3 @@
-[submodule "fpu"]
-	path = fpu
-	url = https://github.com/taneroksuz/fpu.git
-	branch = main
 [submodule "benchmark"]
 	path = benchmark
 	url = https://github.com/taneroksuz/cpu-benchmark.git

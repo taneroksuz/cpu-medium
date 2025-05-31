@@ -44,14 +44,6 @@ module compress (
   logic [0 : 0] rden1;
   logic [0 : 0] rden2;
 
-  logic [0 : 0] fwren;
-  logic [0 : 0] frden1;
-  logic [0 : 0] frden2;
-  logic [0 : 0] frden3;
-  logic [0 : 0] fload;
-  logic [0 : 0] fstore;
-  logic [0 : 0] fpunit;
-
   logic [0 : 0] alunit;
   logic [0 : 0] lui;
   logic [0 : 0] jal;
@@ -124,14 +116,6 @@ module compress (
     rden1 = 0;
     rden2 = 0;
 
-    fwren = 0;
-    frden1 = 0;
-    frden2 = 0;
-    frden3 = 0;
-    fload = 0;
-    fstore = 0;
-    fpunit = 0;
-
     alunit = 0;
     lui = 0;
     jal = 0;
@@ -178,28 +162,6 @@ module compress (
             load = 1;
             lsu_op.lsu_lw = 1;
           end
-          c0_flw: begin
-            instr_str = "c.flw";
-            imm = imm_lswr;
-            waddr = {2'b01, instr[4:2]};
-            raddr1 = {2'b01, instr[9:7]};
-            fwren = 1;
-            rden1 = 1;
-            fload = 1;
-            fpunit = 1;
-            lsu_op.lsu_lw = 1;
-          end
-          c0_fld: begin
-            instr_str = "c.fld";
-            imm = imm_lsdr;
-            waddr = {2'b01, instr[4:2]};
-            raddr1 = {2'b01, instr[9:7]};
-            fwren = 1;
-            rden1 = 1;
-            fload = 1;
-            fpunit = 1;
-            lsu_op.lsu_ld = 1;
-          end
           c0_sw: begin
             instr_str = "c.sw";
             imm = imm_lswr;
@@ -209,28 +171,6 @@ module compress (
             rden2 = 1;
             store = 1;
             lsu_op.lsu_sw = 1;
-          end
-          c0_fsw: begin
-            instr_str = "c.fsw";
-            imm = imm_lswr;
-            raddr1 = {2'b01, instr[9:7]};
-            raddr2 = {2'b01, instr[4:2]};
-            rden1 = 1;
-            frden2 = 1;
-            fstore = 1;
-            fpunit = 1;
-            lsu_op.lsu_sw = 1;
-          end
-          c0_fsd: begin
-            instr_str = "c.fsd";
-            imm = imm_lsdr;
-            raddr1 = {2'b01, instr[9:7]};
-            raddr2 = {2'b01, instr[4:2]};
-            rden1 = 1;
-            frden2 = 1;
-            fstore = 1;
-            fpunit = 1;
-            lsu_op.lsu_sd = 1;
           end
           default: valid = 0;
         endcase
@@ -398,26 +338,6 @@ module compress (
             load = 1;
             lsu_op.lsu_lw = 1;
           end
-          c2_flwsp: begin
-            instr_str = "c.flwsp";
-            imm = imm_lwsp;
-            fwren = 1;
-            rden1 = 1;
-            raddr1 = 2;
-            fload = 1;
-            fpunit = 1;
-            lsu_op.lsu_lw = 1;
-          end
-          c2_fldsp: begin
-            instr_str = "c.fldsp";
-            imm = imm_ldsp;
-            fwren = 1;
-            rden1 = 1;
-            raddr1 = 2;
-            fload = 1;
-            fpunit = 1;
-            lsu_op.lsu_ld = 1;
-          end
           c2_alu: begin
             case (funct4)
               0: begin
@@ -471,26 +391,6 @@ module compress (
             store = 1;
             lsu_op.lsu_sw = 1;
           end
-          c2_fswsp: begin
-            instr_str = "c.fswsp";
-            imm = imm_swsp;
-            rden1 = 1;
-            frden2 = 1;
-            raddr1 = 2;
-            fstore = 1;
-            fpunit = 1;
-            lsu_op.lsu_sw = 1;
-          end
-          c2_fsdsp: begin
-            instr_str = "c.fsdsp";
-            imm = imm_sdsp;
-            rden1 = 1;
-            frden2 = 1;
-            raddr1 = 2;
-            fstore = 1;
-            fpunit = 1;
-            lsu_op.lsu_sd = 1;
-          end
           default: valid = 0;
         endcase
       end
@@ -511,10 +411,6 @@ module compress (
     compress_out.wren = wren;
     compress_out.rden1 = rden1;
     compress_out.rden2 = rden2;
-    compress_out.fwren = fwren;
-    compress_out.frden1 = frden1;
-    compress_out.frden2 = frden2;
-    compress_out.frden3 = frden3;
     compress_out.alunit = alunit;
     compress_out.lui = lui;
     compress_out.jal = jal;
@@ -523,9 +419,6 @@ module compress (
     compress_out.load = load;
     compress_out.store = store;
     compress_out.nop = nop;
-    compress_out.fload = fload;
-    compress_out.fstore = fstore;
-    compress_out.fpunit = fpunit;
     compress_out.ebreak = ebreak;
     compress_out.valid = valid;
     compress_out.alu_op = alu_op;

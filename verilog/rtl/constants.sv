@@ -19,13 +19,6 @@ package constants;
   parameter [6 : 0] opcode_register = 7'b0110011;
   parameter [6 : 0] opcode_fence = 7'b0001111;
   parameter [6 : 0] opcode_system = 7'b1110011;
-  parameter [6 : 0] opcode_fp = 7'b1010011;
-  parameter [6 : 0] opcode_fload = 7'b0000111;
-  parameter [6 : 0] opcode_fstore = 7'b0100111;
-  parameter [6 : 0] opcode_fmadd = 7'b1000011;
-  parameter [6 : 0] opcode_fmsub = 7'b1000111;
-  parameter [6 : 0] opcode_fnmsub = 7'b1001011;
-  parameter [6 : 0] opcode_fnmadd = 7'b1001111;
 
   parameter [2 : 0] funct_add = 3'b000;
   parameter [2 : 0] funct_sll = 3'b001;
@@ -159,10 +152,6 @@ package constants;
   parameter [11 : 0] csr_ucause = 12'h042;
   parameter [11 : 0] csr_utval = 12'h043;
   parameter [11 : 0] csr_uip = 12'h044;
-
-  parameter [11 : 0] csr_fflags = 12'h001;
-  parameter [11 : 0] csr_frm = 12'h002;
-  parameter [11 : 0] csr_fcsr = 12'h003;
 
   parameter [11 : 0] csr_ucycle = 12'hC00;
   parameter [11 : 0] csr_utime = 12'hC01;

@@ -1,15 +1,13 @@
 # CPU-MEDIUM
 
-This cpu is 6-stage in-order dual issue superscalar processor with floating point unit.
+This cpu is 6-stage in-order dual issue superscalar processor.
 
 ## SPECIFICATIONS
 
 ### Architecture
-- RV32-IMFDCB
+- RV32-IMCB
 - Fast multiplication unit
 - Slow division unit
-- FPU with single and double precision
-- Fast and slow option for FDIV and FSQRT instruction
 - Branch target cache with bimodal branch predictor
 ### Memory
 - Harvard bus architecture

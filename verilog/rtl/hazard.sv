@@ -171,8 +171,6 @@ module hazard_ctrl (
     v.calc0.raddr2 = v.instr0.raddr2;
     v.calc0.raddr3 = v.instr0.raddr3;
     v.calc0.caddr = v.instr0.caddr;
-    v.calc0.fmt = v.instr0.fmt;
-    v.calc0.rm = v.instr0.rm;
     v.calc0.op = v.instr0.op;
     v.calc0.alu_op = v.instr0.alu_op;
     v.calc0.bcu_op = v.instr0.bcu_op;
@@ -181,7 +179,6 @@ module hazard_ctrl (
     v.calc0.div_op = v.instr0.div_op;
     v.calc0.mul_op = v.instr0.mul_op;
     v.calc0.bit_op = v.instr0.bit_op;
-    v.calc0.fpu_op = v.instr0.fpu_op;
     v.calc0.pred = v.instr0.pred;
 
     v.calc1.pc = v.instr1.pc;
@@ -193,8 +190,6 @@ module hazard_ctrl (
     v.calc1.raddr2 = v.instr1.raddr2;
     v.calc1.raddr3 = v.instr1.raddr3;
     v.calc1.caddr = v.instr1.caddr;
-    v.calc1.fmt = v.instr1.fmt;
-    v.calc1.rm = v.instr1.rm;
     v.calc1.op = v.instr1.op;
     v.calc1.alu_op = v.instr1.alu_op;
     v.calc1.bcu_op = v.instr1.bcu_op;
@@ -203,16 +198,13 @@ module hazard_ctrl (
     v.calc1.div_op = v.instr1.div_op;
     v.calc1.mul_op = v.instr1.mul_op;
     v.calc1.bit_op = v.instr1.bit_op;
-    v.calc1.fpu_op = v.instr1.fpu_op;
     v.calc1.pred = v.instr1.pred;
 
     v.single = v.calc0.op.fence | v.calc0.op.mret | v.calc0.op.wfi | v.calc1.op.fence | v.calc1.op.mret | v.calc1.op.wfi;
-    v.single = v.single | (v.calc0.op.fpunit & v.calc1.op.fpunit);
     v.single = v.single | (v.calc0.op.division & v.calc1.op.division);
     v.single = v.single | (v.calc0.op.mult & v.calc1.op.mult);
     v.single = v.single | (v.calc0.op.bitc & v.calc1.op.bitc);
     v.single = v.single | (v.calc0.op.csreg & v.calc1.op.csreg);
-    v.single = v.single | (v.calc0.op.fpuf & v.calc1.op.csreg & (v.calc1.caddr == csr_fflags || v.calc1.caddr == csr_fcsr));
 
     if (v.count > 1) begin
       if (v.single == 1) begin
@@ -224,17 +216,6 @@ module hazard_ctrl (
             v.diff = 1;
           end
           if (v.calc1.op.rden2 == 1 && v.calc1.raddr2 == v.calc0.waddr) begin
-            v.diff = 1;
-          end
-        end
-        if (v.calc0.op.fwren == 1) begin
-          if (v.calc1.op.frden1 == 1 && v.calc1.raddr1 == v.calc0.waddr) begin
-            v.diff = 1;
-          end
-          if (v.calc1.op.frden2 == 1 && v.calc1.raddr2 == v.calc0.waddr) begin
-            v.diff = 1;
-          end
-          if (v.calc1.op.frden3 == 1 && v.calc1.raddr3 == v.calc0.waddr) begin
             v.diff = 1;
           end
         end

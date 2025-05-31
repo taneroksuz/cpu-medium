@@ -106,46 +106,8 @@ module cpu (
   execute_out_type execute_out_q;
   memory_out_type memory_out_q;
   writeback_out_type writeback_out_q;
-  fpu_in_type fpu_in;
-  fpu_out_type fpu_out;
-  fp_decode_in_type fp_decode0_in;
-  fp_decode_in_type fp_decode1_in;
-  fp_execute_in_type fp_execute_in;
-  fp_register_read_in_type fp_register_rin;
-  fp_register_write_in_type fp_register_win;
-  fp_csr_read_in_type fp_csr_rin;
-  fp_csr_write_in_type fp_csr_win;
-  fp_csr_exception_in_type fp_csr_ein;
-  fp_forwarding_register_in_type fp_forwarding_rin;
-  fp_forwarding_execute_in_type fp_forwarding_ein;
-  fp_forwarding_memory_in_type fp_forwarding_min;
-  fp_decode_out_type fp_decode0_out;
-  fp_decode_out_type fp_decode1_out;
-  fp_execute_out_type fp_execute_out;
-  fp_register_out_type fp_register_out;
-  fp_csr_out_type fp_csr_out;
-  fp_forwarding_out_type fp_forwarding_out;
 
   logic [1:0] clear;
-
-  assign fpu_in.fp_decode0_in = fp_decode0_in;
-  assign fpu_in.fp_decode1_in = fp_decode1_in;
-  assign fpu_in.fp_execute_in = fp_execute_in;
-  assign fpu_in.fp_register_rin = fp_register_rin;
-  assign fpu_in.fp_register_win = fp_register_win;
-  assign fpu_in.fp_csr_rin = fp_csr_rin;
-  assign fpu_in.fp_csr_win = fp_csr_win;
-  assign fpu_in.fp_csr_ein = fp_csr_ein;
-  assign fpu_in.fp_forwarding_rin = fp_forwarding_rin;
-  assign fpu_in.fp_forwarding_ein = fp_forwarding_ein;
-  assign fpu_in.fp_forwarding_min = fp_forwarding_min;
-
-  assign fp_decode0_out = fpu_out.fp_decode0_out;
-  assign fp_decode1_out = fpu_out.fp_decode1_out;
-  assign fp_execute_out = fpu_out.fp_execute_out;
-  assign fp_register_out = fpu_out.fp_register_out;
-  assign fp_csr_out = fpu_out.fp_csr_out;
-  assign fp_forwarding_out = fpu_out.fp_forwarding_out;
 
   assign fetch_in_a.f = fetch_out_y;
   assign fetch_in_a.i = issue_out_y;
@@ -404,10 +366,6 @@ module cpu (
       .compress0_in(compress0_in),
       .compress1_out(compress1_out),
       .compress1_in(compress1_in),
-      .fp_decode0_out(fp_decode0_out),
-      .fp_decode0_in(fp_decode0_in),
-      .fp_decode1_out(fp_decode1_out),
-      .fp_decode1_in(fp_decode1_in),
       .csr_out(csr_out),
       .btac_out(btac_out),
       .a(decode_in_a),
@@ -424,20 +382,14 @@ module cpu (
       .hazard_in(hazard_in),
       .register0_rin(register0_rin),
       .register1_rin(register1_rin),
-      .fp_register_rin(fp_register_rin),
       .register0_out(register0_out),
       .register1_out(register1_out),
-      .fp_register_out(fp_register_out),
       .forwarding0_out(forwarding0_out),
       .forwarding1_out(forwarding1_out),
       .forwarding0_rin(forwarding0_rin),
       .forwarding1_rin(forwarding1_rin),
-      .fp_forwarding_out(fp_forwarding_out),
-      .fp_forwarding_rin(fp_forwarding_rin),
       .csr_out(csr_out),
       .csr_rin(csr_rin),
-      .fp_csr_out(fp_csr_out),
-      .fp_csr_rin(fp_csr_rin),
       .btac_out(btac_out),
       .a(issue_in_a),
       .d(issue_in_d),
@@ -473,13 +425,10 @@ module cpu (
       .bit_alu1_in(bit_alu1_in),
       .bit_clmul_out(bit_clmul_out),
       .bit_clmul_in(bit_clmul_in),
-      .fp_execute_out(fp_execute_out),
-      .fp_execute_in(fp_execute_in),
       .csr_out(csr_out),
       .btac_out(btac_out),
       .forwarding0_ein(forwarding0_ein),
       .forwarding1_ein(forwarding1_ein),
-      .fp_forwarding_ein(fp_forwarding_ein),
       .a(execute_in_a),
       .d(execute_in_d),
       .y(execute_out_y),
@@ -503,13 +452,8 @@ module cpu (
       .csr_ein(csr_ein),
       .register0_win(register0_win),
       .register1_win(register1_win),
-      .fp_register_win(fp_register_win),
       .forwarding0_min(forwarding0_min),
       .forwarding1_min(forwarding1_min),
-      .fp_forwarding_min(fp_forwarding_min),
-      .fp_csr_out(fp_csr_out),
-      .fp_csr_win(fp_csr_win),
-      .fp_csr_ein(fp_csr_ein),
       .ver0_out(ver0_out),
       .ver1_out(ver1_out),
       .a(memory_in_a),
@@ -527,16 +471,6 @@ module cpu (
       .y(writeback_out_y),
       .q(writeback_out_q),
       .clear(clear)
-  );
-
-  fpu #(
-      .fpu_enable(fpu_enable)
-  ) fpu_comp (
-      .reset  (reset),
-      .clock  (clock),
-      .fpu_in (fpu_in),
-      .fpu_out(fpu_out),
-      .clear  (clear[0])
   );
 
 endmodule

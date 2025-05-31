@@ -28,13 +28,10 @@ module execute_stage (
     output bit_alu_in_type bit_alu1_in,
     input bit_clmul_out_type bit_clmul_out,
     output bit_clmul_in_type bit_clmul_in,
-    input fp_execute_out_type fp_execute_out,
-    output fp_execute_in_type fp_execute_in,
     input csr_out_type csr_out,
     input btac_out_type btac_out,
     output forwarding_execute_in_type forwarding0_ein,
     output forwarding_execute_in_type forwarding1_ein,
-    output fp_forwarding_execute_in_type fp_forwarding_ein,
     input execute_in_type a,
     input execute_in_type d,
     output execute_out_type y,
@@ -52,14 +49,6 @@ module execute_stage (
 
     v.calc0 = d.i.calc0;
     v.calc1 = d.i.calc1;
-
-    if ((v.calc0.op.fpunit & v.calc0.op.rden1) == 1) begin
-      v.calc0.frdata1 = {32'h0, v.calc0.rdata1};
-    end
-
-    if ((v.calc1.op.fpunit & v.calc1.op.rden1) == 1) begin
-      v.calc1.frdata1 = {32'h0, v.calc1.rdata1};
-    end
 
     if ((d.e.stall | d.m.stall) == 1) begin
       v = r;
@@ -110,8 +99,8 @@ module execute_stage (
     agu0_in.jal = v.calc0.op.jal;
     agu0_in.jalr = v.calc0.op.jalr;
     agu0_in.branch = v.calc0.op.branch;
-    agu0_in.load = v.calc0.op.load | v.calc0.op.fload;
-    agu0_in.store = v.calc0.op.store | v.calc0.op.fstore;
+    agu0_in.load = v.calc0.op.load;
+    agu0_in.store = v.calc0.op.store;
     agu0_in.lsu_op = v.calc0.lsu_op;
 
     v.calc0.address = agu0_out.address;
@@ -124,8 +113,8 @@ module execute_stage (
     agu1_in.jal = v.calc1.op.jal;
     agu1_in.jalr = v.calc1.op.jalr;
     agu1_in.branch = v.calc1.op.branch;
-    agu1_in.load = v.calc1.op.load | v.calc1.op.fload;
-    agu1_in.store = v.calc1.op.store | v.calc1.op.fstore;
+    agu1_in.load = v.calc1.op.load;
+    agu1_in.store = v.calc1.op.store;
     agu1_in.lsu_op = v.calc1.lsu_op;
 
     v.calc1.address = agu1_out.address;
@@ -148,13 +137,11 @@ module execute_stage (
       v.calc0.ecause = agu0_out.ecause;
       v.calc0.etval = agu0_out.etval;
       if (v.calc0.op.exception == 1) begin
-        if ((v.calc0.op.load | v.calc0.op.fload) == 1) begin
-          v.calc0.op.load  = 0;
-          v.calc0.op.fload = 0;
-          v.calc0.op.wren  = 0;
-        end else if ((v.calc0.op.store | v.calc0.op.fstore) == 1) begin
-          v.calc0.op.store  = 0;
-          v.calc0.op.fstore = 0;
+        if (v.calc0.op.load == 1) begin
+          v.calc0.op.load = 0;
+          v.calc0.op.wren = 0;
+        end else if (v.calc0.op.store == 1) begin
+          v.calc0.op.store = 0;
         end else if (v.calc0.op.jump == 1) begin
           v.calc0.op.jump = 0;
           v.calc0.op.wren = 0;
@@ -179,13 +166,11 @@ module execute_stage (
       v.calc1.ecause = agu1_out.ecause;
       v.calc1.etval = agu1_out.etval;
       if (v.calc1.op.exception == 1) begin
-        if ((v.calc1.op.load | v.calc1.op.fload) == 1) begin
-          v.calc1.op.load  = 0;
-          v.calc1.op.fload = 0;
-          v.calc1.op.wren  = 0;
-        end else if ((v.calc1.op.store | v.calc1.op.fstore) == 1) begin
-          v.calc1.op.store  = 0;
-          v.calc1.op.fstore = 0;
+        if (v.calc1.op.load == 1) begin
+          v.calc1.op.load = 0;
+          v.calc1.op.wren = 0;
+        end else if (v.calc1.op.store == 1) begin
+          v.calc1.op.store = 0;
         end else if (v.calc1.op.jump == 1) begin
           v.calc1.op.jump = 0;
           v.calc1.op.wren = 0;
@@ -193,8 +178,8 @@ module execute_stage (
       end
     end
 
-    v.calc0.sdata = (v.calc0.op.fstore == 1) ? v.calc0.frdata2 : {32'h0, v.calc0.rdata2};
-    v.calc1.sdata = (v.calc1.op.fstore == 1) ? v.calc1.frdata2 : {32'h0, v.calc1.rdata2};
+    v.calc0.sdata = {32'h0, v.calc0.rdata2};
+    v.calc1.sdata = {32'h0, v.calc1.rdata2};
 
     mul_in.rdata1 = v.calc0.op.mult ? v.calc0.rdata1 : v.calc1.rdata1;
     mul_in.rdata2 = v.calc0.op.mult ? v.calc0.rdata2 : v.calc1.rdata2;
@@ -239,21 +224,6 @@ module execute_stage (
     v.calc0.bcready = bit_clmul_out.ready;
     v.calc1.bcready = bit_clmul_out.ready;
 
-    fp_execute_in.data1 = v.calc0.op.fpunit ? v.calc0.frdata1 : v.calc1.frdata1;
-    fp_execute_in.data2 = v.calc0.op.fpunit ? v.calc0.frdata2 : v.calc1.frdata2;
-    fp_execute_in.data3 = v.calc0.op.fpunit ? v.calc0.frdata3 : v.calc1.frdata3;
-    fp_execute_in.fpu_op = v.calc0.op.fpunit ? v.calc0.fpu_op : v.calc1.fpu_op;
-    fp_execute_in.fmt = v.calc0.op.fpunit ? v.calc0.fmt : v.calc1.fmt;
-    fp_execute_in.rm = v.calc0.op.fpunit ? v.calc0.rm : v.calc1.rm;
-    fp_execute_in.enable = (v.calc0.op.fpunit | v.calc1.op.fpunit) & v.enable;
-
-    v.calc0.fdata = fp_execute_out.result;
-    v.calc1.fdata = fp_execute_out.result;
-    v.calc0.flags = fp_execute_out.flags;
-    v.calc1.flags = fp_execute_out.flags;
-    v.calc0.fready = fp_execute_out.ready;
-    v.calc1.fready = fp_execute_out.ready;
-
     if (v.calc0.op.auipc == 1) begin
       v.calc0.wdata = v.calc0.address;
     end else if (v.calc0.op.lui == 1) begin
@@ -272,8 +242,6 @@ module execute_stage (
       v.calc0.wdata = v.calc0.bdata;
     end else if (v.calc0.op.bitc == 1) begin
       v.calc0.wdata = v.calc0.bcdata;
-    end else if (v.calc0.op.fpunit == 1) begin
-      v.calc0.wdata = v.calc0.fdata[31:0];
     end
 
     if (v.calc1.op.auipc == 1) begin
@@ -294,8 +262,6 @@ module execute_stage (
       v.calc1.wdata = v.calc1.bdata;
     end else if (v.calc1.op.bitc == 1) begin
       v.calc1.wdata = v.calc1.bcdata;
-    end else if (v.calc1.op.fpunit == 1) begin
-      v.calc1.wdata = v.calc1.fdata[31:0];
     end
 
     csr_alu_in.cdata = v.calc0.op.csreg ? v.calc0.crdata : v.calc1.crdata;
@@ -315,10 +281,6 @@ module execute_stage (
       if (v.calc0.bcready == 0) begin
         v.stall = ~(a.m.stall);
       end
-    end else if (v.calc0.op.fpuc == 1) begin
-      if (v.calc0.fready == 0) begin
-        v.stall = ~(a.m.stall);
-      end
     end
 
     if (v.calc1.op.division == 1) begin
@@ -327,10 +289,6 @@ module execute_stage (
       end
     end else if (v.calc1.op.bitc == 1) begin
       if (v.calc1.bcready == 0) begin
-        v.stall = ~(a.m.stall);
-      end
-    end else if (v.calc1.op.fpuc == 1) begin
-      if (v.calc1.fready == 0) begin
         v.stall = ~(a.m.stall);
       end
     end
@@ -371,10 +329,6 @@ module execute_stage (
     forwarding1_ein.wren = v.calc1.op.wren;
     forwarding1_ein.waddr = v.calc1.waddr;
     forwarding1_ein.wdata = v.calc1.wdata;
-
-    fp_forwarding_ein.wren = v.calc0.op.fwren | v.calc1.op.fwren;
-    fp_forwarding_ein.waddr = v.calc0.op.fwren ? v.calc0.waddr : v.calc1.waddr;
-    fp_forwarding_ein.wdata = v.calc0.op.fwren ? v.calc0.fdata : v.calc1.fdata;
 
     rin = v;
 

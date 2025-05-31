@@ -115,7 +115,7 @@ module testbench ();
       mem_file = $fopen(filename, "w");
       for (int i = 0; i < stoptime; i = i + 1) begin
         @(posedge clock);
-        if ((ver0_out.store | ver0_out.fstore) == 1) begin
+        if (ver0_out.store == 1) begin
           if (|ver0_out.byteenable == 1) begin
             $fwrite(mem_file, "PERIOD = %t\t", $time);
             $fwrite(mem_file, "PC = %x\t", ver0_out.pc);
@@ -123,7 +123,7 @@ module testbench ();
             $fwrite(mem_file, "WSTRB = %b\t", ver0_out.byteenable);
             $fwrite(mem_file, "WDATA = %x\n", ver0_out.sdata);
           end
-        end else if ((ver1_out.store | ver1_out.fstore) == 1) begin
+        end else if (ver1_out.store == 1) begin
           if (|ver1_out.byteenable == 1) begin
             $fwrite(mem_file, "PERIOD = %t\t", $time);
             $fwrite(mem_file, "PC = %x\t", ver1_out.pc);
@@ -134,28 +134,6 @@ module testbench ();
         end
       end
       $fclose(mem_file);
-    end
-  end
-
-  initial begin
-    string filename;
-    if ($value$plusargs("FREGFILE=%s", filename)) begin
-      freg_file = $fopen(filename, "w");
-      for (int i = 0; i < stoptime; i = i + 1) begin
-        @(posedge clock);
-        if (ver0_out.fwren == 1) begin
-          $fwrite(freg_file, "PERIOD = %t\t", $time);
-          $fwrite(freg_file, "PC = %x\t", ver0_out.pc);
-          $fwrite(freg_file, "WADDR = %x\t", ver0_out.waddr);
-          $fwrite(freg_file, "WDATA = %x\n", ver0_out.fdata);
-        end else if (ver1_out.fwren == 1) begin
-          $fwrite(freg_file, "PERIOD = %t\t", $time);
-          $fwrite(freg_file, "PC = %x\t", ver1_out.pc);
-          $fwrite(freg_file, "WADDR = %x\t", ver1_out.waddr);
-          $fwrite(freg_file, "WDATA = %x\n", ver1_out.fdata);
-        end
-      end
-      $fclose(freg_file);
     end
   end
 

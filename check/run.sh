@@ -30,7 +30,6 @@ ${VERIBLE}-verilog-format --inplace ${BASEDIR}/verilog/conf/configure.sv \
                                     ${BASEDIR}/verilog/rtl/execute_stage.sv \
                                     ${BASEDIR}/verilog/rtl/memory_stage.sv \
                                     ${BASEDIR}/verilog/rtl/writeback_stage.sv \
-                                    ${BASEDIR}/verilog/rtl/fpu.sv \
                                     ${BASEDIR}/verilog/rtl/arbiter.sv \
                                     ${BASEDIR}/verilog/rtl/clint.sv \
                                     ${BASEDIR}/verilog/rtl/tim.sv \
