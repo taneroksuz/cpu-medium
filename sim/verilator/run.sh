@@ -72,7 +72,7 @@ cp ${FILE}.dat sram.dat
 cp ${FILE}.host host.dat
 if [ "$DUMP" = "1" ]
 then
-  obj_dir/Vtestbench +MAXTIME=$MAXTIME +REGFILE=${FILE}.reg +CSRFILE=${FILE}.csr +MEMFILE=${FILE}.mem +FREGFILE=${FILE}.freg -wlf ${FILE}.wlf
+  obj_dir/Vtestbench +MAXTIME=$MAXTIME +REGFILE=${FILE}.reg +CSRFILE=${FILE}.csr +MEMFILE=${FILE}.mem -wlf ${FILE}.wlf
 else
   obj_dir/Vtestbench +MAXTIME=$MAXTIME
 fi
