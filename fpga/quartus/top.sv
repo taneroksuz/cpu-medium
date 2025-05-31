@@ -30,6 +30,10 @@ module top
   verify_out_type VER0_OUT /* synthesis keep */;
   verify_out_type VER1_OUT /* synthesis keep */;
 
+  initial begin
+    MISO = 0;
+  end
+
   pll pll_cpu_comp (
     .refclk(CLOCK),
     .rst(~KEY),
