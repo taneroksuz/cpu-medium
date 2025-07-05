@@ -6,7 +6,6 @@ module testbench ();
 
   logic reset;
   logic clock;
-  logic clock_per;
   logic sclk;
   logic mosi;
   logic miso;
@@ -53,7 +52,6 @@ module testbench ();
   initial begin
     reset = 0;
     clock = 1;
-    clock_per = 1;
   end
 
   initial begin
@@ -61,7 +59,6 @@ module testbench ();
   end
 
   always #0.5 clock = ~clock;
-  always #5.0 clock_per = ~clock_per;
 
   initial begin
     string filename;
@@ -214,7 +211,6 @@ module testbench ();
   soc soc_comp (
       .reset(reset),
       .clock(clock),
-      .clock_per(clock_per),
       .sclk(sclk),
       .mosi(mosi),
       .miso(miso),
