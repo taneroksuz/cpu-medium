@@ -88,19 +88,6 @@ module ram2ddr (
     assign rstn = ~rst_sync[1];
 
     //--------------------------------------------------------------
-    // ── Register SRAM inputs to 200 MHz domain ───────────────────
-    //--------------------------------------------------------------
-    always_ff @(posedge clk_200MHz_i) begin
-        ram_a_int   <= ram_a;
-        ram_dq_i_int<= ram_dq_i;
-        ram_cen_int <= ram_cen;
-        ram_oen_int <= ram_oen;
-        ram_wen_int <= ram_wen;
-        ram_ub_int  <= ram_ub;
-        ram_lb_int  <= ram_lb;
-    end
-
-    //--------------------------------------------------------------
     // ── MIG instance (generated separately with Xilinx MIG) ──────
     //--------------------------------------------------------------
     mig u_mig (
@@ -151,6 +138,19 @@ module ram2ddr (
         .ui_clk_sync_rst     (mem_ui_rst),
         .init_calib_complete (calib_complete)
     );
+
+    //--------------------------------------------------------------
+    // ── Register SRAM inputs to mem_ui_clk domain ────────────────
+    //--------------------------------------------------------------
+    always_ff @(posedge mem_ui_clk) begin
+        ram_a_int   <= ram_a;
+        ram_dq_i_int<= ram_dq_i;
+        ram_cen_int <= ram_cen;
+        ram_oen_int <= ram_oen;
+        ram_wen_int <= ram_wen;
+        ram_ub_int  <= ram_ub;
+        ram_lb_int  <= ram_lb;
+    end
 
     //--------------------------------------------------------------
     // ── FSM: state register (mem_ui_clk domain) ──────────────────
