@@ -5,3 +5,9 @@
 !*.sh
 !*.tcl
 !*.xdc
+!ip/
+!ip/mig/
+ip/mig/*
+!ip/mig/*.prj
+!ip/mig/*.xci
+!ip/mig/*.xdc

@@ -57,16 +57,23 @@ read_verilog -sv ../../verilog/rtl/uart_rx.sv
 read_verilog -sv ../../verilog/rtl/uart_tx.sv
 read_verilog -sv rom.sv
 read_verilog -sv ../../verilog/rtl/soc.sv
-read_verilog -sv sram_memory.sv
+read_verilog -sv ram2ddr.sv
 read_verilog pll_clk_wiz.v
 read_verilog pll.v
 read_verilog -sv top.sv
 
-read_xdc top.xdc
+set_part xc7a100tcsg324-1
+set_property board_part digilentinc.com:nexys4_ddr:part0:1.1 [current_project]
 
-set Cmd "synth_design -part xc7a100tcsg324-1 -top top "
-append Cmd [join $argv]
-eval $Cmd
+read_xdc top.xdc
+read_xdc ip/mig/mig.xdc
+
+add_files ip/mig/mig_a.prj
+add_files ip/mig/mig.xci
+
+generate_target all [get_ips mig]
+
+synth_design -top top
 
 opt_design
 place_design

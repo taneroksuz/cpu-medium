@@ -53,7 +53,8 @@
 //  Output     Output      Phase    Duty Cycle   Pk-to-Pk     Phase
 //   Clock     Freq (MHz)  (degrees)    (%)     Jitter (ps)  Error (ps)
 //----------------------------------------------------------------------------
-// clk_out1__20.00000______0.000______50.0______397.791____313.282
+// clk_out1__200.00000______0.000______50.0______114.829_____98.575
+// clk_out2__20.00000______0.000______50.0______183.243_____98.575
 //
 //----------------------------------------------------------------------------
 // Input Clock   Freq (MHz)    Input Jitter (UI)
@@ -67,6 +68,7 @@ module pll_clk_wiz
  (// Clock in ports
   // Clock out ports
   output        clk_out1,
+  output        clk_out2,
   // Status and control signals
   input         reset,
   output        locked,
@@ -105,7 +107,6 @@ wire clk_in2_pll;
   wire        clkfbout_pll;
   wire        clkfbout_buf_pll;
   wire        clkfboutb_unused;
-   wire clkout1_unused;
    wire clkout2_unused;
    wire clkout3_unused;
    wire clkout4_unused;
@@ -119,19 +120,22 @@ wire clk_in2_pll;
   #(.BANDWIDTH            ("OPTIMIZED"),
     .COMPENSATION         ("ZHOLD"),
     .STARTUP_WAIT         ("FALSE"),
-    .DIVCLK_DIVIDE        (5),
-    .CLKFBOUT_MULT        (41),
+    .DIVCLK_DIVIDE        (1),
+    .CLKFBOUT_MULT        (10),
     .CLKFBOUT_PHASE       (0.000),
-    .CLKOUT0_DIVIDE       (41),
+    .CLKOUT0_DIVIDE       (5),
     .CLKOUT0_PHASE        (0.000),
     .CLKOUT0_DUTY_CYCLE   (0.500),
+    .CLKOUT1_DIVIDE       (50),
+    .CLKOUT1_PHASE        (0.000),
+    .CLKOUT1_DUTY_CYCLE   (0.500),
     .CLKIN1_PERIOD        (10.000))
   plle2_adv_inst
     // Output clocks
    (
     .CLKFBOUT            (clkfbout_pll),
     .CLKOUT0             (clk_out1_pll),
-    .CLKOUT1             (clkout1_unused),
+    .CLKOUT1             (clk_out2_pll),
     .CLKOUT2             (clkout2_unused),
     .CLKOUT3             (clkout3_unused),
     .CLKOUT4             (clkout4_unused),
@@ -175,6 +179,10 @@ wire clk_in2_pll;
    (.O   (clk_out1),
     .I   (clk_out1_pll));
 
+
+  BUFG clkout2_buf
+   (.O   (clk_out2),
+    .I   (clk_out2_pll));
 
 
 
