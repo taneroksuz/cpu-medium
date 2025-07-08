@@ -74,7 +74,7 @@ $VERILATOR --binary --trace --trace-structs --top-module testbench -Wno-UNOPTFLA
             $BASEDIR/verilog/rtl/tim.sv \
             $BASEDIR/verilog/rtl/cpu.sv \
             $BASEDIR/verilog/rtl/rom.sv \
-            $BASEDIR/verilog/rtl/sram.sv \
+            $BASEDIR/verilog/rtl/ram.sv \
             $BASEDIR/verilog/rtl/spi.sv \
             $BASEDIR/verilog/rtl/uart_rx.sv \
             $BASEDIR/verilog/rtl/uart_tx.sv \
@@ -90,7 +90,7 @@ FILE=$BASEDIR/sim/verilator/output/$PROGRAM
 ${RISCV}/bin/riscv32-unknown-elf-nm -A ${FILE}.riscv | grep -sw 'tohost' | sed -e 's/.*:\(.*\) D.*/\1/' > ${FILE}.host
 ${RISCV}/bin/riscv32-unknown-elf-objcopy -O binary ${FILE}.riscv ${FILE}.bin
 $PYTHON $BASEDIR/py/bin2dat.py --input ${FILE}.riscv --address 0x0 --offset 0x100000
-cp ${FILE}.dat sram.dat
+cp ${FILE}.dat ram.dat
 cp ${FILE}.host host.dat
 if [ "$DUMP" = "1" ]
 then

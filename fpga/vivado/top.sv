@@ -35,15 +35,8 @@ module top
   logic MISO;
   logic SS;
 
-  logic SRAM_CE_n;
-  logic SRAM_WE_n;
-  logic SRAM_OE_n;
-  logic SRAM_UB_n;
-  logic SRAM_LB_n;
-  logic [15 : 0] SRAM_D;
-  logic [15 : 0] SRAM_D_i;
-  logic [15 : 0] SRAM_D_o;
-  logic [17 : 0] SRAM_A;
+  mem_in_type  ram_in;
+  mem_out_type ram_out;
 
   initial begin
     SCLK = 0;
@@ -62,20 +55,24 @@ module top
 
   assign RESET = LOCKED & CPU_RESETN;
 
-  assign SRAM_D = (SRAM_CE_n & SRAM_OE_n) ? SRAM_D_o : 16'bz;
-  assign SRAM_D_i = (SRAM_CE_n & SRAM_WE_n) ? SRAM_D : 16'bz;
+  soc soc_comp (
+      .reset(RESET),
+      .clock(CLOCK_CPU),
+      .sclk(SCLK),
+      .mosi(MOSI),
+      .miso(MISO),
+      .ss(SS),
+      .rx(UART_TXD_IN),
+      .tx(UART_RXD_OUT),
+      .ram_in(ram_in),
+      .ram_out(ram_out)
+  );
 
-  ram2ddr ram2ddr_comp (
+  dram dram_comp (
       .clk_200MHz_i(CLOCK_DDR),
       .rst_i(RESET),
-      .ram_a(SRAM_A),
-      .ram_dq_i(SRAM_D_i),
-      .ram_dq_o(SRAM_D_o),
-      .ram_cen(SRAM_CE_n),
-      .ram_oen(SRAM_OE_n),
-      .ram_wen(SRAM_WE_n),
-      .ram_ub(SRAM_UB_n),
-      .ram_lb(SRAM_LB_n),
+      .dram_in(ram_in),
+      .dram_out(ram_out),
       .ddr2_addr(ddr2_addr),
       .ddr2_ba(ddr2_ba),
       .ddr2_ras_n(ddr2_ras_n),
@@ -91,24 +88,6 @@ module top
       .ddr2_dqs_p(ddr2_dqs_p),
       .ddr2_dqs_n(ddr2_dqs_n),
       .ddr2_complete(LED16_B)
-  );
-
-  soc soc_comp (
-      .reset(RESET),
-      .clock(CLOCK_CPU),
-      .sclk(SCLK),
-      .mosi(MOSI),
-      .miso(MISO),
-      .ss(SS),
-      .rx(UART_TXD_IN),
-      .tx(UART_RXD_OUT),
-      .sram_ce_n(SRAM_CE_n),
-      .sram_we_n(SRAM_WE_n),
-      .sram_oe_n(SRAM_OE_n),
-      .sram_ub_n(SRAM_UB_n),
-      .sram_lb_n(SRAM_LB_n),
-      .sram_dq(SRAM_D),
-      .sram_addr(SRAM_A)
   );
 
 endmodule

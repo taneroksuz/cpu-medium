@@ -5,6 +5,7 @@ set_global_assignment -name VERILOG_FILE pll_0002.v
 set_global_assignment -name SYSTEMVERILOG_FILE top.sv
 set_global_assignment -name SYSTEMVERILOG_FILE configure.sv
 set_global_assignment -name SYSTEMVERILOG_FILE rom.sv
+set_global_assignment -name SYSTEMVERILOG_FILE sram.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/constants.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/functions.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../fpu/verilog/src/lzc/lzc_wire.sv
@@ -57,7 +58,6 @@ set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/ccd.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/clint.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/tim.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/cpu.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/sram.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/spi.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/uart_rx.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/uart_tx.sv

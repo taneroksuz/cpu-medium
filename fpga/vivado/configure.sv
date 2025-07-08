@@ -10,7 +10,7 @@ package configure;
   parameter tim_width = 16;
   parameter tim_depth = 1024;
 
-  parameter sram_depth = 1;
+  parameter ram_depth = 1;
 
   parameter ram_type = 0;
 
@@ -41,8 +41,8 @@ package configure;
   parameter dtim_base_addr = 32'h20000000;
   parameter dtim_mask_addr = 32'h000FFFFF;
 
-  parameter sram_base_addr = 32'h80000000;
-  parameter sram_mask_addr = 32'h000FFFFF;
+  parameter ram_base_addr = 32'h80000000;
+  parameter ram_mask_addr = 32'h000FFFFF;
 
   parameter sys_freq = 100000000; // 100MHz
 

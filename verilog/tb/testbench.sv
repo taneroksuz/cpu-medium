@@ -12,13 +12,9 @@ module testbench ();
   logic ss;
   logic rx;
   logic tx;
-  logic sram_ce_n;
-  logic sram_we_n;
-  logic sram_oe_n;
-  logic sram_ub_n;
-  logic sram_lb_n;
-  logic [17:0] sram_addr;
-  wire [15:0] sram_dq;
+
+  mem_in_type ram_in;
+  mem_out_type ram_out;
 
   logic [31 : 0] host[0:0];
 
@@ -217,13 +213,15 @@ module testbench ();
       .ss(ss),
       .rx(rx),
       .tx(tx),
-      .sram_ce_n(sram_ce_n),
-      .sram_we_n(sram_we_n),
-      .sram_oe_n(sram_oe_n),
-      .sram_ub_n(sram_ub_n),
-      .sram_lb_n(sram_lb_n),
-      .sram_dq(sram_dq),
-      .sram_addr(sram_addr)
+      .ram_in(ram_in),
+      .ram_out(ram_out)
+  );
+
+  ram ram_comp (
+      .reset  (reset),
+      .clock  (clock),
+      .ram_in (ram_in),
+      .ram_out(ram_out)
   );
 
 endmodule

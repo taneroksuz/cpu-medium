@@ -1,4 +1,5 @@
 import configure::*;
+import wires::*;
 
 module top
 (
@@ -26,6 +27,9 @@ module top
   logic MISO;
   logic SS;
 
+  mem_in_type  ram_in;
+  mem_out_type ram_out;
+
   initial begin
     SCLK = 0;
     MOSI = 0;
@@ -51,6 +55,17 @@ module top
       .ss(SS),
       .rx(UART_RX),
       .tx(UART_TX),
+      .ram_in(ram_in),
+      .ram_out(ram_out)
+  );
+
+  sram #(
+      .clock_rate(clk_divider_per)
+  ) sram_comp (
+      .reset(RESET),
+      .clock(CLOCK_CPU),
+      .sram_in(ram_in),
+      .sram_out(ram_out),
       .sram_ce_n(SRAM_CE_n),
       .sram_we_n(SRAM_WE_n),
       .sram_oe_n(SRAM_OE_n),
