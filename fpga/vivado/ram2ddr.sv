@@ -37,8 +37,11 @@ module ram2ddr (
     output logic        ddr2_odt,
     inout  tri   [15:0] ddr2_dq,
     inout  tri   [1:0]  ddr2_dqs_p,
-    inout  tri   [1:0]  ddr2_dqs_n
+    inout  tri   [1:0]  ddr2_dqs_n,
+    //--------------------------------------------------------------
+    output logic        ddr2_complete
 );
+    timeunit 1ns; timeprecision 1ps;
 
     //--------------------------------------------------------------
     // ── Local signals ────────────────────────────────────────────
@@ -81,9 +84,9 @@ module ram2ddr (
     //--------------------------------------------------------------
     // ── Reset synchroniser (to 200 MHz domain → rstn low-true) ───
     //--------------------------------------------------------------
-    always_ff @(posedge clk_200MHz_i or posedge rst_i)
-        if (rst_i) rst_sync <= 2'b11;
-        else       rst_sync <= {rst_sync[0],1'b0};
+    always_ff @(posedge clk_200MHz_i)
+        if (rst_i == 0) rst_sync <= 2'b11;
+        else            rst_sync <= {rst_sync[0],1'b0};
 
     assign rstn = ~rst_sync[1];
 
@@ -139,6 +142,8 @@ module ram2ddr (
         .init_calib_complete (calib_complete)
     );
 
+    assign ddr2_complete = calib_complete;
+
     //--------------------------------------------------------------
     // ── Register SRAM inputs to mem_ui_clk domain ────────────────
     //--------------------------------------------------------------
@@ -155,7 +160,7 @@ module ram2ddr (
     //--------------------------------------------------------------
     // ── FSM: state register (mem_ui_clk domain) ──────────────────
     //--------------------------------------------------------------
-    always_ff @(posedge mem_ui_clk or posedge mem_ui_rst)
+    always_ff @(posedge mem_ui_clk)
         if (mem_ui_rst) cState <= stIdle;
         else            cState <= nState;
 

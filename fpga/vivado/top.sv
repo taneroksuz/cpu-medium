@@ -6,6 +6,7 @@ module top
   input  CPU_RESETN,
   input  UART_TXD_IN,
   output UART_RXD_OUT,
+  output LED16_B,
   output [12:0] ddr2_addr,
   output [2:0]  ddr2_ba,
   output        ddr2_ras_n,
@@ -53,7 +54,7 @@ module top
 
   pll pll_cpu_comp (
     .clk_in1(CLK100MHZ),
-    .reset(~CPU_RESETN),
+    .resetn(CPU_RESETN),
     .clk_out1(CLOCK_DDR),
     .clk_out2(CLOCK_CPU),
     .locked(LOCKED)
@@ -88,7 +89,8 @@ module top
       .ddr2_odt(ddr2_odt),
       .ddr2_dq(ddr2_dq),
       .ddr2_dqs_p(ddr2_dqs_p),
-      .ddr2_dqs_n(ddr2_dqs_n)
+      .ddr2_dqs_n(ddr2_dqs_n),
+      .ddr2_complete(LED16_B)
   );
 
   soc soc_comp (
