@@ -1,4 +1,5 @@
 import configure::*;
+import wires::*;
 
 module dram (
   input  logic        clk_200MHz_i,
@@ -25,6 +26,9 @@ module dram (
 
   typedef enum logic [2:0] { stIdle, stPreset, stSendData, stSetCmdRd, stSetCmdWr, stWaitCen } state_t;
 
+  mem_in_type   mem_in;
+  mem_out_type  mem_out;
+
   logic [1:0]   rst_sync;
   logic         rstn;
 
@@ -47,6 +51,11 @@ module dram (
   logic         mem_rd_data_end;
 
   state_t       cState, nState;
+
+  always_ff @(posedge mem_ui_clk) begin
+    mem_in <= dram_in;
+    dram_out <= mem_out;
+  end
 
   always_ff @(posedge clk_200MHz_i)
     if (rst_i == 0) rst_sync <= 2'b11;
@@ -103,7 +112,7 @@ module dram (
   always_comb begin
     nState = cState;
     unique case (cState)
-      stIdle     : if (dram_in.mem_valid && calib_complete) nState = stPreset;
+      stIdle     : if (mem_in.mem_valid && calib_complete) nState = stPreset;
       stPreset   : nState = stSendData;
       stSendData : if (mem_wdf_rdy) nState = stSetCmdWr;
       stSetCmdWr : if (mem_rdy)     nState = stWaitCen;
@@ -137,29 +146,29 @@ module dram (
 
   always_ff @(posedge mem_ui_clk) begin
     if (cState == stPreset) begin
-      mem_wdf_data <= {dram_in.mem_wdata,dram_in.mem_wdata};
+      mem_wdf_data <= {mem_in.mem_wdata,mem_in.mem_wdata};
       mem_wdf_mask <= {16'hFFFF};
-      mem_addr <= {dram_in.mem_addr[26:4],4'b0000};
-      if (dram_in.mem_addr[3] == 0) begin
-        mem_wdf_mask[7:0] <= ~dram_in.mem_wstrb;
+      mem_addr <= {mem_in.mem_addr[26:4],4'b0000};
+      if (mem_in.mem_addr[3] == 0) begin
+        mem_wdf_mask[7:0] <= ~mem_in.mem_wstrb;
       end
-      if (dram_in.mem_addr[3] == 1) begin
-        mem_wdf_mask[15:8] <= ~dram_in.mem_wstrb;
+      if (mem_in.mem_addr[3] == 1) begin
+        mem_wdf_mask[15:8] <= ~mem_in.mem_wstrb;
       end
     end
   end
 
   always_ff @(posedge mem_ui_clk) begin
-    dram_out.mem_rdata <= 0;
-    dram_out.mem_ready <= 0;
+    mem_out.mem_rdata <= 0;
+    mem_out.mem_ready <= 0;
     if (cState==stWaitCen && mem_rd_data_valid && mem_rd_data_end) begin
-      if (dram_in.mem_addr[3] == 0) begin
-        dram_out.mem_rdata <= mem_rd_data[63:0];
-        dram_out.mem_ready <= 1;
+      if (mem_in.mem_addr[3] == 0) begin
+        mem_out.mem_rdata <= mem_rd_data[63:0];
+        mem_out.mem_ready <= 1;
       end
-      if (dram_in.mem_addr[3] == 1) begin
-        dram_out.mem_rdata <= mem_rd_data[127:64];
-        dram_out.mem_ready <= 1;
+      if (mem_in.mem_addr[3] == 1) begin
+        mem_out.mem_rdata <= mem_rd_data[127:64];
+        mem_out.mem_ready <= 1;
       end
     end
   end

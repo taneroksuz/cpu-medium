@@ -1,4 +1,5 @@
 import configure::*;
+import wires::*;
 
 module top
 (
@@ -37,6 +38,8 @@ module top
 
   mem_in_type  ram_in;
   mem_out_type ram_out;
+  mem_in_type  dram_in;
+  mem_out_type dram_out;
 
   initial begin
     SCLK = 0;
@@ -68,11 +71,16 @@ module top
       .ram_out(ram_out)
   );
 
+  always_ff @(posedge CLOCK_CPU) begin
+    dram_in <= ram_in;
+    ram_out <= dram_out;
+  end
+
   dram dram_comp (
       .clk_200MHz_i(CLOCK_DDR),
       .rst_i(RESET),
-      .dram_in(ram_in),
-      .dram_out(ram_out),
+      .dram_in(dram_in),
+      .dram_out(dram_out),
       .ddr2_addr(ddr2_addr),
       .ddr2_ba(ddr2_ba),
       .ddr2_ras_n(ddr2_ras_n),
