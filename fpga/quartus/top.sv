@@ -5,6 +5,7 @@ module top
 (
   input           CLOCK_50_B5B,
   input  [ 3 : 0] KEY,
+  output [ 9 : 0] LEDR,
   input           UART_RX,
   output          UART_TX,
   output          SRAM_CE_n,
@@ -58,6 +59,8 @@ module top
       .ram_in(ram_in),
       .ram_out(ram_out)
   );
+
+  assign LEDR[9:0] = ram_in.mem_addr[17:8];
 
   sram #(
       .clock_rate(clk_divider_per)

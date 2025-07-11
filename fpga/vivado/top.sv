@@ -3,11 +3,12 @@ import wires::*;
 
 module top
 (
-  input  CLK100MHZ,
-  input  CPU_RESETN,
-  input  UART_TXD_IN,
-  output UART_RXD_OUT,
-  output LED16_B,
+  input         CLK100MHZ,
+  input         CPU_RESETN,
+  input         UART_TXD_IN,
+  output        UART_RXD_OUT,
+  output        LED16_B,
+  output [15:0] LED,
   output [12:0] ddr2_addr,
   output [2:0]  ddr2_ba,
   output        ddr2_ras_n,
@@ -75,6 +76,8 @@ module top
     dram_in <= ram_in;
     ram_out <= dram_out;
   end
+
+  assign LED[15:0] = ram_in.mem_addr[17:2];
 
   dram dram_comp (
       .reset_cpu(RESET),
