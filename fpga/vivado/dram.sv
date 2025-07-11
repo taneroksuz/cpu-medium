@@ -213,7 +213,7 @@ module dram (
     .src_mem_in(dram_in),
     .src_mem_out(dram_out),
     .dst_clk(app_ui_clk),
-    .dst_rstn(app_ui_rst),
+    .dst_rstn(~app_ui_rst),
     .dst_mem_in(mem_in),
     .dst_mem_out(mem_out)
   );
