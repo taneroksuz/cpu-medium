@@ -54,7 +54,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/memory_stage.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/writeback_stage.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/fpu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/arbiter.sv
-set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/ccd.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/cdc.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/clint.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/tim.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../../verilog/rtl/cpu.sv

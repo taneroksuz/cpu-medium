@@ -2,8 +2,9 @@ import configure::*;
 import wires::*;
 
 module dram (
-  input  logic        clk_200MHz_i,
-  input  logic        rst_i,
+  input  logic        reset_cpu,
+  input  logic        clock_cpu,
+  input  logic        clock_ddr,
   input  mem_in_type  dram_in,
   output mem_out_type dram_out,
   output logic [12:0] ddr2_addr,
@@ -27,8 +28,8 @@ module dram (
   mem_in_type   mem_in;
   mem_out_type  mem_out;
 
-  logic [1:0]   rst_sync;
-  logic         rstn;
+  logic [1:0]   reset_sync;
+  logic         reset_ddr;
 
   logic         app_ui_clk;
   logic         app_ui_rst;
@@ -198,18 +199,24 @@ module dram (
     end
   end
 
-  always_ff @(posedge app_ui_clk) begin
-    mem_in <= dram_in;
-    dram_out <= mem_out;
-  end
+  always_ff @(posedge clock_ddr)
+    if (reset_cpu == 0) reset_sync <= 2'b00;
+    else                reset_sync <= {reset_sync[0],1'b1};
 
-  always_ff @(posedge clk_200MHz_i)
-    if (rst_i == 0) rst_sync <= 2'b11;
-    else            rst_sync <= {rst_sync[0],1'b0};
-
-  assign rstn = ~rst_sync[1];
+  assign reset_ddr = reset_sync[1];
 
   assign ddr2_complete = calib_complete;
+
+  cdc cdc_comp (
+    .src_clk(clock_cpu),
+    .src_rstn(reset_cpu),
+    .src_mem_in(dram_in),
+    .src_mem_out(dram_out),
+    .dst_clk(app_ui_clk),
+    .dst_rstn(app_ui_rst),
+    .dst_mem_in(mem_in),
+    .dst_mem_out(mem_out)
+  );
 
   mig u_mig (
     .ddr2_dq             (ddr2_dq),
@@ -226,8 +233,8 @@ module dram (
     .ddr2_cs_n           (ddr2_cs_n),
     .ddr2_dm             (ddr2_dm),
     .ddr2_odt            (ddr2_odt),
-    .sys_clk_i           (clk_200MHz_i),
-    .sys_rst             (rstn),
+    .sys_clk_i           (clock_ddr),
+    .sys_rst             (reset_ddr),
     .app_addr            (r_in.app_addr),
     .app_cmd             (r_in.app_cmd),
     .app_en              (r_in.app_en),

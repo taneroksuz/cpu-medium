@@ -77,8 +77,9 @@ module top
   end
 
   dram dram_comp (
-      .clk_200MHz_i(CLOCK_DDR),
-      .rst_i(RESET),
+      .reset_cpu(RESET),
+      .clock_cpu(CLOCK_CPU),
+      .clock_ddr(CLOCK_DDR),
       .dram_in(dram_in),
       .dram_out(dram_out),
       .ddr2_addr(ddr2_addr),
