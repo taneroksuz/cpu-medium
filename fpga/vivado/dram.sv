@@ -35,7 +35,7 @@ module dram (
   logic         app_ui_rst;
   logic         calib_complete;
 
-  typedef enum logic [2:0] { stIdle, stPreset, stSendData, stSetCmdRd, stSetCmdWr, stWaitCen } state_t;
+  typedef enum logic [2:0] { stIdle, stPreset, stSendData, stSetCmdRd, stSetCmdWr, stRecvData } state_t;
 
   typedef struct packed {
     logic [0:0]   mem_valid;
@@ -106,16 +106,16 @@ module dram (
       end
       stSetCmdWr : begin
         if (r_out.app_rdy) begin
-          v_in.state = stWaitCen;
+          v_in.state = stIdle;
         end
       end
       stSetCmdRd : begin
         if (r_out.app_rdy) begin
-          v_in.state = stWaitCen;
+          v_in.state = stRecvData;
         end
       end
-      stWaitCen  : begin
-        if (~mem_in.mem_valid) begin
+      stRecvData  : begin
+        if (r_out.app_rd_data_valid) begin
           v_in.state = stIdle;
         end
       end
@@ -178,8 +178,14 @@ module dram (
     mem_out.mem_ready = 0;
     mem_out.mem_error = 0;
 
-    if (r_in.state == stWaitCen) begin
-      if (r_out.app_rd_data_valid && r_out.app_rd_data_end) begin
+    if (r_in.state == stSetCmdWr) begin
+      if (r_out.app_rdy) begin
+        mem_out.mem_ready <= 1;
+      end
+    end
+
+    if (r_in.state == stRecvData) begin
+      if (r_out.app_rd_data_valid) begin
         mem_out.mem_ready <= 1;
         unique case (v_in.mem_addr[3])
           0 : mem_out.mem_rdata <= r_out.app_rd_data[63:0];
@@ -235,13 +241,13 @@ module dram (
     .ddr2_odt            (ddr2_odt),
     .sys_clk_i           (clock_ddr),
     .sys_rst             (reset_ddr),
-    .app_addr            (r_in.app_addr),
-    .app_cmd             (r_in.app_cmd),
-    .app_en              (r_in.app_en),
-    .app_wdf_data        (r_in.app_wdf_data),
-    .app_wdf_end         (r_in.app_wdf_end),
-    .app_wdf_mask        (r_in.app_wdf_mask),
-    .app_wdf_wren        (r_in.app_wdf_wren),
+    .app_addr            (rin_in.app_addr),
+    .app_cmd             (rin_in.app_cmd),
+    .app_en              (rin_in.app_en),
+    .app_wdf_data        (rin_in.app_wdf_data),
+    .app_wdf_end         (rin_in.app_wdf_end),
+    .app_wdf_mask        (rin_in.app_wdf_mask),
+    .app_wdf_wren        (rin_in.app_wdf_wren),
     .app_rd_data         (r_out.app_rd_data),
     .app_rd_data_end     (r_out.app_rd_data_end),
     .app_rd_data_valid   (r_out.app_rd_data_valid),
