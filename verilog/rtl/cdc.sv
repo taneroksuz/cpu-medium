@@ -1,10 +1,7 @@
 import wires::*;
 import constants::*;
 
-module cdc #(
-    parameter DEPTH = 4,
-    parameter ADDR_WIDTH = $clog2(DEPTH)
-) (
+module cdc (
     input  logic        src_clk,
     input  logic        src_rstn,
     input  mem_in_type  src_mem_in,
@@ -17,51 +14,62 @@ module cdc #(
 );
   timeunit 1ns; timeprecision 1ps;
 
-  mem_in_type fifo_mem_in[0:DEPTH-1];
-  logic [ADDR_WIDTH:0] wr_ptr, rd_ptr;
-  logic full, empty;
+  mem_in_type  mem_in_reg;
+  mem_out_type mem_out_reg;
+
+  logic        req_valid_src;
+  logic        req_valid_dst;
+
+  logic        ack_ready_src;
+  logic        ack_ready_dst;
 
   always_ff @(posedge src_clk) begin
-    if (src_rstn == 0) begin
-      wr_ptr <= 0;
+    if (!src_rstn) begin
+      mem_in_reg      <= '0;
+      req_valid_src   <= 1'b0;
     end else begin
-      if (src_mem_in.mem_valid && !full) begin
-        fifo_mem_in[wr_ptr[ADDR_WIDTH-1:0]] <= src_mem_in;
-        wr_ptr <= wr_ptr + 1;
+      if (src_mem_in.mem_valid && !req_valid_src) begin
+        mem_in_reg    <= src_mem_in;
+        req_valid_src <= 1'b1;
+      end else if (req_valid_src && req_valid_dst) begin
+        mem_in_reg    <= '0;
+        req_valid_src <= 1'b0;
       end
     end
   end
 
   always_ff @(posedge dst_clk) begin
-    if (dst_rstn == 0) begin
-      rd_ptr <= 0;
+    if (!dst_rstn) begin
+      req_valid_dst <= 1'b0;
     end else begin
-      if (!empty && dst_mem_out.mem_ready) begin
-        rd_ptr <= rd_ptr + 1;
+      req_valid_dst <= req_valid_src;
+    end
+  end
+
+  always_ff @(posedge dst_clk) begin
+    if (!dst_rstn) begin
+      mem_out_reg     <= '0;
+      ack_ready_dst   <= 1'b0;
+    end else begin
+      if (dst_mem_out.mem_ready && !ack_ready_dst) begin
+        mem_out_reg   <= src_mem_in;
+        ack_ready_dst <= 1'b1;
+      end else if (ack_ready_dst && ack_ready_src) begin
+        mem_out_reg   <= '0;
+        ack_ready_dst <= 1'b0;
       end
     end
   end
 
-  assign full  = ( (wr_ptr[ADDR_WIDTH]    != rd_ptr[ADDR_WIDTH]) &&
-                     (wr_ptr[ADDR_WIDTH-1:0] == rd_ptr[ADDR_WIDTH-1:0]) );
-
-  assign empty = (wr_ptr == rd_ptr);
-
-  assign dst_mem_in = fifo_mem_in[rd_ptr[ADDR_WIDTH-1:0]];
-
-  logic mem_ready_sync_0, mem_ready_sync_1;
-  always_ff @(posedge src_clk) begin
-    if (src_rstn == 0) begin
-      mem_ready_sync_0 <= 0;
-      mem_ready_sync_1 <= 0;
+  always_ff @(posedge dst_clk) begin
+    if (!src_rstn) begin
+      ack_ready_src <= 1'b0;
     end else begin
-      mem_ready_sync_0 <= dst_mem_out.mem_ready;
-      mem_ready_sync_1 <= mem_ready_sync_0;
+      ack_ready_src <= ack_ready_dst;
     end
   end
 
-  assign src_mem_out.mem_ready = mem_ready_sync_1;
-  assign src_mem_out.mem_error = dst_mem_out.mem_error;
-  assign src_mem_out.mem_rdata = dst_mem_out.mem_rdata;
+  assign dst_mem_in  = mem_in_reg;
+  assign src_mem_out = mem_out_reg;
 
 endmodule
