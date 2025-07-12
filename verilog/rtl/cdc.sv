@@ -14,69 +14,175 @@ module cdc (
 );
   timeunit 1ns; timeprecision 1ps;
 
-  mem_in_type  mem_in_reg;
+  typedef enum logic {
+    IDLE,
+    WAIT
+  } state;
 
-  logic        req_valid_src;
-  logic        req_valid_meta;
-  logic        req_valid_sync;
+  mem_in_type mem_in_reg;
+
+  logic       req_in_valid;
+  logic       ack_in_valid;
+  logic       req_in_valid_sync;
+  logic       ack_in_valid_sync;
+  logic       req_in_valid_meta;
+  logic       ack_in_valid_meta;
+
+  state current_in_state, next_in_state;
 
   mem_out_type mem_out_reg;
 
-  logic        ack_ready_dst;
-  logic        ack_ready_meta;
-  logic        ack_ready_sync;
+  logic        req_out_ready;
+  logic        ack_out_ready;
+  logic        req_out_ready_sync;
+  logic        ack_out_ready_sync;
+  logic        req_out_ready_meta;
+  logic        ack_out_ready_meta;
+
+  state current_out_state, next_out_state;
+
+  // SRC -> DST
 
   always_ff @(posedge src_clk) begin
     if (!src_rstn) begin
-      mem_in_reg      <= '0;
-      req_valid_src   <= 1'b0;
+      current_in_state <= IDLE;
     end else begin
-      if (src_mem_in.mem_valid && !req_valid_src && ack_ready_sync) begin
-        mem_in_reg    <= src_mem_in;
-        req_valid_src <= 1'b1;
-      end else if (req_valid_src && ack_ready_sync) begin
-        mem_in_reg    <= '0;
-        req_valid_src <= 1'b0;
+      current_in_state <= next_in_state;
+    end
+  end
+
+  always_comb begin
+    case (current_in_state)
+      IDLE: begin
+        if (src_mem_in.mem_valid) begin
+          next_in_state = WAIT;
+        end else begin
+          next_in_state = IDLE;
+        end
       end
+      WAIT: begin
+        if (!(req_in_valid ^ ack_in_valid_sync)) begin
+          next_in_state = IDLE;
+        end else begin
+          next_in_state = WAIT;
+        end
+      end
+      default: next_in_state = IDLE;
+    endcase
+  end
+
+  always_ff @(posedge src_clk) begin
+    if (!src_rstn) begin
+      req_in_valid <= 1'b0;
+      mem_in_reg   <= '0;
+    end else if (current_in_state == IDLE && src_mem_in.mem_valid) begin
+      req_in_valid <= ~req_in_valid;
+      mem_in_reg   <= src_mem_in;
     end
   end
 
   always_ff @(posedge dst_clk) begin
     if (!dst_rstn) begin
-      req_valid_meta <= 1'b0;
-      req_valid_sync <= 1'b0;
+      req_in_valid_meta <= 1'b0;
+      req_in_valid_sync <= 1'b0;
     end else begin
-      req_valid_meta <= req_valid_src;
-      req_valid_sync <= req_valid_meta;
-    end
-  end
-
-  always_ff @(posedge dst_clk) begin
-    if (!dst_rstn) begin
-      mem_out_reg     <= '0;
-      ack_ready_dst   <= 1'b0;
-    end else begin
-      if (dst_mem_out.mem_ready && !ack_ready_dst && req_valid_sync) begin
-        mem_out_reg   <= dst_mem_out;
-        ack_ready_dst <= 1'b1;
-      end else if (ack_ready_dst && req_valid_sync) begin
-        mem_out_reg   <= '0;
-        ack_ready_dst <= 1'b0;
-      end
+      req_in_valid_meta <= req_in_valid;
+      req_in_valid_sync <= req_in_valid_meta;
     end
   end
 
   always_ff @(posedge src_clk) begin
     if (!src_rstn) begin
-      ack_ready_meta <= 1'b0;
-      ack_ready_sync <= 1'b0;
+      ack_in_valid_meta <= 1'b0;
+      ack_in_valid_sync <= 1'b0;
     end else begin
-      ack_ready_meta <= ack_ready_dst;
-      ack_ready_sync <= ack_ready_meta;
+      ack_in_valid_meta <= ack_in_valid;
+      ack_in_valid_sync <= ack_in_valid_meta;
     end
   end
 
-  assign dst_mem_in = mem_in_reg;
-  assign src_mem_out = mem_out_reg;
+  always_ff @(posedge dst_clk) begin
+    if (!dst_rstn) begin
+      ack_in_valid <= 1'b0;
+      dst_mem_in   <= '0;
+    end else if (req_in_valid_sync ^ ack_in_valid) begin
+      ack_in_valid <= ~ack_in_valid;
+      dst_mem_in   <= mem_in_reg;
+    end else begin
+      dst_mem_in <= '0;
+    end
+  end
+
+  // DST -> SRC
+
+  always_ff @(posedge dst_clk) begin
+    if (!dst_rstn) begin
+      current_out_state <= IDLE;
+    end else begin
+      current_out_state <= next_out_state;
+    end
+  end
+
+  always_comb begin
+    case (current_out_state)
+      IDLE: begin
+        if (dst_mem_out.mem_ready) begin
+          next_out_state = WAIT;
+        end else begin
+          next_out_state = IDLE;
+        end
+      end
+      WAIT: begin
+        if (!(req_out_ready ^ ack_out_ready_sync)) begin
+          next_out_state = IDLE;
+        end else begin
+          next_out_state = WAIT;
+        end
+      end
+      default: next_out_state = IDLE;
+    endcase
+  end
+
+  always_ff @(posedge dst_clk) begin
+    if (!dst_rstn) begin
+      req_out_ready <= 1'b0;
+      mem_out_reg   <= '0;
+    end else if (current_out_state == IDLE && dst_mem_out.mem_ready) begin
+      req_out_ready <= ~req_out_ready;
+      mem_out_reg   <= dst_mem_out;
+    end
+  end
+
+  always_ff @(posedge src_clk) begin
+    if (!src_rstn) begin
+      req_out_ready_meta <= 1'b0;
+      req_out_ready_sync <= 1'b0;
+    end else begin
+      req_out_ready_meta <= req_out_ready;
+      req_out_ready_sync <= req_out_ready_meta;
+    end
+  end
+
+  always_ff @(posedge dst_clk) begin
+    if (!dst_rstn) begin
+      ack_out_ready_meta <= 1'b0;
+      ack_out_ready_sync <= 1'b0;
+    end else begin
+      ack_out_ready_meta <= ack_out_ready;
+      ack_out_ready_sync <= ack_out_ready_meta;
+    end
+  end
+
+  always_ff @(posedge src_clk) begin
+    if (!src_rstn) begin
+      ack_out_ready <= 1'b0;
+      src_mem_out   <= '0;
+    end else if (req_out_ready_sync ^ ack_out_ready) begin
+      ack_out_ready <= ~ack_out_ready;
+      src_mem_out   <= mem_out_reg;
+    end else begin
+      src_mem_out <= '0;
+    end
+  end
 
 endmodule

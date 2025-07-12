@@ -60,7 +60,7 @@ module top
       .ram_out(ram_out)
   );
 
-  assign LEDR[9:0] = ram_in.mem_addr[17:8];
+  assign LEDR[9:0] = ram_in.mem_addr[18:9];
 
   sram #(
       .clock_rate(clk_divider_per)

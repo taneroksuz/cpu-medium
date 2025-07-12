@@ -77,7 +77,7 @@ module top
     ram_out <= dram_out;
   end
 
-  assign LED[15:0] = ram_in.mem_addr[17:2];
+  assign LED[15:0] = ram_in.mem_addr[18:3];
 
   dram dram_comp (
       .reset_cpu(RESET),
