@@ -1,4 +1,5 @@
 import configure::*;
+import wires::*;
 
 module testbench ();
 
