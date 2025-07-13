@@ -60,7 +60,19 @@ module top
       .ram_out(ram_out)
   );
 
-  assign LEDR[9:0] = ram_in.mem_addr[18:9];
+  logic [9:0] REG_LED = 0;
+
+  always_ff @(posedge CLOCK_CPU) begin
+    if (RESET == 0) begin
+      REG_LED <= 0;
+    end else begin
+      if (ram_in.mem_valid) begin
+        REG_LED[9:0] <= ram_in.mem_addr[18:9];
+      end
+    end
+  end
+
+  assign LEDR = REG_LED;
 
   sram #(
       .clock_rate(clk_divider_per)

@@ -217,7 +217,9 @@ module testbench ();
       .ram_out(ram_out)
   );
 
-  ram ram_comp (
+  ram #(
+      .clock_rate(clk_divider_bit)
+  ) ram_comp (
       .reset  (reset),
       .clock  (clock),
       .ram_in (ram_in),

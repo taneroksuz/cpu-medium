@@ -19,17 +19,17 @@ module cdc (
     WAIT
   } state;
 
-  mem_in_type mem_in_reg = '0;
+  mem_in_type  mem_in_reg = '0;
 
-  logic       req_in_valid = 0;
-  logic       ack_in_valid = 0;
-  logic       req_in_valid_sync = 0;
-  logic       ack_in_valid_sync = 0;
-  logic       req_in_valid_meta = 0;
-  logic       ack_in_valid_meta = 0;
+  logic        req_in_valid = 0;
+  logic        ack_in_valid = 0;
+  logic        req_in_valid_sync = 0;
+  logic        ack_in_valid_sync = 0;
+  logic        req_in_valid_meta = 0;
+  logic        ack_in_valid_meta = 0;
 
-  state current_in_state = IDLE;
-  state next_in_state = IDLE;
+  state        current_in_state = IDLE;
+  state        next_in_state = IDLE;
 
   mem_out_type mem_out_reg = '0;
 
@@ -40,8 +40,8 @@ module cdc (
   logic        req_out_ready_meta = 0;
   logic        ack_out_ready_meta = 0;
 
-  state current_out_state = IDLE;
-  state next_out_state = IDLE;
+  state        current_out_state = IDLE;
+  state        next_out_state = IDLE;
 
   // SRC -> DST
 

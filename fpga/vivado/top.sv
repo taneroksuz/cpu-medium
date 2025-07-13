@@ -77,7 +77,19 @@ module top
     ram_out <= dram_out;
   end
 
-  assign LED[15:0] = ram_in.mem_addr[18:3];
+  logic [15:0] REG_LED = 0;
+
+  always_ff @(posedge CLOCK_CPU) begin
+    if (RESET == 0) begin
+      REG_LED <= 0;
+    end else begin
+      if (ram_in.mem_valid) begin
+        REG_LED[15:0] <= ram_in.mem_addr[18:3];
+      end
+    end
+  end
+
+  assign LED = REG_LED;
 
   dram dram_comp (
       .reset_cpu(RESET),
