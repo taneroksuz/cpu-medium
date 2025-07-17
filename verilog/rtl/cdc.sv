@@ -19,29 +19,29 @@ module cdc (
     WAIT
   } state;
 
-  mem_in_type  mem_in_reg = '0;
+  mem_in_type  mem_in_reg;
 
-  logic        req_in_valid = 0;
-  logic        ack_in_valid = 0;
-  logic        req_in_valid_sync = 0;
-  logic        ack_in_valid_sync = 0;
-  logic        req_in_valid_meta = 0;
-  logic        ack_in_valid_meta = 0;
+  logic        req_in_valid;
+  logic        ack_in_valid;
+  logic        req_in_valid_sync;
+  logic        ack_in_valid_sync;
+  logic        req_in_valid_meta;
+  logic        ack_in_valid_meta;
 
-  state        current_in_state = IDLE;
-  state        next_in_state = IDLE;
+  state        current_in_state;
+  state        next_in_state;
 
-  mem_out_type mem_out_reg = '0;
+  mem_out_type mem_out_reg;
 
-  logic        req_out_ready = 0;
-  logic        ack_out_ready = 0;
-  logic        req_out_ready_sync = 0;
-  logic        ack_out_ready_sync = 0;
-  logic        req_out_ready_meta = 0;
-  logic        ack_out_ready_meta = 0;
+  logic        req_out_ready;
+  logic        ack_out_ready;
+  logic        req_out_ready_sync;
+  logic        ack_out_ready_sync;
+  logic        req_out_ready_meta;
+  logic        ack_out_ready_meta;
 
-  state        current_out_state = IDLE;
-  state        next_out_state = IDLE;
+  state        current_out_state;
+  state        next_out_state;
 
   // SRC -> DST
 
@@ -77,9 +77,11 @@ module cdc (
     if (!src_rstn) begin
       req_in_valid <= 1'b0;
       mem_in_reg   <= '0;
-    end else if (current_in_state == IDLE && src_mem_in.mem_valid) begin
-      req_in_valid <= ~req_in_valid;
-      mem_in_reg   <= src_mem_in;
+    end else begin
+      if (current_in_state == IDLE && src_mem_in.mem_valid) begin
+        req_in_valid <= ~req_in_valid;
+        mem_in_reg   <= src_mem_in;
+      end
     end
   end
 
@@ -107,11 +109,13 @@ module cdc (
     if (!dst_rstn) begin
       ack_in_valid <= 1'b0;
       dst_mem_in   <= '0;
-    end else if (req_in_valid_sync ^ ack_in_valid) begin
-      ack_in_valid <= ~ack_in_valid;
-      dst_mem_in   <= mem_in_reg;
     end else begin
-      dst_mem_in <= '0;
+      if (req_in_valid_sync ^ ack_in_valid) begin
+        ack_in_valid <= ~ack_in_valid;
+        dst_mem_in   <= mem_in_reg;
+      end else begin
+        dst_mem_in <= '0;
+      end
     end
   end
 
@@ -149,9 +153,11 @@ module cdc (
     if (!dst_rstn) begin
       req_out_ready <= 1'b0;
       mem_out_reg   <= '0;
-    end else if (current_out_state == IDLE && dst_mem_out.mem_ready) begin
-      req_out_ready <= ~req_out_ready;
-      mem_out_reg   <= dst_mem_out;
+    end else begin
+      if (current_out_state == IDLE && dst_mem_out.mem_ready) begin
+        req_out_ready <= ~req_out_ready;
+        mem_out_reg   <= dst_mem_out;
+      end
     end
   end
 
@@ -179,11 +185,13 @@ module cdc (
     if (!src_rstn) begin
       ack_out_ready <= 1'b0;
       src_mem_out   <= '0;
-    end else if (req_out_ready_sync ^ ack_out_ready) begin
-      ack_out_ready <= ~ack_out_ready;
-      src_mem_out   <= mem_out_reg;
     end else begin
-      src_mem_out <= '0;
+      if (req_out_ready_sync ^ ack_out_ready) begin
+        ack_out_ready <= ~ack_out_ready;
+        src_mem_out   <= mem_out_reg;
+      end else begin
+        src_mem_out <= '0;
+      end
     end
   end
 

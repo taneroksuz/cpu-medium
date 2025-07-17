@@ -250,7 +250,7 @@ module buffer_ctrl (
       comp7 : 0,
       ready0 : 0,
       ready1 : 0,
-      clear : 0,
+      clear : 1,
       stall : 0
   };
 
@@ -261,10 +261,7 @@ module buffer_ctrl (
     v = r;
 
     if (buffer_in.clear == 1) begin
-      v.wid   = 0;
-      v.rid   = 0;
-      v.count = 0;
-      v.clear = 1;
+      v = init_reg;
     end
 
     if (r.clear == 1 && buffer_in.clear == 0 && buffer_in.ready == 1) begin

@@ -8,7 +8,7 @@ module writeback_stage (
     input writeback_in_type d,
     output writeback_out_type y,
     output writeback_out_type q,
-    output logic [1:0] clear
+    input logic clear
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -21,6 +21,10 @@ module writeback_stage (
 
     v.calc0 = d.m.calc0;
     v.calc1 = d.m.calc1;
+
+    if (clear == 1) begin
+      v = init_writeback_reg;
+    end
 
     rin = v;
 
@@ -35,14 +39,6 @@ module writeback_stage (
       r <= init_writeback_reg;
     end else begin
       r <= rin;
-    end
-  end
-
-  always_ff @(posedge clock) begin
-    if (reset == 0) begin
-      clear <= 2'b11;
-    end else begin
-      clear <= {1'b0, clear[1]};
     end
   end
 

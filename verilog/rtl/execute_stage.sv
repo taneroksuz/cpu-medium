@@ -39,7 +39,7 @@ module execute_stage (
     input execute_in_type d,
     output execute_out_type y,
     output execute_out_type q,
-    input logic [1:0] clear
+    input logic clear
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -71,7 +71,7 @@ module execute_stage (
 
     v.stall = 0;
 
-    v.enable = ~(d.e.stall | a.m.stall | d.e.calc0.op.exception | d.e.calc0.op.mret | csr_out.trap | csr_out.mret | btac_out.pred_miss | clear[0]);
+    v.enable = ~(d.e.stall | a.m.stall | d.e.calc0.op.exception | d.e.calc0.op.mret | csr_out.trap | csr_out.mret | btac_out.pred_miss | clear);
 
     alu0_in.rdata1 = v.calc0.rdata1;
     alu0_in.rdata2 = v.calc0.rdata2;
@@ -359,9 +359,13 @@ module execute_stage (
       v.calc1.pred = init_prediction;
     end
 
-    if ((d.e.calc0.op.exception | d.e.calc0.op.mret | csr_out.trap | csr_out.mret | btac_out.pred_miss | clear[0]) == 1) begin
+    if ((d.e.calc0.op.exception | d.e.calc0.op.mret | csr_out.trap | csr_out.mret | btac_out.pred_miss) == 1) begin
       v.calc0 = init_calculation;
       v.calc1 = init_calculation;
+    end
+
+    if (clear == 1) begin
+      v = init_execute_reg;
     end
 
     forwarding0_ein.wren = v.calc0.op.wren;

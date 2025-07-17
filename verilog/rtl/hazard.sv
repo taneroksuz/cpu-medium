@@ -112,9 +112,7 @@ module hazard_ctrl (
     v = r;
 
     if (hazard_in.clear == 1) begin
-      v.wid   = 0;
-      v.rid   = 0;
-      v.count = 0;
+      v = init_reg;
     end
 
     v.wen = (~hazard_in.clear) & (~r.stall) & (hazard_in.instr0.op.valid | hazard_in.instr1.op.valid);

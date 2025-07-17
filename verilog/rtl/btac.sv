@@ -173,6 +173,11 @@ module btac_ctrl (
     v_btb = r_btb;
     v_bht = r_bht;
 
+    if (btac_in.clear == 1) begin
+      v_btb = init_btb_reg;
+      v_bht = init_bht_reg;
+    end
+
     if (btac_in.clear == 0) begin
       v_btb.pc0 = btac_in.get_pc0;
       v_btb.pc1 = btac_in.get_pc1;

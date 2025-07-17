@@ -24,7 +24,7 @@ module decode_stage (
     input decode_in_type d,
     output decode_out_type y,
     output decode_out_type q,
-    input logic [1:0] clear
+    input logic clear
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -288,9 +288,13 @@ module decode_stage (
       v.instr1 = init_instruction;
     end
 
-    if ((a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | clear[0]) == 1) begin
+    if ((a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss) == 1) begin
       v.instr0 = init_instruction;
       v.instr1 = init_instruction;
+    end
+
+    if (clear == 1) begin
+      v = init_decode_reg;
     end
 
     rin = v;

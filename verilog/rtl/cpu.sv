@@ -3,6 +3,7 @@ import wires::*;
 
 module cpu (
     input logic reset,
+    input logic clear,
     input logic clock,
     input mem_out_type imem0_out,
     input mem_out_type imem1_out,
@@ -123,8 +124,6 @@ module cpu (
   fp_register_out_type fp_register_out;
   fp_csr_out_type fp_csr_out;
   fp_forwarding_out_type fp_forwarding_out;
-
-  logic [1:0] clear;
 
   assign fpu_in.fp_decode0_in = fp_decode0_in;
   assign fpu_in.fp_decode1_in = fp_decode1_in;
@@ -532,7 +531,7 @@ module cpu (
       .clock  (clock),
       .fpu_in (fpu_in),
       .fpu_out(fpu_out),
-      .clear  (clear[0])
+      .clear  (clear)
   );
 
 endmodule
