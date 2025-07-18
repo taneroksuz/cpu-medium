@@ -369,7 +369,7 @@ module fpu_register (
 );
   timeunit 1ns; timeprecision 1ps;
 
-  logic [63:0] fp_reg_file[0:31] = '{default: '0};
+  logic [63:0] fp_reg_file[0:31];
 
   always_ff @(posedge clock) begin
     if (fp_register_win.wren == 1) begin

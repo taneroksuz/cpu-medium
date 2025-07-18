@@ -67,14 +67,14 @@ module buffer_reg (
 
   localparam depth = $clog2(buffer_depth);
 
-  logic [47:0] buffer_reg_array0[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array1[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array2[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array3[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array4[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array5[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array6[0:buffer_depth-1] = '{default: '0};
-  logic [47:0] buffer_reg_array7[0:buffer_depth-1] = '{default: '0};
+  logic [47:0] buffer_reg_array0[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array1[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array2[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array3[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array4[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array5[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array6[0:buffer_depth-1];
+  logic [47:0] buffer_reg_array7[0:buffer_depth-1];
 
   logic [47:0] rdata0;
   logic [47:0] rdata1;

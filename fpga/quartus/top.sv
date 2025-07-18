@@ -33,13 +33,6 @@ module top
   mem_in_type  ram_in;
   mem_out_type ram_out;
 
-  initial begin
-    SCLK = 0;
-    MOSI = 0;
-    MISO = 0;
-    SS = 0;
-  end
-
   pll pll_cpu_comp (
     .refclk(CLOCK_50_B5B),
     .rst(~KEY[0]),
@@ -71,7 +64,7 @@ module top
       .ram_out(ram_out)
   );
 
-  logic [9:0] REG_LED = 0;
+  logic [9:0] REG_LED;
 
   always_ff @(posedge CLOCK_CPU) begin
     if (RESET == 0) begin

@@ -21,8 +21,8 @@ module testbench ();
 
   logic [31 : 0] host[0:0];
 
-  logic [31 : 0] stoptime = 10000000;
-  logic [31 : 0] counter = 0;
+  logic [31 : 0] stoptime;
+  logic [31 : 0] counter;
 
   integer reg_file;
   integer csr_file;
@@ -181,10 +181,14 @@ module testbench ();
   end
 
   always_ff @(posedge clock) begin
-    if (counter == stoptime) begin
-      $finish;
+    if (reset == 0) begin
+      counter <= 0;
     end else begin
-      counter <= counter + 1;
+      if (counter == stoptime) begin
+        $finish;
+      end else begin
+        counter <= counter + 1;
+      end
     end
   end
 

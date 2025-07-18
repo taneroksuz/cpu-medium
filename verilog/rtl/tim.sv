@@ -43,7 +43,7 @@ module tim_ram (
 
     if (ram_type == 0) begin
 
-      logic [63 : 0] tim_ram[0:tim_depth-1] = '{default: '0};
+      logic [63 : 0] tim_ram[0:tim_depth-1];
 
       always_ff @(posedge clock) begin
         if (tim0_ram_in.en == 1) begin
@@ -76,9 +76,7 @@ module tim_ram (
 
     if (ram_type == 1) begin
 
-      /* synthesis syn_ramstyle = "MLAB, no_rw_check"*/
-
-      logic [7 : 0][7 : 0] tim_ram[0:tim_depth-1] = '{default: '0};
+      (* ramstyle = "no_rw_check, M10K" *) logic [7 : 0][7 : 0] tim_ram[0:tim_depth-1];
 
       always_ff @(posedge clock) begin
         if (tim0_ram_in.strb[0]) tim_ram[tim0_ram_in.addr][0] <= tim0_ram_in.data[7:0];
@@ -222,17 +220,6 @@ module tim_ctrl (
 
     v_b.rdata0 = dvec0_out[v_b.wid0].data;
     v_b.rdata1 = dvec1_out[v_b.wid1].data;
-
-    if (|v_b.strb0 == 1 && |v_b.strb1 == 0 && v_b.did0 == v_b.did1 && v_b.wid0 == v_b.wid1) begin
-      if (v_b.strb0[0] == 1) v_b.rdata1[7:0] = v_b.data0[7:0];
-      if (v_b.strb0[1] == 1) v_b.rdata1[15:8] = v_b.data0[15:8];
-      if (v_b.strb0[2] == 1) v_b.rdata1[23:16] = v_b.data0[23:16];
-      if (v_b.strb0[3] == 1) v_b.rdata1[31:24] = v_b.data0[31:24];
-      if (v_b.strb0[4] == 1) v_b.rdata1[39:32] = v_b.data0[39:32];
-      if (v_b.strb0[5] == 1) v_b.rdata1[47:40] = v_b.data0[47:40];
-      if (v_b.strb0[6] == 1) v_b.rdata1[55:48] = v_b.data0[55:48];
-      if (v_b.strb0[7] == 1) v_b.rdata1[63:56] = v_b.data0[63:56];
-    end
 
     tim0_out.mem_rdata = v_b.rdata0;
     tim0_out.mem_error = 0;

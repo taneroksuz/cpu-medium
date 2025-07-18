@@ -44,13 +44,6 @@ module top
   mem_in_type  dram_in;
   mem_out_type dram_out;
 
-  initial begin
-    SCLK = 0;
-    MOSI = 0;
-    MISO = 0;
-    SS = 0;
-  end
-
   pll pll_cpu_comp (
     .clk_in1(CLK100MHZ),
     .resetn(CPU_RESETN),
@@ -88,7 +81,7 @@ module top
     ram_out <= dram_out;
   end
 
-  logic [15:0] REG_LED = 0;
+  logic [15:0] REG_LED;
 
   always_ff @(posedge CLOCK_CPU) begin
     if (RESET == 0) begin

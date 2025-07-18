@@ -18,10 +18,10 @@ module csr (
 
   csr_machine_reg_type csr_machine_reg;
 
-  logic [0 : 0] exception = 0;
-  logic [0 : 0] interrupt = 0;
-  logic [7 : 0] cause = 0;
-  logic [0 : 0] mret = 0;
+  logic [0 : 0] exception;
+  logic [0 : 0] interrupt;
+  logic [7 : 0] cause;
+  logic [0 : 0] mret;
 
   logic [0 : 0] valid;
   logic [63 : 0] incr;

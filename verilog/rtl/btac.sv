@@ -47,7 +47,7 @@ module btb (
 
   localparam btb_depth = $clog2(branchtarget_depth);
 
-  logic [62-btb_depth:0] btb_array[0:branchtarget_depth-1] = '{default: '0};
+  logic [62-btb_depth:0] btb_array[0:branchtarget_depth-1];
 
   always_ff @(posedge clock) begin
     if (btb_in.wen == 1) begin
@@ -72,7 +72,7 @@ module bht (
 
   localparam bht_depth = $clog2(branchhistory_depth);
 
-  logic [1:0] bht_array[0:branchhistory_depth-1] = '{default: '0};
+  logic [1:0] bht_array[0:branchhistory_depth-1];
 
   always_ff @(posedge clock) begin
     if (bht_in.wen == 1) begin
