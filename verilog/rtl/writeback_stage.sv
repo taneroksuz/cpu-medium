@@ -3,12 +3,12 @@ import wires::*;
 
 module writeback_stage (
     input logic reset,
+    input logic clear,
     input logic clock,
     input writeback_in_type a,
     input writeback_in_type d,
     output writeback_out_type y,
-    output writeback_out_type q,
-    output logic [1:0] clear
+    output writeback_out_type q
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -35,14 +35,6 @@ module writeback_stage (
       r <= init_writeback_reg;
     end else begin
       r <= rin;
-    end
-  end
-
-  always_ff @(posedge clock) begin
-    if (reset == 0) begin
-      clear <= 2'b11;
-    end else begin
-      clear <= {1'b0, clear[1]};
     end
   end
 

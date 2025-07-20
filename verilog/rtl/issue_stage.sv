@@ -5,6 +5,7 @@ import fp_wire::*;
 
 module issue_stage (
     input logic reset,
+    input logic clear,
     input logic clock,
     input hazard_out_type hazard_out,
     output hazard_in_type hazard_in,
@@ -28,8 +29,7 @@ module issue_stage (
     input issue_in_type a,
     input issue_in_type d,
     output issue_out_type y,
-    output issue_out_type q,
-    input logic [1:0] clear
+    output issue_out_type q
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -52,7 +52,7 @@ module issue_stage (
 
     hazard_in.instr0 = v.instr0;
     hazard_in.instr1 = v.instr1;
-    hazard_in.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | clear[0];
+    hazard_in.clear = a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | clear;
     hazard_in.stall = d.i.stall | d.e.stall | d.m.stall;
 
     v.calc0 = hazard_out.calc0;
@@ -212,7 +212,7 @@ module issue_stage (
       v.calc0 = init_calculation;
     end
 
-    if ((a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | clear[0]) == 1) begin
+    if ((a.m.calc0.op.fence | csr_out.trap | csr_out.mret | btac_out.pred_miss | clear) == 1) begin
       v.calc0 = init_calculation;
       v.calc1 = init_calculation;
     end

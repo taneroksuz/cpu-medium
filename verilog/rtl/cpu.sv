@@ -3,6 +3,7 @@ import wires::*;
 
 module cpu (
     input logic reset,
+    input logic clear,
     input logic clock,
     input mem_out_type imem0_out,
     input mem_out_type imem1_out,
@@ -123,8 +124,6 @@ module cpu (
   fp_register_out_type fp_register_out;
   fp_csr_out_type fp_csr_out;
   fp_forwarding_out_type fp_forwarding_out;
-
-  logic [1:0] clear;
 
   assign fpu_in.fp_decode0_in = fp_decode0_in;
   assign fpu_in.fp_decode1_in = fp_decode1_in;
@@ -374,6 +373,7 @@ module cpu (
 
   fetch_stage fetch_stage_comp (
       .reset(reset),
+      .clear(clear),
       .clock(clock),
       .buffer_out(buffer_out),
       .buffer_in(buffer_in),
@@ -387,12 +387,12 @@ module cpu (
       .a(fetch_in_a),
       .d(fetch_in_d),
       .y(fetch_out_y),
-      .q(fetch_out_q),
-      .clear(clear)
+      .q(fetch_out_q)
   );
 
   decode_stage decode_stage_comp (
       .reset(reset),
+      .clear(clear),
       .clock(clock),
       .decoder0_out(decoder0_out),
       .decoder0_in(decoder0_in),
@@ -411,12 +411,12 @@ module cpu (
       .a(decode_in_a),
       .d(decode_in_d),
       .y(decode_out_y),
-      .q(decode_out_q),
-      .clear(clear)
+      .q(decode_out_q)
   );
 
   issue_stage issue_stage_comp (
       .reset(reset),
+      .clear(clear),
       .clock(clock),
       .hazard_out(hazard_out),
       .hazard_in(hazard_in),
@@ -440,12 +440,12 @@ module cpu (
       .a(issue_in_a),
       .d(issue_in_d),
       .y(issue_out_y),
-      .q(issue_out_q),
-      .clear(clear)
+      .q(issue_out_q)
   );
 
   execute_stage execute_stage_comp (
       .reset(reset),
+      .clear(clear),
       .clock(clock),
       .alu0_out(alu0_out),
       .alu0_in(alu0_in),
@@ -481,12 +481,12 @@ module cpu (
       .a(execute_in_a),
       .d(execute_in_d),
       .y(execute_out_y),
-      .q(execute_out_q),
-      .clear(clear)
+      .q(execute_out_q)
   );
 
   memory_stage memory_stage_comp (
       .reset(reset),
+      .clear(clear),
       .clock(clock),
       .lsu0_out(lsu0_out),
       .lsu0_in(lsu0_in),
@@ -511,18 +511,17 @@ module cpu (
       .a(memory_in_a),
       .d(memory_in_d),
       .y(memory_out_y),
-      .q(memory_out_q),
-      .clear(clear)
+      .q(memory_out_q)
   );
 
   writeback_stage writeback_stage_comp (
       .reset(reset),
+      .clear(clear),
       .clock(clock),
       .a(writeback_in_a),
       .d(writeback_in_d),
       .y(writeback_out_y),
-      .q(writeback_out_q),
-      .clear(clear)
+      .q(writeback_out_q)
   );
 
   fpu #(
@@ -532,7 +531,7 @@ module cpu (
       .clock  (clock),
       .fpu_in (fpu_in),
       .fpu_out(fpu_out),
-      .clear  (clear[0])
+      .clear  (clear)
   );
 
 endmodule

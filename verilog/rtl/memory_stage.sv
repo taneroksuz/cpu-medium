@@ -4,6 +4,7 @@ import functions::*;
 
 module memory_stage (
     input logic reset,
+    input logic clear,
     input logic clock,
     input lsu_out_type lsu0_out,
     output lsu_in_type lsu0_in,
@@ -28,8 +29,7 @@ module memory_stage (
     input memory_in_type a,
     input memory_in_type d,
     output memory_out_type y,
-    output memory_out_type q,
-    input logic [1:0] clear
+    output memory_out_type q
 );
   timeunit 1ns; timeprecision 1ps;
 
@@ -130,7 +130,7 @@ module memory_stage (
       v.ready1 = 0;
     end
 
-    if ((csr_out.trap | csr_out.mret | clear[0]) == 1) begin
+    if ((csr_out.trap | csr_out.mret | clear) == 1) begin
       v.calc0 = init_calculation;
       v.calc1 = init_calculation;
     end

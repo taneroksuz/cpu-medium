@@ -13,6 +13,7 @@ module testbench ();
   logic ss;
   logic rx;
   logic tx;
+  logic [1:0] clear;
 
   mem_in_type ram_in;
   mem_out_type ram_out;
@@ -205,8 +206,17 @@ module testbench ();
     end
   end
 
+  always_ff @(posedge clock) begin
+    if (reset == 0) begin
+      clear <= 2'b11;
+    end else begin
+      clear <= {1'b0, clear[1]};
+    end
+  end
+
   soc soc_comp (
       .reset(reset),
+      .clear(clear[0]),
       .clock(clock),
       .sclk(sclk),
       .mosi(mosi),
