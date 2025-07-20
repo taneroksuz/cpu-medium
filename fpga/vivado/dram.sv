@@ -166,8 +166,8 @@ module dram (
       v_in.app_wdf_mask = 16'hFFFF;
       v_in.app_addr     = {v_in.mem_addr[26:4],4'b0000};
       unique case (v_in.mem_addr[3])
-        0 : v_in.app_wdf_mask[7:0] <= ~v_in.mem_wstrb;
-        1 : v_in.app_wdf_mask[15:8] <= ~v_in.mem_wstrb;
+        0 : v_in.app_wdf_mask[7:0] = ~v_in.mem_wstrb;
+        1 : v_in.app_wdf_mask[15:8] = ~v_in.mem_wstrb;
         default : ;
       endcase
     end
@@ -180,16 +180,16 @@ module dram (
 
     if (r_in.state == stSetCmdWr) begin
       if (r_out.app_rdy) begin
-        mem_out.mem_ready <= 1;
+        mem_out.mem_ready = 1;
       end
     end
 
     if (r_in.state == stRecvData) begin
       if (r_out.app_rd_data_valid) begin
-        mem_out.mem_ready <= 1;
+        mem_out.mem_ready = 1;
         unique case (v_in.mem_addr[3])
-          0 : mem_out.mem_rdata <= r_out.app_rd_data[63:0];
-          1 : mem_out.mem_rdata <= r_out.app_rd_data[127:64];
+          0 : mem_out.mem_rdata = r_out.app_rd_data[63:0];
+          1 : mem_out.mem_rdata = r_out.app_rd_data[127:64];
           default : ;
         endcase
       end
