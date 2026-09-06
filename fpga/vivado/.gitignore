@@ -12,3 +12,6 @@ ip/mig/*
 !ip/mig/*.prj
 !ip/mig/*.xci
 !ip/mig/*.xdc
+!ip/pll/
+ip/pll/*
+!ip/pll/*.xci

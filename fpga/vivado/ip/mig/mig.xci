@@ -1182,8 +1182,8 @@
         "OUTPUTDIR": [ { "value": "../../gen/mig" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "." } ],
-        "SWVERSION": [ { "value": "2025.2" } ],
-        "SYNTHESISFLOW": [ { "value": "GLOBAL" } ]
+        "SWVERSION": [ { "value": "2026.1" } ],
+        "SYNTHESISFLOW": [ { "value": "OUT_OF_CONTEXT" } ]
       }
     },
     "boundary": {
@@ -1547,5 +1547,5 @@
       }
     }
   },
-  "checksum": "49556254"
+  "checksum": "133cf8da"
 }

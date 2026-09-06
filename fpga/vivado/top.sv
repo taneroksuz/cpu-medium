@@ -52,8 +52,8 @@ module top (
   pll pll_cpu_comp (
     .clk_in1 (CLK100MHZ),
     .resetn  (CPU_RESETN),
-    .clk_out1(CLOCK_DDR),
-    .clk_out2(CLOCK_CPU),
+    .clk_out1(CLOCK_CPU),
+    .clk_out2(CLOCK_DDR),
     .locked  (LOCKED)
   );
 

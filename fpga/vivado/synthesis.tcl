@@ -38,8 +38,6 @@ read_verilog -sv ../../verilog/rtl/uart_rx.sv
 read_verilog -sv ../../verilog/rtl/uart_tx.sv
 read_verilog -sv ../../verilog/rtl/soc.sv
 read_verilog -sv dram.sv
-read_verilog pll_clk_wiz.v
-read_verilog pll.v
 read_verilog -sv top.sv
 
 set_part xc7a100tcsg324-1
@@ -49,9 +47,18 @@ read_xdc top.xdc
 read_xdc ip/mig/mig.xdc
 
 add_files ip/mig/mig_a.prj
-add_files ip/mig/mig.xci
+
+read_ip ip/mig/mig.xci
+read_ip ip/pll/pll.xci
 
 generate_target all [get_ips mig]
+generate_target all [get_ips pll]
+
+set_property GENERATE_SYNTH_CHECKPOINT true [get_files ip/mig/mig.xci]
+set_property GENERATE_SYNTH_CHECKPOINT true [get_files ip/pll/pll.xci]
+
+synth_ip [get_ips mig]
+synth_ip [get_ips pll]
 
 synth_design -top top
 
